@@ -1,0 +1,26 @@
+.nitro-loading {
+    position: relative;
+    background: #1d1a24;
+    z-index: 100;
+
+    .connecting-duck {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        margin: auto;
+        right: 0;
+        left: 0;
+        background: url('@/assets/images/loading/caja.gif') no-repeat top left;
+        width: 84px;
+        height: 84px;
+        zoom: 1.5;
+        image-rendering: pixelated;
+    }
+
+    .nitro-logo {
+        width: 47px;
+        height: 65px;
+        background: transparent url('https://assets.nitrodev.co/logos/react-loader.png') no-repeat center;
+        z-index: 1;
+    }
+}
