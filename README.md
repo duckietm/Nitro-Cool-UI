@@ -1,5 +1,7 @@
 # Nitro React v2.1
 
+Credits: Thanks to wassehk on discord for this release.
+
 ## Prerequisites
 
 -   [Git](https://git-scm.com/)
