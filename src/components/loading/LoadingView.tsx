@@ -22,7 +22,7 @@ export const LoadingView: FC<LoadingViewProps> = props =>
                             <Base className="fs-4 text-shadow">{ message }</Base>
                             :
                             <>
-                                <Text fontSize={ 4 } variant="white" className="text-shadow">El hotel esta cargando { percent.toFixed() }%...</Text>
+                                <Text fontSize={ 4 } variant="white" className="text-shadow">The hotel is loading { percent.toFixed() }%...</Text>
                                 <LayoutProgressBar progress={ percent } className="mt-2 large" />
                             </>
                         }
