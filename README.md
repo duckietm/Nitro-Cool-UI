@@ -26,6 +26,11 @@ Credits: Thanks to wassehk on discord for this release.
     -   Open `public/ui-config.json`
         -   Update `camera.url, thumbnails.url, url.prefix, habbopages.url`
     -   You can override any variable by passing it to `NitroConfig` in the index.html
+	
+-   Make the following changes
+	- ExternalTesxts.json
+	`"room.mute.button.text": "Hide chat",`
+	`"room.unmute.button.text": "Unhide chat",`
 
 ## Usage
 

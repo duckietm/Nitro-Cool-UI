@@ -17,6 +17,7 @@ export const RoomToolsWidgetView: FC<{}> = props =>
     const { navigatorData = null } = useNavigator();
     const { roomSession = null } = useRoom();
     const roomHistoryRef = useRef(null);
+	const [areBubblesMuted, setAreBubblesMuted] = useState(false);
 	
 	const roomsetthidebot = () => {
 		setIsOpenHistory(false);
@@ -72,13 +73,20 @@ export const RoomToolsWidgetView: FC<{}> = props =>
                 });
             },
             'chat_history': () => CreateLinkEvent('chat-history/toggle'),
-            'hiddenbubbles': () => {
-                CreateLinkEvent('nitrobubblehidden/toggle');
-                const bubbleElement = document.getElementById('bubble');
-                if (bubbleElement) {
-                    bubbleElement.classList.toggle('icon-chat-disablebubble');
-                }
-            },
+            'hiddenbubbles': () => { 
+				CreateLinkEvent('nitrobubblehidden/toggle');
+				const bubbleElement = document.getElementById('bubble');
+				if (bubbleElement) {
+					bubbleElement.classList.toggle('icon-chat-disablebubble');
+				}
+				const newText = areBubblesMuted ? LocalizeText('room.unmute.button.text') : LocalizeText('room.mute.button.text');
+				document.getElementById('hiddenbubblesText').innerText = newText;
+				setAreBubblesMuted(!areBubblesMuted);
+				const bubbleIcon = document.getElementById('bubbleIcon');
+				if (bubbleIcon) {
+					bubbleIcon.classList.toggle('icon-chat-disablebubble');
+				}
+			},
             'like_room': () => SendMessageComposer(new RateFlatMessageComposer(1)),
             'toggle_room_link': () => CreateLinkEvent('navigator/toggle-room-link'),
             'navigator_search_tag': (tag: string) => {
@@ -172,11 +180,13 @@ export const RoomToolsWidgetView: FC<{}> = props =>
                     <Base pointer title={ LocalizeText('room.chathistory.button.text') } onClick={ () => handleToolClick('chat_history') } className="iconleftgen icon icon-chat-history" />
                     <div className="texticonright" onClick={ () => handleToolClick('chat_history') } title={ LocalizeText('room.chathistory.button.text') }>{LocalizeText('room.chathistory.button.text')}</div>
                 </div>
-
-                <div className="gridinforooms">
-                    <Base id="bubble" pointer title={ LocalizeText('room.mute.button.texte') } onClick={ () => handleToolClick('hiddenbubbles') } className="iconleftgen icon icon-chat-enablebubble"/>
-                    <div className="texticonright" onClick={ () => handleToolClick('hiddenbubbles') } title={ LocalizeText('room.mute.button.text') }>{LocalizeText('room.mute.button.text')}</div>
-                </div>
+				
+				<div className="gridinforooms">
+					<Base id="bubble" pointer title={areBubblesMuted ? LocalizeText('room.unmute.button.text') : LocalizeText('room.mute.button.text')} onClick={() => handleToolClick('hiddenbubbles')} className={areBubblesMuted ? "iconleftgen icon icon-chat-disablebubble" : "iconleftgen icon icon-chat-enablebubble"} />
+					<div id="hiddenbubblesText" className="texticonright" onClick={() => handleToolClick('hiddenbubbles')} title={areBubblesMuted ? LocalizeText('room.unmute.button.text') : LocalizeText('room.mute.button.text')}>
+						{areBubblesMuted ? LocalizeText('room.unmute.button.text') : LocalizeText('room.mute.button.text')}
+					</div>
+				</div>
 
                 { navigatorData.canRate &&
                     <div className="gridinforooms">
