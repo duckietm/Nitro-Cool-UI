@@ -1,20 +1,21 @@
 import { IRoomSession, RoomObjectVariable, RoomPreviewer } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
-import { attemptPetPlacement, GetRoomEngine, LocalizeText, UnseenItemCategory } from '../../../../api';
+import { GetRoomEngine, LocalizeText, UnseenItemCategory, attemptPetPlacement } from '../../../../api';
 import { AutoGrid, Button, Column, Grid, LayoutRoomPreviewerView, Text } from '../../../../common';
 import { useInventoryPets, useInventoryUnseenTracker } from '../../../../hooks';
-import { InventoryCategoryEmptyView } from '../InventoryCategoryEmptyView';
+import { InventoryCategoryEmptyViewPets } from '../InventoryCategoryEmptyViewPets';
 import { InventoryPetItemView } from './InventoryPetItemView';
 
 interface InventoryPetViewProps
 {
     roomSession: IRoomSession;
     roomPreviewer: RoomPreviewer;
+	isTrading: boolean;
 }
 
 export const InventoryPetView: FC<InventoryPetViewProps> = props =>
 {
-    const { roomSession = null, roomPreviewer = null } = props;
+    const { roomSession = null, roomPreviewer = null, isTrading = false } = props;
     const [ isVisible, setIsVisible ] = useState(false);
     const { petItems = null, selectedPet = null, activate = null, deactivate = null } = useInventoryPets();
     const { isUnseen = null, removeUnseen = null } = useInventoryUnseenTracker();
@@ -63,7 +64,7 @@ export const InventoryPetView: FC<InventoryPetViewProps> = props =>
         return () => setIsVisible(false);
     }, []);
 
-    if(!petItems || !petItems.length) return <InventoryCategoryEmptyView title={ LocalizeText('inventory.empty.pets.title') } desc={ LocalizeText('inventory.empty.pets.desc') } />;
+    if(!petItems || !petItems.length) return <InventoryCategoryEmptyViewPets title={ LocalizeText('inventory.empty.pets.title') } desc={ LocalizeText('inventory.empty.pets.desc') } isTrading={ isTrading } />;
 
     return (
         <Grid>

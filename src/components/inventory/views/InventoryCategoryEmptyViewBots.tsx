@@ -2,21 +2,20 @@ import { FC } from 'react';
 import { CreateLinkEvent, LocalizeText } from '../../../api';
 import { Button, Column, Flex, Grid, GridProps, Text } from '../../../common';
 
-export interface InventoryCategoryEmptyViewProps extends GridProps
+export interface InventoryCategoryEmptyViewBots extends GridProps
 {
     title: string;
     desc: string;
 	isTrading?: boolean;
 }
 
-export const InventoryCategoryEmptyView: FC<InventoryCategoryEmptyViewProps> = props =>
-{
-    const { title = '', desc = '', isTrading = false, children = null, ...rest } = props;
-    
-    return (
+export const InventoryCategoryEmptyViewBots: FC< InventoryCategoryEmptyViewBotsProps> = (props) => {
+  const { title = '', desc = '', isTrading = false, children = null, ...rest } = props;
+
+  return (
     <Grid {...rest}>
       <Column justifyContent="start" center size={6} overflow="hidden">
-        <div className="empty-furniimage" />
+        <div className="empty-botsimage" />
       </Column>
       <Column justifyContent="center" size={6} overflow="hidden">
         <div className="bubble-inventory bubble-inventory-bottom-left">
