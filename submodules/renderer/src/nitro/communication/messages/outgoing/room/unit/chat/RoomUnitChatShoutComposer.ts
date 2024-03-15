@@ -4,9 +4,9 @@ export class RoomUnitChatShoutComposer implements IMessageComposer<ConstructorPa
 {
     private _data: ConstructorParameters<typeof RoomUnitChatShoutComposer>;
 
-    constructor(message: string, styleId: number)
+    constructor(message: string, styleId: number, chatColour: string)
     {
-        this._data = [message, styleId];
+        this._data = [message, styleId, chatColour];
     }
 
     public getMessageArray()

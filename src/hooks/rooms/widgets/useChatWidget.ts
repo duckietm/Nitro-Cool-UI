@@ -97,7 +97,7 @@ const useChatWidgetState = () =>
 
     useRoomSessionManagerEvent<RoomSessionChatEvent>(RoomSessionChatEvent.CHAT_EVENT, event =>
     {
-        const roomObject = GetRoomEngine().getRoomObject(roomSession.roomId, event.objectId, RoomObjectCategory.UNIT);
+		const roomObject = GetRoomEngine().getRoomObject(roomSession.roomId, event.objectId, RoomObjectCategory.UNIT);
         const bubbleLocation = roomObject ? GetRoomObjectScreenLocation(roomSession.roomId, roomObject?.id, RoomObjectCategory.UNIT) : new NitroPoint();
         const userData = roomObject ? roomSession.userDataManager.getUserDataByIndex(event.objectId) : new RoomUserData(-1);
 
@@ -109,8 +109,9 @@ const useChatWidgetState = () =>
         let userType = 0;
         let petType = -1;
         let text = event.message;
-
-        if(userData)
+		let chatColours = event._chatColours
+		
+		if(userData)
         {
             userType = userData.type;
 
@@ -121,6 +122,7 @@ const useChatWidgetState = () =>
                 case RoomObjectType.PET:
                     imageUrl = getPetImage(figure, 2, true, 64, roomObject.model.getValue<string>(RoomObjectVariable.FIGURE_POSTURE));
                     petType = new PetFigureData(figure).typeId;
+					chatColours = "black"
                     break;
                 case RoomObjectType.USER:
                     imageUrl = getUserImage(figure);
@@ -128,6 +130,7 @@ const useChatWidgetState = () =>
                 case RoomObjectType.RENTABLE_BOT:
                 case RoomObjectType.BOT:
                     styleId = SystemChatStyleEnum.BOT;
+					chatColours = "black"
                     break;
             }
 
@@ -193,7 +196,7 @@ const useChatWidgetState = () =>
 
         const formattedText = RoomChatFormatter(text);
         const color = (avatarColor && (('#' + (avatarColor.toString(16).padStart(6, '0'))) || null));
-
+	
         const chatMessage = new ChatBubbleMessage(
             userData.roomIndex,
             RoomObjectCategory.UNIT,
@@ -205,10 +208,11 @@ const useChatWidgetState = () =>
             chatType,
             styleId,
             imageUrl,
-            color);
+            color,
+			chatColours);
 
         setChatMessages(prevValue => [ ...prevValue, chatMessage ]);
-        addChatEntry({ id: -1, webId: userData.webID, entityId: userData.roomIndex, name: username, imageUrl, style: styleId, chatType: chatType, entityType: userData.type, message: formattedText, timestamp: ChatHistoryCurrentDate(), type: ChatEntryType.TYPE_CHAT, roomId: roomSession.roomId, color });
+        addChatEntry({ id: -1, webId: userData.webID, entityId: userData.roomIndex, name: username, imageUrl, style: styleId, chatType: chatType, entityType: userData.type, message: formattedText, timestamp: ChatHistoryCurrentDate(), type: ChatEntryType.TYPE_CHAT, roomId: roomSession.roomId, color, chatColours });
     });
 
     useRoomEngineEvent<RoomDragEvent>(RoomDragEvent.ROOM_DRAG, event =>

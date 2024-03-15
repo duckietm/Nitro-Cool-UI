@@ -1,4 +1,4 @@
-import { FigureUpdateEvent, RoomUnitChatStyleComposer, UserInfoDataParser, UserInfoEvent, UserSettingsEvent } from '@nitrots/nitro-renderer';
+import { FigureUpdateEvent, RoomUnitChatStyleComposer, UserInfoDataParser, UserInfoEvent } from '@nitrots/nitro-renderer';
 import { useEffect, useState } from 'react';
 import { useBetween } from 'use-between';
 import { GetLocalStorage, GetSessionDataManager, SendMessageComposer } from '../../api';
@@ -9,16 +9,22 @@ const useSessionInfoState = () =>
 {
     const [ userInfo, setUserInfo ] = useState<UserInfoDataParser>(null);
     const [ userFigure, setUserFigure ] = useState<string>(null);
-    const [ chatStyleId, setChatStyleId ] = useState<number>(0);
+    const [ chatStyleId, setChatStyleId ] = useLocalStorage<number>('chatStyleId', 0);
+    const [ chatColour, setChatColour ] = useLocalStorage<string>('chatColour', '');
     const [ userRespectRemaining, setUserRespectRemaining ] = useState<number>(0);
     const [ petRespectRemaining, setPetRespectRemaining ] = useState<number>(0);
-    const [ screenSize, setScreenSize ] = useLocalStorage('nitro.screensize', { width: window.innerWidth, height: window.innerHeight });
+    const [ screenSize, setScreenSize ] = useLocalStorage('nitroScreensize', { width: window.innerWidth, height: window.innerHeight });
 
     const updateChatStyleId = (styleId: number) =>
     {
         setChatStyleId(styleId);
 
         SendMessageComposer(new RoomUnitChatStyleComposer(styleId));
+    }
+
+    const updateChatColour = (colour: string) =>
+    {
+        setChatColour(colour);
     }
 
     const respectUser = (userId: number) =>
@@ -52,16 +58,9 @@ const useSessionInfoState = () =>
         setUserFigure(parser.figure);
     });
 
-    useMessageEvent<UserSettingsEvent>(UserSettingsEvent, event =>
-    {
-        const parser = event.getParser();
-
-        setChatStyleId(parser.chatType);
-    });
-
     useEffect(() =>
     {
-        const currentScreenSize = <{ width: number, height: number }>GetLocalStorage('nitro.screensize');
+        const currentScreenSize = <{ width: number, height: number }>GetLocalStorage('nitroScreensize');
 
         if(currentScreenSize && ((currentScreenSize.width !== window.innerWidth) || (currentScreenSize.height !== window.innerHeight)))
         {
@@ -87,7 +86,7 @@ const useSessionInfoState = () =>
         }
     }, [ setScreenSize ]);
 
-    return { userInfo, userFigure, chatStyleId, userRespectRemaining, petRespectRemaining, respectUser, respectPet, updateChatStyleId };
+    return { userInfo, userFigure, chatStyleId, userRespectRemaining, petRespectRemaining, respectUser, respectPet, updateChatStyleId, updateChatColour, chatColour };
 }
 
 export const useSessionInfo = () => useBetween(useSessionInfoState);

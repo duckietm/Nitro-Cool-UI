@@ -25,16 +25,18 @@ export class RoomSessionChatEvent extends RoomSessionEvent
     private _extraParam: number;
     private _style: number;
 
-    constructor(type: string, session: IRoomSession, objectId: number, message: string, chatType: number, style: number = 0, links: string[] = null, extraParam: number = -1)
+    constructor(type: string, session: IRoomSession, objectId: number, message: string, chatType: number, style: number = 0, chatColours: string[], links: string[] = null, extraParam: number = -1)
     {
         super(type, session);
 
         this._objectId = objectId;
         this._message = message;
         this._chatType = chatType;
+		this._chatColours = chatColours;
         this._links = links;
         this._extraParam = extraParam;
         this._style = style;
+		
     }
 
     public get objectId(): number
@@ -65,5 +67,10 @@ export class RoomSessionChatEvent extends RoomSessionEvent
     public get style(): number
     {
         return this._style;
+    }
+	
+	public get chatColours(): string[]
+    {
+        return this._chatColours;
     }
 }

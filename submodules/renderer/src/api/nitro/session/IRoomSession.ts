@@ -12,8 +12,8 @@ export interface IRoomSession extends IDisposable
     setRoomOwner(): void;
     start(): boolean;
     reset(roomId: number): void;
-    sendChatMessage(text: string, styleId: number): void;
-    sendShoutMessage(text: string, styleId: number): void;
+    sendChatMessage(text: string, styleId: number, chatColour: string): void;
+    sendShoutMessage(text: string, styleId: number, chatColour: string): void;
     sendWhisperMessage(recipientName: string, text: string, styleId: number): void;
     sendChatTypingMessage(isTyping: boolean): void;
     sendMottoMessage(motto: string): void;
@@ -23,6 +23,7 @@ export interface IRoomSession extends IDisposable
     sendPostureMessage(posture: number): void;
     sendDoorbellApprovalMessage(userName: string, flag: boolean): void;
     sendAmbassadorAlertMessage(userId: number): void;
+    sendWhisperGroupMessage(userId: number): void;
     sendKickMessage(userId: number): void;
     sendMuteMessage(userId: number, minutes: number): void;
     sendBanMessage(userId: number, type: string): void;

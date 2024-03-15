@@ -3,7 +3,7 @@ import { Disposable } from '../../core';
 import { DiceValueMessageEvent, FloorHeightMapEvent, FurnitureAliasesComposer, FurnitureAliasesEvent, FurnitureDataEvent, FurnitureFloorAddEvent, FurnitureFloorDataParser, FurnitureFloorEvent, FurnitureFloorRemoveEvent, FurnitureFloorUpdateEvent, FurnitureWallAddEvent, FurnitureWallDataParser, FurnitureWallEvent, FurnitureWallRemoveEvent, FurnitureWallUpdateEvent, GetRoomEntryDataMessageComposer, GuideSessionEndedMessageEvent, GuideSessionErrorMessageEvent, GuideSessionStartedMessageEvent, IgnoreResultEvent, ItemDataUpdateMessageEvent, ObjectsDataUpdateEvent, ObjectsRollingEvent, OneWayDoorStatusMessageEvent, PetExperienceEvent, PetFigureUpdateEvent, RoomEntryTileMessageEvent, RoomEntryTileMessageParser, RoomHeightMapEvent, RoomHeightMapUpdateEvent, RoomPaintEvent, RoomReadyMessageEvent, RoomUnitChatEvent, RoomUnitChatShoutEvent, RoomUnitChatWhisperEvent, RoomUnitDanceEvent, RoomUnitEffectEvent, RoomUnitEvent, RoomUnitExpressionEvent, RoomUnitHandItemEvent, RoomUnitIdleEvent, RoomUnitInfoEvent, RoomUnitNumberEvent, RoomUnitRemoveEvent, RoomUnitStatusEvent, RoomUnitTypingEvent, RoomVisualizationSettingsEvent, UserInfoEvent, YouArePlayingGameEvent } from '../communication';
 import { RoomPlaneParser } from './object/RoomPlaneParser';
 import { RoomVariableEnum } from './RoomVariableEnum';
-import { FurnitureStackingHeightMap, LegacyWallGeometry } from './utils';
+import { FurnitureStackingHeightMap } from './utils';
 
 export class RoomMessageHandler extends Disposable
 {
@@ -243,20 +243,20 @@ export class RoomMessageHandler extends Disposable
         this._planeParser.initializeFromTileData(parser.wallHeight);
         this._planeParser.setTileHeight(Math.floor(doorX), Math.floor(doorY), (doorZ + this._planeParser.wallHeight));
 
-        if(parser.scale === 64)
-        {
-            this._planeParser.restrictsDragging = true;
-            this._planeParser.restrictsScaling = true;
-            this._planeParser.restrictedScale = 0.5;
-        }
-        else
-        {
-            this._planeParser.restrictsDragging = false;
-            this._planeParser.restrictsScaling = false;
-            this._planeParser.restrictedScale = 1;
-        }
+        //if(parser.scale === 64)
+        //{
+        //this._planeParser.restrictsDragging = true;
+        //this._planeParser.restrictsScaling = true;
+        //this._planeParser.restrictedScale = 0.5;
+        //}
+        //else
+        //{
+        //this._planeParser.restrictsDragging = false;
+        //this._planeParser.restrictsScaling = false;
+        //this._planeParser.restrictedScale = 1;
+        //}
 
-        wallGeometry.scale = LegacyWallGeometry.DEFAULT_SCALE;
+        wallGeometry.scale = parser.scale;
         wallGeometry.initialize(width, height, this._planeParser.floorHeight);
 
         let heightIterator = (parser.height - 1);
@@ -739,7 +739,7 @@ export class RoomMessageHandler extends Disposable
             if(status.didMove) goal = new Vector3d(status.targetX, status.targetY, status.targetZ);
 
             this._roomCreator.updateRoomObjectUserLocation(this._currentRoomId, status.id, location, goal, status.canStandUp, height, direction, status.headDirection);
-            this._roomCreator.updateRoomObjectUserFlatControl(this._currentRoomId, status.id, null);
+            this._roomCreator.updateRoomObjectUserFlatControl(this._currentRoomId, status.id, '0');
 
             let isPosture = true;
             let postureUpdate = false;
