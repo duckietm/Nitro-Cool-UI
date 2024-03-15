@@ -65,37 +65,38 @@
         { "clubLevel": 2, "tileSize": 926, "name": "9" }
     ],
     "hotelview": {
-        "show.avatar": true,
+        "room.pool": "",
+        "room.picnic": "",
+        "room.rooftop": "",
+        "room.rooftop.pool": "",
+        "room.peaceful": "",
+        "room.infobus": "",
+        "room.lobby": "",
+        "show.avatar": false,
         "widgets": {
-            "slot.1.widget": "promoarticle",
+            "slot.1.widget": "",
             "slot.1.conf": {},
-            "slot.2.widget": "widgetcontainer",
-            "slot.2.conf": {
-                "image": "${image.library.url}web_promo_small/spromo_Canal_Bundle.png",
-                "texts": "2021NitroPromo",
-                "btnLink": "https://google.com"
-            },
-            "slot.3.widget": "promoarticle",
+            "slot.2.widget": "",
+            "slot.2.conf": {},
+            "slot.3.widget": "",
             "slot.3.conf": {},
             "slot.4.widget": "",
             "slot.4.conf": {},
             "slot.5.widget": "",
             "slot.5.conf": {},
-            "slot.6.widget": "achievementcompetition_hall_of_fame",
-            "slot.6.conf": {
-                "campaign": "habboFameComp"
-            },
+            "slot.6.widget": "",
+            "slot.6.conf": {},
             "slot.7.widget": "",
             "slot.7.conf": {}
         },
         "images": {
             "background": "${asset.url}/images/reception/stretch_blue.png",
-            "background.colour": "#6eadc8",
+            "background.colour": "#8ee0ff",
             "sun": "${asset.url}/images/reception/sun.png",
             "drape": "${asset.url}/images/reception/drape.png",
-            "left": "${asset.url}/images/reception/ts.png",
-            "right": "${asset.url}/images/reception/US_right.png",
-            "right.repeat": "${asset.url}/images/reception/US_top_right.png"
+            "left": "",
+            "right": "",
+            "right.repeat": ""
         }
     },
     "achievements.unseen.ignored": [

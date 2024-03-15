@@ -2,7 +2,7 @@
     display: block;
 	position: fixed;
 	width: 100%;
-	height: 100%;
+	height: calc(100% - 55px);
 	background: rgba($black, 1);
 	color:#000;
 	
@@ -11,6 +11,19 @@
 		left: 57px;
 		position: absolute;
 		z-index: 1;
+	}
+
+	.drape {
+		background-image: url(@/assets/images/hotelview/drape.png);
+        width: auto;
+        height: 100%;
+		top: 0;
+		animation-iteration-count: 1;
+		animation-name: slideDown;
+		animation-duration: 2s;
+		z-index: 3;
+        background-repeat: no-repeat;
+		pointer-events: none;
 	}
 
 	.background {
@@ -33,6 +46,39 @@
         background-repeat: no-repeat;
 	}
 
+	.hotelview {
+		margin-bottom: -205px;
+		max-width: 100%;
+		display: block;
+
+		img {
+			margin-left: -1005px;
+			margin-bottom: -205px;
+		}
+	}
+
+	.hotelview-back {
+		margin-left: -905px;
+		max-width: 100%;
+		display: block;
+
+	}	  
+  
+
+	.hotelview-back-light {
+		
+	top: -115px;
+	margin-left: -220px;
+	}	  
+
+	.hotelview-sun {
+			margin-left: -905px;
+			margin-bottom: 2222px;
+			position: absolute;
+			z-index: 2;
+		}
+		 
+
 	.sun {
         width: 100%;
         height: 100%;
@@ -45,16 +91,628 @@
 	}
 
 	.left {
-        top:0;
-		right:0;
-		bottom: 0;
-		left: 0;
+		bottom: -105px;
+		left: 15vw;
 		animation-iteration-count: 1;
 		animation-name: slideUp;
 		animation-duration: 1s;
-        background-repeat: no-repeat;
-		background-position: left bottom;
 	}
+	// night
+
+	.rooftop-night {
+		background-image: url(@/assets/images/hotelview/common/night/night-rooftop.png);
+		background-repeat: no-repeat;
+		width: 120px;
+		height: 164px;
+		top: 90px;
+		right: 1507px;;
+		cursor: pointer;
+		z-index: 9;
+		
+		.arrow {
+			width: 30px;
+			height: 42px;
+			position: absolute;
+			left: 39px;
+			margin-top: 15px;
+			display: none;
+				z-index: 13;
+		}
+
+		&:hover {
+			-webkit-filter: drop-shadow(1px 3px 20px #000000);
+			
+
+			.arrow {
+				display: block;
+			}
+		}
+	}
+
+	.rooftop-pool-night {
+		background-image: url(@/assets/images/hotelview/common/night/night-rooftop_pool.gif);
+        background-repeat: no-repeat;
+        width: 183px;
+        height: 164px;
+        top: 311px;
+        right: 1292px;;
+        cursor: pointer;
+        z-index: 45;
+
+        .arrow {
+            width: 30px;
+            height: 42px;
+            position: absolute;
+            left: 75px;
+            margin-top: 0px;
+            display: none;
+        }
+
+        &:hover {
+            -webkit-filter: drop-shadow(1px 3px 20px #000000);
+
+
+            .arrow {
+
+
+                display: block;
+
+            }
+        }
+    } 
+
+	.pool-night {
+		background-image: url(@/assets/images/hotelview/common/night/night-pool.gif);
+		background-repeat: no-repeat;
+		width: 433px;
+		height: 361px;
+		top: 476px;
+		right: 934px;
+		cursor: pointer;
+		z-index: 45;
+
+		.arrow {
+			width: 30px;
+			height: 42px;
+			position: absolute;
+			left: 195px;
+			margin-top: 190px;
+			display: none;
+		}
+
+		&:hover {
+			-webkit-filter: drop-shadow(1px 3px 20px #000000);
+		
+
+			.arrow {
+				display: block;
+
+			}
+		}
+	}
+
+	.picnic-night {
+		background-image: url(@/assets/images/hotelview/common/night/night-picnic.gif);
+		background-repeat: no-repeat;
+		width: 576px;
+		height: 436px;
+		top: 488px;
+		left: -128px;
+		cursor: pointer;
+		z-index: 9;
+
+		.arrow {
+			width: 30px;
+			height: 42px;
+			position: absolute;
+			left: 315px;
+			margin-top: 110px;
+			display: none;
+		}
+
+		&:hover {
+			-webkit-filter: drop-shadow(1px 3px 20px #000000);
+	
+
+			.arrow {
+				display: block;
+			}
+
+		}
+	}
+
+	.peaceful-night {
+		background-image: url(@/assets/images/hotelview/common/night/night-park.png);
+		background-repeat: no-repeat;
+		width: 384px;
+		height: 269px;
+		top: 359px;
+		right: 888px;
+		cursor: pointer;
+		z-index: 49;
+
+		.arrow {
+			width: 30px;
+			height: 42px;
+			position: absolute;
+			left: 120px;
+			margin-top: 100px;
+			display: none;
+		}
+
+		&:hover {
+			-webkit-filter: drop-shadow(1px 3px 20px #000000);
+
+			.arrow {
+				display: block;
+			}
+		}
+	}
+
+	.infobus-night {
+		background-image: url(@/assets/images/hotelview/common/night/night-infobus.gif);
+		background-repeat: no-repeat;
+		width: 181px;
+		height: 175px;
+		top: 332px;
+		right: 1128px;
+		cursor: pointer;
+		z-index: 49;
+
+		.arrow {
+			width: 30px;
+			height: 42px;
+			position: absolute;
+			left: 60px;
+			margin-top: 5px;
+			display: none;
+		}
+
+		&:hover {
+			-webkit-filter: drop-shadow(1px 3px 20px #000000);
+
+			.arrow {
+				display: block;
+			}
+
+		}
+	}
+
+	.lobby-night {
+        background-image: url(@/assets/images/hotelview/common/night/night-lobby.png);
+    	background-repeat: no-repeat;
+    	width: 73px;
+    	height: 65px;
+    	top: 636px;
+    	right: 1463px;
+    	cursor: pointer;
+
+    	z-index: 22;
+
+    	.arrow {
+    		width: 30px;
+    		height: 42px;
+    		position: absolute;
+    		left: 21px;
+    		margin-top: -39px;
+    		display: none;
+    	}
+
+    	&:hover {
+    		-webkit-filter: drop-shadow(1px 3px 20px #000000);
+    		transform: scale(1.01);
+		   
+    		.arrow {
+    			display: block;
+
+    		}
+    	}
+    }
+
+	// hotel-view
+
+	.hotelview-default {
+		position: relative;
+		margin-left: -1005px;
+		margin-top: -19px;
+		top: 0px;
+		left: 0px;
+		height: 1185px;
+		width: 3000px;  
+		pointer-events: none; 
+		background-image: url(@/assets/images/hotelview/hotelview.png);
+		background-repeat: no-repeat;
+	}
+
+	
+	.hotelview-orange {
+		position: relative;
+		margin-left: -1005px;
+		margin-top: -19px;
+		top: 0px;
+		left: 0px;
+		height: 1185px;
+		width: 3000px;  
+		pointer-events: none; 
+		background-image: url(@/assets/images/hotelview/hotelview-orange-mansion.png);
+		background-repeat: no-repeat;
+	
+	}
+
+	.hotelview-night {
+		position: relative;
+		margin-left: -1005px;
+		margin-top: -19px;
+		top: 0px;
+		left: 0px;
+		height: 1185px;
+		width: 3000px;  
+		pointer-events: none; 
+		background-image: url(@/assets/images/hotelview/common/night/hotelview-night.png);
+		background-repeat: no-repeat;
+	
+	}
+
+// stretch
+	.stretch-blue {
+		position: relative;
+		height: 3000px;
+		width: 7120px;  
+		
+		margin-left: -2100px;
+		pointer-events: none; 
+		background-image: url(@/assets/images/hotelview/stretch/stretch_blue.png);
+		background-repeat: no-repeat;
+	}
+
+	
+	.stretch-blue-af-1 {
+		position: relative;
+		height: 3000px;
+		width: 7120px;   
+		
+		margin-left: -2100px;
+		pointer-events: none; 
+		background-image: url(@/assets/images/hotelview/stretch/stretch_blue_af_1.png);
+		background-repeat: no-repeat;
+	}
+
+	.stretch-blue-af-2 {
+		position: relative;
+		height: 3000px;
+		width: 7120px;   
+		
+		margin-left: -2100px;
+		pointer-events: none; 
+		background-image: url(@/assets/images/hotelview/stretch/stretch_blue_af_2.png);
+		background-repeat: no-repeat;
+	}
+
+	.stretch-blue-af-3 {
+		position: relative;
+		height: 3000px;
+		width: 7120px;  
+		
+		margin-left: -2100px;
+		pointer-events: none; 
+		background-image: url(@/assets/images/hotelview/stretch/stretch_blue_af_3.png);
+		background-repeat: no-repeat;
+	}
+
+	.stretch-blue-af-4 {
+		position: relative;
+		height: 3000px;
+		width: 7120px;   
+		
+		margin-left: -2100px;
+		pointer-events: none; 
+		background-image: url(@/assets/images/hotelview/stretch/stretch_blue_af_4.png);
+		background-repeat: no-repeat;
+	}
+
+	.stretch-blue-af-5 {
+		position: relative;
+		height: 3000px;
+		width: 7120px;  
+		
+		margin-left: -2100px;
+		pointer-events: none; 
+		background-image: url(@/assets/images/hotelview/stretch/stretch_blue_af_5.png);
+		background-repeat: no-repeat;
+	}
+
+	
+	.stretch-blue-af-6 {
+		position: relative;
+		height: 3000px;
+		width: 7120px;  
+		
+		margin-left: -2100px;
+		pointer-events: none; 
+		background-image: url(@/assets/images/hotelview/stretch/stretch_blue_af_6.png);
+		background-repeat: no-repeat;
+	}
+
+	.stretch-blue-night {
+		position: absolute;
+		height: 3000px;
+		width: 7120px; 
+		margin-left: -2100px;
+		pointer-events: none; 
+		background-image: url(@/assets/images/hotelview/stretch/stretch_night.png);
+		background-repeat: no-repeat;
+	}
+ 
+	// animations
+	.door {
+		background-image: url(@/assets/images/hotelview/common/night/night-door.gif);
+		background-repeat: no-repeat;
+		width: 439px;
+		height: 600px;
+		top: 502px;
+		right: 1128px;
+		z-index: 0;
+}
+
+	.door-a {
+		background-image: url(@/assets/images/hotelview/common/night/night-door-1.gif);
+		background-repeat: no-repeat;
+		width: 786px;
+		height: 600px;
+		top: 145px;
+		right: 1054px;
+		z-index: 44;
+		pointer-events: none; 
+
+	}
+	.door-b {
+		background-image: url(@/assets/images/hotelview/common/night/night-door-2.gif);
+		background-repeat: no-repeat;
+		width: 786px;
+		height: 600px;
+		top: 144px;
+		right: 1054px;
+		z-index: 44;
+		pointer-events: none; 
+
+	}
+	// normal
+
+	.rooftop {
+		background-image: url(@/assets/images/hotelview/common/rooftop.gif);
+		background-repeat: no-repeat;
+		width: 120px;
+		height: 164px;
+		top: 90px;
+		right: 1507px;;
+		cursor: pointer;
+		z-index: 1;
+		
+		.arrow {
+			width: 30px;
+			height: 42px;
+			display: none;
+			left: 39px;
+			margin-top: 15px;
+			position: absolute;
+		
+		}
+
+		&:hover {
+			-webkit-filter: drop-shadow(1px 3px 20px #000000);
+			
+
+			.arrow {
+				display: block;
+				
+			}
+		}
+	}
+
+	.rooftop-pool {
+		background-image: url(@/assets/images/hotelview/common/rooftop_pool.gif);
+		background-repeat: no-repeat;
+		width: 183px;
+		height: 164px;
+		top: 311px;
+		right: 1292px;;
+		cursor: pointer;
+		z-index: 9;
+
+		.arrow {
+			width: 30px;
+			height: 42px;
+			position: absolute;
+			left: 75px;
+			margin-top: 0px;
+			display: none;
+		}
+
+		&:hover {
+			-webkit-filter: drop-shadow(1px 3px 20px #000000);
+			
+
+			.arrow {
+				
+				
+				display: block;
+			
+			}
+		}
+	}
+
+	.pool {
+		background-image: url(@/assets/images/hotelview/common/pool.gif);
+		background-repeat: no-repeat;
+		width: 433px;
+		height: 361px;
+		top: 476px;
+		right: 934px;
+		cursor: pointer;
+		z-index: 9;
+
+		.arrow {
+			width: 30px;
+			height: 42px;
+			position: absolute;
+			left: 195px;
+			margin-top: 190px;
+			display: none;
+			z-index: 112;
+		}
+
+		&:hover {
+			-webkit-filter: drop-shadow(1px 3px 20px #000000);
+		
+
+			.arrow {
+				display: block;
+				z-index: 112;
+			}
+		}
+	}
+
+	.picnic {
+		background-image: url(@/assets/images/hotelview/common/picnic.gif);
+		background-repeat: no-repeat;
+		width: 576px;
+		height: 436px;
+		top: 488px;
+		left: -128px;
+		cursor: pointer;
+		z-index: 9;
+
+		.arrow {
+			width: 30px;
+			height: 42px;
+			position: absolute;
+			left: 315px;
+			margin-top: 110px;
+			display: none;
+		}
+
+		&:hover {
+			-webkit-filter: drop-shadow(1px 3px 20px #000000);
+	
+
+			.arrow {
+				display: block;
+			}
+
+		}
+	}
+
+	.peaceful {
+		background-image: url(@/assets/images/hotelview/common/peacefulpark.gif);
+		background-repeat: no-repeat;
+		width: 384px;
+		height: 269px;
+		top: 359px;
+		right: 888px;
+		cursor: pointer;
+		z-index: 10;
+
+		.arrow {
+			width: 30px;
+			height: 42px;
+			position: absolute;
+			left: 120px;
+			margin-top: 100px;
+			display: none;
+   
+		}
+
+
+		&:hover {
+			-webkit-filter: drop-shadow(1px 3px 20px #000000);
+
+			.arrow {
+				display: block;
+			}
+		}
+	}
+
+	.infobus {
+		background-image: url(@/assets/images/hotelview/common/infobus.gif);
+		background-repeat: no-repeat;
+		width: 181px;
+		height: 175px;
+		top: 332px;
+		right: 1128px;
+		cursor: pointer;
+		z-index: 10;
+
+		.arrow {
+			width: 30px;
+			height: 42px;
+			position: absolute;
+			left: 60px;
+			margin-top: 5px;
+			display: none;
+		}
+
+		&:hover {
+			-webkit-filter: drop-shadow(1px 3px 20px #000000);
+
+			.arrow {
+				display: block;
+			}
+
+		}
+	}
+
+	.lobby {
+		background-image: url(@/assets/images/hotelview/common/lobby.png);
+    	background-repeat: no-repeat;
+    	width: 73px;
+    	height: 65px;
+
+    	top: 636px;
+    	right: 1463px;
+    	cursor: pointer;
+
+    	z-index: 10;
+
+    	.arrow {
+    		width: 30px;
+    		height: 42px;
+    		position: absolute;
+    		left: 21px;
+    		margin-top: -39px;
+    		display: none;
+    	}
+
+    	&:hover {
+    		-webkit-filter: drop-shadow(1px 3px 20px #000000);
+    		transform: scale(1.01);
+		   
+    		.arrow {
+    			display: block;
+
+    		}
+    	}
+    }
+
+	.active-arrow {
+		position: absolute;
+		background-image: url(@/assets/images/hotelview/arrow_down.png);
+		background-repeat: no-repeat;
+		animation: MoveUpDown 1s linear infinite;
+		z-index: 99;
+	
+		@keyframes MoveUpDown {
+			0%, 100% {
+			  top: 1px;
+			  z-index: 99;
+	
+			}
+			50% {
+			  top: 10px;
+			  z-index: 99;
+
+			}
+		  }
+		}
 
 	.right {
         width: 100%;
@@ -91,6 +749,1409 @@
 		background: $black;
 		box-shadow: 0 1px rgba($white,.5);
 		opacity: 0.5
+	}
+
+	// normal-orange
+
+	.rooftop-orange {
+		background-image: url(@/assets/images/hotelview/common/orange/rooftop.gif);
+		background-repeat: no-repeat;
+		width: 120px;
+		height: 164px;
+		top: 90px;
+		right: 1507px;;
+		cursor: pointer;
+		z-index: 1;
+		
+		.arrow {
+			width: 30px;
+			height: 42px;
+			display: none;
+			left: 39px;
+			margin-top: 15px;
+			position: absolute;
+		
+		}
+
+		&:hover {
+			-webkit-filter: drop-shadow(1px 3px 20px #000000);
+			
+
+			.arrow {
+				display: block;
+				
+			}
+		}
+	}
+
+	.rooftop-pool-orange {
+		background-image: url(@/assets/images/hotelview/common/orange/rooftop_pool.gif);
+		background-repeat: no-repeat;
+		width: 183px;
+		height: 164px;
+		top: 311px;
+		right: 1292px;;
+		cursor: pointer;
+		z-index: 9;
+
+		.arrow {
+			width: 30px;
+			height: 42px;
+			position: absolute;
+			left: 75px;
+			margin-top: 0px;
+			display: none;
+		}
+
+		&:hover {
+			-webkit-filter: drop-shadow(1px 3px 20px #000000);
+			
+
+			.arrow {
+				
+				
+				display: block;
+			
+			}
+		}
+	}
+
+	.pool-orange {
+		background-image: url(@/assets/images/hotelview/common/orange/pool.gif);
+		background-repeat: no-repeat;
+		width: 433px;
+		height: 361px;
+		top: 476px;
+		right: 934px;
+		cursor: pointer;
+		z-index: 9;
+
+		.arrow {
+			width: 30px;
+			height: 42px;
+			position: absolute;
+			left: 195px;
+			margin-top: 190px;
+			display: none;
+			z-index: 112;
+		}
+
+		&:hover {
+			-webkit-filter: drop-shadow(1px 3px 20px #000000);
+		
+
+			.arrow {
+				display: block;
+				z-index: 112;
+			}
+		}
+	}
+
+	.picnic-orange {
+		background-image: url(@/assets/images/hotelview/common/orange/picnic.gif);
+		background-repeat: no-repeat;
+		width: 576px;
+		height: 436px;
+		top: 488px;
+		left: -128px;
+		cursor: pointer;
+		z-index: 9;
+
+		.arrow {
+			width: 30px;
+			height: 42px;
+			position: absolute;
+			left: 315px;
+			margin-top: 110px;
+			display: none;
+		}
+
+		&:hover {
+			-webkit-filter: drop-shadow(1px 3px 20px #000000);
+	
+
+			.arrow {
+				display: block;
+			}
+
+		}
+	}
+
+	.peaceful-orange {
+		background-image: url(@/assets/images/hotelview/common/orange/peacefulpark.gif);
+		background-repeat: no-repeat;
+		width: 384px;
+		height: 269px;
+		top: 359px;
+		right: 888px;
+		cursor: pointer;
+		z-index: 10;
+
+		.arrow {
+			width: 30px;
+			height: 42px;
+			position: absolute;
+			left: 120px;
+			margin-top: 100px;
+			display: none;
+   
+		}
+
+
+		&:hover {
+			-webkit-filter: drop-shadow(1px 3px 20px #000000);
+
+			.arrow {
+				display: block;
+			}
+		}
+	}
+
+	.infobus-orange {
+		background-image: url(@/assets/images/hotelview/common/orange/infobus.gif);
+		background-repeat: no-repeat;
+		width: 181px;
+		height: 175px;
+		top: 332px;
+		right: 1128px;
+		cursor: pointer;
+		z-index: 10;
+
+		.arrow {
+			width: 30px;
+			height: 42px;
+			position: absolute;
+			left: 60px;
+			margin-top: 5px;
+			display: none;
+		}
+
+		&:hover {
+			-webkit-filter: drop-shadow(1px 3px 20px #000000);
+
+			.arrow {
+				display: block;
+			}
+
+		}
+	}
+
+	.active-arrow {
+		position: absolute;
+		background-image: url(@/assets/images/hotelview/arrow_down.png);
+		background-repeat: no-repeat;
+		animation: MoveUpDown 1s linear infinite;
+		z-index: 99;
+	
+		@keyframes MoveUpDown {
+			0%, 100% {
+			  top: 1px;
+			  z-index: 99;
+	
+			}
+			50% {
+			  top: 10px;
+			  z-index: 99;
+
+			}
+		  }
+		}
+
+	.right {
+        width: 100%;
+        height: 100%;
+		right: 0;
+		bottom: 0;
+		animation-iteration-count: 1;
+		animation-name: slideUp;
+		animation-duration: 1s;
+        background-repeat: no-repeat;
+		background-position: right bottom;
+	}
+
+	.right-repeat {
+        width: 100%;
+        height: 100%;
+		right: 0;
+		top: 0;
+        background-repeat: no-repeat;
+		background-position: right top;
+	}
+
+	.landing-widgets {
+		z-index: 9;
+		position: relative;
+
+	}
+
+	.widget-slot {
+		z-index: 9;	
+	}
+
+	hr {
+		background: $black;
+		box-shadow: 0 1px rgba($white,.5);
+		opacity: 0.5
+	}
+	
+// light
+.light-a {
+		
+	position: relative;
+	margin-left: -1005px;
+	margin-top:0px;
+	top: 0px;
+	left: 0px;
+	height: 1185px;
+	width: 3000px;  
+	z-index: 99;
+	pointer-events: none; 
+	background-image: url(@/assets/images/hotelview/hours/light/a.png); 
+	mix-blend-mode: overlay;
+}
+
+.light-b{
+	
+position: relative;
+margin-left: -1005px;
+margin-top:0px;
+top: 0px;
+left: 0px;
+height: 1185px;
+width: 3000px;  
+z-index: 99;
+pointer-events: none; 
+background-image: url(@/assets/images/hotelview/hours/light/b.png); 
+mix-blend-mode: overlay;
+}
+
+.light-c {
+	
+position: relative;
+margin-left: -1005px;
+margin-top:0px;
+top: 0px;
+left: 0px;
+height: 1185px;
+z-index: 99;
+width: 3000px;  
+pointer-events: none; 
+background-image: url(@/assets/images/hotelview/hours/light/c.png); 
+mix-blend-mode: overlay;
+}
+
+.light-d {
+	
+position: relative;
+margin-left: -1005px;
+margin-top:0px;
+top: 0px;
+left: 0px;
+height: 1185px;
+width: 3000px;  
+z-index: 99;
+pointer-events: none; 
+background-image: url(@/assets/images/hotelview/hours/light/d.png); 
+mix-blend-mode: hard-light;
+filter: opacity(0.7);
+}
+
+.light-e {
+	
+position: relative;
+margin-left: -1005px;
+margin-top: 0px;
+top: 0px;
+left: 0px;
+height: 1185px;
+width: 3000px;  
+z-index: 99;
+pointer-events: none; 
+background-image: url(@/assets/images/hotelview/hours/light/e.png); 
+mix-blend-mode: multiply;
+}
+
+.light-e-alt {
+	
+	position: relative;
+	margin-left: -1005px;
+	margin-top: 0px;
+	top: 0px;
+	left: 0px;
+	height: 1185px;
+	width: 3000px;  
+	z-index: 99;
+	pointer-events: none; 
+	background-image: url(@/assets/images/hotelview/hours/light/e.png); 
+	mix-blend-mode: hue;
+	filter: brightness(0.1);
+	}
+
+.light-f {
+	
+position: relative;
+margin-left: -1005px;
+margin-top:0px;
+top: 0px;
+left: 0px;
+height: 1185px;
+z-index: 99;
+width: 3000px;  
+pointer-events: none; 
+background-image: url(@/assets/images/hotelview/hours/light/f.png); 
+mix-blend-mode: multiply;
+filter:opacity(0.5);
+}
+
+.light-f-alt {
+	
+	position: relative;
+	margin-left: -1005px;
+	margin-top:0px;
+	top: 0px;
+	left: 0px;
+	height: 1185px;
+	z-index: 99;
+	width: 3000px;  
+	pointer-events: none; 
+	background-image: url(@/assets/images/hotelview/hours/light/f.png); 
+	mix-blend-mode: overlay;
+	filter:grayscale(2);
+}
+
+.light-g {
+	
+position: relative;
+margin-left: -1005px;
+margin-top:0px;
+top: 0px;
+left: 0px;
+height: 1185px;
+width: 3000px;  
+z-index: 99;
+pointer-events: none; 
+background-image: url(@/assets/images/hotelview/hours/light/g.png); 
+mix-blend-mode: multiply;
+filter: opacity(0.4);
+}
+
+	
+.light-gg-alt {
+	
+	position: relative;
+	margin-left: -1005px;
+	margin-top:0px;
+	top: 0px;
+	left: 0px;
+	height: 1185px;
+	width: 3000px;  
+	z-index: 99;
+	pointer-events: none; 
+	background-image: url(@/assets/images/hotelview/hours/light/g.png); 
+	mix-blend-mode: darken;
+	filter: opacity(0.1);
+	}
+
+.light-h {
+	
+	position: relative;
+	margin-left: -1005px;
+	margin-top:0px;
+	top: 0px;
+	left: 0px;
+	height: 1185px;
+	z-index: 99;
+	width: 3000px;  
+	pointer-events: none; 
+	background-image: url(@/assets/images/hotelview/hours/light/h.png); 
+	mix-blend-mode: multiply;
+	filter: opacity(0.9)
+	} 
+
+			  
+ 
+				   
+					 
+			   
+		 
+		  
+			   
+			
+				
+					  
+																   
+					
+ 
+
+.light-i {
+	
+position: relative;
+margin-left: -1005px;
+margin-top:0px;
+top: 0px;
+z-index: 99;
+left: 0px;
+height: 1185px;
+width: 3000px;  
+z-index: 99;
+pointer-events: none; 
+background-image: url(@/assets/images/hotelview/hours/light/i.png); 
+mix-blend-mode: multiply;
+filter: opacity(0.2);
+}
+
+.light-j {
+	
+position: relative;
+margin-left: -1005px;
+margin-top:0px;
+top: 0px;
+left: 0px;
+height: 1185px;
+z-index: 99;
+width: 3000px;  
+pointer-events: none; 
+background-image: url(@/assets/images/hotelview/hours/light/j.png); 
+mix-blend-mode: multiply;
+}
+
+.light-l-alt {
+	
+	position: relative;
+	margin-left: -1005px;
+	margin-top:0px;
+	top: 0px;
+	left: 0px;
+	height: 1185px;
+	width: 3000px;  
+	pointer-events: none; 
+	z-index: 99;
+	background-image: url(@/assets/images/hotelview/hours/light/l.png); 
+	mix-blend-mode: hue;
+	}
+
+.light-l {
+	
+	position: relative;
+	margin-left: -1005px;
+	margin-top:0px;
+	top: 0px;
+	left: 0px;
+	height: 1185px;
+	width: 3000px;  
+	pointer-events: none; 
+	z-index: 99;
+	background-image: url(@/assets/images/hotelview/hours/light/l.png); 
+	mix-blend-mode: multiply;
+	}
+	
+.light-m {
+		
+	position: relative;
+	margin-left: -1005px;
+	margin-top:0px;
+	top: 0px;
+	left: 0px;
+	height: 1185px;
+	width: 3000px;  
+	z-index: 99;
+	pointer-events: none; 
+	background-image: url(@/assets/images/hotelview/hours/light/m.png); 
+	mix-blend-mode: multiply;
+	}
+
+.light-m-alt {
+		
+		position: relative;
+		margin-left: -1005px;
+		margin-top:0px;
+		top: 0px;
+		left: 0px;
+		height: 1185px;
+		width: 3000px;  
+		z-index: 99;
+		pointer-events: none; 
+		background-image: url(@/assets/images/hotelview/hours/light/m.png); 
+		mix-blend-mode: hue;
+		}
+	
+.light-n {
+		
+	position: relative;
+	margin-left: -1005px;
+	margin-top:0px;
+	top: 0px;
+	left: 0px;
+	height: 1185px;
+	width: 3000px;  
+	z-index: 99;
+	pointer-events: none; 
+	background-image: url(@/assets/images/hotelview/hours/light/n.png); 
+	mix-blend-mode: darken;
+	}
+
+.light-n-alt {
+		
+		position: relative;
+		margin-left: -1005px;
+		margin-top:0px;
+		top: 0px;
+		left: 0px;
+		height: 1185px;
+		width: 3000px;  
+		z-index: 99;
+		pointer-events: none; 
+		background-image: url(@/assets/images/hotelview/hours/light/n.png); 
+		mix-blend-mode: multiply;
+		}
+
+.light-n-alt-ii {
+		
+			position: relative;
+			margin-left: -1005px;
+			margin-top:0px;
+			top: 0px;
+			left: 0px;
+			height: 1185px;
+			width: 3000px;  
+			z-index: 99;
+			pointer-events: none; 
+			background-image: url(@/assets/images/hotelview/hours/light/n.png); 
+			mix-blend-mode: color-burn;
+			}
+
+.light-n-alt-iii {
+		
+				position: relative;
+				margin-left: -1005px;
+				margin-top:0px;
+				top: 0px;
+				left: 0px;
+				height: 1185px;
+				width: 3000px;  
+				z-index: 99;
+				pointer-events: none; 
+				background-image: url(@/assets/images/hotelview/hours/light/n.png); 
+				mix-blend-mode: hue;
+				}
+	
+.light-o {
+		
+	position: relative;
+	margin-left: -1005px;
+	margin-top:0px;
+	top: 0px;
+	left: 0px;
+	height: 1185px;
+	width: 3000px;  
+	z-index: 99;
+	pointer-events: none; 
+	background-image: url(@/assets/images/hotelview/hours/light/o.png); 
+	mix-blend-mode: hue;
+	}
+	
+.light-o-alt {
+		
+		position: relative;
+		margin-left: -1005px;
+		margin-top:0px;
+		top: 0px;
+		left: 0px;
+		height: 1185px;
+		width: 3000px;  
+		z-index: 99;
+		pointer-events: none; 
+		background-image: url(@/assets/images/hotelview/hours/light/o.png); 
+		mix-blend-mode: multiply;
+		}
+.light-o-alt-ii {
+		
+			position: relative;
+			margin-left: -1005px;
+			margin-top:0px;
+			top: 0px;
+			left: 0px;
+			height: 1185px;
+			width: 3000px;  
+			z-index: 99;
+			pointer-events: none; 
+			background-image: url(@/assets/images/hotelview/hours/light/o.png); 
+			mix-blend-mode: darken;
+			}
+
+.light-o-alt-iii {
+
+				position: relative;
+				margin-left: -1005px;
+				margin-top:0px;
+				top: 0px;
+				left: 0px;
+				height: 1185px;
+				width: 3000px;  
+				z-index: 99;
+				pointer-events: none; 
+				background-image: url(@/assets/images/hotelview/hours/light/o.png); 
+				mix-blend-mode: color-dodge;
+				filter: brightness(0.6);
+				}
+
+.light-p {
+		
+	position: relative;
+	margin-left: -1005px;
+	margin-top:0px;
+	top: 0px;
+	left: 0px;
+	height: 1185px;
+	width: 3000px;  
+	z-index: 99;
+	pointer-events: none; 
+	background-image: url(@/assets/images/hotelview/hours/light/p.png); 
+	mix-blend-mode: hue;
+	}
+
+.light-p-alt {
+		
+		position: relative;
+		margin-left: -1005px;
+		margin-top:0px;
+		top: 0px;
+		left: 0px;
+		height: 1185px;
+		width: 3000px;  
+		z-index: 99;
+		pointer-events: none; 
+		background-image: url(@/assets/images/hotelview/hours/light/p.png); 
+		mix-blend-mode: multiply;
+		}
+			
+.light-p-alt-ii {
+		
+			position: relative;
+			margin-left: -1005px;
+			margin-top:0px;
+			top: 0px;
+			left: 0px;
+			height: 1185px;
+			width: 3000px;  
+			z-index: 99;
+			pointer-events: none; 
+			background-image: url(@/assets/images/hotelview/hours/light/p.png); 
+			mix-blend-mode:color-dodge;
+			filter: brightness(0.6);
+			}
+			
+			
+			
+.light-q {
+		
+				position: relative;
+				margin-left: -1005px;
+				margin-top:0px;
+				top: 0px;
+				left: 0px;
+				height: 1185px;
+				width: 3000px;  
+				z-index: 99;
+				pointer-events: none; 
+				background-image: url(@/assets/images/hotelview/hours/light/q.png); 
+				mix-blend-mode: overlay;
+				}
+			
+.light-q-alt {
+					
+					position: relative;
+					margin-left: -1005px;
+					margin-top:0px;
+					top: 0px;
+					left: 0px;
+					height: 1185px;
+					width: 3000px;  
+					z-index: 99;
+					pointer-events: none; 
+					background-image: url(@/assets/images/hotelview/hours/light/q.png); 
+					mix-blend-mode: color-burn;
+					}
+				
+					
+.light-q-alt-ii {
+					
+						position: relative;
+						margin-left: -1005px;
+						margin-top:0px;
+						top: 0px;
+						left: 0px;
+						height: 1185px;
+						width: 3000px;  
+						z-index: 99;
+						pointer-events: none; 
+						background-image: url(@/assets/images/hotelview/hours/light/q.png); 
+						mix-blend-mode: hard-light;
+			}
+	
+// front
+.front-a {
+		
+	margin-left: -1005px;
+	margin-top: 0px;
+	top: 0px;
+	z-index: 13;
+	left: 0px;
+	height: 1185px;
+	width: 3000px;  
+	pointer-events: none; 
+	background-image: url(@/assets/images/hotelview/hours/front/a.png); 
+	mix-blend-mode: multiply;
+}
+
+.front-b{
+	
+position: relative;
+margin-left: -1005px;
+margin-top: 0px;
+top: 0px;
+left: 0px;
+height: 1185px;
+z-index: 13;
+width: 3000px;  
+pointer-events: none; 
+background-image: url(@/assets/images/hotelview/hours/front/b.png); 
+mix-blend-mode: multiply;
+}
+
+.front-c {
+	
+position: relative;
+margin-left: -1005px;
+margin-top: 0px;
+top: 0px;
+left: 0px;
+z-index: 13;
+height: 1185px;
+width: 3000px;  
+pointer-events: none; 
+background-image: url(@/assets/images/hotelview/hours/front/c.png); 
+mix-blend-mode: multiply;
+}
+
+.front-d {
+	
+position: relative;
+margin-left: -1005px;
+margin-top: 0px;
+top: 0px;
+left: 0px;
+height: 1185px;
+width: 3000px;  
+z-index: 13;
+pointer-events: none; 
+background-image: url(@/assets/images/hotelview/hours/front/d.png); 
+mix-blend-mode: multiply;
+}
+
+.front-e {
+	
+position: relative;
+margin-left: -1005px;
+margin-top: 0px;
+top: 0px;
+left: 0px;
+height: 1185px;
+width: 3000px;  
+z-index: 13;
+pointer-events: none; 
+background-image: url(@/assets/images/hotelview/hours/front/e.png); 
+mix-blend-mode: multiply;
+}
+
+.front-f {
+	
+position: relative;
+margin-left: -1005px;
+margin-top: 0px;
+top: 0px;
+left: 0px;
+z-index: 17;
+height: 1185px;
+width: 3000px;  
+pointer-events: none; 
+background-image: url(@/assets/images/hotelview/hours/front/f.png); 
+mix-blend-mode: multiply;
+}
+
+.front-g {
+	
+position: relative;
+margin-left: -1005px;
+margin-top: 0px;
+top: 0px;
+left: 0px;
+z-index: 17;
+height: 1185px;
+width: 3000px;  
+pointer-events: none; 
+background-image: url(@/assets/images/hotelview/hours/front/g.png); 
+mix-blend-mode: multiply;
+}
+
+.front-h {
+	
+position: relative;
+margin-left: -1005px;
+margin-top: 0px;
+top: 0px;
+left: 0px;
+height: 1185px;
+width: 3000px;  
+z-index: 17;
+pointer-events: none; 
+background-image: url(@/assets/images/hotelview/hours/front/h.png); 
+mix-blend-mode: multiply;
+}
+
+.front-i {
+	
+position: relative;
+margin-left: -1005px;
+margin-top: 0px;
+top: 0px;
+left: 0px;
+height: 1185px;
+z-index: 17;
+width: 3000px;  
+pointer-events: none; 
+background-image: url(@/assets/images/hotelview/hours/front/i.png); 
+mix-blend-mode: multiply;
+}
+
+.front-j {
+	
+position: relative;
+margin-left: -1005px;
+margin-top: 0px;
+top: 0px;
+left: 0px;
+height: 1185px;
+z-index: 17;
+width: 3000px;  
+pointer-events: none; 
+background-image: url(@/assets/images/hotelview/hours/front/j.png); 
+mix-blend-mode: multiply;
+}
+
+.front-k {
+	
+	position: relative;
+	margin-left: -1005px;
+	margin-top: 0px;
+	top: 0px;
+	left: 0px;
+	height: 1185px;
+	z-index: 17;
+	width: 3000px;  
+	pointer-events: none; 
+	background-image: url(@/assets/images/hotelview/hours/front/k.png); 
+	mix-blend-mode: multiply;
+	}
+
+.front-l {
+	
+	position: relative;
+	margin-left: -1005px;
+	margin-top: 0px;
+	top: 0px;
+	left: 0px;
+	height: 1185px;
+	z-index: 17;
+	width: 3000px;  
+	pointer-events: none; 
+	background-image: url(@/assets/images/hotelview/hours/front/l.png); 
+	mix-blend-mode: multiply;
+	}
+	
+.front-m {
+		
+	position: relative;
+	margin-left: -1005px;
+	margin-top: 0px;
+	top: 0px;
+	left: 0px;
+	z-index: 17;
+	height: 1185px;
+	width: 3000px;  
+	pointer-events: none; 
+	background-image: url(@/assets/images/hotelview/hours/front/m.png); 
+	mix-blend-mode: multiply;
+	}
+
+
+// back-general
+.back-a {
+		
+		position: relative;
+		margin-left: -135px;
+		margin-top: 1119px;
+		top: 0px;
+		left: 0px;
+		height: 3000px;
+		width: 3000px;  
+		pointer-events: none; 
+		background-image: url(@/assets/images/hotelview/hours/back/a.png); 
+		mix-blend-mode: soft-light;
+  } 
+
+.back-a-alt {
+		
+	position: relative;
+	margin-left: -35px;
+		margin-top: 1119px;
+	top: 0px;
+	left: 0px;
+	height: 3000px;
+	width: 3000px;  
+	pointer-events: none; 
+	background-image: url(@/assets/images/hotelview/hours/back/a.png); 
+	mix-blend-mode: luminosity;
+	filter: opacity(0.7);
+} 
+
+
+  .back-b{
+		
+	position: relative;
+	margin-left: -135px;
+		margin-top: 1219px;
+	top: 0px;
+	left: 0px;
+	height: 3000px;
+	width: 3000px;  
+	pointer-events: none; 
+	background-image: url(@/assets/images/hotelview/hours/back/b.png); 
+	mix-blend-mode: hard-light;
+	filter: opacity(0.2);
+}
+
+.back-b-alt {
+		
+	position: relative;
+	margin-left: -135px;
+		margin-top: 1119px;
+	top: 0px;
+	left: 0px;
+	height: 3000px;
+	width: 3000px;  
+	pointer-events: none; 
+	background-image: url(@/assets/images/hotelview/hours/back/b.png); 
+	mix-blend-mode: overlay;
+}
+
+.back-c {
+		
+	position: relative;
+	margin-left: -135px;
+		margin-top: 1219px;
+	top: 0px;
+	left: 0px;
+	height: 3000px;
+	width: 3000px;  
+	pointer-events: none; 
+	background-image: url(@/assets/images/hotelview/hours/back/c.png); 
+	mix-blend-mode: screen;
+}
+
+.back-c-alt {
+		
+	position: relative;
+	margin-left: -135px;
+		margin-top: 1119px;
+	top: 0px;
+	left: 0px;
+	height: 3000px;
+	width: 3000px;  
+	pointer-events: none; 
+	background-image: url(@/assets/images/hotelview/hours/back/c.png); 
+	mix-blend-mode: overlay;
+
+}
+
+.back-d {
+		
+	position: relative;
+	margin-left: -135px;
+		margin-top: 1219px;
+		top: 0px;
+		left: 0px;
+	height: 3000px;
+	width: 3000px;  
+	pointer-events: none; 
+	background-image: url(@/assets/images/hotelview/hours/back/d.png); 
+	mix-blend-mode: overlay;
+}
+
+.back-e {
+		
+	position: relative;
+	margin-left: -135px;
+		margin-top: 1219px;
+		top: 0px;
+		left: 0px;
+	height: 3000px;
+	width: 3000px;  
+	pointer-events: none; 
+	background-image: url(@/assets/images/hotelview/hours/back/e.png); 
+	mix-blend-mode: overlay;
+
+}
+
+.back-e-alt {
+		
+	position: relative;
+	margin-left: -135px;
+		margin-top: 1219px;
+		top: 0px;
+		left: 0px;
+	height: 3000px;
+	width: 3000px;  
+	pointer-events: none; 
+	background-image: url(@/assets/images/hotelview/hours/back/e.png); 
+	mix-blend-mode: soft-light;
+
+}
+
+.back-e-alt-ii {
+		
+	position: relative;
+	margin-left: -135px;
+		margin-top: 1219px;
+		top: 0px;
+		left: 0px;
+	height: 3000px;
+	width: 3000px;  
+	pointer-events: none; 
+	background-image: url(@/assets/images/hotelview/hours/back/ee.png); 
+	mix-blend-mode: overlay;
+	filter: opacity(0.8);
+
+}
+
+.back-e-alt-iii {
+		
+	position: relative;
+	margin-left: -135px;
+		margin-top: 1219px;
+		top: 0px;
+		left: 0px;
+	height: 3000px;
+	width: 3000px;  
+	pointer-events: none; 
+	background-image: url(@/assets/images/hotelview/hours/back/ee.png); 
+	mix-blend-mode: overlay;
+	filter: opacity(0.6);
+
+}
+
+.back-e-alt-iv {
+		
+	position: relative;
+	margin-left: -135px;
+		margin-top: 1219px;
+		top: 0px;
+		left: 0px;
+	height: 3000px;
+	width: 3000px;  
+	pointer-events: none; 
+	background-image: url(@/assets/images/hotelview/hours/back/ee.png); 
+	mix-blend-mode: overlay;
+	filter: opacity(0.4);
+
+}
+
+
+.back-e-alt-v {
+		
+	position: relative;
+	margin-left: -135px;
+		margin-top: 1219px;
+		top: 0px;
+		left: 0px;
+	height: 3000px;
+	width: 3000px;  
+	pointer-events: none; 
+	background-image: url(@/assets/images/hotelview/hours/back/ee.png); 
+	mix-blend-mode: overlay;
+	filter: opacity(0.2);
+
+}
+.back-f {
+		
+	position: relative;
+	margin-left: 75px;
+		margin-top: 1319px;
+		top: 0px;
+		left: 0px;
+	top: 0px;
+	left: 0px;
+	height: 3000px;
+	width: 3000px;   
+	pointer-events: none; 
+	background-image: url(@/assets/images/hotelview/hours/back/f.png); 
+	mix-blend-mode: hue;
+}
+.back-f-alt {
+		
+	position: relative;
+	margin-left: 75px;
+		margin-top: 1319px;
+		top: 0px;
+		left: 0px;
+	height: 3000px;
+	width: 3000px;  
+	pointer-events: none; 
+	background-image: url(@/assets/images/hotelview/hours/back/f.png); 
+	mix-blend-mode: screen;
+}
+
+.back-g {
+		
+	position: relative;
+	margin-left: 75px;
+		margin-top: 1319px;
+	top: 0px;
+	left: 0px;
+	height: 3000px;
+	width: 3000px;  
+	pointer-events: none; 
+	background-image: url(@/assets/images/hotelview/hours/back/g.png); 
+	mix-blend-mode: hue;
+}
+
+.back-g-alt {
+		
+	position: relative;
+	margin-left: 75px;
+		margin-top: 1319px;
+	top: 0px;
+	left: 0px;
+	height: 3000px;
+	width: 3000px;  
+	pointer-events: none; 
+	background-image: url(@/assets/images/hotelview/hours/back/g.png); 
+	mix-blend-mode: screen;
+	filter: opacity(0.7);
+}
+
+
+.back-g-alt-ii {
+		
+	position: relative;
+	margin-left: 75px;
+		margin-top: 1319px;
+	top: 0px;
+	left: 0px;
+	height: 3000px;
+	width: 3000px;   
+	pointer-events: none; 
+	background-image: url(@/assets/images/hotelview/hours/back/g.png); 
+	mix-blend-mode: overlay;
+}
+
+.back-h {
+		
+	position: relative;
+	margin-left: 75px;
+		margin-top: 1319px;
+	top: 0px;
+	left: 0px;
+	height: 3000px;
+	width: 3000px;  
+	pointer-events: none; 
+	background-image: url(@/assets/images/hotelview/hours/back/h.png); 
+	mix-blend-mode: color;
+}
+
+.back-h-alt {
+		
+	position: relative;
+	margin-left: 75px;
+		margin-top: 1319px;
+	top: 0px;
+	left: 0px;
+	height: 3000px;
+	width: 3000px;  
+	pointer-events: none; 
+	background-image: url(@/assets/images/hotelview/hours/back/h.png); 
+	mix-blend-mode: hue;
+}
+.back-i {
+		
+	position: relative;
+	margin-left: 75px;
+		margin-top: 1319px;
+	top: 0px;
+	left: 0px;
+	height: 3000px;
+	width: 3000px;   
+	pointer-events: none; 
+	background-image: url(@/assets/images/hotelview/hours/back/i.png); 
+	mix-blend-mode: multiply;
+}
+
+.back-i-alt {
+		
+	position: relative;
+	margin-left: 75px;
+		margin-top: 1319px;
+	top: 0px;
+	left: 0px;
+	height: 3000px;
+	width: 3000px;  
+	pointer-events: none; 
+	background-image: url(@/assets/images/hotelview/hours/back/i.png); 
+	mix-blend-mode: lighten;
+	filter: opacity(0.4);
+}
+
+.back-j {
+		
+	position: relative;
+	margin-left: 75px;
+		margin-top: 1319px;
+	top: 0px;
+	left: 0px;
+	height: 3000px;
+	width: 3000px;  
+	pointer-events: none; 
+	background-image: url(@/assets/images/hotelview/hours/back/j.png); 
+	mix-blend-mode: color-burn;
+}
+
+.back-j-alt {
+		
+	position: relative;
+	margin-left: 75px;
+		margin-top: 1319px;
+	top: 0px;
+	left: 0px;
+	height: 3000px;
+	width: 3000px;  
+	pointer-events: none; 
+	background-image: url(@/assets/images/hotelview/hours/back/j.png); 
+	mix-blend-mode: hue;
+}
+
+
+.back-k-alt {
+		
+	position: relative;
+	margin-left: -2100px;
+					 
+	top: 0px;
+	left: 0px;
+	height: 3000px;
+	width: 7120px;   
+	pointer-events: none; 
+	background-image: url(@/assets/images/hotelview/hours/back/kkkk.png); 
+	mix-blend-mode: screen;
+	filter: opacity(0.8)
+}
+
+.back-k-alt-ii {
+		
+	position: relative;
+	margin-left: -2100px;
+					 
+	top: 0px;
+	left: 0px;
+	height: 3000px;
+	width: 7120px;   
+	pointer-events: none; 
+	background-image: url(@/assets/images/hotelview/hours/back/kkkk.png); 
+	mix-blend-mode: screen;
+	filter: opacity(0.6)
+}
+
+
+
+.back-k-alt-i {
+		
+	position: relative;
+	margin-left: -2100px;
+					 
+	top: 0px;
+	left: 0px;
+	height: 3000px;
+	width: 7120px;   
+	pointer-events: none; 
+	background-image: url(@/assets/images/hotelview/hours/back/kkkk.png); 
+	mix-blend-mode: screen;
+}
+.back-k-final
+{
+		
+	position: relative;
+	margin-left: -2100px;
+					 
+	top: 0px;
+	left: 0px;
+	height: 3000px;
+	width: 7120px;   
+	pointer-events: none; 
+	background-image: url(@/assets/images/hotelview/hours/back/kkkk.png); 
+	mix-blend-mode: screen;
+	filter: opacity(0.2);
+
+}
+
+.back-l {
+		
+	position: relative;
+	margin-left: 75px;
+		margin-top: 1319px;
+	top: 0px;
+	left: 0px;
+	height: 3000px;
+	width: 3000px;  
+	pointer-events: none; 
+	background-image: url(@/assets/images/hotelview/hours/back/l.png); 
+	mix-blend-mode: soft-light;
+}
+
+.back-n
+{
+		
+	position: relative;
+	margin-left: 0px;
+	margin-left: -2100px;
+	top: 0px;
+	left: 0px;
+	height: 3000px;
+	width: 7120px;   
+	pointer-events: none; 
+	background-image: url(@/assets/images/hotelview/hours/back/na.png); 
+	mix-blend-mode: multiply;
+	filter: opacity(0.5);
+
+
+}
+
+
+}
+
+@media only screen and (min-width: 1700px) {
+	.left {
+		left: 18vw !important;
+	}
+}
+
+@media only screen and (min-width: 2000px) {
+	.left {
+		left: 23vw !important;
+	}
+}
+
+@media only screen and (min-width: 2500px) {
+	.left {
+		left: 28% !important;
 	}
 }
 

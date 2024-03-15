@@ -1,7 +1,4 @@
 .hall-of-fame {
-    background-color: rgba($black,.3);
-    border-radius: $border-radius;
-    justify-content: center;
 
     .hof-user-container {
         display:inline-flex;
@@ -17,10 +14,10 @@
         .hof-tooltip {
             position: absolute;
             display: none;
-            width: 125px;
+            width: 136px;
             max-width: 125px;
             padding: 2px;
-            background-color: $gable-green;
+            background-color: $white;
             border: 2px solid rgba($white, 0.5);
             border-radius: $border-radius;
             font-size: $font-size-sm;
@@ -28,20 +25,6 @@
             pointer-events: all;
             left: -15px;
             bottom: calc(100% - 10px);
-
-            .hof-header {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 5px;
-                background-color: $william;
-                color: $white;
-                min-width: 117px;
-                height: 25px;
-                max-height: 25px;
-                font-size: 16px;
-                margin-bottom: 2px;
-            }
 
             &:after {
                 content: '';
@@ -53,7 +36,7 @@
                 height: 10px;
                 width: 10px;
                 transform: rotate(45deg);
-                border-color: transparent rgba($white, 0.5) rgba($white, 0.5) transparent;
+                border-color: $white;
                 border-style: solid;
                 border-width: 5px;
             }

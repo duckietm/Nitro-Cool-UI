@@ -26,10 +26,10 @@ export const HallOfFameWidgetView: FC<HallOfFameWidgetViewProps> = props =>
     if(!data) return null;
 
     return (
-        <div className="hall-of-fame d-flex">
+        <div className="hall-of-fame d-flex px-2">
             { data.hof && (data.hof.length > 0) && data.hof.map((entry, index) =>
             {
-                return <HallOfFameItemView key={ index } data={ entry } level={ (index + 1) } />;
+                return <HallOfFameItemView key={ index } data={ entry } goalCode={ data.goalCode } />;
             }
             ) }
         </div>
