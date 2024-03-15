@@ -13,7 +13,7 @@ Credits: Thanks to wassehk on discord for this release.
 
 -   First you should open terminal and navigate to the folder where you want to clone Nitro
 -   Clone Nitro
-    -   `git clone https://git.krews.org/nitro/nitro-react.git`
+    -   `git clone https://github.com/duckietm/Nitro-Cool-UI.git`
 -   Install the dependencies
     -   `yarn install`
     -   This may take some time, please be patient
@@ -35,7 +35,6 @@ Credits: Thanks to wassehk on discord for this release.
 ## Usage
 
 -   To use Nitro you need `.nitro` assets generated, see [nitro-converter](https://git.krews.org/nitro/nitro-converter) for instructions
--   See [Morningstar Websockets](https://git.krews.org/nitro/ms-websockets) for instructions on configuring websockets on your server
 
 ### Development
 
@@ -50,7 +49,7 @@ yarn start
 To build a production version of Nitro just run the following command
 
 ```
-yarn build:prod
+yarn build
 ```
 
 -   A `dist` folder will be generated, these are the files that must be uploaded to your webserver
