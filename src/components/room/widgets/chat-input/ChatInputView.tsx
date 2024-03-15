@@ -29,14 +29,14 @@ export const ChatInputView: FC<{}> = props =>
     
     var deletedAudio = false;
     
-    function startRecording(){
-        
+    function startRecording() {
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         microphoneOn.style.display = "none";
         microphoneOff.style.display = "inline-block";
         deleteAudio.style.display = "inline-block";
-        
-        navigator.mediaDevices.getUserMedia({audio:true})
-            .then(stream=> {
+
+        navigator.mediaDevices.getUserMedia({ audio: true })
+            .then(stream => {
                 mediaRecorder = new MediaRecorder(stream);
                 mediaRecorder.start();
 
@@ -49,23 +49,27 @@ export const ChatInputView: FC<{}> = props =>
                     microphoneOff.style.display = "none";
                     deleteAudio.style.display = "none";
 
-                    if(!deletedAudio){
+                    if (!deletedAudio) {
                         const audioBlob = new Blob(audioChunks);
-                            var fd = new FormData();
-                            fd.append("audio", audioBlob);
-                            fetch("https://int.habbeh.net/audio.php", {method:"POST", body: fd})
-                                .then((response) => response.text())
-                                .then((resp) => {
-                                    roomSession.sendChatMessage("https://int.habbeh.net/audios/" + resp + ".mp3",0);
-                                })
-                        
+                        var fd = new FormData();
+                        fd.append("audio", audioBlob);
+                        fetch(GetConfiguration<string>('api.sound.url'), { method: "POST", body: fd })
+                            .then((response) => response.text())
+                            .then((resp) => {
+                                roomSession.sendChatMessage(GetConfiguration<string>('api.sound.upload') + resp + ".mp3", 0);
+                            })
                     }
-                    
                     deletedAudio = false;
                     audioChunks = [];
                 });
             })
-    }
+            .catch(error => {
+                console.error('Error accessing microphone:', error);
+            });
+		} else {
+			console.error('getUserMedia is not supported');
+		}
+	}
 
     function stopRecording(){
         microphoneOn.style.display = "inline-block";
