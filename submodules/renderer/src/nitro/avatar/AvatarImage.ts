@@ -5,12 +5,12 @@ import { Rectangle } from '@pixi/math';
 import { Sprite } from '@pixi/sprite';
 import { AdvancedMap, AvatarAction, AvatarDirectionAngle, AvatarScaleType, AvatarSetType, IActionDefinition, IActiveActionData, IAdvancedMap, IAnimationLayerData, IAvatarDataContainer, IAvatarEffectListener, IAvatarFigureContainer, IAvatarImage, IGraphicAsset, IPartColor, ISpriteDataContainer } from '../../api';
 import { GetTickerTime, NitroContainer, NitroSprite, PaletteMapFilter, PixiApplicationProxy, TextureUtils } from '../../pixi-proxy';
-import { ActiveActionData } from './actions';
-import { AssetAliasCollection } from './alias';
 import { AvatarFigureContainer } from './AvatarFigureContainer';
 import { AvatarStructure } from './AvatarStructure';
-import { AvatarImageCache } from './cache';
 import { EffectAssetDownloadManager } from './EffectAssetDownloadManager';
+import { ActiveActionData } from './actions';
+import { AssetAliasCollection } from './alias';
+import { AvatarImageCache } from './cache';
 
 export class AvatarImage implements IAvatarImage, IAvatarEffectListener
 {
@@ -222,45 +222,6 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
         this._changes = true;
     }
 
-    private getFullImageCacheKey(): string
-    {
-        if(!this._useFullImageCache) return null;
-
-        if(((this._sortedActions.length == 1) && (this._mainDirection == this._headDirection)))
-        {
-            return (this._mainDirection + this._currentActionsString) + (this._frameCounter % 4);
-        }
-
-        if(this._sortedActions.length == 2)
-        {
-            for(const k of this._sortedActions)
-            {
-                if(((k.actionType == 'fx') && ((((k.actionParameter == '33') || (k.actionParameter == '34')) || (k.actionParameter == '35')) || (k.actionParameter == '36'))))
-                {
-                    return (this._mainDirection + this._currentActionsString) + 0;
-                }
-
-                if(((k.actionType == 'fx') && ((k.actionParameter == '38') || (k.actionParameter == '39'))))
-                {
-                    return (((this._mainDirection + '_') + this._headDirection) + this._currentActionsString) + (this._frameCounter % 11);
-                }
-
-                if((k.actionType === 'dance') && ((k.actionParameter === '1') || (k.actionParameter === '2') || (k.actionParameter === '3') || (k.actionParameter === '4')))
-                {
-                    let frame = (this._frameCounter % 8);
-
-                    if((k.actionParameter === '3')) frame = (this._frameCounter % 10);
-
-                    if((k.actionParameter === '4')) frame = (this._frameCounter % 16);
-
-                    return (((this._mainDirection + k.actionType) + k.actionParameter) + frame);
-                }
-            }
-        }
-
-        return null;
-    }
-
     private getBodyParts(k: string, _arg_2: string, _arg_3: number): string[]
     {
         if((((!(_arg_3 == this._cachedBodyPartsDirection)) || (!(_arg_2 == this._cachedBodyPartsGeometryType))) || (!(k == this._cachedBodyPartsAvatarSet))))
@@ -273,25 +234,25 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
         return this._cachedBodyParts;
     }
 
-    public getAvatarPartsForCamera(k: string): void
+    public getAvatarPartsForCamera(partsAvatarSet: string): void
     {
-        let _local_4: string;
-        if(this._mainAction == null)
+        if(this._mainAction === null)
         {
             return;
         }
-        const _local_2 = this._structure.getCanvas(this._scale, this._mainAction.definition.geometryType);
-        if(_local_2 == null)
+
+        const canvas = this._structure.getCanvas(this._scale, this._mainAction.definition.geometryType);
+        if(canvas === null)
         {
             return;
         }
-        const _local_3 = this.getBodyParts(k, this._mainAction.definition.geometryType, this._mainDirection);
-        let _local_6 = (_local_3.length - 1);
-        while(_local_6 >= 0)
+
+        const bodyParts = this.getBodyParts(partsAvatarSet, this._mainAction.definition.geometryType, this._mainDirection);
+
+        for(let i = bodyParts.length - 1; i >= 0; i--)
         {
-            _local_4 = _local_3[_local_6];
-            const _local_5 = this._cache.getImageContainer(_local_4, this._frameCounter, true);
-            _local_6--;
+            const bodyPart = bodyParts[i];
+            const imageContainer = this._cache.getImageContainer(bodyPart, this._frameCounter, true);
         }
     }
 
