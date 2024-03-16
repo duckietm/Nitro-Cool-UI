@@ -2,16 +2,17 @@ import { ILinkEventTracker } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { AddEventLinkTracker, ChatEntryType, LocalizeText, RemoveLinkEventTracker } from '../../api';
 import { Flex, InfiniteScroll, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../common';
-import { useChatHistory } from '../../hooks';
+import { useChatHistory, useOnClickChat } from '../../hooks';
 
 export const ChatHistoryView: FC<{}> = props =>
 {
-    const [ isVisible, setIsVisible ] = useState(false);
-    const [ searchText, setSearchText ] = useState<string>('');
     const { chatHistory = [] } = useChatHistory();
+    const [ isVisible, setIsVisible ] = useState(false);
+	const { onClickChat = null } = useOnClickChat();
+    const [ searchText, setSearchText ] = useState<string>('');
     const elementRef = useRef<HTMLDivElement>(null);
 
-    const filteredChatHistory = useMemo(() => 
+    const filteredChatHistory = useMemo(() =>
     {
         if (searchText.length === 0) return chatHistory;
 
@@ -78,7 +79,7 @@ export const ChatHistoryView: FC<{}> = props =>
                                         </div>
                                         <div className="chat-content">
                                             <b className="username mr-1" dangerouslySetInnerHTML={ { __html: `${ row.name }: ` } } />
-                                            <span className="message" dangerouslySetInnerHTML={ { __html: `${ row.message }` } } />
+                                            <span className="message" dangerouslySetInnerHTML={ { __html: `${ row.message }` } } onClick={ e => onClickChat(e) }/>
                                         </div>
                                     </div>
                                 </div> }

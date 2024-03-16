@@ -71,29 +71,25 @@ export const CatalogView: FC<{}> = props =>
             { isVisible &&
                 <NitroCardView uniqueKey="catalog" className="nitro-catalog" style={ GetConfiguration('catalog.headers') ? { width: 710 } : {} }>
                     <NitroCardHeaderView headerText={ LocalizeText('catalog.title') } onCloseClick={ event => setIsVisible(false) } />
-                    <NitroCardTabsView subClassName="w-100">
-                        {rootNode &&
-                            rootNode.children.length > 0 &&
-                            rootNode.children.map((child, index) => {
-                                if (!child.isVisible) return null;
-                                // Generate a unique key using the index of the map function
-                                const uniqueKey = `${child.pageId}-${index}`;
-                                return (
-                                    <NitroCardTabsItemView
-                                        key={uniqueKey}
-                                        isActive={child.isActive}
-                                        onClick={(event) => {
-                                            if (searchResult) setSearchResult(null);
-                                            activateNode(child);
-                                        }}
-                                    >
-                                        <Flex gap={GetConfiguration('catalog.tab.icons') ? 1 : 0} alignItems="center">
-                                            {GetConfiguration('catalog.tab.icons') && <CatalogIconView icon={child.iconId} />}
-                                            {child.localization}
-                                        </Flex>
-                                    </NitroCardTabsItemView>
-                                );
-                            })}
+                    <NitroCardTabsView>
+                        { rootNode && (rootNode.children.length > 0) && rootNode.children.map(child =>
+                        {
+                            if(!child.isVisible) return null;
+
+                            return (
+                                <NitroCardTabsItemView key={ child.pageId } isActive={ child.isActive } onClick={ event =>
+                                {
+                                    if(searchResult) setSearchResult(null);
+
+                                    activateNode(child);
+                                } } >
+                                    <Flex gap={ GetConfiguration('catalog.tab.icons') ? 1 : 0 } alignItems="center">
+                                        { GetConfiguration('catalog.tab.icons') && <CatalogIconView icon={ child.iconId } /> }
+                                        { child.localization }
+                                    </Flex>
+                                </NitroCardTabsItemView>
+                            );
+                        }) }
                     </NitroCardTabsView>
                     <NitroCardContentView>
                         <Grid>

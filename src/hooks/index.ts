@@ -18,5 +18,6 @@ export * from './rooms';
 export * from './session';
 export * from './useLocalStorage';
 export * from './UseMountEffect';
+export * from './useOnClickChat';
 export * from './useSharedVisibility';
 export * from './wired';

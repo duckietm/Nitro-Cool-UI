@@ -27,6 +27,7 @@
     "guides.enabled": true,
     "toolbar.hide.quests": true,
 	"api.sound.upload": "/chatvoice/upload.php",
+	"youtube.publish.disabled": false,
     "navigator.room.models": [
         { "clubLevel": 0, "tileSize": 104, "name": "a" },
         { "clubLevel": 0, "tileSize": 94, "name": "b" },
