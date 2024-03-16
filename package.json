@@ -13,6 +13,7 @@
   "dependencies": {
     "@nitrots/nitro-renderer": "file:submodules/renderer",
     "@tanstack/react-virtual": "^3.0.0-beta.60",
+    "dompurify": "^3.0.9",
     "emoji-toolkit": "^7.0.1",
     "react": "^18.2.0",
     "react-bootstrap": "^2.7.2",
