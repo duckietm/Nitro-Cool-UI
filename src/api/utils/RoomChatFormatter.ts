@@ -155,12 +155,6 @@ export const RoomChatFormatter = (content: string) => {
         );
     }
 
-    if (content.includes("giphy.com/media")) {
-        content = `
-            <p style='background-image: url(${content}.gif);width: 70px;height: 70px;margin: 4px 10px 2px 10px; background-size: cover;border-radius: 2px;'></p>
-        `;
-    }
-
     const match = content.match(/@[a-zA-Z]+@/);
     if (match) {
         const colorTag = match[0].toString();

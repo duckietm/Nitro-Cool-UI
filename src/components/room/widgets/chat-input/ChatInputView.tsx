@@ -4,7 +4,6 @@ import { createPortal } from 'react-dom';
 import { ChatMessageTypeEnum, GetClubMemberLevel, GetConfiguration, GetSessionDataManager, LocalizeText, RoomWidgetUpdateChatInputContentEvent } from '../../../../api';
 import { Text } from '../../../../common';
 import { useChatInputWidget, useRoom, useSessionInfo, useUiEvent } from '../../../../hooks';
-import { ChatInputStickersSelectorView } from './ChatInputStickersSelectorView';
 import { ChatInputStyleSelectorView } from './ChatInputStyleSelectorView';
 import { ChatInputColorSelectorView } from './ChatInputColorSelectorView';
 
@@ -15,90 +14,12 @@ export const ChatInputView: FC<{}> = props =>
     const { chatStyleId = 0, updateChatStyleId = null, chatColour = '', updateChatColour = null } = useSessionInfo();
     const { selectedUsername = '', floodBlocked = false, floodBlockedSeconds = 0, setIsTyping = null, setIsIdle = null, sendChat = null } = useChatInputWidget();
     const { roomSession = null } = useRoom();
-    const inputRef = useRef<HTMLInputElement>();
 
+    const inputRef = useRef<HTMLInputElement>();
     const chatModeIdWhisper = useMemo(() => LocalizeText('widgets.chatinput.mode.whisper'), []);
     const chatModeIdShout = useMemo(() => LocalizeText('widgets.chatinput.mode.shout'), []);
     const chatModeIdSpeak = useMemo(() => LocalizeText('widgets.chatinput.mode.speak'), []);
     const maxChatLength = useMemo(() => GetConfiguration<number>('chat.input.maxlength', 100), []);
-
-    var mediaRecorder;
-    var audioChunks = [];
-    var microphoneOn = document.getElementById("microphoneOn");
-    var microphoneOff = document.getElementById("microphoneOff");
-    var deleteAudio = document.getElementById("deleteAudio");
-    
-    var deletedAudio = false;
-	
-    function startRecording(authenticationKey: string) {
-        if (!GetSessionDataManager().userName) {
-            return;
-        }
-	if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        microphoneOn.style.display = "none";
-        microphoneOff.style.display = "inline-block";
-        deleteAudio.style.display = "inline-block";
-
-        navigator.mediaDevices.getUserMedia({ audio: true })
-            .then(stream => {
-                mediaRecorder = new MediaRecorder(stream);
-                mediaRecorder.start();
-
-                mediaRecorder.addEventListener("dataavailable", event => {
-                    audioChunks.push(event.data);
-                });
-
-                mediaRecorder.addEventListener("stop", () => {
-                    microphoneOn.style.display = "inline-block";
-                    microphoneOff.style.display = "none";
-                    deleteAudio.style.display = "none";
-
-                    if (!deletedAudio) {
-                        const audioBlob = new Blob(audioChunks);
-                        var fd = new FormData();
-                        fd.append("audio", audioBlob);
-                        fetch(GetConfiguration<string>('api.sound.url'), { method: "POST", body: fd })
-                            .then((response) => response.text())
-                            .then((resp) => {
-                                roomSession.sendChatMessage(GetConfiguration<string>('api.sound.upload') + GetSessionDataManager().userName + resp + ".mp3", 0);
-                            })
-                    }
-                    deletedAudio = false;
-                    audioChunks = [];
-                });
-            })
-            .catch(error => {
-                console.error('Error accessing microphone:', error);
-            });
-    } else {
-        console.error('getUserMedia is not supported');}
-	
-	}
-
-    function stopRecording(){
-        microphoneOn.style.display = "inline-block";
-        microphoneOff.style.display = "none";
-        deleteAudio.style.display = "none";
-        mediaRecorder.stop();
-    }
-
-    function deleteRecording(){
-        microphoneOn.style.display = "inline-block";
-        microphoneOff.style.display = "none";
-        deleteAudio.style.display = "none";
-        deletedAudio = true;
-        mediaRecorder.stop();
-    }
-
-    function showSubMenu(){
-        if(document.getElementById("submenuChat").style.display == "block") document.getElementById("submenuChat").style.display = "none";
-        else document.getElementById("submenuChat").style.display = "block"; 
-    }
-
-    function hideSubMenu(){
-        document.getElementById("submenuChat").style.display = "none";
-    }
-
 
     const anotherInputHasFocus = useCallback(() =>
     {
@@ -316,23 +237,15 @@ export const ChatInputView: FC<{}> = props =>
 
     return (
         createPortal(
-            <div className="nitro-chat-input-container">
-				<ChatInputColorSelectorView chatColour={ chatColour } selectColour={ updateChatColour } />
+            <div className="nitro-chat-input-container">				
 			    <div className="input-sizer align-items-center">
-					<div onClick={() => showSubMenu()} className="iconcommandsright icon chatmas-icon" />
-					<ChatInputStyleSelectorView chatStyleId={ chatStyleId } chatStyleIds={ chatStyleIds } selectChatStyleId={ updateChatStyleId } />
-						{ !floodBlocked &&
-							<input ref={ inputRef } type="text" className="chat-input" placeholder={ LocalizeText('widgets.chatinput.default') } value={ chatValue } maxLength={ maxChatLength } onChange={ event => updateChatInput(event.target.value) } onMouseDown={ event => setInputFocus() } /> }
-						{ floodBlocked &&
-							<Text variant="danger">{ LocalizeText('chat.input.alert.flood', [ 'time' ], [ floodBlockedSeconds.toString() ]) } </Text> }
-							<div id="submenuChat">
-					<ChatInputStickersSelectorView /> 
-					<div id="microphoneOn" onClick={e => startRecording()} style={{marginLeft: "5px", display: "inline-block"}} className="icon chatmicrophone-on-icon" />
-					<div id="microphoneOff" onClick={e => stopRecording()} style={{marginLeft: "5px", display: "none"}} className="icon chatmicrophone-off-icon" />
-					<div id="deleteAudio" onClick={e => deleteRecording()} style={{marginLeft: "5px", display: "none"}} className="icon chatdeleteaudio-icon" />
-					<div onClick={() => hideSubMenu()} className="icon chatequis-icon" style={{display: "inline-block"}} />
-				</div>
-			</div>
-		</div>,document.getElementById('toolbar-chat-input-container'))
-	);
+                    { !floodBlocked &&
+                    <input ref={ inputRef } type="text" className="chat-input" placeholder={ LocalizeText('widgets.chatinput.default') } value={ chatValue } maxLength={ maxChatLength } onChange={ event => updateChatInput(event.target.value) } onMouseDown={ event => setInputFocus() } /> }
+                    { floodBlocked &&
+                    <Text variant="danger">{ LocalizeText('chat.input.alert.flood', [ 'time' ], [ floodBlockedSeconds.toString() ]) } </Text> }
+                </div>
+				<ChatInputColorSelectorView chatColour={ chatColour } selectColour={ updateChatColour } />
+                <ChatInputStyleSelectorView chatStyleId={ chatStyleId } chatStyleIds={ chatStyleIds } selectChatStyleId={ updateChatStyleId } />
+            </div>, document.getElementById('toolbar-chat-input-container'))
+    );
 }

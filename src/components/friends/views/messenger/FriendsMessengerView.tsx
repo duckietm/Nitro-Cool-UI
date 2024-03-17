@@ -4,7 +4,6 @@ import { FaTimes } from 'react-icons/fa';
 import { AddEventLinkTracker, GetSessionDataManager, GetUserProfile, LocalizeText, RemoveLinkEventTracker, ReportType, SendMessageComposer } from '../../../../api';
 import { Base, Button, ButtonGroup, Column, Flex, Grid, LayoutAvatarImageView, LayoutBadgeImageView, LayoutGridItem, LayoutItemCountView, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../../common';
 import { useHelp, useMessenger } from '../../../../hooks';
-import { ChatInputStickersSelectorConsolaView } from '../../../room/widgets/chat-input/ChatInputStickersSelectorConsolaView';
 import { FriendsMessengerThreadView } from './messenger-thread/FriendsMessengerThreadView';
 
 export const FriendsMessengerView: FC<{}> = props =>
@@ -237,13 +236,6 @@ function startRecordingConsola(){
                                 </Column>
                                 <Flex gap={ 1 }>
                                     <input type="text" className="form-control form-control-sm" maxLength={ 255 } placeholder={ LocalizeText('messenger.window.input.default', [ 'FRIEND_NAME' ], [ activeThread.participant.name ]) } value={ messageText } onChange={ event => setMessageText(event.target.value) } onKeyDown={ onKeyDown } style={{paddingRight: 35}}/>
-                                    <div id="submenuChatConsola">
-            <ChatInputStickersSelectorConsolaView />  
-            <div id="microphoneConsoeOn" onClick={e => startRecordingConsola()} style={{marginLeft: "5px", display: "inline-block"}} className="icon chatmicrophoneConsoe-on-icon" />
-            <div id="microphoneConsoeOff" onClick={e => stopRecordingConsola()} style={{marginLeft: "5px", display: "none"}} className="icon chatmicrophoneConsoe-off-icon" />
-            <div id="deleteAudioConsola" onClick={e => deleteRecordingConsola()} style={{marginLeft: "5px", display: "none"}} className="icon chatdeleteAudioConsola-icon" />
-            <div onClick={() => hideSubMenuConsola()} className="icon chatequis-icon" style={{display: "inline-block"}} />
-        </div>
                                     <div onClick={() => showSubMenuConsola()} className="masiconstoolgen icon chatmas-icon" id="chatmasinfogen" style={{ position: 'relative', width: '40px', height: '27px', marginTop: '4px', marginRight: '0px', marginLeft: '0px', float: 'inherit', right: '0px', }}/>
                                     <Button variant="success" onClick={ send }>
                                         { LocalizeText('widgets.chatinput.say') }
