@@ -4,8 +4,8 @@ import { FaArrowDown, FaArrowLeft, FaArrowRight, FaArrowUp } from 'react-icons/f
 import { SendMessageComposer } from '../../../api';
 import { Base, Button, Column, ColumnProps, Flex, Grid } from '../../../common';
 import { useMessageEvent } from '../../../hooks';
-import { FloorplanEditor } from '../common/FloorplanEditor';
 import { useFloorplanEditorContext } from '../FloorplanEditorContext';
+import { FloorplanEditor } from '../common/FloorplanEditor';
 
 export const FloorplanCanvasView: FC<ColumnProps> = props =>
 {
@@ -32,7 +32,7 @@ export const FloorplanCanvasView: FC<ColumnProps> = props =>
 
         setOccupiedTilesReceived(true);
         
-        elementRef.current.scrollTo((FloorplanEditor.instance.view.width / 3), 0);
+        elementRef.current.scrollTo((FloorplanEditor.instance.renderer.canvas.width / 3), 0);
     });
 
     useMessageEvent<RoomEntryTileMessageEvent>(RoomEntryTileMessageEvent, event =>
@@ -86,6 +86,25 @@ export const FloorplanCanvasView: FC<ColumnProps> = props =>
         }
     }
 
+    const onPointerEvent = (event: PointerEvent) =>
+    {
+        event.preventDefault();
+        
+        switch(event.type)
+        {
+            case 'pointerout':
+            case 'pointerup':
+                FloorplanEditor.instance.onPointerRelease();
+                break;
+            case 'pointerdown':
+                FloorplanEditor.instance.onPointerDown(event);
+                break;
+            case 'pointermove':
+                FloorplanEditor.instance.onPointerMove(event);
+                break;
+        }
+    }
+
     useEffect(() =>
     {
         return () =>
@@ -116,22 +135,46 @@ export const FloorplanCanvasView: FC<ColumnProps> = props =>
         SendMessageComposer(new GetRoomEntryTileMessageComposer());
         SendMessageComposer(new GetOccupiedTilesMessageComposer());
 
-        FloorplanEditor.instance.tilemapRenderer.interactive = true;
+        const currentElement = elementRef.current;
 
-        if(!elementRef.current) return;
+        if(!currentElement) return;
+                
+        currentElement.appendChild(FloorplanEditor.instance.renderer.canvas);
 
-        elementRef.current.appendChild(FloorplanEditor.instance.renderer.view);
+        currentElement.addEventListener('pointerup', onPointerEvent);
+
+        currentElement.addEventListener('pointerout', onPointerEvent);
+
+        currentElement.addEventListener('pointerdown', onPointerEvent);
+
+        currentElement.addEventListener('pointermove', onPointerEvent);
+
+        return () => 
+        {
+            if(currentElement)
+            {
+                currentElement.removeEventListener('pointerup', onPointerEvent);
+
+                currentElement.removeEventListener('pointerout', onPointerEvent);
+
+                currentElement.removeEventListener('pointerdown', onPointerEvent);
+
+                currentElement.removeEventListener('pointermove', onPointerEvent);
+            }
+        }
     }, []);
+
+    const isSmallScreen = () => window.innerWidth < 768;
 
     return (
         <Column gap={ gap } { ...rest }>
             <Grid overflow="hidden" gap={ 1 }>
-                <Column center size={ 1 }>
+                <Column center size={ 1 } className="d-md-none">
                     <Button className="d-md-none" onClick={ event => onClickArrowButton('left') }>
                         <FaArrowLeft className="fa-icon" />
                     </Button>
                 </Column>
-                <Column overflow="hidden" size={ 10 } gap={ 1 }>
+                <Column overflow="hidden" size={ isSmallScreen() ? 10: 12 } gap={ 1 }>
                     <Flex justifyContent="center" className="d-md-none">
                         <Button shrink onClick={ event => onClickArrowButton('up') }>
                             <FaArrowUp className="fa-icon" />
@@ -144,7 +187,7 @@ export const FloorplanCanvasView: FC<ColumnProps> = props =>
                         </Button>
                     </Flex>
                 </Column>
-                <Column center size={ 1 }>
+                <Column center size={ 1 } className="d-md-none">
                     <Button className="d-md-none" onClick={ event => onClickArrowButton('right') }>
                         <FaArrowRight className="fa-icon" />
                     </Button>

@@ -3,11 +3,11 @@ import { FC, useEffect, useState } from 'react';
 import { AddEventLinkTracker, LocalizeText, RemoveLinkEventTracker, SendMessageComposer } from '../../api';
 import { Button, ButtonGroup, Flex, NitroCardContentView, NitroCardHeaderView, NitroCardView } from '../../common';
 import { useMessageEvent, useRoomEngineEvent } from '../../hooks';
+import { FloorplanEditorContextProvider } from './FloorplanEditorContext';
 import { FloorplanEditor } from './common/FloorplanEditor';
 import { IFloorplanSettings } from './common/IFloorplanSettings';
 import { IVisualizationSettings } from './common/IVisualizationSettings';
 import { convertNumbersForSaving, convertSettingToNumber } from './common/Utils';
-import { FloorplanEditorContextProvider } from './FloorplanEditorContext';
 import { FloorplanCanvasView } from './views/FloorplanCanvasView';
 import { FloorplanImportExportView } from './views/FloorplanImportExportView';
 import { FloorplanOptionsView } from './views/FloorplanOptionsView';
@@ -133,11 +133,6 @@ export const FloorplanEditorView: FC<{}> = props =>
         AddEventLinkTracker(linkTracker);
 
         return () => RemoveLinkEventTracker(linkTracker);
-    }, []);
-
-    useEffect(() =>
-    {
-        FloorplanEditor.instance.initialize();
     }, []);
 
     return (

@@ -87,6 +87,7 @@ export class SocketConnection extends EventDispatcher implements IConnection
 
         this._dataBuffer = new ArrayBuffer(0);
         this._socket = new WebSocket(socketUrl);
+		this._socket.binaryType = 'arraybuffer';
 
         this._socket.addEventListener(WebSocketEventEnum.CONNECTION_OPENED, this.onOpen);
         this._socket.addEventListener(WebSocketEventEnum.CONNECTION_CLOSED, this.onClose);
@@ -104,6 +105,8 @@ export class SocketConnection extends EventDispatcher implements IConnection
         this._socket.removeEventListener(WebSocketEventEnum.CONNECTION_MESSAGE, this.onMessage);
 
         if(this._socket.readyState === WebSocket.OPEN) this._socket.close();
+		
+		NitroLogger.error('Bye Bye connection.');
 
         this._socket = null;
     }
@@ -129,16 +132,9 @@ export class SocketConnection extends EventDispatcher implements IConnection
 
         //this.dispatchConnectionEvent(SocketConnectionEvent.CONNECTION_MESSAGE, event);
 
-        const reader = new FileReader();
+        this._dataBuffer = this.concatArrayBuffers(this._dataBuffer, event.data);
 
-        reader.readAsArrayBuffer(event.data);
-
-        reader.onloadend = () =>
-        {
-            this._dataBuffer = this.concatArrayBuffers(this._dataBuffer, (reader.result as ArrayBuffer));
-
-            this.processReceivedData();
-        };
+        this.processReceivedData();
     }
 
     private dispatchConnectionEvent(type: string, event: Event): void
