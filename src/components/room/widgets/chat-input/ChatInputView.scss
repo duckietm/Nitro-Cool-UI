@@ -77,16 +77,18 @@
 .info-habbopages {
     cursor: pointer;
     background-image: url("@/assets/images/boxes/card/questionmark.png");
+    background-size: contain;
+    background-repeat: no-repeat;
     width: 19px;
     height: 20px;
     position: relative;
 
-        &:hover {
-            background-image: url("@/assets/images/boxes/card/questionmark_hover.png");
+    &:hover {
+        background-image: url("@/assets/images/boxes/card/questionmark_hover.png");
+    }
 
-        &:active {
-            background-image: url("@/assets/images/boxes/card/questionmark_click.png");
-        }
+    &:active {
+        background-image: url("@/assets/images/boxes/card/questionmark_click.png");
     }
 }
 
