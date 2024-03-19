@@ -2,7 +2,7 @@ import { FurnitureStackHeightComposer } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
 import ReactSlider from 'react-slider';
 import { LocalizeText, SendMessageComposer } from '../../../../api';
-import { Button, Column, Flex, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../../common';
+import { Button, Column, Flex, NitroCardContentView, NitroCardHeaderView, NitroCardView, Slider, Text } from '../../../../common';
 import { useFurnitureStackHeightWidget } from '../../../../hooks';
 
 export const FurnitureStackHeightView: FC<{}> = props =>
@@ -34,8 +34,7 @@ export const FurnitureStackHeightView: FC<{}> = props =>
             <NitroCardContentView justifyContent="between">
                 <Text>{ LocalizeText('widget.custom.stack.height.text') }</Text>
                 <Flex gap={ 2 }>
-                    <ReactSlider
-                        className="nitro-slider"
+                    <Slider
                         min={ 0 }
                         max={ maxHeight }
                         step={ 0.01 }

@@ -1,7 +1,6 @@
 import { FC, useEffect, useState } from 'react';
-import ReactSlider from 'react-slider';
 import { GetWiredTimeLocale, LocalizeText, WiredFurniType } from '../../../../api';
-import { Column, Text } from '../../../../common';
+import { Column, Slider, Text } from '../../../../common';
 import { useWired } from '../../../../hooks';
 import { WiredConditionBaseView } from './WiredConditionBaseView';
 
@@ -21,8 +20,7 @@ export const WiredConditionTimeElapsedLessView: FC<{}> = props =>
         <WiredConditionBaseView requiresFurni={ WiredFurniType.STUFF_SELECTION_OPTION_NONE } hasSpecialInput={ true } save={ save }>
             <Column gap={ 1 }>
                 <Text bold>{ LocalizeText('wiredfurni.params.allowbefore', [ 'seconds' ], [ GetWiredTimeLocale(time) ]) }</Text>
-                <ReactSlider
-                    className={ 'nitro-slider' }
+                <Slider
                     min={ 1 }
                     max={ 1200 }
                     value={ time }

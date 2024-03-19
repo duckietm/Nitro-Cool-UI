@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from 'react';
 import ReactSlider from 'react-slider';
 import { GetConfiguration, LocalizeText, WiredFurniType } from '../../../../api';
-import { Column, Text } from '../../../../common';
+import { Column, Slider, Text } from '../../../../common';
 import { useWired } from '../../../../hooks';
 import { WiredActionBaseView } from './WiredActionBaseView';
 
@@ -27,8 +27,7 @@ export const WiredActionMuteUserView: FC<{}> = props =>
         <WiredActionBaseView requiresFurni={ WiredFurniType.STUFF_SELECTION_OPTION_NONE } hasSpecialInput={ true } save={ save }>
             <Column gap={ 1 }>
                 <Text bold>{ LocalizeText('wiredfurni.params.length.minutes', [ 'minutes' ], [ time.toString() ]) }</Text>
-                <ReactSlider
-                    className={ 'nitro-slider' }
+                <Slider
                     min={ 1 }
                     max={ 10 }
                     value={ time }

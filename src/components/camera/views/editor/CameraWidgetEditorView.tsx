@@ -3,7 +3,7 @@ import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { FaSave, FaSearchMinus, FaSearchPlus, FaTrash } from 'react-icons/fa';
 import ReactSlider from 'react-slider';
 import { CameraEditorTabs, CameraPicture, CameraPictureThumbnail, GetRoomCameraWidgetManager, LocalizeText } from '../../../../api';
-import { Button, ButtonGroup, Column, Flex, Grid, LayoutImage, NitroCardContentView, NitroCardHeaderView, NitroCardTabsItemView, NitroCardTabsView, NitroCardView, Text } from '../../../../common';
+import { Button, ButtonGroup, Column, Flex, Grid, LayoutImage, NitroCardContentView, NitroCardHeaderView, NitroCardTabsItemView, NitroCardTabsView, NitroCardView, Slider, Text } from '../../../../common';
 import { CameraWidgetEffectListView } from './effect-list/CameraWidgetEffectListView';
 
 export interface CameraWidgetEditorViewProps
@@ -189,8 +189,7 @@ export const CameraWidgetEditorView: FC<CameraWidgetEditorViewProps> = props =>
                             { selectedEffectName &&
                                 <Column center fullWidth gap={ 1 }>
                                     <Text>{ LocalizeText('camera.effect.name.' + selectedEffectName) }</Text>
-                                    <ReactSlider
-                                        className={ 'nitro-slider' }
+                                    <Slider
                                         min={ 0 }
                                         max={ 1 }
                                         step={ 0.01 }

@@ -2,7 +2,7 @@ import { RoomEngineTriggerWidgetEvent } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useMemo, useState } from 'react';
 import ReactSlider from 'react-slider';
 import { ColorUtils, FurnitureDimmerUtilities, GetConfiguration, LocalizeText } from '../../../../api';
-import { Base, Button, classNames, Column, Flex, Grid, NitroCardContentView, NitroCardHeaderView, NitroCardTabsItemView, NitroCardTabsView, NitroCardView, Text } from '../../../../common';
+import { Base, Button, classNames, Column, Flex, Grid, NitroCardContentView, NitroCardHeaderView, NitroCardTabsItemView, NitroCardTabsView, NitroCardView, Slider, Text } from '../../../../common';
 import { useFurnitureDimmerWidget, useRoomEngineEvent } from '../../../../hooks';
 
 export const FurnitureDimmerView: FC<{}> = props =>
@@ -62,8 +62,7 @@ export const FurnitureDimmerView: FC<{}> = props =>
                         </Column>
                         <Column gap={ 1 }>
                             <Text fontWeight="bold">{ LocalizeText('widget.backgroundcolor.lightness') }</Text>
-                            <ReactSlider
-                                className="nitro-slider"
+                            <Slider
                                 min={ FurnitureDimmerUtilities.MIN_BRIGHTNESS }
                                 max={ FurnitureDimmerUtilities.MAX_BRIGHTNESS }
                                 value={ selectedBrightness }
