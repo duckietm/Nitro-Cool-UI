@@ -1,8 +1,8 @@
-import { FlatControllerAddedEvent, FlatControllerRemovedEvent, FlatControllersEvent, RemoveAllRightsMessageComposer, RoomTakeRightsComposer, RoomUsersWithRightsComposer } from '@nitrots/nitro-renderer';
+import { FlatControllerAddedEvent, FlatControllerRemovedEvent, FlatControllersEvent, RemoveAllRightsMessageComposer, RoomGiveRightsComposer, RoomTakeRightsComposer, RoomUsersWithRightsComposer } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
 import { IRoomData, LocalizeText, SendMessageComposer } from '../../../../api';
 import { Button, Column, Flex, Grid, Text, UserProfileIconView } from '../../../../common';
-import { useMessageEvent } from '../../../../hooks';
+import { useFriends, useMessageEvent } from '../../../../hooks';
 
 interface NavigatorRoomSettingsTabViewProps
 {
@@ -14,6 +14,9 @@ export const NavigatorRoomSettingsRightsTabView: FC<NavigatorRoomSettingsTabView
 {
     const { roomData = null } = props;
     const [ usersWithRights, setUsersWithRights ] = useState<Map<number, string>>(new Map());
+	const { onlineFriends = [], offlineFriends = [] } = useFriends();
+    const allFriends = [ ...onlineFriends, ...offlineFriends ];
+    const friendWitoutRights = allFriends.filter(friend => !usersWithRights.has(friend.id));
 
     useMessageEvent<FlatControllersEvent>(FlatControllersEvent, event =>
     {
@@ -67,7 +70,7 @@ export const NavigatorRoomSettingsRightsTabView: FC<NavigatorRoomSettingsTabView
                 <Text bold>
                     { LocalizeText('navigator.flatctrls.userswithrights', [ 'displayed', 'total' ], [ usersWithRights.size.toString(), usersWithRights.size.toString() ]) }
                 </Text>
-                <Flex overflow="hidden" className="bg-white rounded list-container p-2">
+                <Flex overflow="hidden" className="p-2 bg-white rounded list-container">
                     <Column fullWidth overflow="auto" gap={ 1 }>
                         { Array.from(usersWithRights.entries()).map(([ id, name ], index) =>
                         {
@@ -81,7 +84,23 @@ export const NavigatorRoomSettingsRightsTabView: FC<NavigatorRoomSettingsTabView
                     </Column>
                 </Flex>
             </Column>
-            <Column size={ 6 } justifyContent="end">
+            <Column size={ 6 }>
+                <Text bold>
+                    { LocalizeText('navigator.flatctrls.friends', [ 'displayed', 'total' ], [ friendWitoutRights.length.toString(), allFriends.length.toString() ]) }
+                </Text>
+                <Flex overflow="hidden" className="p-2 bg-white rounded list-container">
+                    <Column fullWidth overflow="auto" gap={ 1 }>
+                        { friendWitoutRights.map((friend, index) =>
+                        {
+                            return (
+                                <Flex key={ index } shrink alignItems="center" gap={ 1 } overflow="hidden">
+                                    <UserProfileIconView userName={ friend.name } />
+                                    <Text pointer grow onClick={ event => SendMessageComposer(new RoomGiveRightsComposer(friend.id)) }> { friend.name }</Text>
+                                </Flex>
+                            );
+                        }) }
+                    </Column>
+                </Flex>
                 <Button variant="danger" disabled={ !usersWithRights.size } onClick={ event => SendMessageComposer(new RemoveAllRightsMessageComposer(roomData.roomId)) } >
                     { LocalizeText('navigator.flatctrls.clear') }
                 </Button>
