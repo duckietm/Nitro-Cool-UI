@@ -51,7 +51,7 @@ export const ChatInputEmojiSelectorView: FC<ChatInputEmojiSelectorViewProps> = p
         <Overlay show={selectorVisible} target={iconRef} placement="top">
             <Popover className="nitro-chat-style-selector-container">
                 <NitroCardContentView overflow="hidden" className="bg-transparent">
-                    <Grid columnCount={4} overflow="auto">
+                    <Grid columnCount={3} overflow="auto">
                         {emojiList && emojiList.length > 0 && emojiList.map((emojiId) => {
                             return (
                                 <Flex center pointer key={emojiId} onClick={(event) => selectEmoji(emojiId)}>

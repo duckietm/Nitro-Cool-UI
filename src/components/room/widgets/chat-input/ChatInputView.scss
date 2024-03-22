@@ -1,5 +1,6 @@
 .nitro-chat-input-container {
     display: flex;
+	justify-content: space-between;
     align-items: center;
     position: relative;
     height: 40px;
@@ -11,12 +12,13 @@
     overflow: hidden;
     width: -webkit-fill-available;
 
-    @include media-breakpoint-down(sm) {
+    @include media-breakpoint-down(xxl) {
         display: flex;
         position: absolute;
         bottom: 70px;
-        left: calc(100% / 3);
-        width: 200px!important;
+        left: 50%;
+        transform: translateX(-50%);
+        width: auto;
     }
 
     &:before {
@@ -54,6 +56,11 @@
         }
     
     }
+	
+	.colour-container {
+        visibility: visible;
+        width: 100%;
+    }
 
     .bubble-container {
         visibility: visible;
@@ -74,26 +81,8 @@
     width: calc(100% - 80px)!important;
 }
 
-.info-habbopages {
-    cursor: pointer;
-    background-image: url("@/assets/images/boxes/card/questionmark.png");
-    background-size: contain;
-    background-repeat: no-repeat;
-    width: 19px;
-    height: 20px;
-    position: relative;
-
-    &:hover {
-        background-image: url("@/assets/images/boxes/card/questionmark_hover.png");
-    }
-
-    &:active {
-        background-image: url("@/assets/images/boxes/card/questionmark_click.png");
-    }
-}
-
 .nitro-chat-style-selector-container {
-    width: auto;
+    width: $chat-input-style-selector-widget-width;
     max-height: $chat-input-style-selector-widget-height;
 
     .content-area {
@@ -134,6 +123,23 @@
         .bubble-container {
             position: relative;
             width: 50px;
+        }
+    }
+}
+
+.info-habbopages {
+    cursor: pointer;
+    background-image: url("@/assets/images/boxes/card/questionmark.png");
+    width: 19px;
+    height: 20px;
+    right: -2px;
+    position: relative;
+
+        &:hover {
+            background-image: url("@/assets/images/boxes/card/questionmark_hover.png");
+
+        &:active {
+            background-image: url("@/assets/images/boxes/card/questionmark_click.png");
         }
     }
 }

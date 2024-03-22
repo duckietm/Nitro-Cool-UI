@@ -84,7 +84,7 @@ $nitro-card-tabs-height: 42px;
             background-color: #ededed;
 
             .nav-item {
-                padding: 0.2rem 0.8rem;
+                padding: 0.2rem 0.4rem;
                 background-color: #dedede;
                 color: #000;
                 z-index: 1;
@@ -95,7 +95,7 @@ $nitro-card-tabs-height: 42px;
                 border-top-right-radius: 0.5rem !important;
 
                 &.active {
-                    background-color: #ededed;
+                    background-color: #e1e5ff;
 
                     &:before {
                         background: $white;

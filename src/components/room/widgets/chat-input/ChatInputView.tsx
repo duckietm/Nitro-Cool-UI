@@ -251,12 +251,14 @@ export const ChatInputView: FC<{}> = props =>
                     { floodBlocked &&
                     <Text variant="danger">{ LocalizeText('chat.input.alert.flood', [ 'time' ], [ floodBlockedSeconds.toString() ]) } </Text> }
                 </div>
-				<ChatInputEmojiSelectorView addChatEmoji={ addEmojiToChat } />												  
-				<ChatInputColorSelectorView chatColour={ chatColour } selectColour={ updateChatColour } />
-                <ChatInputStyleSelectorView chatStyleId={ chatStyleId } chatStyleIds={ chatStyleIds } selectChatStyleId={ updateChatStyleId } />
-				{ (showInfoHabboPages) &&
-                    <Base className="info-habbopages" onClick={ () => CreateLinkEvent('habbopages/chat/chatting') }></Base>
-                }
+				<Flex>
+					<ChatInputEmojiSelectorView addChatEmoji={ addEmojiToChat } />
+					<ChatInputColorSelectorView chatColour={ chatColour } selectColour={ updateChatColour } />
+					<ChatInputStyleSelectorView chatStyleId={ chatStyleId } chatStyleIds={ chatStyleIds } selectChatStyleId={ updateChatStyleId } />
+					{
+						(showInfoHabboPages) && <Base className="info-habbopages" onClick={ () => CreateLinkEvent('habbopages/chat/chatting') }></Base>
+					}
+				</Flex>
 				</div>, document.getElementById('toolbar-chat-input-container'))
     );
 }

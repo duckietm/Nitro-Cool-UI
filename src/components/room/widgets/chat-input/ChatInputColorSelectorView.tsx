@@ -49,7 +49,7 @@ export const ChatInputColorSelectorView: FC<ChatInputColorSelectorViewProps> = p
             </Base>
             <Overlay show={ selectorVisible } target={ iconRef } placement="top">
                 <Popover className="nitro-chat-style-selector-container">
-                    <NitroCardContentView overflow="hidden" className="bg-transparent">
+                    <NitroCardContentView overflow="hidden" className="bg-transparent colour-container image-rendering-pixelated">
                         <AutoGrid gap={ 1 } columnCount={ 6 } columnMinWidth={ 20 } columnMinHeight={ 20 }>
                             { colours && (colours.size > 0) && Array.from(colours).map(([ color, hex ]) =>
                             {
