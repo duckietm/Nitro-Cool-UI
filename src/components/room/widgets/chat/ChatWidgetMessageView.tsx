@@ -79,7 +79,7 @@ export const ChatWidgetMessageView: FC<ChatWidgetMessageViewProps> = props => {
 
     return (
         <div ref={elementRef} className={`bubble-container newbubblehe ${isVisible ? 'visible' : 'invisible'}`} onClick={event => GetRoomEngine().selectRoomObject(chat.roomId, chat.senderId, RoomObjectCategory.UNIT)}>
-            {selectedEmoji && <span>{selectedEmoji}</span>}
+            {selectedEmoji && <span>{DOMPurify.sanitize(selectedEmoji)}</span>}
 			{ (chat.styleId === 0) &&
                 <div className="user-container-bg" style={ { backgroundColor: chat.color } } /> }
             <div className={ `chat-bubble bubble-${ chat.styleId } type-${ chat.type }` } style={ { maxWidth: getBubbleWidth } }>
