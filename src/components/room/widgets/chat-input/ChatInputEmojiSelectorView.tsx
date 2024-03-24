@@ -1,7 +1,8 @@
 import { FC, MouseEvent, useEffect, useRef, useState } from 'react';
 import { Overlay, Popover } from 'react-bootstrap';
 import { Base, Flex, Grid, NitroCardContentView } from '../../../../common';
-import { emojiList } from './EmojiList';
+import data from '@emoji-mart/data'
+import Picker from '@emoji-mart/react'
 
 interface ChatInputEmojiSelectorViewProps
 {
@@ -15,7 +16,17 @@ export const ChatInputEmojiSelectorView: FC<ChatInputEmojiSelectorViewProps> = p
 	const [ target, setTarget ] = useState<(EventTarget & HTMLElement)>(null);
     const iconRef = useRef<HTMLDivElement>(null);
 	const componentRef = useRef<HTMLDivElement>(null);
+	
+	const handleEmojiSelect = (emoji: any) => {
+		addChatEmoji(emoji.native);
+		setSelectorVisible(false);
+	}
 
+	const addEmojiToChat = (emoji: string) => {
+    setChatValue(chatValue + emoji);
+    setIsTyping(true);
+	};
+	
     const handleClickOutside = (event: MouseEvent) => {
         const className = 'emoji-icon';
         if (componentRef.current && !componentRef.current.contains(event.target as Node) && !(event.target as Element).classList.contains(className)) {
@@ -48,19 +59,9 @@ export const ChatInputEmojiSelectorView: FC<ChatInputEmojiSelectorViewProps> = p
     return (
     <>
         <Base pointer onClick={toggleSelector} innerRef={iconRef}>🙂</Base>
-        <Overlay show={selectorVisible} target={iconRef} placement="top">
-            <Popover className="nitro-chat-style-selector-container">
-                <NitroCardContentView overflow="hidden" className="bg-transparent">
-                    <Grid columnCount={3} overflow="auto">
-                        {emojiList && emojiList.length > 0 && emojiList.map((emojiId) => {
-                            return (
-                                <Flex center pointer key={emojiId} onClick={(event) => selectEmoji(emojiId)}>
-                                    <Base className="emoji" textColor="black" style={{ fontSize: '20px' }}>{emojiId}</Base>
-                                </Flex>
-                            );
-                        })}
-                    </Grid>
-                </NitroCardContentView>
+        <Overlay show={selectorVisible} target={iconRef} placement="top-end">
+            <Popover>
+				<Picker data={data} onEmojiSelect={handleEmojiSelect} />
             </Popover>
         </Overlay>
     </>

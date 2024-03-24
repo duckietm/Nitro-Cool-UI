@@ -78,7 +78,15 @@
 }
 
 .nitro-chat-input-container .input-sizer input{
-    width: calc(100% - 80px)!important;
+    width: auto;
+            min-width: 1em;
+            grid-area: 1 / 2;
+            margin: 0;
+            resize: none;
+            background: none;
+            appearance: none;
+            border: none;
+            outline: none;
 }
 
 .nitro-chat-style-selector-container {

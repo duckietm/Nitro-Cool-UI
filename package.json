@@ -11,10 +11,13 @@
     "eslint": "eslint src --ext .ts,.tsx"
   },
   "dependencies": {
+    "@emoji-mart/data": "^1.1.2",
+    "@emoji-mart/react": "^1.1.1",
     "@nitrots/nitro-renderer": "file:submodules/renderer",
     "@tanstack/react-virtual": "^3.0.0-beta.60",
     "dompurify": "^3.0.9",
-    "emoji-toolkit": "^7.0.1",
+    "emoji-mart": "^5.5.2",
+    "emoji-toolkit": "8.0.0",
     "react": "^18.2.0",
     "react-bootstrap": "^2.7.2",
     "react-dom": "^18.2.0",

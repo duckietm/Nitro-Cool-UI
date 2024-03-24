@@ -218,11 +218,11 @@ export const ChatInputView: FC<{}> = props =>
         return styleIds;
     }, []);
 
-	const addEmojiToChat = (emoji: string) =>
-    {
-        setChatValue(chatValue + emoji);
-        setIsTyping(true);
-    }					  
+	const addEmojiToChat = (emoji: string) => {
+		setChatValue(chatValue + emoji);
+		setIsTyping(true);
+	};
+	
     useEffect(() =>
     {
         document.body.addEventListener('keydown', onKeyDownEvent);
@@ -241,13 +241,22 @@ export const ChatInputView: FC<{}> = props =>
     }, [ chatValue ]);
 
     if(!roomSession || roomSession.isSpectator) return null;
-
+	
     return (
         createPortal(
             <div className="nitro-chat-input-container" onMouseEnter={ () => setShowInfohabboPages(true) } onMouseLeave={ () => setTimeout(() => setShowInfohabboPages(false), 100) }>				
 			    <div className="input-sizer align-items-center">
                     { !floodBlocked &&
-                    <input ref={ inputRef } type="text" className="chat-input" placeholder={ LocalizeText('widgets.chatinput.default') } value={ chatValue } maxLength={ maxChatLength } onChange={ event => updateChatInput(event.target.value) } onMouseDown={ event => setInputFocus() } /> }
+                    <input 
+						ref={ inputRef } 
+						type="text" 
+						className="chat-input" 
+						placeholder={ LocalizeText('widgets.chatinput.default') } 
+						value={ chatValue } 
+						maxLength={ maxChatLength } 
+						onChange={ event => updateChatInput(event.target.value) } 
+						onMouseDown={ event => setInputFocus() } /> 
+					}
                     { floodBlocked &&
                     <Text variant="danger">{ LocalizeText('chat.input.alert.flood', [ 'time' ], [ floodBlockedSeconds.toString() ]) } </Text> }
                 </div>
