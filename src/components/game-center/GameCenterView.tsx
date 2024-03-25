@@ -1,4 +1,4 @@
-import { ILinkEventTracker } from '@nitrots/nitro-renderer';
+import { AddLinkEventTracker, ILinkEventTracker, RemoveLinkEventTracker } from '@nitrots/nitro-renderer';
 import { useEffect } from 'react';
 import { AddEventLinkTracker, RemoveLinkEventTracker } from '../../api';
 import { Flex } from '../../common';
@@ -33,10 +33,10 @@ export const GameCenterView = () =>
             eventUrlPrefix: 'games/'
         };
 
-        AddEventLinkTracker(linkTracker);
+        AddLinkEventTracker(linkTracker);
 
         return () => RemoveLinkEventTracker(linkTracker);
-    }, [ ]);
+    }, [ setIsVisible ]);
 
     if(!isVisible || !games || !accountStatus) return;
     
