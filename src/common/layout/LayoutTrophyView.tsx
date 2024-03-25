@@ -1,5 +1,8 @@
 import { FC } from 'react';
-import { Base, Column, Flex, Text } from '..';
+import { Base } from '../Base';
+import { Column } from '../Column';
+import { Flex } from '../Flex';
+import { Text } from '../Text';
 import { LocalizeText } from '../../api';
 import { DraggableWindow } from '../draggable-window';
 

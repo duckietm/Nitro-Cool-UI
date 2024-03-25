@@ -1,5 +1,7 @@
 import { FC } from 'react';
-import { Column, Flex, Text } from '..';
+import { Column } from '../Column';
+import { Flex } from '../Flex';
+import { Text } from '../Text';
 import { LocalizeText } from '../../api';
 import { LayoutAvatarImageView } from './LayoutAvatarImageView';
 
