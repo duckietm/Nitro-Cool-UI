@@ -1,6 +1,5 @@
-import { NitroToolbarAnimateIconEvent, TextureUtils, ToolbarIconEnum } from '@nitrots/nitro-renderer';
+import { GetEventDispatcher, NitroToolbarAnimateIconEvent, TextureUtils, ToolbarIconEnum } from '@nitrots/nitro-renderer';
 import { FC, useRef } from 'react';
-import { GetRoomEngine } from '../../../../api';
 import { LayoutRoomPreviewerView, LayoutRoomPreviewerViewProps } from '../../../../common';
 import { CatalogPurchasedEvent } from '../../../../events';
 import { useUiEvent } from '../../../../hooks';
@@ -31,7 +30,7 @@ export const CatalogRoomPreviewerView: FC<LayoutRoomPreviewerViewProps> = props 
 
         animateEvent.iconName = ToolbarIconEnum.INVENTORY;
 
-        GetRoomEngine().events.dispatchEvent(animateEvent);
+        GetEventDispatcher().dispatchEvent(animateEvent);
     });
 
     return (
