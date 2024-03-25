@@ -1,6 +1,6 @@
-import { BadgePointLimitsEvent, ILinkEventTracker, IRoomSession, RoomEngineObjectEvent, RoomEngineObjectPlacedEvent, RoomPreviewer, RoomSessionEvent } from '@nitrots/nitro-renderer';
+import { AddLinkEventTracker, BadgePointLimitsEvent, GetLocalizationManager, GetRoomEngine, ILinkEventTracker, IRoomSession, RemoveLinkEventTracker, RoomEngineObjectEvent, RoomEngineObjectPlacedEvent, RoomPreviewer, RoomSessionEvent } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
-import { AddEventLinkTracker, GetLocalization, GetRoomEngine, GroupItem, LocalizeText, RemoveLinkEventTracker, isObjectMoverRequested, setObjectMoverRequested } from '../../api';
+import { LocalizeText, UnseenItemCategory, isObjectMoverRequested, setObjectMoverRequested } from '../../api';
 import { NitroCardContentView, NitroCardHeaderView, NitroCardTabsItemView, NitroCardTabsView, NitroCardView } from '../../common';
 import { useInventoryBadges, useInventoryFurni, useInventoryTrade, useInventoryUnseenTracker, useMessageEvent, useRoomEngineEvent, useRoomSessionManagerEvent } from '../../hooks';
 import { TABS, TAB_BADGES, TAB_BOTS, TAB_FURNITURE, TAB_PETS, UNSEEN_CATEGORIES } from './constants';
@@ -63,7 +63,7 @@ export const InventoryView: FC<{}> = props =>
     {
         const parser = event.getParser();
 
-        for(const data of parser.data) GetLocalization().setBadgePointLimit(data.badgeId, data.limit);
+        for(const data of parser.data) GetLocalizationManager().setBadgePointLimit(data.badgeId, data.limit);
     });
 
     useEffect(() =>
@@ -91,7 +91,7 @@ export const InventoryView: FC<{}> = props =>
             eventUrlPrefix: 'inventory/'
         };
 
-        AddEventLinkTracker(linkTracker);
+        AddLinkEventTracker(linkTracker);
 
         return () => RemoveLinkEventTracker(linkTracker);
     }, []);
