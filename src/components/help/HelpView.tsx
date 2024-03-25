@@ -1,6 +1,6 @@
-import { ILinkEventTracker } from '@nitrots/nitro-renderer';
+import { AddLinkEventTracker, ILinkEventTracker, RemoveLinkEventTracker } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
-import { AddEventLinkTracker, LocalizeText, RemoveLinkEventTracker, ReportState } from '../../api';
+import { LocalizeText, ReportState } from '../../api';
 import { Base, Column, Grid, NitroCardContentView, NitroCardHeaderView, NitroCardView } from '../../common';
 import { useHelp } from '../../hooks';
 import { DescribeReportView } from './views/DescribeReportView';
@@ -59,7 +59,7 @@ export const HelpView: FC<{}> = props =>
             eventUrlPrefix: 'help/'
         };
 
-        AddEventLinkTracker(linkTracker);
+        AddLinkEventTracker(linkTracker);
 
         return () => RemoveLinkEventTracker(linkTracker);
     }, []);

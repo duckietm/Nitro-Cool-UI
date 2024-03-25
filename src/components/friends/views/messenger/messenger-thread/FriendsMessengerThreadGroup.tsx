@@ -1,6 +1,6 @@
 import * as joypixels from 'emoji-toolkit';
 import { FC, useMemo } from 'react';
-import { GetGroupChatData, GetSessionDataManager, LocalizeText, MessengerGroupType, MessengerThread, MessengerThreadChat, MessengerThreadChatGroup } from '../../../../../api';
+import { GetGroupChatData, LocalizeText, MessengerGroupType, MessengerThread, MessengerThreadChat, MessengerThreadChatGroup } from '../../../../../api';
 import { Base, Flex, LayoutAvatarImageView } from '../../../../../common';
 
 export const FriendsMessengerThreadGroup: FC<{ thread: MessengerThread, group: MessengerThreadChatGroup }> = props =>

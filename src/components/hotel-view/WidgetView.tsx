@@ -1,6 +1,6 @@
-import { NitroConfiguration, RoomSessionEvent } from '@nitrots/nitro-renderer';
+import { GetConfiguration, RoomSessionEvent } from '@nitrots/nitro-renderer';
 import { FC, useState, useCallback } from 'react';
-import { GetConfiguration} from '../../api';
+import { GetConfigurationValue} from '../../api';
 import { useRoomSessionManagerEvent, useSessionInfo } from '../../hooks';
 import { WidgetSlotView } from './views/widgets/WidgetSlotView';
 
@@ -26,10 +26,10 @@ export const WidgetView: FC<{}> = () => {
 
     if (!isVisible) return null;
 
-    const config = GetConfiguration('hotelview');
+    const config = GetConfigurationValue('hotelview');
 
     const backgroundColor = config['images']['background.colour'];
-    const assetUrl = GetConfiguration<string>('asset.url');
+    const assetUrl = GetConfigurationValue<string>('asset.url');
 
     const renderWidgetSlot = (slot: number) => (
 		<WidgetSlotView

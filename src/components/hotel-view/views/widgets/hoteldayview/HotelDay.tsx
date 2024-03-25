@@ -1,10 +1,10 @@
 import { FC } from "react";
-import { GetConfiguration } from "../../../../../api";
+import { GetConfigurationValue } from "../../../../../api";
 import { RoomWidgetViewNight } from "./../../../views/widgets/rooms/RoomWidgetViewNight";
 import { RoomWidgetView } from "./../../../views/widgets/rooms/RoomWidgetView";
 
 export const HotelDay: FC<{}> = () => {
-  const backgroundColor = GetConfiguration("hotelview")["images"]["background.colour"];
+  const backgroundColor = GetConfigurationValue("hotelview")["images"]["background.colour"];
   const now = new Date();
   const hour = now.getHours();
   const minutes = now.getMinutes();

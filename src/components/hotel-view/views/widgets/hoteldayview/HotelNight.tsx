@@ -1,12 +1,12 @@
 import { FC, useEffect, useState } from 'react';
-import { GetConfiguration } from '../../../../../api';
+import { GetConfigurationValue } from '../../../../../api';
 import { RoomWidgetView } from '../rooms/RoomWidgetView';
 import { RoomWidgetViewNight } from '../rooms/RoomWidgetViewNight';
 
 export const HotelNight: FC<{}> = props =>
 {
     const [show, setShow] = useState(false)
-    const backgroundColor = GetConfiguration('hotelview')['images']['background.colour'];
+    const backgroundColor = GetConfigurationValue('hotelview')['images']['background.colour'];
 
     const now = new Date();
 	
