@@ -2,7 +2,6 @@
 import typescript from '@rollup/plugin-typescript';
 import { resolve } from 'path';
 import { defineConfig } from 'vite';
-import { ViteMinifyPlugin } from 'vite-plugin-minify';
 
 const resolvePath = str => resolve(__dirname, str);
 
@@ -14,20 +13,13 @@ export default defineConfig({
             'declaration': true,
             exclude: resolvePath('./node_modules/**'),
             allowSyntheticDefaultImports: true
-        }),
-        ViteMinifyPlugin()
+        })
     ],
     build: {
         lib: {
             entry: resolve(__dirname, 'src/index.ts'),
             name: 'nitro-renderer',
             fileName: 'nitro-renderer'
-        }
-    },
-    resolve: {
-        alias: {
-            '@': resolve(__dirname, 'src'),
-            '~': resolve(__dirname, 'node_modules')
         }
     },
     server: {
