@@ -1,7 +1,7 @@
-import { HabboClubLevelEnum, IAvatarFigureContainer, SaveWardrobeOutfitMessageComposer } from '@nitrots/nitro-renderer';
+import { GetAvatarRenderManager, HabboClubLevelEnum, IAvatarFigureContainer, SaveWardrobeOutfitMessageComposer } from '@nitrots/nitro-renderer';
 import { Dispatch, FC, SetStateAction, useCallback, useMemo } from 'react';
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from 'react-icons/md';
-import { CreateLinkEvent, FigureData, GetAvatarRenderManager, GetClubMemberLevel, GetConfiguration, GetSessionDataManager, LocalizeText, SendMessageComposer } from '../../../api';
+import { CreateLinkEvent, FigureData, GetAvatarRenderManager, GetClubMemberLevel, GetConfigurationValue, GetSessionDataManager, LocalizeText, SendMessageComposer } from '../../../api';
 import { Flex, LayoutAvatarImageView, LayoutCurrencyIcon } from '../../../common';
 export interface AvatarEditorWardrobeViewProps
 {
@@ -15,7 +15,7 @@ export const AvatarEditorWardrobeView: FC<AvatarEditorWardrobeViewProps> = props
 {
     const { figureData = null, savedFigures = [], setSavedFigures = null, loadAvatarInEditor = null } = props;
 
-    const hcDisabled = GetConfiguration<boolean>('hc.disabled', false);
+    const hcDisabled = GetConfigurationValue<boolean>('hc.disabled', false);
 
     const wearFigureAtIndex = useCallback((index: number) =>
     {

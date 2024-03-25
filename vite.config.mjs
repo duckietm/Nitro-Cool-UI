@@ -28,7 +28,6 @@ export default defineConfig({
         alias: {
             '@': resolve(__dirname, 'src'),
             '~': resolve(__dirname, 'node_modules'),
-			submodules: resolve(__dirname, "submodules"),
             ...aliases
         }
     },
@@ -37,13 +36,11 @@ export default defineConfig({
         rollupOptions: {
             output: {
                 assetFileNames: 'src/assets/[name].[ext]',
-                manualChunks: id => {					
-                    if (id.includes("submodules")) {
-                        return "nitro-renderer";
+                manualChunks: id => {
+                    if (id.includes('node_modules')) {
+                        if (id.includes('@nitrots/nitro-renderer')) return 'nitro-renderer';
+                        return 'vendor';
                     }
-					if (id.includes("node_modules")) {
-						return "vendor";
-					}
                 }
             }
         }
