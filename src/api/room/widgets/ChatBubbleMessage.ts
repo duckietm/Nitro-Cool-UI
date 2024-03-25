@@ -1,5 +1,3 @@
-import { INitroPoint } from '@nitrots/nitro-renderer';
-
 export class ChatBubbleMessage
 {
     public static BUBBLE_COUNTER: number = 0;
@@ -20,17 +18,14 @@ export class ChatBubbleMessage
         public text: string = '',
         public formattedText: string = '',
         public username: string = '',
-        public location: INitroPoint = null,
+        public location: { x: number, y: number } = null,
         public type: number = 0,
         public styleId: number = 0,
         public imageUrl: string = null,
-        public color: string = null,
-		public chatColours: string = ""
+        public color: string = null
     ) 
     {
         this.id = ++ChatBubbleMessage.BUBBLE_COUNTER;
-		this.color = color;
-		this.chatColours = chatColours;
     }
 
     public get top(): number
