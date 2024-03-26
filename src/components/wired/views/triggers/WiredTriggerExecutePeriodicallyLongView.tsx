@@ -1,6 +1,5 @@
-import { FriendlyTime } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
-import { LocalizeText, WiredFurniType } from '../../../../api';
+import { FriendlyTime, LocalizeText, WiredFurniType } from '../../../../api';
 import { Column, Slider, Text } from '../../../../common';
 import { useWired } from '../../../../hooks';
 import { WiredTriggerBaseView } from './WiredTriggerBaseView';
