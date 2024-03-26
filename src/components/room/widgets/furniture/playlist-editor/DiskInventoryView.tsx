@@ -1,6 +1,6 @@
 import { CreateLinkEvent, GetSoundManager, IAdvancedMap, MusicPriorities } from '@nitrots/nitro-renderer';
 import { FC, MouseEvent, useCallback, useEffect, useState } from 'react';
-import { CatalogPageName, CreateLinkEvent, GetConfigurationValue, GetDiskColor, GetNitroInstance, LocalizeText } from '../../../../../api';
+import { CatalogPageName, GetConfigurationValue, GetDiskColor, GetNitroInstance, LocalizeText } from '../../../../../api';
 import { AutoGrid, Base, Button, Flex, LayoutGridItem, Text } from '../../../../../common';
 
 export interface DiskInventoryViewProps

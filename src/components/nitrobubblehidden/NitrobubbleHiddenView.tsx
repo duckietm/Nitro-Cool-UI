@@ -1,6 +1,5 @@
-import { AddLinkEventTracker, ILinkEventTracker } from '@nitrots/nitro-renderer';
+import { AddLinkEventTracker, ILinkEventTracker, RemoveLinkEventTracker } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
-import { RemoveLinkEventTracker } from '../../api';
 import { useChatHistory } from '../../hooks';
 
 export const NitrobubbleHiddenView: FC<{}> = props =>

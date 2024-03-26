@@ -1,5 +1,5 @@
-import { FC, useEffect, useMemo, useState } from 'react';
-import { AddEventLinkTracker, GetConfiguration, RemoveLinkEventTracker, SendMessageComposer } from '../../api';
+import { AddLinkEventTracker, FC, GetConfiguration, RemoveLinkEventTracker, useEffect, useMemo, useState } from 'react';
+import { SendMessageComposer } from '../../api';
 import { Button, Flex, NitroCardContentView, NitroCardHeaderView, NitroCardView } from '../../common';
 import { useMessageEvent } from '../../hooks';
 
@@ -35,7 +35,7 @@ export const YoutubeTvView: FC<{}> = props =>
             eventUrlPrefix: 'youtube-tv/'
         };
 
-        AddEventLinkTracker(linkTracker);
+        AddLinkEventTracker(linkTracker);
 
         return () => RemoveLinkEventTracker(linkTracker);
     }, []);
