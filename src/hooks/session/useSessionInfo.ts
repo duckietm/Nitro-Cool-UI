@@ -1,7 +1,7 @@
-import { FigureUpdateEvent, RoomUnitChatStyleComposer, UserInfoDataParser, UserInfoEvent } from '@nitrots/nitro-renderer';
+import { FigureUpdateEvent, GetSessionDataManager, RoomUnitChatStyleComposer, UserInfoDataParser, UserInfoEvent } from '@nitrots/nitro-renderer';
 import { useEffect, useState } from 'react';
 import { useBetween } from 'use-between';
-import { GetLocalStorage, GetSessionDataManager, SendMessageComposer } from '../../api';
+import { GetSessionDataManager, SendMessageComposer } from '../../api';
 import { useMessageEvent } from '../events';
 import { useLocalStorage } from '../useLocalStorage';
 

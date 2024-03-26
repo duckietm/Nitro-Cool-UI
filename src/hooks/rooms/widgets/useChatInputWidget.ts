@@ -1,6 +1,6 @@
-import { AvatarExpressionEnum, GetTicker, HabboClubLevelEnum, RoomControllerLevel, RoomEngineObjectEvent, RoomObjectCategory, RoomRotatingEffect, RoomSessionChatEvent, RoomSettingsComposer, RoomShakingEffect, RoomZoomEvent, TextureUtils } from '@nitrots/nitro-renderer';
+import { AvatarExpressionEnum, CreateLinkEvent, GetEventDispatcher, GetRoomEngine, GetSessionDataManager, GetTicker, HabboClubLevelEnum, RoomControllerLevel, RoomEngineObjectEvent, RoomObjectCategory, RoomRotatingEffect, RoomSessionChatEvent, RoomSettingsComposer, RoomShakingEffect, RoomZoomEvent, TextureUtils } from '@nitrots/nitro-renderer';
 import { useEffect, useState } from 'react';
-import { ChatMessageTypeEnum, CreateLinkEvent, GetClubMemberLevel, GetConfiguration, GetRoomEngine, GetSessionDataManager, LocalizeText, SendMessageComposer } from '../../../api';
+import { ChatMessageTypeEnum, GetClubMemberLevel, GetConfigurationValue, LocalizeText, SendMessageComposer } from '../../../api';
 import { useRoomEngineEvent, useRoomSessionManagerEvent } from '../../events';
 import { useNotification } from '../../notification';
 import { useObjectSelectedEvent } from '../engine';
@@ -104,7 +104,7 @@ const useChatInputWidgetState = () =>
                     return null;
                 case ':iddqd':
                 case ':flip':
-                    GetRoomEngine().events.dispatchEvent(new RoomZoomEvent(roomSession.roomId, -1, true));
+                    GetEventDispatcher().dispatchEvent(new RoomZoomEvent(roomSession.roomId, -1, true));
 
                     return null;
                 case ':zoom':
@@ -165,7 +165,7 @@ const useChatInputWidgetState = () =>
                     return null;
                 case ':togglefps': {
                     if(GetTicker().maxFPS > 0) GetTicker().maxFPS = 0;
-                    else GetTicker().maxFPS = GetConfiguration('system.animation.fps');
+                    else GetTicker().maxFPS = GetConfigurationValue('system.animation.fps');
 
                     return null;
                 }

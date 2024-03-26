@@ -1,7 +1,7 @@
-import { FurnitureExchangeComposer, RoomEngineTriggerWidgetEvent, RoomObjectVariable } from '@nitrots/nitro-renderer';
+import { FurnitureExchangeComposer, GetRoomEngine, RoomEngineTriggerWidgetEvent, RoomObjectVariable } from '@nitrots/nitro-renderer';
 import { useState } from 'react';
-import { GetRoomEngine, GetRoomSession, IsOwnerOfFurniture } from '../../../../api';
-import { useRoomEngineEvent } from '../../../events';
+import { IsOwnerOfFurniture, SendMessageComposer } from '../../../../api';
+import { useNitroEvent } from '../../../events';
 import { useFurniRemovedEvent } from '../../engine';
 
 const useFurnitureExchangeWidgetState = () =>
@@ -19,12 +19,12 @@ const useFurnitureExchangeWidgetState = () =>
 
     const redeem = () =>
     {
-        GetRoomSession().connection.send(new FurnitureExchangeComposer(objectId));
+        SendMessageComposer(new FurnitureExchangeComposer(objectId));
 
         onClose();
     }
 
-    useRoomEngineEvent<RoomEngineTriggerWidgetEvent>(RoomEngineTriggerWidgetEvent.REQUEST_CREDITFURNI, event =>
+    useNitroEvent<RoomEngineTriggerWidgetEvent>(RoomEngineTriggerWidgetEvent.REQUEST_CREDITFURNI, event =>
     {
         const roomObject = GetRoomEngine().getRoomObject(event.roomId, event.objectId, event.category);
 

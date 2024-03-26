@@ -1,9 +1,8 @@
-import { AcceptFriendMessageComposer, DeclineFriendMessageComposer, FindFriendsProcessResultEvent, FollowFriendMessageComposer, FriendListFragmentEvent, FriendListUpdateComposer, FriendListUpdateEvent, FriendParser, FriendRequestsEvent, GetFriendRequestsComposer, MessengerInitComposer, MessengerInitEvent, NewFriendRequestEvent, RequestFriendComposer, SetRelationshipStatusComposer } from '@nitrots/nitro-renderer';
+import { AcceptFriendMessageComposer, DeclineFriendMessageComposer, FollowFriendMessageComposer, FriendListFragmentEvent, FriendListUpdateComposer, FriendListUpdateEvent, FriendParser, FriendRequestsEvent, GetFriendRequestsComposer, GetSessionDataManager, MessengerInitComposer, MessengerInitEvent, NewFriendRequestEvent, RequestFriendComposer, SetRelationshipStatusComposer } from '@nitrots/nitro-renderer';
 import { useEffect, useMemo, useState } from 'react';
 import { useBetween } from 'use-between';
-import { CloneObject, GetSessionDataManager, LocalizeText, MessengerFriend, MessengerRequest, MessengerSettings, SendMessageComposer } from '../../api';
+import { CloneObject, MessengerFriend, MessengerRequest, MessengerSettings, SendMessageComposer } from '../../api';
 import { useMessageEvent } from '../events';
-import { useNotification } from '../notification';
 
 const useFriendsState = () =>
 {
@@ -12,20 +11,12 @@ const useFriendsState = () =>
     const [ sentRequests, setSentRequests ] = useState<number[]>([]);
     const [ dismissedRequestIds, setDismissedRequestIds ] = useState<number[]>([]);
     const [ settings, setSettings ] = useState<MessengerSettings>(null);
-    const { simpleAlert } = useNotification();
 
     const onlineFriends = useMemo(() =>
     {
         const onlineFriends = friends.filter(friend => friend.online);
 
-        onlineFriends.sort((a, b) =>
-        {
-            if( a.name < b.name ) return -1;
-
-            if( a.name > b.name ) return 1;
-
-            return 0;
-        });
+        onlineFriends.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
 
         return onlineFriends;
     }, [ friends ]);
@@ -34,14 +25,7 @@ const useFriendsState = () =>
     {
         const offlineFriends = friends.filter(friend => !friend.online);
 
-        offlineFriends.sort((a, b) =>
-        {
-            if( a.name < b.name ) return -1;
-
-            if( a.name > b.name ) return 1;
-
-            return 0;
-        });
+        offlineFriends.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
 
         return offlineFriends;
     }, [ friends ]);
@@ -196,7 +180,7 @@ const useFriendsState = () =>
             return newValue;
         });
     });
-	
+
     useMessageEvent<FriendRequestsEvent>(FriendRequestsEvent, event =>
     {
         const parser = event.getParser();
@@ -209,7 +193,7 @@ const useFriendsState = () =>
             {
                 const index = newValue.findIndex(existing => (existing.requesterUserId === request.requesterUserId));
 
-                if(index >= 0)
+                if(index > 0)
                 {
                     newValue[index] = CloneObject(newValue[index]);
                     newValue[index].populate(request);
@@ -250,20 +234,11 @@ const useFriendsState = () =>
         });
     });
 
-    useMessageEvent<FindFriendsProcessResultEvent>(FindFriendsProcessResultEvent, event =>
-    {
-        const parser = event.getParser();
-
-        if (!parser) return;
-
-        simpleAlert(LocalizeText(!parser.success ? 'friendbar.find.error.text' : 'friendbar.find.success.text'), '', '', '', LocalizeText(!parser.success ? 'friendbar.find.error.title' : 'friendbar.find.success.title'));
-    });
-
     useEffect(() =>
     {
         SendMessageComposer(new MessengerInitComposer());
 
-		const interval = window.setInterval(() => SendMessageComposer(new FriendListUpdateComposer()), 120000);
+        const interval = setInterval(() => SendMessageComposer(new FriendListUpdateComposer()), 120000);
 
         return () =>
         {

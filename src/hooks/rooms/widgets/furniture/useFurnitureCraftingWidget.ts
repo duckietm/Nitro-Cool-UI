@@ -1,7 +1,7 @@
-import { CraftableProductsEvent, CraftComposer, CraftingRecipeEvent, CraftingRecipeIngredientParser, CraftingRecipesAvailableEvent, CraftingResultEvent, GetCraftableProductsComposer, GetCraftingRecipeComposer, RoomEngineTriggerWidgetEvent, RoomWidgetEnum } from '@nitrots/nitro-renderer';
+import { CraftableProductsEvent, CraftComposer, CraftingRecipeEvent, CraftingRecipeIngredientParser, CraftingRecipesAvailableEvent, CraftingResultEvent, GetCraftableProductsComposer, GetCraftingRecipeComposer, GetRoomContentLoader, GetRoomEngine, RoomEngineTriggerWidgetEvent, RoomWidgetEnum } from '@nitrots/nitro-renderer';
 import { useEffect, useState } from 'react';
-import { GetRoomEngine, ICraftingIngredient, ICraftingRecipe, LocalizeText, SendMessageComposer } from '../../../../api';
-import { useMessageEvent, useRoomEngineEvent } from '../../../events';
+import { ICraftingIngredient, ICraftingRecipe, LocalizeText, SendMessageComposer } from '../../../../api';
+import { useMessageEvent, useNitroEvent } from '../../../events';
 import { useInventoryFurni } from '../../../inventory';
 import { useNotification } from './../../../notification';
 
@@ -49,7 +49,7 @@ const useFurnitureCraftingWidgetState = () =>
         if(!cache) SendMessageComposer(new GetCraftingRecipeComposer(recipe.name));
     }
 
-    useRoomEngineEvent<RoomEngineTriggerWidgetEvent>(RoomEngineTriggerWidgetEvent.OPEN_WIDGET, event => 
+    useNitroEvent<RoomEngineTriggerWidgetEvent>(RoomEngineTriggerWidgetEvent.OPEN_WIDGET, event => 
     {
         if (event.widget !== RoomWidgetEnum.CRAFTING) return;
 
@@ -76,7 +76,7 @@ const useFurnitureCraftingWidgetState = () =>
             for(const recipe of parser.recipes)
             {
                 //@ts-ignore
-                const itemId = GetRoomEngine().roomContentLoader._activeObjectTypeIds.get(recipe.itemName);
+                const itemId = GetRoomContentLoader()._activeObjectTypeIds.get(recipe.itemName);
                 const iconUrl = GetRoomEngine().getFurnitureFloorIconUrl(itemId);
 
                 newValue.push({
@@ -131,7 +131,7 @@ const useFurnitureCraftingWidgetState = () =>
             for(const name of ingredientNames)
             {
                 //@ts-ignore
-                const itemId = GetRoomEngine().roomContentLoader._activeObjectTypeIds.get(name);
+                const itemId = GetRoomContentLoader()._activeObjectTypeIds.get(name);
                 const iconUrl = GetRoomEngine().getFurnitureFloorIconUrl(itemId);
 
                 const inventoryItems = getItemsByType(itemId);
