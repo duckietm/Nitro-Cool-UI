@@ -1,5 +1,6 @@
+import { CreateLinkEvent } from '@nitrots/nitro-renderer';
 import React, { FC } from 'react';
-import { CreateLinkEvent, GetConfiguration } from '../../../../../api';
+import { GetConfigurationValue } from '../../../../../api';
 import { Base, Flex } from '../../../../../common';
 
 interface Room {
@@ -18,7 +19,7 @@ const rooms: Room[] = [
 ];
 
 export const RoomWidgetViewNight: FC<{}> = () => {
-  const hotelViewConfig = GetConfiguration('hotelview');
+  const hotelViewConfig = GetConfigurationValue('hotelview');
 
   const handleRoomClick = (roomId: string) => {
     CreateLinkEvent(`navigator/goto/${roomId}`);

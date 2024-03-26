@@ -1,7 +1,7 @@
-import { GetAvatarRenderManager, HabboClubLevelEnum, IAvatarFigureContainer, SaveWardrobeOutfitMessageComposer } from '@nitrots/nitro-renderer';
+import { CreateLinkEvent, GetAvatarRenderManager, GetSessionDataManager, HabboClubLevelEnum, IAvatarFigureContainer, SaveWardrobeOutfitMessageComposer } from '@nitrots/nitro-renderer';
 import { Dispatch, FC, SetStateAction, useCallback, useMemo } from 'react';
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from 'react-icons/md';
-import { CreateLinkEvent, FigureData, GetAvatarRenderManager, GetClubMemberLevel, GetConfigurationValue, GetSessionDataManager, LocalizeText, SendMessageComposer } from '../../../api';
+import { FigureData, GetClubMemberLevel, GetConfigurationValue, LocalizeText, SendMessageComposer } from '../../../api';
 import { Flex, LayoutAvatarImageView, LayoutCurrencyIcon } from '../../../common';
 export interface AvatarEditorWardrobeViewProps
 {

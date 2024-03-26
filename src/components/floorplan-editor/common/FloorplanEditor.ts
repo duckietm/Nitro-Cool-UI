@@ -41,11 +41,11 @@ export class FloorplanEditor
         this._image.src = imageBase64;
 
         this._tilemap = [];
-        this._doorLocation = { x: 0, y: 0 }
+        this._doorLocation = { x: 0, y: 0 };
         this._width = 0;
         this._height = 0;
         this._isPointerDown = false;
-        this._lastUsedTile = { x: -1, y: -1 }
+        this._lastUsedTile = { x: -1, y: -1 };
         this._actionSettings = new ActionSettings();
     }
 
@@ -68,8 +68,8 @@ export class FloorplanEditor
     public onPointerMove(event: PointerEvent): void
     {
         if(!this._isPointerDown) return;
-		
-		const location = { x: event.offsetX, y: event.offsetY };
+        
+        const location = { x: event.offsetX, y: event.offsetY };
 
         this.tileHitDetection(location, false);
     }
@@ -169,7 +169,7 @@ export class FloorplanEditor
 
         if(!newHeight) return;
 
-        // if(tile.isBlocked) return;
+        if(tile.isBlocked) return;
 
         this._tilemap[y][x].height = newHeight;
 
@@ -192,8 +192,7 @@ export class FloorplanEditor
 
                 if(tile.isBlocked) assetName = FloorplanEditor.TILE_BLOCKED;
 
-                if ((tile.height === 'x' || tile.height === 'X') && tile.isBlocked) assetName = 'x';
-                
+                //if((tile.height === 'x') || tile.height === 'X') continue;
                 const [ positionX, positionY ] = getScreenPositionForTile(x, y);
 
                 const asset = spritesheet.frames[assetName];

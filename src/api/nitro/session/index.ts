@@ -9,6 +9,7 @@ export * from './GetFurnitureDataForRoomObject';
 export * from './GetOwnPosture';
 export * from './GetProductDataForLocalization';
 export * from './GetRoomSession';
+export * from './GetRoomSessionManager';
 export * from './GoToDesktop';
 export * from './HasHabboClub';
 export * from './HasHabboVip';

@@ -1,7 +1,6 @@
-import { ILinkEventTracker, RoomSessionEvent } from '@nitrots/nitro-renderer';
+import { AddLinkEventTracker, ILinkEventTracker, RemoveLinkEventTracker, RoomSessionEvent } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
-import { AddEventLinkTracker, RemoveLinkEventTracker } from '../../api';
-import { useCamera, useRoomSessionManagerEvent } from '../../hooks';
+import { useCamera, useNitroEvent } from '../../hooks';
 import { CameraWidgetCaptureView } from './views/CameraWidgetCaptureView';
 import { CameraWidgetCheckoutView } from './views/CameraWidgetCheckoutView';
 import { CameraWidgetEditorView } from './views/editor/CameraWidgetEditorView';
@@ -49,7 +48,7 @@ export const CameraWidgetView: FC<{}> = props =>
         setMode(MODE_CHECKOUT);
     }
 
-    useRoomSessionManagerEvent<RoomSessionEvent>(RoomSessionEvent.ENDED, event => setMode(MODE_NONE));
+    useNitroEvent<RoomSessionEvent>(RoomSessionEvent.ENDED, event => setMode(MODE_NONE));
 
     useEffect(() =>
     {
@@ -80,7 +79,7 @@ export const CameraWidgetView: FC<{}> = props =>
             eventUrlPrefix: 'camera/'
         };
 
-        AddEventLinkTracker(linkTracker);
+        AddLinkEventTracker(linkTracker);
 
         return () => RemoveLinkEventTracker(linkTracker);
     }, []);

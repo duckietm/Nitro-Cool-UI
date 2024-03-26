@@ -1,7 +1,7 @@
-import { AchievementNotificationMessageEvent, ActivityPointNotificationMessageEvent, ClubGiftNotificationEvent, ClubGiftSelectedEvent, ConnectionErrorEvent, HabboBroadcastMessageEvent, HotelClosedAndOpensEvent, HotelClosesAndWillOpenAtEvent, HotelWillCloseInMinutesEvent, InfoFeedEnableMessageEvent, MaintenanceStatusMessageEvent, ModeratorCautionEvent, ModeratorMessageEvent, MOTDNotificationEvent, NotificationDialogMessageEvent, PetLevelNotificationEvent, PetReceivedMessageEvent, RespectReceivedEvent, RoomEnterEffect, RoomEnterEvent, SimpleAlertMessageEvent, UserBannedMessageEvent, Vector3d } from '@nitrots/nitro-renderer';
+import { AchievementNotificationMessageEvent, ActivityPointNotificationMessageEvent, ClubGiftNotificationEvent, ClubGiftSelectedEvent, ConnectionErrorEvent, GetLocalizationManager, GetRoomEngine, GetSessionDataManager, HabboBroadcastMessageEvent, HotelClosedAndOpensEvent, HotelClosesAndWillOpenAtEvent, HotelWillCloseInMinutesEvent, InfoFeedEnableMessageEvent, MaintenanceStatusMessageEvent, ModeratorCautionEvent, ModeratorMessageEvent, MOTDNotificationEvent, NotificationDialogMessageEvent, PetLevelNotificationEvent, PetReceivedMessageEvent, RespectReceivedEvent, RoomEnterEffect, RoomEnterEvent, SimpleAlertMessageEvent, UserBannedMessageEvent, Vector3d } from '@nitrots/nitro-renderer';
 import { useCallback, useState } from 'react';
 import { useBetween } from 'use-between';
-import { GetConfiguration, GetNitroInstance, GetRoomEngine, GetSessionDataManager, LocalizeBadgeName, LocalizeText, NotificationAlertItem, NotificationAlertType, NotificationBubbleItem, NotificationBubbleType, NotificationConfirmItem, PlaySound, ProductImageUtility, TradingNotificationType } from '../../api';
+import { GetConfigurationValue, LocalizeBadgeName, LocalizeText, NotificationAlertItem, NotificationAlertType, NotificationBubbleItem, NotificationBubbleType, NotificationConfirmItem, PlaySound, ProductImageUtility, TradingNotificationType } from '../../api';
 import { useMessageEvent } from '../events';
 
 const cleanText = (text: string) => (text && text.length) ? text.replace(/\\r/g, '\r') : '';
@@ -23,7 +23,7 @@ const useNotificationState = () =>
     const [ bubblesDisabled, setBubblesDisabled ] = useState(false);
     const [ modDisclaimerShown, setModDisclaimerShown ] = useState(false);
 
-    const getMainNotificationConfig = () => GetConfiguration<{ [key: string]: { delivery?: string, display?: string; title?: string; image?: string }}>('notification', {});
+    const getMainNotificationConfig = () => GetConfigurationValue<{ [key: string]: { delivery?: string, display?: string; title?: string; image?: string }}>('notification', {});
 
     const getNotificationConfig = (key: string) =>
     {
@@ -40,7 +40,7 @@ const useNotificationState = () =>
 
         const localizeKey = [ 'notification', type, key ].join('.');
 
-        if(GetNitroInstance().localization.hasValue(localizeKey) || localize) return LocalizeText(localizeKey, Array.from(options.keys()), Array.from(options.values()));
+        if(GetLocalizationManager().hasValue(localizeKey) || localize) return LocalizeText(localizeKey, Array.from(options.keys()), Array.from(options.values()));
 
         return null;
     }
@@ -49,7 +49,7 @@ const useNotificationState = () =>
     {
         let imageUrl = options.get('image');
 
-        if(!imageUrl) imageUrl = GetConfiguration<string>('image.library.notifications.url', '').replace('%image%', type.replace(/\./g, '_'));
+        if(!imageUrl) imageUrl = GetConfigurationValue<string>('image.library.notifications.url', '').replace('%image%', type.replace(/\./g, '_'));
 
         return LocalizeText(imageUrl);
     }
@@ -223,7 +223,7 @@ const useNotificationState = () =>
 
         if(parser.numGifts <= 0) return;
 
-        showSingleBubble(parser.numGifts.toString(), NotificationBubbleType.CLUBGIFT, null, ('catalog/open/' + GetConfiguration('catalog.links')['hc.hc_gifts']));
+        showSingleBubble(parser.numGifts.toString(), NotificationBubbleType.CLUBGIFT, null, ('catalog/open/' + GetConfigurationValue('catalog.links')['hc.hc_gifts']));
     });
 
     useMessageEvent<ModeratorMessageEvent>(ModeratorMessageEvent, event =>
@@ -239,7 +239,7 @@ const useNotificationState = () =>
 
         if((parser.amountChanged <= 0) || (parser.type !== 5)) return;
 
-        const imageUrl = GetConfiguration<string>('currency.asset.icon.url', '').replace('%type%', parser.type.toString());
+        const imageUrl = GetConfigurationValue<string>('currency.asset.icon.url', '').replace('%type%', parser.type.toString());
 
         showSingleBubble(LocalizeText('notifications.text.loyalty.received', [ 'AMOUNT' ], [ parser.amountChanged.toString() ]), NotificationBubbleType.INFO, imageUrl);
     });
@@ -258,7 +258,7 @@ const useNotificationState = () =>
         simpleAlert( LocalizeText(('opening.hours.' + (parser.userThrowOutAtClose ? 'disconnected' : 'closed')), [ 'h', 'm' ], [ getTimeZeroPadded(parser.openHour), getTimeZeroPadded(parser.openMinute) ]), NotificationAlertType.DEFAULT, null, null, LocalizeText('opening.hours.title'));
     });
 
-    useMessageEvent<PetReceivedMessageEvent>(PetReceivedMessageEvent, event =>
+    useMessageEvent<PetReceivedMessageEvent>(PetReceivedMessageEvent, async event =>
     {
         const parser = event.getParser();
 
@@ -268,7 +268,7 @@ const useNotificationState = () =>
 
         const imageResult = GetRoomEngine().getRoomObjectPetImage(parser.pet.typeId, parser.pet.paletteId, parseInt(parser.pet.color, 16), new Vector3d(45 * 3), 64, null, true);
 
-        if(imageResult) imageUrl = imageResult.getImage().src;
+        if(imageResult) imageUrl = (await imageResult.getImage())?.src;
 
         showSingleBubble(text, NotificationBubbleType.PETLEVEL, imageUrl);
     });
@@ -284,7 +284,7 @@ const useNotificationState = () =>
         setAlerts(prevValue => [ alertItem, ...prevValue ]);
     });
 
-    useMessageEvent<PetLevelNotificationEvent>(PetLevelNotificationEvent, event =>
+    useMessageEvent<PetLevelNotificationEvent>(PetLevelNotificationEvent, async event =>
     {
         const parser = event.getParser();
 
@@ -292,7 +292,7 @@ const useNotificationState = () =>
 
         const imageResult = GetRoomEngine().getRoomObjectPetImage(parser.figureData.typeId, parser.figureData.paletteId, parseInt(parser.figureData.color, 16), new Vector3d(45 * 3), 64, null, true);
 
-        if(imageResult) imageUrl = imageResult.getImage().src;
+        if(imageResult) imageUrl = (await imageResult.getImage())?.src;
 
         showSingleBubble(LocalizeText('notifications.text.petlevel', [ 'pet_name', 'level' ], [ parser.petName, parser.level.toString() ]), NotificationBubbleType.PETLEVEL, imageUrl);
     });
@@ -381,7 +381,8 @@ const useNotificationState = () =>
             case 1017:
             case 1018:
             case 1019:
-                event.connection.dispose();
+                // TODO: fix dispose
+                //event.connection.dispose();
                 break;
             case 4013:
                 simpleAlert(LocalizeText('connection.room.maintenance.desc'), NotificationAlertType.ALERT, null, null, LocalizeText('connection.room.maintenance.title'));

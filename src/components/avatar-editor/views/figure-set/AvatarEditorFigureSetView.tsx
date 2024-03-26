@@ -1,6 +1,6 @@
-import { HabboClubLevelEnum } from '@nitrots/nitro-renderer';
+import { CreateLinkEvent, GetSessionDataManager, HabboClubLevelEnum } from '@nitrots/nitro-renderer';
 import { Dispatch, FC, SetStateAction, useCallback, useEffect, useRef } from 'react';
-import { AvatarEditorGridPartItem, CategoryData, CreateLinkEvent, GetSessionDataManager, IAvatarEditorCategoryModel } from '../../../../api';
+import { AvatarEditorGridPartItem, CategoryData, IAvatarEditorCategoryModel } from '../../../../api';
 import { AutoGrid } from '../../../../common';
 import { AvatarEditorFigureSetItemView } from './AvatarEditorFigureSetItemView';
 

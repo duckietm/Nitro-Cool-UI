@@ -1,5 +1,5 @@
+import { CreateLinkEvent } from '@nitrots/nitro-renderer';
 import { useBetween } from 'use-between';
-import { CreateLinkEvent, LocalizeText } from '../api';
 import { useNotification } from './notification';
 
 const useOnClickChatState = () =>

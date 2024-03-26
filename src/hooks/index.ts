@@ -3,7 +3,6 @@ export * from './camera';
 export * from './catalog';
 export * from './chat-history';
 export * from './events';
-export * from './events/core';
 export * from './events/nitro';
 export * from './friends';
 export * from './game-center';

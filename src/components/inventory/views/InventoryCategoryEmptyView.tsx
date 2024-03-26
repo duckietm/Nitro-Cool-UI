@@ -1,5 +1,6 @@
+import { CreateLinkEvent } from '@nitrots/nitro-renderer';
 import { FC } from 'react';
-import { CreateLinkEvent, LocalizeText } from '../../../api';
+import { LocalizeText } from '../../../api';
 import { Button, Column, Flex, Grid, GridProps, Text } from '../../../common';
 
 export interface InventoryCategoryEmptyViewProps extends GridProps
