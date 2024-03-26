@@ -1,7 +1,7 @@
-import { HabboClubLevelEnum, RoomControllerLevel } from '@nitrots/nitro-renderer';
+import { GetSessionDataManager, HabboClubLevelEnum, RoomControllerLevel } from '@nitrots/nitro-renderer';
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { ChatMessageTypeEnum, CreateLinkEvent, GetClubMemberLevel, GetConfiguration, GetSessionDataManager, LocalizeText, RoomWidgetUpdateChatInputContentEvent } from '../../../../api';
+import { ChatMessageTypeEnum, GetClubMemberLevel, GetConfigurationValue, LocalizeText, RoomWidgetUpdateChatInputContentEvent } from '../../../../api';
 import { Base, Flex, Text } from '../../../../common';
 import { useChatInputWidget, useRoom, useSessionInfo, useUiEvent } from '../../../../hooks';
 import { ChatInputStyleSelectorView } from './ChatInputStyleSelectorView';
@@ -21,7 +21,7 @@ export const ChatInputView: FC<{}> = props =>
     const chatModeIdWhisper = useMemo(() => LocalizeText('widgets.chatinput.mode.whisper'), []);
     const chatModeIdShout = useMemo(() => LocalizeText('widgets.chatinput.mode.shout'), []);
     const chatModeIdSpeak = useMemo(() => LocalizeText('widgets.chatinput.mode.speak'), []);
-    const maxChatLength = useMemo(() => GetConfiguration<number>('chat.input.maxlength', 100), []);
+    const maxChatLength = useMemo(() => GetConfigurationValue<number>('chat.input.maxlength', 100), []);
 
     const anotherInputHasFocus = useCallback(() =>
     {
@@ -173,7 +173,7 @@ export const ChatInputView: FC<{}> = props =>
     {
         let styleIds: number[] = [];
 
-        const styles = GetConfiguration<{ styleId: number, minRank: number, isSystemStyle: boolean, isHcOnly: boolean, isAmbassadorOnly: boolean }[]>('chat.styles');
+        const styles = GetConfigurationValue<{ styleId: number, minRank: number, isSystemStyle: boolean, isHcOnly: boolean, isAmbassadorOnly: boolean }[]>('chat.styles');
 
         for(const style of styles)
         {
@@ -196,7 +196,7 @@ export const ChatInputView: FC<{}> = props =>
                 }
             }
 
-            if(GetConfiguration<number[]>('chat.styles.disabled').indexOf(style.styleId) >= 0) continue;
+            if(GetConfigurationValue<number[]>('chat.styles.disabled').indexOf(style.styleId) >= 0) continue;
 
             if(style.isHcOnly && (GetClubMemberLevel() >= HabboClubLevelEnum.CLUB))
             {
