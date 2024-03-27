@@ -1,7 +1,8 @@
-import { Dispatch, FC, SetStateAction, useEffect, useState } from 'react';
+import { Dispatch, FC, SetStateAction, useEffect } from 'react';
 import { FaSearch } from 'react-icons/fa';
 import { GroupItem, LocalizeText } from '../../../../api';
 import { Button, Flex } from '../../../../common';
+import { useLocalStorage } from '../../../../hooks';
 
 export interface InventoryFurnitureSearchViewProps
 {
@@ -12,7 +13,7 @@ export interface InventoryFurnitureSearchViewProps
 export const InventoryFurnitureSearchView: FC<InventoryFurnitureSearchViewProps> = props =>
 {
     const { groupItems = [], setGroupItems = null } = props;
-    const [ searchValue, setSearchValue ] = useState('');
+    const [ searchValue, setSearchValue ] = useLocalStorage('inventoryFurnitureSearchValue', '');
 
     useEffect(() =>
     {
@@ -26,7 +27,8 @@ export const InventoryFurnitureSearchView: FC<InventoryFurnitureSearchViewProps>
             {
                 if(comparison && comparison.length)
                 {
-                    if(item.name.toLocaleLowerCase().includes(comparison)) return item;
+                    if(comparison === 'rare' && item.isSellable) return item;
+                    if(comparison !== 'rare' && item.name.toLocaleLowerCase().includes(comparison)) return item;
                 }
 
                 return null;
