@@ -52,7 +52,7 @@ const useFurnitureExternalImageWidgetState = () =>
 
             if(roomObjectPhotoData)
             {
-                index = datas.findIndex(data => (data.u === roomObjectPhotoData.u))
+                index = datas.findIndex(data => (data.w === roomObjectPhotoData.w))
             }
 
             if(index < 0) index = 0;
