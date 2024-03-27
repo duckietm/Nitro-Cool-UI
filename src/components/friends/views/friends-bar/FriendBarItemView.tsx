@@ -43,7 +43,7 @@ export const FriendBarItemView: FC<{ friend: MessengerFriend }> = props =>
     return (
         <div ref={ elementRef } className={ 'btn btn-friendsgensuccess friend-bar-item ' + (isVisible ? 'friend-bar-item-active' : '') } onClick={ event => setVisible(prevValue => !prevValue) }>
             <div className={ `friend-bar-item-head position-absolute ${ friend.id > 0 ? 'avatar': 'group' }` }>
-                { (friend.id > 0) && <LayoutAvatarImageView headOnly={ true } figure={ friend.figure } direction={ 2 } /> }
+                { (friend.id > 0) && <LayoutAvatarImageView headOnly={ !isVisible } figure={ friend.figure } direction={ 2 } /> }
                 { (friend.id <= 0) && <LayoutBadgeImageView isGroup={ true } badgeCode={ friend.figure } /> } 
             </div>
             <div className="text-truncate">{ friend.name }</div>

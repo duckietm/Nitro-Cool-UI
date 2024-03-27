@@ -141,6 +141,10 @@
 
             pointer-events: none;
         }
+		
+		.avatar-image {
+                max-height: 80px;
+            }
 
         &.friend-bar-search {
             .friend-bar-item-head {
