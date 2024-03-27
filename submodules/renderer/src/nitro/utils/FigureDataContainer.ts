@@ -1,4 +1,4 @@
-﻿export class FigureDataContainer
+export class FigureDataContainer
 {
     private static MALE: string = 'M';
     private static FEMALE: string = 'F';
@@ -10,11 +10,14 @@
     private static HAIR: string = 'hr';
     private static HAT: string = 'ha';
     private static HEAD_ACCESSORIES: string = 'he';
+    private static EARRINGS: string = 'er';
     private static EYE_ACCESSORIES: string = 'ea';
     private static FACE_ACCESSORIES: string = 'fa';
     private static JACKET: string = 'cc';
     private static SHIRT: string = 'ch';
     private static CHEST_ACCESSORIES: string = 'ca';
+    private static PURSES: string = 'pu';
+    private static BACKPACKS: string = 'bp';
     private static CHEST_PRINTS: string = 'cp';
     private static TROUSERS: string = 'lg';
     private static SHOES: string = 'sh';
@@ -27,13 +30,13 @@
     private _isDisposed: boolean;
     private _avatarEffectType: number = -1;
 
-    public loadAvatarData(figure: string, gender: string): void
+    public loadAvatarData(k: string, _arg_2: string): void
     {
         this._data = new Map();
         this._colors = new Map();
-        this._gender = gender;
+        this._gender = _arg_2;
 
-        this.parseFigureString(figure);
+        this.parseFigureString(k);
     }
 
     public dispose(): void
@@ -104,7 +107,7 @@
 
         const sets: string[] = [];
 
-        for(const [key, value] of this._data.entries())
+        for(const [ key, value ] of this._data.entries())
         {
             let set = ((key + '-') + value);
 
@@ -143,11 +146,14 @@
             case FigureDataContainer.HAIR:
             case FigureDataContainer.HAT:
             case FigureDataContainer.HEAD_ACCESSORIES:
+            case FigureDataContainer.EARRINGS:
             case FigureDataContainer.EYE_ACCESSORIES:
             case FigureDataContainer.FACE_ACCESSORIES:
             case FigureDataContainer.SHIRT:
             case FigureDataContainer.JACKET:
             case FigureDataContainer.CHEST_ACCESSORIES:
+            case FigureDataContainer.PURSES:
+            case FigureDataContainer.BACKPACKS:
             case FigureDataContainer.CHEST_PRINTS:
             case FigureDataContainer.TROUSERS:
             case FigureDataContainer.SHOES:
@@ -171,11 +177,14 @@
             case FigureDataContainer.HAIR:
             case FigureDataContainer.HAT:
             case FigureDataContainer.HEAD_ACCESSORIES:
+            case FigureDataContainer.EARRINGS:
             case FigureDataContainer.EYE_ACCESSORIES:
             case FigureDataContainer.FACE_ACCESSORIES:
             case FigureDataContainer.SHIRT:
             case FigureDataContainer.JACKET:
             case FigureDataContainer.CHEST_ACCESSORIES:
+            case FigureDataContainer.PURSES:
+            case FigureDataContainer.BACKPACKS:
             case FigureDataContainer.CHEST_PRINTS:
             case FigureDataContainer.TROUSERS:
             case FigureDataContainer.SHOES:
@@ -187,7 +196,7 @@
 
     public getFigureStringWithFace(k: number): string
     {
-        const partSets: string[] = [FigureDataContainer.HD];
+        const partSets: string[] = [ FigureDataContainer.HD ];
 
         let figure = '';
         const sets: string[] = [];

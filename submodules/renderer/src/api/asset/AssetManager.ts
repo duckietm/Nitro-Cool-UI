@@ -80,7 +80,65 @@ export class AssetManager implements IAssetManager
 
     public async downloadAsset(url: string): Promise<boolean>
     {
-        return await this.downloadAssets([url]);
+        const response = await fetch(url);
+
+        if(response.status !== 200) return false;
+
+        let contentType = 'application/octet-stream';
+
+        if(response.headers.has('Content-Type'))
+        {
+            contentType = response.headers.get('Content-Type');
+        }
+
+        switch(contentType)
+        {
+            case 'application/octet-stream': {
+                const buffer = await response.arrayBuffer();
+                const nitroBundle = new NitroBundle(buffer);
+
+                await this.processAsset(
+                    nitroBundle.baseTexture,
+                    nitroBundle.jsonFile as IAssetData
+                );
+                break;
+            }
+            case 'image/png':
+            case 'image/jpeg':
+            case 'image/gif': {
+                const buffer = await response.arrayBuffer();
+                const base64 = ArrayBufferToBase64(buffer);
+                const baseTexture = BaseTexture.from(
+                    `data:${ contentType };base64,${ base64 }`
+                );
+
+                const createAsset = async () =>
+                {
+                    const texture = new Texture(baseTexture);
+                    this.setTexture(url, texture);
+                };
+
+                if(baseTexture.valid)
+                {
+                    await createAsset();
+                }
+                else
+                {
+                    await new Promise<void>((resolve, reject) =>
+                    {
+                        baseTexture.once('update', async () =>
+                        {
+                            await createAsset();
+
+                            return resolve();
+                        });
+                    });
+                }
+                break;
+            }
+        }
+
+        return true;
     }
 
     public async downloadAssets(urls: string[]): Promise<boolean>
@@ -89,66 +147,7 @@ export class AssetManager implements IAssetManager
 
         try
         {
-            for(const url of urls)
-            {
-                const response = await fetch(url);
-
-                if(response.status !== 200) continue;
-
-                let contentType = 'application/octet-stream';
-
-                if(response.headers.has('Content-Type'))
-                {
-                    contentType = response.headers.get('Content-Type');
-                }
-
-                switch(contentType)
-                {
-                    case 'application/octet-stream': {
-                        const buffer = await response.arrayBuffer();
-                        const nitroBundle = new NitroBundle(buffer);
-
-                        await this.processAsset(
-                            nitroBundle.baseTexture,
-                            nitroBundle.jsonFile as IAssetData
-                        );
-                        break;
-                    }
-                    case 'image/png':
-                    case 'image/jpeg':
-                    case 'image/gif': {
-                        const buffer = await response.arrayBuffer();
-                        const base64 = ArrayBufferToBase64(buffer);
-                        const baseTexture = BaseTexture.from(
-                            `data:${ contentType };base64,${ base64 }`
-                        );
-
-                        const createAsset = async () =>
-                        {
-                            const texture = new Texture(baseTexture);
-                            this.setTexture(url, texture);
-                        };
-
-                        if(baseTexture.valid)
-                        {
-                            await createAsset();
-                        }
-                        else
-                        {
-                            await new Promise<void>((resolve, reject) =>
-                            {
-                                baseTexture.once('update', async () =>
-                                {
-                                    await createAsset();
-
-                                    return resolve();
-                                });
-                            });
-                        }
-                        break;
-                    }
-                }
-            }
+            await Promise.all(urls.map(async (url) => await this.downloadAsset(url)));
 
             return Promise.resolve(true);
         }

@@ -261,7 +261,6 @@ export class RoomPlane implements IRoomPlane
         this._bitmapMasks = null;
         this._rectangleMasks = null;
         this._maskPixels = null;
-
         this._disposed = true;
     }
 

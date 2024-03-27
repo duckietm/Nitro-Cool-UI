@@ -51,40 +51,20 @@ export class AvatarAssetDownloadManager extends EventDispatcher
 
     private loadFigureMap(): void
     {
-        const request = new XMLHttpRequest();
-
-        try
-        {
-            request.open('GET', NitroConfiguration.getValue<string>('avatar.figuremap.url'));
-
-            request.send();
-
-            request.onloadend = e =>
+        const url = NitroConfiguration.getValue<string>('avatar.figuremap.url');
+        fetch(url)
+            .then(response => response.json())
+            .then(data =>
             {
-                if(request.responseText)
-                {
-                    const data = JSON.parse(request.responseText);
+                this.processFigureMap(data.libraries);
 
-                    this.processFigureMap(data.libraries);
+                this.processMissingLibraries();
 
-                    this.processMissingLibraries();
+                this._isReady = true;
 
-                    this._isReady = true;
-
-                    this.dispatchEvent(new NitroEvent(AvatarAssetDownloadManager.DOWNLOADER_READY));
-                }
-            };
-
-            request.onerror = e =>
-            {
-                throw new Error('invalid_avatar_figure_map');
-            };
-        }
-
-        catch (e)
-        {
-            NitroLogger.error(e);
-        }
+                this.dispatchEvent(new NitroEvent(AvatarAssetDownloadManager.DOWNLOADER_READY));
+            })
+            .catch(err => NitroLogger.error(err));
     }
 
     private processFigureMap(data: any): void
@@ -105,6 +85,12 @@ export class AvatarAssetDownloadManager extends EventDispatcher
             const downloadLibrary = new AvatarAssetDownloadLibrary(id, revision, this._assets, NitroConfiguration.getValue<string>('avatar.asset.url'));
 
             downloadLibrary.addEventListener(AvatarRenderLibraryEvent.DOWNLOAD_COMPLETE, this.onLibraryLoaded);
+
+            if(library.parts == undefined)
+            {
+                console.error('Missing parts for ' + id, library);
+                continue;
+            }
 
             for(const part of library.parts)
             {

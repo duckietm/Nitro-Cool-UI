@@ -19,34 +19,14 @@ export class AvatarStructureDownload extends EventDispatcher
 
     private download(url: string): void
     {
-        const request = new XMLHttpRequest();
-
-        try
-        {
-            request.open('GET', url);
-
-            request.send();
-
-            request.onloadend = e =>
+        fetch(url)
+            .then(response => response.json())
+            .then(data =>
             {
-                const response = request.responseText;
-
-                if(!response || !response.length) throw new Error('invalid_figure_data');
-
-                if(this._dataReceiver) this._dataReceiver.appendJSON(JSON.parse(response));
+                if(this._dataReceiver) this._dataReceiver.appendJSON(data);
 
                 this.dispatchEvent(new NitroEvent(AvatarStructureDownload.AVATAR_STRUCTURE_DONE));
-            };
-
-            request.onerror = e =>
-            {
-                throw new Error('invalid_avatar_figure_data');
-            };
-        }
-
-        catch (e)
-        {
-            NitroLogger.error(e);
-        }
+            })
+            .catch(err => NitroLogger.error(err));
     }
 }

@@ -30,9 +30,9 @@ export class IsometricImageFurniVisualization extends FurnitureAnimatedVisualiza
         return !(this._thumbnailImageNormal == null);
     }
 
-    public setThumbnailImages(k: Texture<Resource>): void
+    public setThumbnailImages(texture: Texture<Resource>): void
     {
-        this._thumbnailImageNormal = k;
+        this._thumbnailImageNormal = texture;
         this._thumbnailChanged = true;
     }
 
@@ -64,7 +64,7 @@ export class IsometricImageFurniVisualization extends FurnitureAnimatedVisualiza
         this._thumbnailDirection = this.direction;
     }
 
-    private addThumbnailAsset(k: Texture<Resource>, scale: number): void
+    private addThumbnailAsset(texture: Texture<Resource>, scale: number): void
     {
         let layerId = 0;
 
@@ -77,7 +77,7 @@ export class IsometricImageFurniVisualization extends FurnitureAnimatedVisualiza
 
                 if(asset)
                 {
-                    const _local_6 = this.generateTransformedThumbnail(k, asset);
+                    const _local_6 = this.generateTransformedThumbnail(texture, asset);
                     const _local_7 = this.getThumbnailAssetName(scale);
 
                     this.asset.disposeAsset(_local_7);
@@ -113,36 +113,24 @@ export class IsometricImageFurniVisualization extends FurnitureAnimatedVisualiza
             texture = TextureUtils.generateTexture(container);
         }
 
-        const scale = 1.1;
+        texture.orig.width = asset.width;
+        texture.orig.height = asset.height;
+
         const matrix = new Matrix();
-        const difference = (asset.width / texture.width);
 
         switch(this.direction)
         {
             case 2:
-                matrix.a = difference;
-                matrix.b = (-0.5 * difference);
-                matrix.c = 0;
-                matrix.d = (difference * scale);
-                matrix.tx = 0;
-                matrix.ty = ((0.5 * difference) * texture.width);
+                matrix.b = -(0.5);
+                matrix.d /= 1.6;
+                matrix.ty = ((0.5) * texture.width);
                 break;
             case 0:
             case 4:
-                matrix.a = difference;
-                matrix.b = (0.5 * difference);
-                matrix.c = 0;
-                matrix.d = (difference * scale);
-                matrix.tx = 0;
-                matrix.ty = 0;
+                matrix.b = (0.5);
+                matrix.d /= 1.6;
+                matrix.tx = -0.5;
                 break;
-            default:
-                matrix.a = difference;
-                matrix.b = 0;
-                matrix.c = 0;
-                matrix.d = difference;
-                matrix.tx = 0;
-                matrix.ty = 0;
         }
 
         const sprite = new NitroSprite(texture);

@@ -6,7 +6,7 @@ import { FurnitureLogic } from './FurnitureLogic';
 
 export class FurnitureStickieLogic extends FurnitureLogic
 {
-    private static STICKIE_COLORS: string[] = ['9CCEFF', 'FF9CFF', '9CFF9C', 'FFFF33'];
+    private static STICKIE_COLORS: string[] = [ '9CCEFF', 'FF9CFF', '9CFF9C', 'FFFF33', 'FF9C9D', 'FFCD9C', 'C3B1E1', 'DBDEFB', 'FFFFFF', '282828' ];
 
     public getEventTypes(): string[]
     {

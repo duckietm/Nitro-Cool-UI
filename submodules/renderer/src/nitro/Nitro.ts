@@ -270,7 +270,7 @@ export class Nitro implements INitro
     {
         this.sendHeartBeat();
 
-        setInterval(this.sendHeartBeat, 10000);
+        window.setInterval(this.sendHeartBeat, 10000);
     }
 
     private sendHeartBeat(): void

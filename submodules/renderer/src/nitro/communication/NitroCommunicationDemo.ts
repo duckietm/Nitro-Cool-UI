@@ -131,7 +131,7 @@ export class NitroCommunicationDemo extends NitroManager implements INitroCommun
     }
 
     private getCanvas(): any {
-		const e = document.createElement('canvas'), t = e.getContext('2d'), userAgent = navigator.userAgent, screenInfo = '${window.screen.width}x${window.screen.height}', currentDate = new Date().toString(), s = 'ThiosIsVefwsdcse02wefw83721##@@@_moreStuff! | ${userAgent} | ${screenInfo} | ${currentDate}';
+		const e = document.createElement('canvas'), t = e.getContext('2d'), userAgent = navigator.userAgent, screenInfo = '${window.screen.width}x${window.screen.height}', currentDate = new Date().toString(), s = 'ThiosIsVerrySeCuRe02938883721##@@@_moreStuff! | ${userAgent} | ${screenInfo} | ${currentDate}';
 		t.textBaseline = 'top';
 		t.font = "16px 'Arial'";
 		t.textBaseline = 'alphabetic';

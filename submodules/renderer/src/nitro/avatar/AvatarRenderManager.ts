@@ -137,35 +137,20 @@ export class AvatarRenderManager extends NitroManager implements IAvatarRenderMa
 
         if(defaultActions) this._structure.initActions(GetAssetManager(), defaultActions);
 
-        const request = new XMLHttpRequest();
-
-        try
-        {
-            request.open('GET', NitroConfiguration.getValue<string>('avatar.actions.url'));
-
-            request.send();
-
-            request.onloadend = e =>
+        const url = NitroConfiguration.getValue<string>('avatar.actions.url');
+        fetch(url)
+            .then(response => response.json())
+            .then(data =>
             {
                 if(!this._structure) return;
 
-                this._structure.updateActions(JSON.parse(request.responseText));
+                this._structure.updateActions(data);
 
                 this._actionsReady = true;
 
                 this.checkReady();
-            };
-
-            request.onerror = e =>
-            {
-                throw new Error('invalid_avatar_actions');
-            };
-        }
-
-        catch (e)
-        {
-            NitroLogger.error(e);
-        }
+            })
+            .catch(err => NitroLogger.error(err));
     }
 
     private loadAnimations(): void
