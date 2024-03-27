@@ -78,7 +78,7 @@ export const GroupTabSettingsView: FC<GroupTabSettingsViewProps> = props =>
             </Column>
             <HorizontalRule />
             <Flex alignItems="center" gap={ 1 }>
-                <input className="form-check-input" type="checkbox" checked={ groupDecorate } onChange={ event => setGroupDecorate(prevValue => !prevValue) } />
+                <input className="form-check-input flex-shrink-0" type="checkbox" checked={ groupDecorate } onChange={ event => setGroupDecorate(prevValue => !prevValue) } />
                 <Column gap={ 1 }>
                     <Text bold>{ LocalizeText('group.edit.settings.rights.caption') }</Text>
                     <Text>{ LocalizeText('group.edit.settings.rights.members.help') }</Text>
