@@ -1,6 +1,6 @@
 import { RoomChatSettings, RoomObjectCategory } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
-import { ChatBubbleMessage, sanitizeColor, GetRoomEngine } from '../../../../api';
+import { ChatBubbleMessage, GetRoomEngine } from '../../../../api';
 import { useOnClickChat } from '../../../../hooks';
 
 interface ChatWidgetMessageViewProps
@@ -89,7 +89,7 @@ export const ChatWidgetMessageView: FC<ChatWidgetMessageViewProps> = props => {
                 </div>
                 <div className="chat-content">
                     <b className="username mr-1" dangerouslySetInnerHTML={ { __html: `${ chat.username }: ` } } />
-                     <span className="message" style={{ color: sanitizeColor(chat.chatColours) }} dangerouslySetInnerHTML={{ __html: `${chat.formattedText}` }} onClick={ e => onClickChat(e) } />
+                     <span className="message" style={{ color: chat.chatColours }} dangerouslySetInnerHTML={{ __html: `${chat.formattedText}` }} onClick={e => onClickChat(e)} />
                 </div>
                 <div className="pointer" />
             </div>
