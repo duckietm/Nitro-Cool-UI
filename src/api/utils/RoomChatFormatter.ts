@@ -116,7 +116,11 @@ allowedColours.set('saddlebrown', 'saddlebrown');
 allowedColours.set('sienna', 'sienna');
 allowedColours.set('brown', 'brown');
 
-export const sanitizeColor = (color: string): string | null => {
+export const sanitizeColor = (color: string | null | undefined): string | null => {
+    if (!color) {
+        return null;
+    }
+    
     const sanitizedColor = allowedColours.get(color.toLowerCase());
     return sanitizedColor || null;
 };
