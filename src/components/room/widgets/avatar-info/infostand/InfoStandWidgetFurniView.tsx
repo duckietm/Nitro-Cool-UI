@@ -338,8 +338,8 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
                 <Column overflow="visible" className="container-fluid content-area" gap={ 1 }>
                     <Column gap={ 1 }>
                         <Flex alignItems="center" justifyContent="between" gap={ 1 }>
-                            { !(isSongDisk) && <Text gfbold variant="white" wrap>{ avatarInfo.name }</Text> }
-                            { (songName.length > 0) && <Text gfbold variant="white" wrap>{ songName }</Text> }
+                            { !(isSongDisk) && <Text variant="white" wrap>{ avatarInfo.name }</Text> }
+                            { (songName.length > 0) && <Text variant="white" wrap>{ songName }</Text> }
                             <i className="infostand-close" onClick={ onClose } />
                         </Flex>
                         <hr className="m-0" />
