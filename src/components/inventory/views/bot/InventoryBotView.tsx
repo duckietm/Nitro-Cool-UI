@@ -1,20 +1,21 @@
 import { IRoomSession, RoomObjectVariable, RoomPreviewer } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
-import { attemptBotPlacement, GetRoomEngine, LocalizeText, UnseenItemCategory } from '../../../../api';
+import { GetRoomEngine, LocalizeText, UnseenItemCategory, attemptBotPlacement } from '../../../../api';
 import { AutoGrid, Button, Column, Grid, LayoutRoomPreviewerView, Text } from '../../../../common';
 import { useInventoryBots, useInventoryUnseenTracker } from '../../../../hooks';
-import { InventoryCategoryEmptyView } from '../InventoryCategoryEmptyView';
+import { InventoryCategoryEmptyViewBots } from '../InventoryCategoryEmptyViewBots';
 import { InventoryBotItemView } from './InventoryBotItemView';
 
 interface InventoryBotViewProps
 {
     roomSession: IRoomSession;
     roomPreviewer: RoomPreviewer;
+	isTrading: boolean;
 }
 
 export const InventoryBotView: FC<InventoryBotViewProps> = props =>
 {
-    const { roomSession = null, roomPreviewer = null } = props;
+    const { roomSession = null, roomPreviewer = null, isTrading = false } = props;
     const [ isVisible, setIsVisible ] = useState(false);
     const { botItems = [], selectedBot = null, activate = null, deactivate = null } = useInventoryBots();
     const { isUnseen = null, removeUnseen = null } = useInventoryUnseenTracker();
@@ -64,7 +65,7 @@ export const InventoryBotView: FC<InventoryBotViewProps> = props =>
         return () => setIsVisible(false);
     }, []);
 
-    if(!botItems || !botItems.length) return <InventoryCategoryEmptyView title={ LocalizeText('inventory.empty.bots.title') } desc={ LocalizeText('inventory.empty.bots.desc') } />;
+    if(!botItems || !botItems.length) return <InventoryCategoryEmptyViewBots title={ LocalizeText('inventory.empty.bots.title') } desc={ LocalizeText('inventory.empty.bots.desc') } isTrading={ isTrading } />;
 
     return (
         <Grid>
@@ -81,7 +82,7 @@ export const InventoryBotView: FC<InventoryBotViewProps> = props =>
                     <Column grow justifyContent="between" gap={ 2 }>
                         <Text grow truncate>{ selectedBot.botData.name }</Text>
                         { !!roomSession &&
-                            <Button onClick={ event => attemptBotPlacement(selectedBot) }>
+                            <Button variant="success" onClick={ event => attemptBotPlacement(selectedBot) }>
                                 { LocalizeText('inventory.furni.placetoroom') }
                             </Button> }
                     </Column> }
