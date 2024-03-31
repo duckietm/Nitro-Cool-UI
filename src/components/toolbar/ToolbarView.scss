@@ -13,14 +13,14 @@
         position: relative;
 
         &.item-avatar {
-            overflow: hidden;
             color: #fff;
             background-color: #b69b83;
             width: 50px;
             height: 50px;
-            border-radius: 1rem;
+            border-radius: 32px;
             border: 2px solid #fff;
             padding: 1.75em;
+			position: relative;
             @include media-breakpoint-down(sm) {
                 position: fixed;
                 top: 50px;
@@ -28,8 +28,8 @@
             }
 
             .avatar-image {
-                margin-left: -5px;
-                margin-top: 25px;
+                margin-left: 0px;
+                margin-top: 45px;
             }
         }
 
