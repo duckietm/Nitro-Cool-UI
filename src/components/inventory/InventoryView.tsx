@@ -1,10 +1,8 @@
 import { BadgePointLimitsEvent, ILinkEventTracker, IRoomSession, RoomEngineObjectEvent, RoomEngineObjectPlacedEvent, RoomPreviewer, RoomSessionEvent } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
-import { AddEventLinkTracker, GetLocalization, GetRoomEngine, GroupItem, LocalizeText, RemoveLinkEventTracker, isObjectMoverRequested, setObjectMoverRequested } from '../../api';
+import { AddEventLinkTracker, GetLocalization, GetRoomEngine, isObjectMoverRequested, LocalizeText, RemoveLinkEventTracker, setObjectMoverRequested, UnseenItemCategory } from '../../api';
 import { NitroCardContentView, NitroCardHeaderView, NitroCardTabsItemView, NitroCardTabsView, NitroCardView } from '../../common';
-import { useInventoryBadges, useInventoryFurni, useInventoryTrade, useInventoryUnseenTracker, useMessageEvent, useRoomEngineEvent, useRoomSessionManagerEvent } from '../../hooks';
-import { TABS, TAB_BADGES, TAB_BOTS, TAB_FURNITURE, TAB_PETS, UNSEEN_CATEGORIES } from './constants';
-import { InventoryCategoryFilterView } from './views/InventoryCategoryFilterView';																				  
+import { useInventoryTrade, useInventoryUnseenTracker, useMessageEvent, useRoomEngineEvent, useRoomSessionManagerEvent } from '../../hooks';
 import { InventoryBadgeView } from './views/badge/InventoryBadgeView';
 import { InventoryBotView } from './views/bot/InventoryBotView';
 import { InventoryFurnitureView } from './views/furniture/InventoryFurnitureView';
@@ -12,6 +10,12 @@ import { InventoryTradeView } from './views/furniture/InventoryTradeView';
 import { InventoryPetView } from './views/pet/InventoryPetView';
 import { InventoryFurnitureDeleteView } from './views/furniture/InventoryFurnitureDeleteView';
 
+const TAB_FURNITURE: string = 'inventory.furni';
+const TAB_BOTS: string = 'inventory.bots';
+const TAB_PETS: string = 'inventory.furni.tab.pets';
+const TAB_BADGES: string = 'inventory.badges';
+const TABS = [ TAB_FURNITURE, TAB_BOTS, TAB_PETS, TAB_BADGES ];
+const UNSEEN_CATEGORIES = [ UnseenItemCategory.FURNI, UnseenItemCategory.BOT, UnseenItemCategory.PET, UnseenItemCategory.BADGE ];
 
 export const InventoryView: FC<{}> = props =>
 {
@@ -19,12 +23,8 @@ export const InventoryView: FC<{}> = props =>
     const [ currentTab, setCurrentTab ] = useState<string>(TABS[0]);
     const [ roomSession, setRoomSession ] = useState<IRoomSession>(null);
     const [ roomPreviewer, setRoomPreviewer ] = useState<RoomPreviewer>(null);
-	const [ filteredGroupItems, setFilteredGroupItems ] = useState<GroupItem[]>([]);
-    const [ filteredBadgeCodes, setFilteredBadgeCodes ] = useState<string[]>([]);
     const { isTrading = false, stopTrading = null } = useInventoryTrade();
-    const { getCount = null } = useInventoryUnseenTracker();
-    const { groupItems = [] } = useInventoryFurni();
-    const { badgeCodes = [] } = useInventoryBadges();
+    const { getCount = null, resetCategory = null } = useInventoryUnseenTracker();
 
     const onClose = () =>
     {
@@ -119,34 +119,36 @@ export const InventoryView: FC<{}> = props =>
     if(!isVisible) return null;
 
     return (
-        <NitroCardView uniqueKey={ 'inventory' } className={ `${ isTrading ? 'nitro-inventory trading no-resize' : 'nitro-inventory' }` } theme={ isTrading ? 'primary' : '' } >
+        <NitroCardView uniqueKey={ 'inventory' } className={ isTrading ? 'nitro-inventory trading' : 'nitro-inventory' } theme={ isTrading ? 'primary' : '' } >
             <NitroCardHeaderView headerText={ LocalizeText('inventory.title') } onCloseClick={ onClose } />
-            <>
-                <NitroCardTabsView>
-                    { TABS.map((name, index) =>
-                    {
-                        return (
-                            <NitroCardTabsItemView key={ index } isActive={ (currentTab === name) } onClick={ event => setCurrentTab(name) } count={ getCount(UNSEEN_CATEGORIES[index]) }>
-                                { LocalizeText(name) }
-                            </NitroCardTabsItemView>
-                        );
-                    }) }
-                </NitroCardTabsView>
-                <NitroCardContentView overflow="hidden">
-                    { (currentTab !== TAB_PETS && currentTab !== TAB_BOTS) && <InventoryCategoryFilterView currentTab={ currentTab } groupItems={ groupItems } setGroupItems={ setFilteredGroupItems } badgeCodes={ badgeCodes } setBadgeCodes={ setFilteredBadgeCodes } /> }
-                    { (currentTab === TAB_FURNITURE ) &&
-                            <InventoryFurnitureView roomSession={ roomSession } roomPreviewer={ roomPreviewer } isTrading={ isTrading } filteredGroupItems={ filteredGroupItems } /> }
-                    { (currentTab === TAB_PETS ) &&
-                            <InventoryPetView roomSession={ roomSession } roomPreviewer={ roomPreviewer } isTrading={ isTrading } /> }
-                    { (currentTab === TAB_BADGES ) &&
-                            <InventoryBadgeView filteredBadgeCodes={ filteredBadgeCodes } /> }
-                    { (currentTab === TAB_BOTS ) &&
-                            <InventoryBotView roomSession={ roomSession } roomPreviewer={ roomPreviewer } isTrading={ isTrading } /> }
-							
-                    { isTrading && <InventoryTradeView currentTab={ currentTab } setCurrentTab={ (e) => setCurrentTab(e) } cancelTrade={ onClose } /> }
-                </NitroCardContentView>
+            { !isTrading &&
+                <>
+                    <NitroCardTabsView>
+                        { TABS.map((name, index) =>
+                        {
+                            return (
+                                <NitroCardTabsItemView key={ index } isActive={ (currentTab === name) } onClick={ event => setCurrentTab(name) } count={ getCount(UNSEEN_CATEGORIES[index]) }>
+                                    { LocalizeText(name) }
+                                </NitroCardTabsItemView>
+                            );
+                        }) }
+                    </NitroCardTabsView>
+                    <NitroCardContentView>
+                        { (currentTab === TAB_FURNITURE ) &&
+                            <InventoryFurnitureView roomSession={ roomSession } roomPreviewer={ roomPreviewer } /> }
+                        { (currentTab === TAB_BOTS ) &&
+                            <InventoryBotView roomSession={ roomSession } roomPreviewer={ roomPreviewer } /> }
+                        { (currentTab === TAB_PETS ) && 
+                            <InventoryPetView roomSession={ roomSession } roomPreviewer={ roomPreviewer } /> }
+                        { (currentTab === TAB_BADGES ) && 
+                            <InventoryBadgeView /> }
+                    </NitroCardContentView>
+                </> }
+            { isTrading &&
+                <NitroCardContentView>
+                    <InventoryTradeView cancelTrade={ onClose } />
+                </NitroCardContentView> }
 				<InventoryFurnitureDeleteView />
-            </>
-		</NitroCardView>
-		);
+        </NitroCardView>
+    );
 }

@@ -1,21 +1,20 @@
 import { IRoomSession, RoomObjectVariable, RoomPreviewer } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
-import { GetRoomEngine, LocalizeText, UnseenItemCategory, attemptPetPlacement } from '../../../../api';
+import { attemptPetPlacement, GetRoomEngine, LocalizeText, UnseenItemCategory } from '../../../../api';
 import { AutoGrid, Button, Column, Grid, LayoutRoomPreviewerView, Text } from '../../../../common';
 import { useInventoryPets, useInventoryUnseenTracker } from '../../../../hooks';
-import { InventoryCategoryEmptyViewPets } from '../InventoryCategoryEmptyViewPets';
+import { InventoryCategoryEmptyView } from '../InventoryCategoryEmptyView';
 import { InventoryPetItemView } from './InventoryPetItemView';
 
 interface InventoryPetViewProps
 {
     roomSession: IRoomSession;
     roomPreviewer: RoomPreviewer;
-	isTrading: boolean;
 }
 
 export const InventoryPetView: FC<InventoryPetViewProps> = props =>
 {
-    const { roomSession = null, roomPreviewer = null, isTrading = false } = props;
+    const { roomSession = null, roomPreviewer = null } = props;
     const [ isVisible, setIsVisible ] = useState(false);
     const { petItems = null, selectedPet = null, activate = null, deactivate = null } = useInventoryPets();
     const { isUnseen = null, removeUnseen = null } = useInventoryUnseenTracker();
@@ -64,7 +63,7 @@ export const InventoryPetView: FC<InventoryPetViewProps> = props =>
         return () => setIsVisible(false);
     }, []);
 
-    if(!petItems || !petItems.length) return <InventoryCategoryEmptyViewPets title={ LocalizeText('inventory.empty.pets.title') } desc={ LocalizeText('inventory.empty.pets.desc') } isTrading={ isTrading } />;
+    if(!petItems || !petItems.length) return <InventoryCategoryEmptyView title={ LocalizeText('inventory.empty.pets.title') } desc={ LocalizeText('inventory.empty.pets.desc') } />;
 
     return (
         <Grid>
@@ -81,7 +80,7 @@ export const InventoryPetView: FC<InventoryPetViewProps> = props =>
                     <Column grow justifyContent="between" gap={ 2 }>
                         <Text grow truncate>{ selectedPet.petData.name }</Text>
                         { !!roomSession &&
-                            <Button variant="success" onClick={ event => attemptPetPlacement(selectedPet) }>
+                            <Button onClick={ event => attemptPetPlacement(selectedPet) }>
                                 { LocalizeText('inventory.furni.placetoroom') }
                             </Button> }
                     </Column> }
