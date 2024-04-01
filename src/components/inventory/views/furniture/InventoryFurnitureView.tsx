@@ -16,6 +16,11 @@ interface InventoryFurnitureViewProps
     roomPreviewer: RoomPreviewer;
 }
 
+const FILTER_TYPE_EVERYTHING = 'inventory.filter.option.everything';
+const FILTER_TYPE_FLOOR = 'inventory.furni.tab.floor';
+const FILTER_TYPE_WALL = 'inventory.furni.tab.wall';
+const FILTER_TYPE_WIRED = 'inventory.furni.tab.wired';
+
 const attemptPlaceMarketplaceOffer = (groupItem: GroupItem) =>
 {
     const item = groupItem.getLastItem();
@@ -43,6 +48,32 @@ export const InventoryFurnitureView: FC<InventoryFurnitureViewProps> = props =>
     const [ filteredGroupItems, setFilteredGroupItems ] = useState<GroupItem[]>([]);
     const { groupItems = [], selectedItem = null, activate = null, deactivate = null } = useInventoryFurni();
     const { resetItems = null } = useInventoryUnseenTracker();
+	const [ filterType = string, setFilterType ] = useState(FILTER_TYPE_EVERYTHING);
+	
+	useEffect(() => 
+    {
+        const filteredItems = groupItems.filter(item => 
+        {
+            const isWallItem = item.isWallItem;
+            const isFloorItem = !isWallItem;
+            const isWiredItem = item.name.startsWith('WIRED');
+
+            switch (filterType) 
+            {
+                case FILTER_TYPE_WALL:
+                    return isWallItem;
+                case FILTER_TYPE_FLOOR:
+                    return isFloorItem;
+                case FILTER_TYPE_WIRED:
+                    return isWiredItem;
+                case FILTER_TYPE_EVERYTHING:
+                default:
+                    return true;
+            }
+        });
+
+        setFilteredGroupItems(filteredItems);
+    }, [ groupItems, filterType ]);
 
     useEffect(() =>
     {
@@ -125,6 +156,11 @@ export const InventoryFurnitureView: FC<InventoryFurnitureViewProps> = props =>
         <Grid>
             <Column size={ 7 } overflow="hidden">
                 <InventoryFurnitureSearchView groupItems={ groupItems } setGroupItems={ setFilteredGroupItems } />
+                <select className="form-select form-select-sm" value={ filterType } onChange={ e => setFilterType(e.target.value) }>
+                    { [ FILTER_TYPE_EVERYTHING, FILTER_TYPE_FLOOR, FILTER_TYPE_WALL, FILTER_TYPE_WIRED ].map(type => (
+                        <option key={ type } value={ type }>{ LocalizeText(type) }</option>
+                    )) }
+                </select>
                 <AutoGrid columnCount={ 5 }>
                     { filteredGroupItems && (filteredGroupItems.length > 0) && filteredGroupItems.map((item, index) => <InventoryFurnitureItemView key={ index } groupItem={ item } />) }
                 </AutoGrid>
