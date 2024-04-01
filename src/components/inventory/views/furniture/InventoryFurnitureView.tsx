@@ -4,6 +4,7 @@ import { attemptItemPlacement, DispatchUiEvent, FurniCategory, GetRoomEngine, Ge
 import { AutoGrid, Button, Column, Grid, LayoutLimitedEditionCompactPlateView, LayoutRarityLevelView, LayoutRoomPreviewerView, Text } from '../../../../common';
 import { CatalogPostMarketplaceOfferEvent } from '../../../../events';
 import { DeleteItemConfirmEvent } from '../../../../events';
+import { FaTrashAlt } from 'react-icons/fa';
 import { useInventoryFurni, useInventoryUnseenTracker } from '../../../../hooks';
 import { InventoryCategoryEmptyView } from '../InventoryCategoryEmptyView';
 import { InventoryFurnitureItemView } from './InventoryFurnitureItemView';
@@ -131,6 +132,11 @@ export const InventoryFurnitureView: FC<InventoryFurnitureViewProps> = props =>
             <Column size={ 5 } overflow="auto">
                 <Column overflow="hidden" position="relative">
                     <LayoutRoomPreviewerView roomPreviewer={ roomPreviewer } height={ 140 } />
+					{ selectedItem &&
+						<Button variant="danger" className="bottom-2 end-2" position="absolute" onClick={ event => attemptDeleteItem(selectedItem) }>
+							<FaTrashAlt className="fa-icon" />
+						</Button> 
+					}
                     { selectedItem && selectedItem.stuffData.isUnique &&
                         <LayoutLimitedEditionCompactPlateView className="top-2 end-2" position="absolute" uniqueNumber={ selectedItem.stuffData.uniqueNumber } uniqueSeries={ selectedItem.stuffData.uniqueSeries } /> }
                     { (selectedItem && selectedItem.stuffData.rarityLevel > -1) &&
@@ -147,10 +153,6 @@ export const InventoryFurnitureView: FC<InventoryFurnitureViewProps> = props =>
                             { (selectedItem && selectedItem.isSellable) &&
                                 <Button onClick={ event => attemptPlaceMarketplaceOffer(selectedItem) }>
                                     { LocalizeText('inventory.marketplace.sell') }
-                                </Button> }
-                            { selectedItem &&
-                                <Button variant="danger" onClick={ event => attemptDeleteItem(selectedItem) }>
-                                    { LocalizeText('inventory.furni.delete') }
                                 </Button> }
                         </Column>
                     </Column> }
