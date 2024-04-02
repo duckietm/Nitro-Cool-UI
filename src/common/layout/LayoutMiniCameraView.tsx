@@ -6,7 +6,7 @@ import { DraggableWindow } from '../draggable-window';
 interface LayoutMiniCameraViewProps
 {
     roomId: number;
-    textureReceiver: (texture: NitroTexture) => void;
+    textureReceiver: (texture: NitroTexture) => Promise<void>;
     onClose: () => void;
 }
 
