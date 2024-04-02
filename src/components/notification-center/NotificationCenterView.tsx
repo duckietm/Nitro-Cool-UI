@@ -67,7 +67,7 @@ export const NotificationCenterView: FC<{}> = props =>
 
     return (
         <>
-            <Column gap={ 1 } className="topnotifications">
+            <Column gap={ 1 }>
                 { getBubbleAlerts }
             </Column>
             { getConfirms }

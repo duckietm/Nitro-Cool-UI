@@ -1,7 +1,8 @@
 import { FC, useState } from 'react';
 import { FaCaretLeft, FaCaretRight } from 'react-icons/fa';
+import ReactSlider from 'react-slider';
 import { LocalizeText } from '../../../api';
-import { Column, Flex, LayoutGridItem, Slider, Text } from '../../../common';
+import { Column, Flex, LayoutGridItem, Text } from '../../../common';
 import { COLORMAP, FloorAction } from '../common/Constants';
 import { FloorplanEditor } from '../common/FloorplanEditor';
 import { useFloorplanEditorContext } from '../FloorplanEditorContext';
@@ -156,7 +157,8 @@ export const FloorplanOptionsView: FC<{}> = props =>
             <Flex gap={ 1 }>
                 <Column size={ 6 }>
                     <Text bold>{ LocalizeText('floor.plan.editor.tile.height') }: { floorHeight }</Text>
-                    <Slider
+                    <ReactSlider
+                        className="nitro-slider"
                         min={ MIN_FLOOR_HEIGHT }
                         max={ MAX_FLOOR_HEIGHT }
                         step={ 1 }

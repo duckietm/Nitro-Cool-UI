@@ -1,18 +1,17 @@
-import { ILinkEventTracker } from '@nitrots/nitro-renderer';
+import { AddLinkEventTracker, ILinkEventTracker, RemoveLinkEventTracker } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
-import { AddEventLinkTracker, ChatEntryType, LocalizeText, RemoveLinkEventTracker } from '../../api';
+import { ChatEntryType, LocalizeText } from '../../api';
 import { Flex, InfiniteScroll, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../common';
-import { useChatHistory, useOnClickChat } from '../../hooks';
+import { useChatHistory } from '../../hooks';
 
 export const ChatHistoryView: FC<{}> = props =>
 {
-    const { chatHistory = [] } = useChatHistory();
     const [ isVisible, setIsVisible ] = useState(false);
-	const { onClickChat = null } = useOnClickChat();
     const [ searchText, setSearchText ] = useState<string>('');
+    const { chatHistory = [] } = useChatHistory();
     const elementRef = useRef<HTMLDivElement>(null);
 
-    const filteredChatHistory = useMemo(() =>
+    const filteredChatHistory = useMemo(() => 
     {
         if (searchText.length === 0) return chatHistory;
 
@@ -51,7 +50,7 @@ export const ChatHistoryView: FC<{}> = props =>
             eventUrlPrefix: 'chat-history/'
         };
 
-        AddEventLinkTracker(linkTracker);
+        AddLinkEventTracker(linkTracker);
 
         return () => RemoveLinkEventTracker(linkTracker);
     }, []);
@@ -79,7 +78,7 @@ export const ChatHistoryView: FC<{}> = props =>
                                         </div>
                                         <div className="chat-content">
                                             <b className="username mr-1" dangerouslySetInnerHTML={ { __html: `${ row.name }: ` } } />
-                                            <span className="message" dangerouslySetInnerHTML={ { __html: `${ row.message }` } } onClick={ e => onClickChat(e) }/>
+                                            <span className="message" dangerouslySetInnerHTML={ { __html: `${ row.message }` } } />
                                         </div>
                                     </div>
                                 </div> }

@@ -1,7 +1,8 @@
 import { FC, useEffect, useState } from 'react';
 import { FaPlus, FaTrash } from 'react-icons/fa';
+import ReactSlider from 'react-slider';
 import { LocalizeText, WiredFurniType } from '../../../../api';
-import { Button, Column, Flex, Slider, Text } from '../../../../common';
+import { Button, Column, Flex, Text } from '../../../../common';
 import { useWired } from '../../../../hooks';
 import { WiredActionBaseView } from './WiredActionBaseView';
 
@@ -101,7 +102,8 @@ export const WiredActionGiveRewardView: FC<{}> = props =>
                     Reward limit not set. Make sure rewards are badges or non-tradeable items.
                 </Text> }
             { limitEnabled &&
-                <Slider
+                <ReactSlider
+                    className={ 'nitro-slider' }
                     min={ 1 }
                     max={ 1000 }
                     value={ rewardsLimit }

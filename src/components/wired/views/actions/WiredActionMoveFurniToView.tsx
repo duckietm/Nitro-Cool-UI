@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from 'react';
 import ReactSlider from 'react-slider';
 import { LocalizeText, WiredFurniType } from '../../../../api';
-import { Column, Flex, Slider, Text } from '../../../../common';
+import { Column, Flex, Text } from '../../../../common';
 import { useWired } from '../../../../hooks';
 import { WiredActionBaseView } from './WiredActionBaseView';
 
@@ -50,7 +50,8 @@ export const WiredActionMoveFurniToView: FC<{}> = props =>
         <WiredActionBaseView requiresFurni={ WiredFurniType.STUFF_SELECTION_OPTION_BY_ID_OR_BY_TYPE } hasSpecialInput={ true } save={ save }>
             <Column gap={ 1 }>
                 <Text bold>{ LocalizeText('wiredfurni.params.emptytiles', [ 'tiles' ], [ spacing.toString() ]) }</Text>
-                <Slider
+                <ReactSlider
+                    className={ 'nitro-slider' }
                     min={ 1 }
                     max={ 5 }
                     value={ spacing }

@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'react';
-import { AvatarEditorGridPartItem, GetConfiguration } from '../../../../api';
+import { AvatarEditorGridPartItem, GetConfigurationValue } from '../../../../api';
 import { LayoutCurrencyIcon, LayoutGridItem, LayoutGridItemProps } from '../../../../common';
 import { AvatarEditorIcon } from '../AvatarEditorIcon';
 
@@ -13,7 +13,7 @@ export const AvatarEditorFigureSetItemView: FC<AvatarEditorFigureSetItemViewProp
     const { partItem = null, children = null, ...rest } = props;
     const [ updateId, setUpdateId ] = useState(-1);
 
-    const hcDisabled = GetConfiguration<boolean>('hc.disabled', false);
+    const hcDisabled = GetConfigurationValue<boolean>('hc.disabled', false);
 
     useEffect(() =>
     {
@@ -25,13 +25,11 @@ export const AvatarEditorFigureSetItemView: FC<AvatarEditorFigureSetItemViewProp
     }, [ partItem ]);
 
     return (
-        <div className="avatar-container">
-            <LayoutGridItem className={ `avatar-parts ${ partItem.isSelected ? 'part-selected' : '' }` } itemImage={ (partItem.isClear ? undefined : partItem.imageUrl) } { ...rest }>
-                { !hcDisabled && partItem.isHC && <i className="icon hc-icon position-absolute" /> }
-                { partItem.isClear && <AvatarEditorIcon icon="clear" /> }
-                { partItem.isSellable && <AvatarEditorIcon icon="sellable" position="absolute" className="end-1 bottom-1" /> }
-                { children }
-            </LayoutGridItem>
-        </div>
+        <LayoutGridItem itemImage={ (partItem.isClear ? undefined : partItem.imageUrl) } itemActive={ partItem.isSelected } { ...rest }>
+            { !hcDisabled && partItem.isHC && <LayoutCurrencyIcon className="position-absolute end-1 bottom-1" type="hc" /> }
+            { partItem.isClear && <AvatarEditorIcon icon="clear" /> }
+            { partItem.isSellable && <AvatarEditorIcon icon="sellable" position="absolute" className="end-1 bottom-1" /> }
+            { children }
+        </LayoutGridItem>
     );
 }

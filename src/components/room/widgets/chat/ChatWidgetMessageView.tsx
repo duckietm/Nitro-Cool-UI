@@ -1,21 +1,19 @@
-import { RoomChatSettings, RoomObjectCategory } from '@nitrots/nitro-renderer';
+import { GetRoomEngine, RoomChatSettings, RoomObjectCategory } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
-import { ChatBubbleMessage, GetRoomEngine } from '../../../../api';
-import { useOnClickChat } from '../../../../hooks';
+import { ChatBubbleMessage } from '../../../../api';
 
 interface ChatWidgetMessageViewProps
 {
     chat: ChatBubbleMessage;
     makeRoom: (chat: ChatBubbleMessage) => void;
     bubbleWidth?: number;
-	selectedEmoji?: string;
 }
 
-export const ChatWidgetMessageView: FC<ChatWidgetMessageViewProps> = props => {
-    const { chat = null, makeRoom = null, bubbleWidth = RoomChatSettings.CHAT_BUBBLE_WIDTH_NORMAL, selectedEmoji } = props;
+export const ChatWidgetMessageView: FC<ChatWidgetMessageViewProps> = props =>
+{
+    const { chat = null, makeRoom = null, bubbleWidth = RoomChatSettings.CHAT_BUBBLE_WIDTH_NORMAL } = props;
     const [ isVisible, setIsVisible ] = useState(false);
     const [ isReady, setIsReady ] = useState<boolean>(false);
-    const { onClickChat = null } = useOnClickChat();
     const elementRef = useRef<HTMLDivElement>();
 
     const getBubbleWidth = useMemo(() =>
@@ -78,9 +76,8 @@ export const ChatWidgetMessageView: FC<ChatWidgetMessageViewProps> = props => {
     }, [ chat, isReady, isVisible, makeRoom ]);
 
     return (
-        <div ref={elementRef} className={`bubble-container newbubblehe ${isVisible ? 'visible' : 'invisible'}`} onClick={event => GetRoomEngine().selectRoomObject(chat.roomId, chat.senderId, RoomObjectCategory.UNIT)}>
-            {selectedEmoji && <span>{DOMPurify.sanitize(selectedEmoji)}</span>}
-			{ (chat.styleId === 0) &&
+        <div ref={ elementRef } className={ `bubble-container ${ isVisible ? 'visible' : 'invisible' }` } onClick={ event => GetRoomEngine().selectRoomObject(chat.roomId, chat.senderId, RoomObjectCategory.UNIT) }>
+            { (chat.styleId === 0) &&
                 <div className="user-container-bg" style={ { backgroundColor: chat.color } } /> }
             <div className={ `chat-bubble bubble-${ chat.styleId } type-${ chat.type }` } style={ { maxWidth: getBubbleWidth } }>
                 <div className="user-container">
@@ -89,7 +86,7 @@ export const ChatWidgetMessageView: FC<ChatWidgetMessageViewProps> = props => {
                 </div>
                 <div className="chat-content">
                     <b className="username mr-1" dangerouslySetInnerHTML={ { __html: `${ chat.username }: ` } } />
-                     <span className="message" style={{ color: chat.chatColours }} dangerouslySetInnerHTML={{ __html: `${chat.formattedText}` }} onClick={e => onClickChat(e)} />
+                    <span className="message" dangerouslySetInnerHTML={ { __html: `${ chat.formattedText }` } } />
                 </div>
                 <div className="pointer" />
             </div>

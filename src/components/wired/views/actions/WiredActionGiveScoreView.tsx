@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from 'react';
 import ReactSlider from 'react-slider';
 import { LocalizeText, WiredFurniType } from '../../../../api';
-import { Column, Slider, Text } from '../../../../common';
+import { Column, Text } from '../../../../common';
 import { useWired } from '../../../../hooks';
 import { WiredActionBaseView } from './WiredActionBaseView';
 
@@ -31,7 +31,8 @@ export const WiredActionGiveScoreView: FC<{}> = props =>
         <WiredActionBaseView requiresFurni={ WiredFurniType.STUFF_SELECTION_OPTION_NONE } hasSpecialInput={ true } save={ save }>
             <Column gap={ 1 }>
                 <Text bold>{ LocalizeText('wiredfurni.params.setpoints', [ 'points' ], [ points.toString() ]) }</Text>
-                <Slider
+                <ReactSlider
+                    className={ 'nitro-slider' }
                     min={ 1 }
                     max={ 100 }
                     value={ points }
@@ -39,7 +40,8 @@ export const WiredActionGiveScoreView: FC<{}> = props =>
             </Column>
             <Column gap={ 1 }>
                 <Text bold>{ LocalizeText('wiredfurni.params.settimesingame', [ 'times' ], [ time.toString() ]) }</Text>
-                <Slider
+                <ReactSlider
+                    className={ 'nitro-slider' }
                     min={ 1 }
                     max={ 10 }
                     value={ time }

@@ -1,8 +1,8 @@
-import { InitCameraMessageEvent, IRoomCameraWidgetEffect, RequestCameraConfigurationComposer, RoomCameraWidgetManagerEvent } from '@nitrots/nitro-renderer';
+import { GetRoomCameraWidgetManager, InitCameraMessageEvent, IRoomCameraWidgetEffect, RequestCameraConfigurationComposer, RoomCameraWidgetManagerEvent } from '@nitrots/nitro-renderer';
 import { useEffect, useState } from 'react';
 import { useBetween } from 'use-between';
-import { CameraPicture, GetRoomCameraWidgetManager, SendMessageComposer } from '../../api';
-import { useCameraEvent, useMessageEvent } from '../events';
+import { CameraPicture, SendMessageComposer } from '../../api';
+import { useMessageEvent, useNitroEvent } from '../events';
 
 const useCameraState = () =>
 {
@@ -12,7 +12,7 @@ const useCameraState = () =>
     const [ myLevel, setMyLevel ] = useState(10);
     const [ price, setPrice ] = useState<{ credits: number, duckets: number, publishDucketPrice: number }>(null);
 
-    useCameraEvent<RoomCameraWidgetManagerEvent>(RoomCameraWidgetManagerEvent.INITIALIZED, event =>
+    useNitroEvent<RoomCameraWidgetManagerEvent>(RoomCameraWidgetManagerEvent.INITIALIZED, event =>
     {
         setAvailableEffects(Array.from(GetRoomCameraWidgetManager().effects.values()));
     });

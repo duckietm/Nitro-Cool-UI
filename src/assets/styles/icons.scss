@@ -192,68 +192,7 @@
         width: 17px;
         height: 19px;
     }
-    &.chatstickers-icon {
-        background-image: url('@/assets/images/chat/stickers-icon.png');
-        width: 22px;
-        height: 22px;
-    }
 
-    &.sticker-icon {
-        background-image: url('@/assets/images/chat/sticker.png');
-        width: 22px;
-        height: 22px;
-        margin-left: 5px;
-    }
-    &.icon-room-history-back-enabled {
-        background-image: url('@/assets/images/icons/room-history-back-enabled.png');
-        width: 34px;
-        height: 36px;
-    }
-    &.icon-room-history-back-disabled {
-        background-image: url('@/assets/images/icons/room-history-back-disabled.png');
-        width: 34px;
-        height: 36px;
-    }
-
-    &.icon-room-history-enabled {
-        background-image: url('@/assets/images/icons/room-history-enabled.png');
-        width: 33px;
-        height: 35px;
-    }
-
-    &.icon-room-history-disabled {
-        background-image: url('@/assets/images/icons/room-history-disabled.png');
-        width: 33px;
-        height: 35px;
-    }
-
-    &.icon-room-history-next-enabled {
-        background-image: url('@/assets/images/icons/room-history-next-enabled.png');
-        width: 34px;
-        height: 38px;
-    }
-
-    &.icon-room-history-next-disabled {
-        background-image: url('@/assets/images/icons/room-history-next-disabled.png');
-        width: 34px;
-        height: 38px;
-    }
-    &.icon-bawtool {
-        background: url('@/assets/images/icons/builderstool.png');
-        width: 20px;
-        height: 22px;
-    }
-    &.icon-chat-enablebubble {
-        background: url('@/assets/images/icons/enablebubble.png');
-        width: 17px;
-        height: 21px;
-    }
-
-    &.icon-chat-disablebubble {
-        background: url('@/assets/images/icons/disablebubble.png');
-        width: 17px;
-        height: 21px;
-    }
     &.pencil-icon {
         background-image: url('@/assets/images/infostand/pencil-icon.png');
         width: 17px;
@@ -674,64 +613,6 @@
         height: 19px;
     }
 
-    &.chatmicrophone-on-icon {
-        background-image: url('@/assets/images/chat/microphone-on.png');
-        width: 22px;
-        height: 22px;
-        cursor: pointer;
-    }
-
-    &.chatmicrophone-off-icon {
-        background-image: url('@/assets/images/chat/microphone-off.png');
-        width: 22px;
-        height: 22px;
-        cursor: pointer;
-    }
-    &.chatdeleteaudio-icon {
-        background-image: url('@/assets/images/chat/deleteaudio.png');
-        width: 22px;
-        height: 22px;
-        cursor: pointer;
-    }
-    &.chatmicrophoneConsoe-on-icon {
-        background-image: url('@/assets/images/chat/microphone-on.png');
-        width: 22px;
-        height: 22px;
-        cursor: pointer;
-    }
-
-    &.chatmicrophoneConsoe-off-icon {
-        background-image: url('@/assets/images/chat/microphone-off.png');
-        width: 22px;
-        height: 22px;
-        cursor: pointer;
-    }
-    &.chatdeleteAudioConsola-icon {
-        background-image: url('@/assets/images/chat/deleteaudio.png');
-        width: 22px;
-        height: 22px;
-        cursor: pointer;
-    }
-    &.chatmas-icon {
-        background-image: url('@/assets/images/chat/mas.png');
-        width: 22px;
-        height: 27px;
-        background-position: center;
-        float: right;
-        cursor: pointer;
-        margin-right: 39px;
-        margin-top: 1px;
-        position: absolute;
-        z-index: 999999;
-        right: -26px;
-    }
-    &.chatequis-icon {
-        background-image: url('@/assets/images/chat/equis.png');
-        width: 22px;
-        height: 22px;
-        margin-left: 3px;
-        cursor: pointer;
-    }
     &.spin {
         animation: rotating 1s linear infinite;
     }

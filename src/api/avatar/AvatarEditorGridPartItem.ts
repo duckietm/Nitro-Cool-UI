@@ -1,10 +1,9 @@
-import { AvatarFigurePartType, IAvatarImageListener, IAvatarRenderManager, IFigurePart, IFigurePartSet, IGraphicAsset, IPartColor, NitroAlphaFilter, NitroContainer, NitroSprite, TextureUtils } from '@nitrots/nitro-renderer';
-import { GetAvatarRenderManager } from '../nitro';
+import { AvatarFigurePartType, GetAvatarRenderManager, IAvatarImageListener, IAvatarRenderManager, IFigurePart, IFigurePartSet, IGraphicAsset, IPartColor, NitroAlphaFilter, NitroContainer, NitroSprite, TextureUtils } from '@nitrots/nitro-renderer';
 import { FigureData } from './FigureData';
 
 export class AvatarEditorGridPartItem implements IAvatarImageListener
 {
-    private static ALPHA_FILTER: NitroAlphaFilter = new NitroAlphaFilter(0.2);
+    private static ALPHA_FILTER: NitroAlphaFilter = new NitroAlphaFilter({ alpha: 0.2 });
     private static THUMB_DIRECTIONS: number[] = [ 2, 6, 0, 4, 3, 1 ];
     private static DRAW_ORDER: string[] = [
         AvatarFigurePartType.LEFT_HAND_ITEM,
@@ -189,7 +188,7 @@ export class AvatarEditorGridPartItem implements IAvatarImageListener
         return container;
     }
 
-    private updateThumbVisualization(): void
+    private async updateThumbVisualization(): Promise<void>
     {
         if(!this._isInitalized) return;
 
@@ -212,7 +211,7 @@ export class AvatarEditorGridPartItem implements IAvatarImageListener
 
         if(this._isDisabled) this.setAlpha(container, 0.2);
 
-        this._imageUrl = TextureUtils.generateImageUrl(container);
+        this._imageUrl = await TextureUtils.generateImageUrl(container);
         
         if(this.notify) this.notify();
     }

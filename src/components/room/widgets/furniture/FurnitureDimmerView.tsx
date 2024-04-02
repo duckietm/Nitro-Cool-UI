@@ -1,9 +1,9 @@
 import { RoomEngineTriggerWidgetEvent } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useMemo, useState } from 'react';
 import ReactSlider from 'react-slider';
-import { ColorUtils, FurnitureDimmerUtilities, GetConfiguration, LocalizeText } from '../../../../api';
-import { Base, Button, classNames, Column, Flex, Grid, NitroCardContentView, NitroCardHeaderView, NitroCardTabsItemView, NitroCardTabsView, NitroCardView, Slider, Text } from '../../../../common';
-import { useFurnitureDimmerWidget, useRoomEngineEvent } from '../../../../hooks';
+import { ColorUtils, FurnitureDimmerUtilities, GetConfigurationValue, LocalizeText } from '../../../../api';
+import { Base, Button, Column, Flex, Grid, NitroCardContentView, NitroCardHeaderView, NitroCardTabsItemView, NitroCardTabsView, NitroCardView, Text, classNames } from '../../../../common';
+import { useFurnitureDimmerWidget, useNitroEvent } from '../../../../hooks';
 
 export const FurnitureDimmerView: FC<{}> = props =>
 {
@@ -17,7 +17,7 @@ export const FurnitureDimmerView: FC<{}> = props =>
         setIsVisible(false);
     }
 
-    useRoomEngineEvent<RoomEngineTriggerWidgetEvent>(RoomEngineTriggerWidgetEvent.REMOVE_DIMMER, event => setIsVisible(false));
+    useNitroEvent<RoomEngineTriggerWidgetEvent>(RoomEngineTriggerWidgetEvent.REMOVE_DIMMER, event => setIsVisible(false));
 
     useEffect(() =>
     {
@@ -26,7 +26,7 @@ export const FurnitureDimmerView: FC<{}> = props =>
         setIsVisible(true);
     }, [ presets ]);
 
-    const isFreeColorMode = useMemo(() => GetConfiguration<boolean>('widget.dimmer.colorwheel', false), []);
+    const isFreeColorMode = useMemo(() => GetConfigurationValue<boolean>('widget.dimmer.colorwheel', false), []);
 
     if(!isVisible) return null;
 
@@ -62,7 +62,8 @@ export const FurnitureDimmerView: FC<{}> = props =>
                         </Column>
                         <Column gap={ 1 }>
                             <Text fontWeight="bold">{ LocalizeText('widget.backgroundcolor.lightness') }</Text>
-                            <Slider
+                            <ReactSlider
+                                className="nitro-slider"
                                 min={ FurnitureDimmerUtilities.MIN_BRIGHTNESS }
                                 max={ FurnitureDimmerUtilities.MAX_BRIGHTNESS }
                                 value={ selectedBrightness }

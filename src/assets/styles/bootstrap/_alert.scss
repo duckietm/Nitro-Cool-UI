@@ -1,7 +1,7 @@
-@use 'sass:math';
 //
 // Base styles
 //
+@use 'sass:math';
 
 .alert {
   position: relative;
@@ -22,6 +22,7 @@
   font-weight: $alert-link-font-weight;
 }
 
+
 // Dismissible alerts
 //
 // Expand the right padding and account for the close button's positioning.
@@ -38,6 +39,7 @@
     padding: $alert-padding-y * 1.25 $alert-padding-x;
   }
 }
+
 
 // scss-docs-start alert-modifiers
 // Generate contextual modifier classes for colorizing the alert.

@@ -1,13 +1,8 @@
 $nitro-card-header-height: 33px;
-$nitro-card-tabs-height: 42px;
+$nitro-card-tabs-height: 33px;
 
 .nitro-card {
     resize: both;
-    padding: 0.5rem;
-    background: #ededed;
-    border-radius: 0.75rem!important;
-    border: 2px solid #454566!important;
-    box-shadow: 0 0 0 1pt #fff!important;
 
     @include media-breakpoint-down(lg) {
         max-width: 100vw !important;
@@ -18,14 +13,9 @@ $nitro-card-tabs-height: 42px;
         border: $border-width solid $border-color;
 
         .nitro-card-header {
-            min-height: 28px;
-            max-height: 28px;
-            width: 100%;
-            padding: 1rem;
-            border-radius: 0.5rem;
-            background: #454566;
-            border: 2px solid #66669b;
-            margin-bottom: 0.25rem;
+            min-height: 33px;
+            max-height: 33px;
+            background: $primary;
 
             .nitro-card-header-text {
                 color: $white;
@@ -81,21 +71,19 @@ $nitro-card-tabs-height: 42px;
         }
 
         .nitro-card-tabs {
-            background-color: #ededed;
+            background-color: $secondary;
 
             .nav-item {
-                padding: 0.2rem 0.4rem;
-                background-color: #dedede;
-                color: #000;
+                padding: $nav-link-padding-y $nav-link-padding-x;
+                background-color: $muted;
+                color: $black;
                 z-index: 1;
-                box-shadow: 0 0 0 1pt #fff !important;
-                border: 2px solid #454566!important;
-                border-radius: 0.5rem;
-                border-top-left-radius: 0.5rem !important;
-                border-top-right-radius: 0.5rem !important;
+                margin-bottom: -1px;
 
                 &.active {
-                    background-color: #e1e5ff;
+                    background-color: $light;
+                    border-color: $border-color $border-color $light !important;
+                    border-bottom: 1px solid black;
 
                     &:before {
                         background: $white;
@@ -119,7 +107,7 @@ $nitro-card-tabs-height: 42px;
         }
 
         .content-area {
-            background-color: #ededed;
+            background-color: $light;
         }
     }
 
@@ -130,12 +118,22 @@ $nitro-card-tabs-height: 42px;
             position: relative;
             min-height: 28px;
             max-height: 28px;
+            background: repeating-linear-gradient($tertiary, $tertiary 50%, $quaternary 50%, $quaternary 100%);
+            border-bottom: 2px solid darken($quaternary, 5);
+            box-shadow: 0 2px white;
             width: 100%;
-            padding: 1rem;
-            border-radius: 0.5rem;
-            background: #454566;
-            border: 2px solid #66669b;
-            margin-bottom: 0.25rem;
+            margin: 0;
+            padding-top:2px;
+
+            &:before {
+                position: absolute;
+                content: ' ';
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 2px;
+                background-color: rgba($white, 0.3);
+            }
 
             .nitro-card-header-text {
                 color: $white;
@@ -199,7 +197,7 @@ $nitro-card-tabs-height: 42px;
         }
 
         .content-area {
-            background-color: #ededed;
+            background-color: $light;
         }
     }
 }
@@ -232,6 +230,7 @@ $nitro-card-tabs-height: 42px;
     height: 100%;
     min-height: $nitro-card-tabs-height;
     max-height: $nitro-card-tabs-height;
+    border-bottom: $nav-tabs-border-width solid $nav-tabs-border-color;
 }
 
 .nitro-card-accordion-set {

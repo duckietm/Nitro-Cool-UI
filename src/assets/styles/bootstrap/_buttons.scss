@@ -16,12 +16,7 @@
   user-select: none;
   background-color: transparent;
   border: $btn-border-width solid transparent;
-  @include button-size(
-    $btn-padding-y,
-    $btn-padding-x,
-    $btn-font-size,
-    $btn-border-radius
-  );
+  @include button-size($btn-padding-y, $btn-padding-x, $btn-font-size, $btn-border-radius);
   @include transition($btn-transition);
 
   &:hover {
@@ -55,6 +50,7 @@
   }
 }
 
+
 //
 // Alternate buttons
 //
@@ -72,6 +68,7 @@
   }
 }
 // scss-docs-end btn-variant-loops
+
 
 //
 // Link buttons
@@ -105,131 +102,15 @@
   // No need for an active state here
 }
 
+
 //
 // Button Sizes
 //
 
-.btn-toggle {
-  border-image-source: url("@/assets/images/buttons/toggle_bg.png");
-  border-image-slice: 6 6 6 6 fill;
-  border-image-width: 6px 6px 6px 6px;
-  cursor: pointer;
-
-  .toggle-icon {
-    background-repeat: no-repeat;
-    width: 6px;
-    height: 8px;
-
-    &.left {
-      background-image: url("@/assets/images/buttons/toggle_left.png");
-    }
-
-    &.right {
-      background-image: url("@/assets/images/buttons/toggle_right.png");
-    }
-  }
-}
-
-.infostand-buttons {
-  border-image-source: url(@/assets/images/room/infostand_buttons.png);
-  border-image-slice: 3 3 3 3 fill;
-  border-image-width: 3px 3px 3px 3px;
-  font-size: 9px;
-  color: #ffffff;
-  height: 25px;
-  margin-top: 5px;
-
-  &:hover {
-    border-image-source: url(@/assets/images/room/infostand_buttons_hover.png);
-  }
-
-  &:active {
-    border-image-source: url(@/assets/images/room/infostand_buttons_active.png);
-  }
-}
-
-.volter-bold-button {
-  border-image-source: url(@/assets/images/buttons/volter_bold_btn.png);
-  border-image-slice: 6 6 6 6 fill;
-  border-image-width: 6px 6px 6px 6px;
-  font-size: 9px;
-  height: 20px;
-  margin-top: 5px;
-
-  &:hover {
-    border-image-source: url(@/assets/images/buttons/volter_bold_btn_hover.png);
-  }
-
-  &:active {
-    border-image-source: url(@/assets/images/buttons/volter_bold_btn_active.png);
-  }
-}
-
-.volter-button {
-  border-image-source: url(@/assets/images/buttons/volter_normal_btn.png);
-  border-image-slice: 4 4 4 4 fill;
-  border-image-width: 4px 4px 4px 4px;
-  font-size: 9px;
-  height: 20px;
-  margin-top: 5px;
-
-  &:hover {
-    border-image-source: url(@/assets/images/buttons/volter_normal_btn_hover.png);
-  }
-
-  &:active {
-    border-image-source: url(@/assets/images/buttons/volter_normal_btn_active.png);
-  }
-  &.active {
-    border-image-source: url(@/assets/images/buttons/volter_normal_btn_active.png);
-  }
-}
-
-.notification-buttons {
-  border-image-source: url(@/assets/images/room/infostand_buttons.png);
-  border-image-slice: 3 3 3 3 fill;
-  border-image-width: 3px 3px 3px 3px;
-  color: #ffffff;
-  height: 25px;
-  font-size: 13px;
-  padding: 0;
-  border-radius: 13px;
-
-  &:hover {
-    border-image-source: url(@/assets/images/room/infostand_buttons_hover.png);
-  }
-
-  &:active {
-    border-image-source: url(@/assets/images/room/infostand_buttons_active.png);
-  }
-}
-
-.notification-text-link {
-  font-size: 13px;
-}
-
-.gift-color-btn {
-  outline: 1px solid #000;
-  border: 3px solid #fff;
-  min-height: 22px;
-  min-width: 23px;
-
-}
-
 .btn-lg {
-  @include button-size(
-    $btn-padding-y-lg,
-    $btn-padding-x-lg,
-    $btn-font-size-lg,
-    $btn-border-radius-lg
-  );
+  @include button-size($btn-padding-y-lg, $btn-padding-x-lg, $btn-font-size-lg, $btn-border-radius-lg);
 }
 
 .btn-sm {
-  @include button-size(
-    $btn-padding-y-sm,
-    $btn-padding-x-sm,
-    $btn-font-size-sm,
-    $btn-border-radius-sm
-  );
+  @include button-size($btn-padding-y-sm, $btn-padding-x-sm, $btn-font-size-sm, $btn-border-radius-sm);
 }

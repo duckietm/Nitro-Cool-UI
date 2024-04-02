@@ -6,7 +6,6 @@
     font-size: $font-size-sm;
     z-index: $context-menu-zindex;
     pointer-events: all;
-    border-radius: 10px;
 
     &.bot-chat {
         max-width: 250px;
@@ -54,7 +53,6 @@
         max-height: 25px;
         font-size: 16px;
         margin-bottom: 2px;
-        border-radius: 7px 7px 2px 2px;
     }
 
     &.menu-hidden {

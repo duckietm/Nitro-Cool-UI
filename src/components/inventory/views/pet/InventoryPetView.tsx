@@ -1,6 +1,6 @@
-import { IRoomSession, RoomObjectVariable, RoomPreviewer } from '@nitrots/nitro-renderer';
+import { GetRoomEngine, IRoomSession, RoomObjectVariable, RoomPreviewer } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
-import { attemptPetPlacement, GetRoomEngine, LocalizeText, UnseenItemCategory } from '../../../../api';
+import { LocalizeText, UnseenItemCategory, attemptPetPlacement } from '../../../../api';
 import { AutoGrid, Button, Column, Grid, LayoutRoomPreviewerView, Text } from '../../../../common';
 import { useInventoryPets, useInventoryUnseenTracker } from '../../../../hooks';
 import { InventoryCategoryEmptyView } from '../InventoryCategoryEmptyView';
@@ -78,7 +78,7 @@ export const InventoryPetView: FC<InventoryPetViewProps> = props =>
                 </Column>
                 { selectedPet && selectedPet.petData &&
                     <Column grow justifyContent="between" gap={ 2 }>
-                        <Text grow>{ selectedPet.petData.name }</Text>
+                        <Text grow truncate>{ selectedPet.petData.name }</Text>
                         { !!roomSession &&
                             <Button variant="success" onClick={ event => attemptPetPlacement(selectedPet) }>
                                 { LocalizeText('inventory.furni.placetoroom') }

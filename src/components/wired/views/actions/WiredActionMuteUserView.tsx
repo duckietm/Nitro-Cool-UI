@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from 'react';
 import ReactSlider from 'react-slider';
-import { GetConfiguration, LocalizeText, WiredFurniType } from '../../../../api';
-import { Column, Slider, Text } from '../../../../common';
+import { GetConfigurationValue, LocalizeText, WiredFurniType } from '../../../../api';
+import { Column, Text } from '../../../../common';
 import { useWired } from '../../../../hooks';
 import { WiredActionBaseView } from './WiredActionBaseView';
 
@@ -27,7 +27,8 @@ export const WiredActionMuteUserView: FC<{}> = props =>
         <WiredActionBaseView requiresFurni={ WiredFurniType.STUFF_SELECTION_OPTION_NONE } hasSpecialInput={ true } save={ save }>
             <Column gap={ 1 }>
                 <Text bold>{ LocalizeText('wiredfurni.params.length.minutes', [ 'minutes' ], [ time.toString() ]) }</Text>
-                <Slider
+                <ReactSlider
+                    className={ 'nitro-slider' }
                     min={ 1 }
                     max={ 10 }
                     value={ time }
@@ -35,7 +36,7 @@ export const WiredActionMuteUserView: FC<{}> = props =>
             </Column>
             <Column gap={ 1 }>
                 <Text bold>{ LocalizeText('wiredfurni.params.message') }</Text>
-                <input type="text" className="form-control form-control-sm" value={ message } onChange={ event => setMessage(event.target.value) } maxLength={ GetConfiguration<number>('wired.action.mute.user.max.length', 100) } />
+                <input type="text" className="form-control form-control-sm" value={ message } onChange={ event => setMessage(event.target.value) } maxLength={ GetConfigurationValue<number>('wired.action.mute.user.max.length', 100) } />
             </Column>
         </WiredActionBaseView>
     );

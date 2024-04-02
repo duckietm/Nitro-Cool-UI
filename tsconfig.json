@@ -2,7 +2,11 @@
   "compilerOptions": {
     "baseUrl": "./src",
     "target": "es6",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -18,5 +22,8 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
-  "include": ["src", "submodules/pro-renderer/src/**/*.ts"]
+  "include": [
+    "src",
+    "node_modules/@nitrots/nitro-renderer/src/**/*.ts",
+  ]
 }

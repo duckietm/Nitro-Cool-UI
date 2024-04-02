@@ -1,6 +1,5 @@
-import { IPetCustomPart, PetFigureData, TextureUtils, Vector3d } from '@nitrots/nitro-renderer';
+import { GetRoomEngine, IPetCustomPart, PetFigureData, TextureUtils, Vector3d } from '@nitrots/nitro-renderer';
 import { CSSProperties, FC, useEffect, useMemo, useRef, useState } from 'react';
-import { GetRoomEngine } from '../../api';
 import { Base, BaseProps } from '../Base';
 
 interface LayoutPetImageViewProps extends BaseProps<HTMLDivElement>
@@ -68,7 +67,7 @@ export const LayoutPetImageView: FC<LayoutPetImageViewProps> = props =>
         if(petTypeId === 16) petHeadOnly = false;
 
         const imageResult = GetRoomEngine().getRoomObjectPetImage(petTypeId, petPaletteId, petColor1, new Vector3d((direction * 45)), 64, {
-            imageReady: (id, texture, image) =>
+            imageReady: async (id, texture, image) =>
             {
                 if(isDisposed.current) return;
 
@@ -81,7 +80,7 @@ export const LayoutPetImageView: FC<LayoutPetImageViewProps> = props =>
 
                 else if(texture)
                 {
-                    setPetUrl(TextureUtils.generateImageUrl(texture));
+                    setPetUrl(await TextureUtils.generateImageUrl(texture));
                     setWidth(texture.width);
                     setHeight(texture.height);
                 }
@@ -94,14 +93,17 @@ export const LayoutPetImageView: FC<LayoutPetImageViewProps> = props =>
 
         if(imageResult)
         {
-            const image = imageResult.getImage();
-
-            if(image)
+            (async () =>
             {
-                setPetUrl(image.src);
-                setWidth(image.width);
-                setHeight(image.height);
-            }
+                const image = await imageResult.getImage();
+
+                if(image)
+                {
+                    setPetUrl(image.src);
+                    setWidth(image.width);
+                    setHeight(image.height);
+                }
+            })();
         }
     }, [ figure, typeId, paletteId, petColor, customParts, posture, headOnly, direction ]);
 

@@ -1,8 +1,9 @@
-import { CrackableDataType, GroupInformationComposer, GroupInformationEvent, NowPlayingEvent, RoomControllerLevel, RoomObjectCategory, RoomObjectOperationType, RoomObjectVariable, RoomWidgetEnumItemExtradataParameter, RoomWidgetFurniInfoUsagePolicyEnum, SetObjectDataMessageComposer, SongInfoReceivedEvent, StringDataType } from '@nitrots/nitro-renderer';
+import { CrackableDataType, CreateLinkEvent, GetRoomEngine, GetSoundManager, GroupInformationComposer, GroupInformationEvent, NowPlayingEvent, RoomControllerLevel, RoomObjectCategory, RoomObjectOperationType, RoomObjectVariable, RoomWidgetEnumItemExtradataParameter, RoomWidgetFurniInfoUsagePolicyEnum, SetObjectDataMessageComposer, SongInfoReceivedEvent, StringDataType } from '@nitrots/nitro-renderer';
 import { FC, useCallback, useEffect, useState } from 'react';
-import { AvatarInfoFurni, CreateLinkEvent, GetGroupInformation, GetNitroInstance, GetRoomEngine, LocalizeText, SendMessageComposer } from '../../../../../api';
-import { Base, Button, Column, Flex, LayoutBadgeImageView, LayoutLimitedEditionCompactPlateView, LayoutRarityLevelView, Text, UserProfileIconView } from '../../../../../common';
-import { useMessageEvent, useRoom, useSoundEvent } from '../../../../../hooks';
+import { FaTimes } from 'react-icons/fa';
+import { AvatarInfoFurni, GetGroupInformation, LocalizeText, SendMessageComposer } from '../../../../../api';
+import { Base, Button, Column, Flex, LayoutBadgeImageView, LayoutLimitedEditionCompactPlateView, LayoutRarityLevelView, LayoutRoomObjectImageView, Text, UserProfileIconView } from '../../../../../common';
+import { useMessageEvent, useNitroEvent, useRoom } from '../../../../../hooks';
 
 interface InfoStandWidgetFurniViewProps
 {
@@ -18,7 +19,7 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
 {
     const { avatarInfo = null, onClose = null } = props;
     const { roomSession = null } = useRoom();
-
+    
     const [ pickupMode, setPickupMode ] = useState(0);
     const [ canMove, setCanMove ] = useState(false);
     const [ canRotate, setCanRotate ] = useState(false);
@@ -38,18 +39,17 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
     const [ songId, setSongId ] = useState<number>(-1);
     const [ songName, setSongName ] = useState<string>('');
     const [ songCreator, setSongCreator ] = useState<string>('');
-	const [itemLocation, setItemLocation] = useState<{ x: number; y: number; z: number; }>({ x: -1, y: -1, z: -1 });
 
-    useSoundEvent<NowPlayingEvent>(NowPlayingEvent.NPE_SONG_CHANGED, event =>
+    useNitroEvent<NowPlayingEvent>(NowPlayingEvent.NPE_SONG_CHANGED, event =>
     {
         setSongId(event.id);
     }, (isJukeBox || isSongDisk));
 
-    useSoundEvent<NowPlayingEvent>(SongInfoReceivedEvent.SIR_TRAX_SONG_INFO_RECEIVED, event =>
+    useNitroEvent<NowPlayingEvent>(SongInfoReceivedEvent.SIR_TRAX_SONG_INFO_RECEIVED, event =>
     {
         if(event.id !== songId) return;
-
-        const songInfo = GetNitroInstance().soundManager.musicController.getSongInfo(event.id);
+        
+        const songInfo = GetSoundManager().musicController.getSongInfo(event.id);
 
         if(!songInfo) return;
 
@@ -75,13 +75,7 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
         let furniIsJukebox = false;
         let furniIsSongDisk = false;
         let furniSongId = -1;
-		
-		const roomObject = GetRoomEngine().getRoomObject( roomSession.roomId, avatarInfo.id, avatarInfo.isWallItem ? RoomObjectCategory.WALL : RoomObjectCategory.FLOOR );
-		const location = roomObject.getLocation();
-		if (location) {
-			setItemLocation({ x: location.x, y: location.y, z: location.z, });
-		}
-
+        
         const isValidController = (avatarInfo.roomControllerLevel >= RoomControllerLevel.GUEST);
 
         if(isValidController || avatarInfo.isOwner || avatarInfo.isRoomOwner || avatarInfo.isAnyRoomController)
@@ -96,7 +90,7 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
         {
             canSeeFurniId = true;
         }
-
+        
         if((((avatarInfo.usagePolicy === RoomWidgetFurniInfoUsagePolicyEnum.EVERYBODY) || ((avatarInfo.usagePolicy === RoomWidgetFurniInfoUsagePolicyEnum.CONTROLLER) && isValidController)) || ((avatarInfo.extraParam === RoomWidgetEnumItemExtradataParameter.JUKEBOX) && isValidController)) || ((avatarInfo.extraParam === RoomWidgetEnumItemExtradataParameter.USABLE_PRODUCT) && isValidController)) canUse = true;
 
         if(avatarInfo.extraParam)
@@ -113,11 +107,11 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
 
             else if(avatarInfo.extraParam === RoomWidgetEnumItemExtradataParameter.JUKEBOX)
             {
-                const playlist = GetNitroInstance().soundManager.musicController.getRoomItemPlaylist();
+                const playlist = GetSoundManager().musicController.getRoomItemPlaylist();
 
                 if(playlist)
                 {
-                    furniSongId = playlist.nowPlayingSongId;
+                    furniSongId = playlist.currentSongId;
                 }
 
                 furniIsJukebox = true;
@@ -126,7 +120,7 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
             else if(avatarInfo.extraParam.indexOf(RoomWidgetEnumItemExtradataParameter.SONGDISK) === 0)
             {
                 furniSongId = parseInt(avatarInfo.extraParam.substr(RoomWidgetEnumItemExtradataParameter.SONGDISK.length));
-
+                
                 furniIsSongDisk = true;
             }
 
@@ -195,7 +189,7 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
         setIsJukeBox(furniIsJukebox);
         setIsSongDisk(furniIsSongDisk);
         setSongId(furniSongId);
-
+        
         if(avatarInfo.groupId) SendMessageComposer(new GroupInformationComposer(avatarInfo.groupId, false));
     }, [ roomSession, avatarInfo ]);
 
@@ -212,7 +206,7 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
 
     useEffect(() =>
     {
-        const songInfo = GetNitroInstance().soundManager.musicController.getSongInfo(songId);
+        const songInfo = GetSoundManager().musicController.getSongInfo(songId);
 
         setSongName(songInfo?.name ?? '');
         setSongCreator(songInfo?.creator ?? '');
@@ -296,7 +290,7 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
                     for(const part of dataParts)
                     {
                         const [ key, value ] = part.split('=', 2);
-
+                        
                         mapData.set(key, value);
                     }
                 }
@@ -334,13 +328,12 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
 
     return (
         <Column gap={ 1 } alignItems="end">
-            <Column className="nitro-infostand">
+            <Column className="nitro-infostand rounded">
                 <Column overflow="visible" className="container-fluid content-area" gap={ 1 }>
                     <Column gap={ 1 }>
                         <Flex alignItems="center" justifyContent="between" gap={ 1 }>
-                            { !(isSongDisk) && <Text variant="white" wrap>{ avatarInfo.name }</Text> }
-                            { (songName.length > 0) && <Text variant="white" wrap>{ songName }</Text> }
-                            <i className="infostand-close" onClick={ onClose } />
+                            <Text variant="white" small wrap>{ avatarInfo.name }</Text>
+                            <FaTimes className="cursor-pointer fa-icon" onClick={ onClose } />
                         </Flex>
                         <hr className="m-0" />
                     </Column>
@@ -354,27 +347,28 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
                                 <div className="position-absolute end-0">
                                     <LayoutRarityLevelView level={ avatarInfo.stuffData.rarityLevel } />
                                 </div> }
-                            { avatarInfo.image && avatarInfo.image.src.length &&
-                                <img className="d-block mx-auto" src={ avatarInfo.image.src } alt="" /> }
+                            <Flex fullWidth center>
+                                <LayoutRoomObjectImageView roomId={ roomSession.roomId } objectId={ avatarInfo.id } category={ avatarInfo.category } />
+                            </Flex>
                         </Flex>
                         <hr className="m-0" />
                     </Column>
                     <Column gap={ 1 }>
-                        <Text fullWidth wrap textBreak variant="white">{ avatarInfo.description }</Text>
+                        <Text fullWidth wrap textBreak variant="white" small>{ avatarInfo.description }</Text>
                         <hr className="m-0" />
                     </Column>
                     <Column gap={ 1 }>
                         <Flex alignItems="center" gap={ 1 }>
                             <UserProfileIconView userId={ avatarInfo.ownerId } />
-                            <Text variant="white" wrap>
+                            <Text variant="white" small wrap>
                                 { LocalizeText('furni.owner', [ 'name' ], [ avatarInfo.ownerName ]) }
                             </Text>
                         </Flex>
                         { (avatarInfo.purchaseOfferId > 0) &&
                             <Flex>
-                                <Button className="volter-button text-black" onClick={ event => processButtonAction('buy_one') }>
+                                <Text variant="white" small underline pointer onClick={ event => processButtonAction('buy_one') }>
                                     { LocalizeText('infostand.button.buy') }
-                                </Button>
+                                </Text>
                             </Flex> }
                     </Column>
                     { (isJukeBox || isSongDisk) &&
@@ -403,7 +397,7 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
                         { isCrackable &&
                             <>
                                 <hr className="m-0" />
-                                <Text variant="white" wrap>{ LocalizeText('infostand.crackable_furni.hits_remaining', [ 'hits', 'target' ], [ crackableHits.toString(), crackableTarget.toString() ]) }</Text>
+                                <Text variant="white" small wrap>{ LocalizeText('infostand.crackable_furni.hits_remaining', [ 'hits', 'target' ], [ crackableHits.toString(), crackableTarget.toString() ]) }</Text>
                             </> }
                         { avatarInfo.groupId > 0 &&
                             <>
@@ -413,18 +407,10 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
                                     <Text variant="white" underline>{ groupName }</Text>
                                 </Flex>
                             </> }
-							<>
-								<hr className="m-0" />
-								<Text small wrap variant="white">
-								X = {itemLocation.x}  and  Y = {itemLocation.y}<br />
-								BuildHeight = {itemLocation.z < 0.01 ? 0 : itemLocation.z}<br />
-								{ canSeeFurniId && <Text wrap variant="white"> Room Furnishing ID: { avatarInfo.id }</Text> }
-							</Text>
-							</>
-							{itemLocation.x > -1}
                         { godMode &&
                             <>
                                 <hr className="m-0" />
+                                { canSeeFurniId && <Text small wrap variant="white">ID: { avatarInfo.id }</Text> }
                                 { (furniKeys.length > 0) &&
                                     <>
                                         <hr className="m-0"/>
@@ -433,7 +419,7 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
                                             {
                                                 return (
                                                     <Flex key={ index } alignItems="center" gap={ 1 }>
-                                                        <Text wrap align="end" variant="white" className="col-4">{ key }</Text>
+                                                        <Text small wrap align="end" variant="white" className="col-4">{ key }</Text>
                                                         <input type="text" className="form-control form-control-sm" value={ furniValues[index] } onChange={ event => onFurniSettingChange(index, event.target.value) }/>
                                                     </Flex>);
                                             }) }
@@ -457,29 +443,29 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
                     </Column>
                 </Column>
             </Column>
-            <Flex gap={ 2 } justifyContent="end">
+            <Flex gap={ 1 } justifyContent="end">
                 { canMove &&
-                    <Button className="infostand-buttons px-2" onClick={ event => processButtonAction('move') }>
+                    <Button variant="dark" onClick={ event => processButtonAction('move') }>
                         { LocalizeText('infostand.button.move') }
                     </Button> }
                 { canRotate &&
-                    <Button className="infostand-buttons px-2" onClick={ event => processButtonAction('rotate') }>
+                    <Button variant="dark" onClick={ event => processButtonAction('rotate') }>
                         { LocalizeText('infostand.button.rotate') }
                     </Button> }
                 { (pickupMode !== PICKUP_MODE_NONE) &&
-                    <Button className="infostand-buttons px-2" onClick={ event => processButtonAction('pickup') }>
+                    <Button variant="dark" onClick={ event => processButtonAction('pickup') }>
                         { LocalizeText((pickupMode === PICKUP_MODE_EJECT) ? 'infostand.button.eject' : 'infostand.button.pickup') }
                     </Button> }
                 { canUse &&
-                    <Button className="infostand-buttons px-2" onClick={ event => processButtonAction('use') }>
+                    <Button variant="dark" onClick={ event => processButtonAction('use') }>
                         { LocalizeText('infostand.button.use') }
                     </Button> }
                 { ((furniKeys.length > 0 && furniValues.length > 0) && (furniKeys.length === furniValues.length)) &&
-                    <Button className="infostand-buttons px-2" onClick={ () => processButtonAction('save_branding_configuration') }>
+                    <Button variant="dark" onClick={ () => processButtonAction('save_branding_configuration') }>
                         { LocalizeText('save') }
                     </Button> }
                 { ((customKeys.length > 0 && customValues.length > 0) && (customKeys.length === customValues.length)) &&
-                    <Button className="infostand-buttons px-2" onClick={ () => processButtonAction('save_custom_variables') }>
+                    <Button variant="dark" onClick={ () => processButtonAction('save_custom_variables') }>
                         { LocalizeText('save') }
                     </Button> }
             </Flex>

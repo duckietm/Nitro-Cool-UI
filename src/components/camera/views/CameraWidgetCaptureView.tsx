@@ -1,7 +1,7 @@
-import { NitroRectangle, TextureUtils } from '@nitrots/nitro-renderer';
+import { GetRoomEngine, NitroRectangle, TextureUtils } from '@nitrots/nitro-renderer';
 import { FC, useRef } from 'react';
 import { FaTimes } from 'react-icons/fa';
-import { CameraPicture, GetRoomEngine, GetRoomSession, LocalizeText, PlaySound, SoundNames } from '../../../api';
+import { CameraPicture, GetRoomSession, LocalizeText, PlaySound, SoundNames } from '../../../api';
 import { Column, DraggableWindow, Flex } from '../../../common';
 import { useCamera, useNotification } from '../../../hooks';
 
@@ -32,7 +32,7 @@ export const CameraWidgetCaptureView: FC<CameraWidgetCaptureViewProps> = props =
         return new NitroRectangle(Math.floor(frameBounds.x), Math.floor(frameBounds.y), Math.floor(frameBounds.width), Math.floor(frameBounds.height));
     }
 
-    const takePicture = () =>
+    const takePicture = async () =>
     {
         if(selectedPictureIndex > -1)
         {
@@ -52,7 +52,7 @@ export const CameraWidgetCaptureView: FC<CameraWidgetCaptureViewProps> = props =
         }
 
         PlaySound(SoundNames.CAMERA_SHUTTER);
-        clone.push(new CameraPicture(texture, TextureUtils.generateImageUrl(texture)));
+        clone.push(new CameraPicture(texture, await TextureUtils.generateImageUrl(texture)));
 
         setCameraRoll(clone);
     }

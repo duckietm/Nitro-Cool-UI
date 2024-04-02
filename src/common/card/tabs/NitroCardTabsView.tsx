@@ -7,7 +7,7 @@ export const NitroCardTabsView: FC<FlexProps> = props =>
 
     const getClassNames = useMemo(() =>
     {
-        const newClassNames: string[] = [ 'container-fluid', 'nitro-card-tabs', 'pt-1', 'position-relative' ];
+        const newClassNames: string[] = [ 'container-fluid', 'nitro-card-tabs', 'pt-1' ];
 
         if(classNames.length) newClassNames.push(...classNames);
 

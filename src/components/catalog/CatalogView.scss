@@ -55,7 +55,7 @@
 
     .layout-grid-item {
         font-size: $font-size-sm;
-        height: 27px !important;
+        height: 23px !important;
         border-color: unset !important;
         background-color: #cdd3d9;
         border: 0 !important;
@@ -153,9 +153,6 @@
             background-color: #ebf4ff;
         }
     }
-}
-.blackselectiongen{
-    color: #222;
 }
 
 @import './views/targeted-offer/Offer.scss';

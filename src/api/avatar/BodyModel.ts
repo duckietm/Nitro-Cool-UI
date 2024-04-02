@@ -1,5 +1,4 @@
-import { AvatarEditorFigureCategory, AvatarScaleType, AvatarSetType } from '@nitrots/nitro-renderer';
-import { GetAvatarRenderManager } from '../nitro';
+import { AvatarEditorFigureCategory, AvatarScaleType, AvatarSetType, GetAvatarRenderManager } from '@nitrots/nitro-renderer';
 import { AvatarEditorUtilities } from './AvatarEditorUtilities';
 import { CategoryBaseModel } from './CategoryBaseModel';
 import { FigureData } from './FigureData';
@@ -48,7 +47,7 @@ export class BodyModel extends CategoryBaseModel
                 const figureString = AvatarEditorUtilities.CURRENT_FIGURE.getFigureStringWithFace(part.id);
                 const avatarImage = GetAvatarRenderManager().createAvatarImage(figureString, AvatarScaleType.LARGE, null, { resetFigure, dispose: null, disposed: false });
     
-                const sprite = avatarImage.getImageAsSprite(AvatarSetType.HEAD);
+                const sprite = avatarImage.processAsContainer(AvatarSetType.HEAD);
     
                 if(sprite)
                 {

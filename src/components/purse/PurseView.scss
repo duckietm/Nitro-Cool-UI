@@ -3,54 +3,24 @@
     pointer-events: all;
 
     .nitro-purse {
-        margin-top: 4px;
-
+        background-color: rgba($dark, 0.95);
+        box-shadow: inset 0px 5px lighten(rgba($dark, 0.6), 2.5), inset 0 -4px darken(rgba($dark, 0.6), 4);
+    
         .nitro-purse-subscription {
             background-color: rgba($light, 0.1);
         }
     
         .nitro-purse-button {
             padding: 3px 2px;
-        }
-        .coffecurrencybutton{
-            border-radius: 0.5rem !important;
-            background-color: #b69b83;
-            border: 2px solid hsla(0deg, 0%, 100%, 0.5);
-            margin-bottom: 3px;
-            padding: 0px !important;
-            width: 30px;
-        }
-        .borderhccontent{
-            background-color: #212131;
-            border-radius: 0.5rem!important;
-            border: 2px solid #383853;
-            height: calc(100% - 3px);
-        }
-        .nitro-purse-button.currency--1 {
-            background: #e8b125;
-            border: 2px solid #f4d892;
-        }
-        .nitro-purse-button.currency-0 {
-            background: #c364c1;
-            border: 2px solid #e1b2e0;
-        }
-        .nitro-purse-button.currency-5 {
-            background: #6bafaa;
-            border: 2px solid #b5d7d5;
-        }
-        .allcurrencypurse{
-            border-radius: 7px!important;
-            margin-bottom: 5px;
+    
+            &:hover {
+                background-color: rgba($light, 0.1);
+            }
         }
     }
 
     .nitro-purse-seasonal-currency {
-        background-color: #212131;
-        box-shadow: inset 0 5px rgba(38,38,57,.6), inset 0 -4px rgba(25,25,37,.6);
-        margin-bottom: 6px;
-        margin-top: -6px;
+        background-color: rgba($dark, .95);
+        box-shadow: inset 0px 5px lighten(rgba($dark, .6),2.5), inset 0 -4px darken(rgba($dark, .6), 4);
     }
-}
-.topcurrencygen{
-    margin-top: 2px;
 }

@@ -1,7 +1,7 @@
-import { GiftReceiverNotFoundEvent, PurchaseFromCatalogAsGiftComposer } from '@nitrots/nitro-renderer';
+import { GetSessionDataManager, GiftReceiverNotFoundEvent, PurchaseFromCatalogAsGiftComposer } from '@nitrots/nitro-renderer';
 import { ChangeEvent, FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-import { ColorUtils, GetSessionDataManager, LocalizeText, MessengerFriend, ProductTypeEnum, SendMessageComposer } from '../../../../api';
+import { ColorUtils, LocalizeText, MessengerFriend, ProductTypeEnum, SendMessageComposer } from '../../../../api';
 import { Base, Button, ButtonGroup, Column, Flex, FormGroup, LayoutCurrencyIcon, LayoutFurniImageView, LayoutGiftTagView, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text, classNames } from '../../../../common';
 import { CatalogEvent, CatalogInitGiftEvent, CatalogPurchasedEvent } from '../../../../events';
 import { useCatalog, useFriends, useMessageEvent, useUiEvent } from '../../../../hooks';
@@ -22,7 +22,7 @@ export const CatalogGiftView: FC<{}> = props =>
     const [ maxBoxIndex, setMaxBoxIndex ] = useState<number>(0);
     const [ maxRibbonIndex, setMaxRibbonIndex ] = useState<number>(0);
     const [ receiverNotFound, setReceiverNotFound ] = useState<boolean>(false);
-    const { catalogOptions = null, getNodesByOfferId = null } = useCatalog();
+    const { catalogOptions = null } = useCatalog();
     const { friends } = useFriends();
     const { giftConfiguration = null } = catalogOptions;
     const [ boxTypes, setBoxTypes ] = useState<number[]>([]);
@@ -121,19 +121,10 @@ export const CatalogGiftView: FC<{}> = props =>
                     return;
                 }
 
-                let buyPageId = pageId
-
-                if(buyPageId === -1)
-                {
-                    const nodes = getNodesByOfferId(offerId);
-
-                    if(nodes) buyPageId = nodes[0].pageId;
-                }
-
-                SendMessageComposer(new PurchaseFromCatalogAsGiftComposer(buyPageId, offerId, extraData, receiverName, message, colourId, selectedBoxIndex, selectedRibbonIndex, showMyFace));
+                SendMessageComposer(new PurchaseFromCatalogAsGiftComposer(pageId, offerId, extraData, receiverName, message, colourId , selectedBoxIndex, selectedRibbonIndex, showMyFace));
                 return;
         }
-    }, [ colourId, extraData, maxBoxIndex, maxRibbonIndex, message, offerId, pageId, receiverName, selectedBoxIndex, selectedRibbonIndex, showMyFace, getNodesByOfferId ]);
+    }, [ colourId, extraData, maxBoxIndex, maxRibbonIndex, message, offerId, pageId, receiverName, selectedBoxIndex, selectedRibbonIndex, showMyFace ]);
 
     useMessageEvent<GiftReceiverNotFoundEvent>(GiftReceiverNotFoundEvent, event => setReceiverNotFound(true));
 
@@ -193,8 +184,7 @@ export const CatalogGiftView: FC<{}> = props =>
 
             if(!giftData) continue;
 
-            if (giftData.colors && giftData.colors.length > 0) newColors.push({ id: colorId, color: ColorUtils.makeColorNumberHex(giftData.colors[0]) });
-            else newColors.push({ id: colorId, color: '#000000' });
+            if(giftData.colors && giftData.colors.length > 0) newColors.push({ id: colorId, color: ColorUtils.makeColorNumberHex(giftData.colors[0]) });
         }
 
         createBoxTypes();

@@ -1,7 +1,7 @@
-import { AvatarExpressionEnum, GetTicker, HabboClubLevelEnum, RoomControllerLevel, RoomEngineObjectEvent, RoomObjectCategory, RoomRotatingEffect, RoomSessionChatEvent, RoomSettingsComposer, RoomShakingEffect, RoomZoomEvent, TextureUtils } from '@nitrots/nitro-renderer';
+import { AvatarExpressionEnum, CreateLinkEvent, GetEventDispatcher, GetRoomEngine, GetSessionDataManager, GetTicker, HabboClubLevelEnum, RoomControllerLevel, RoomEngineObjectEvent, RoomObjectCategory, RoomRotatingEffect, RoomSessionChatEvent, RoomSettingsComposer, RoomShakingEffect, RoomZoomEvent, TextureUtils } from '@nitrots/nitro-renderer';
 import { useEffect, useState } from 'react';
-import { ChatMessageTypeEnum, CreateLinkEvent, GetClubMemberLevel, GetConfiguration, GetRoomEngine, GetSessionDataManager, LocalizeText, SendMessageComposer } from '../../../api';
-import { useRoomEngineEvent, useRoomSessionManagerEvent } from '../../events';
+import { ChatMessageTypeEnum, GetClubMemberLevel, GetConfigurationValue, LocalizeText, SendMessageComposer } from '../../../api';
+import { useNitroEvent } from '../../events';
 import { useNotification } from '../../notification';
 import { useObjectSelectedEvent } from '../engine';
 import { useRoom } from '../useRoom';
@@ -17,7 +17,7 @@ const useChatInputWidgetState = () =>
     const { showNitroAlert = null, showConfirm = null } = useNotification();
     const { roomSession = null } = useRoom();
 
-    const sendChat = (text: string, chatType: number, recipientName: string = '', styleId: number = 0, chatColour: string = '') =>
+    const sendChat = (text: string, chatType: number, recipientName: string = '', styleId: number = 0) =>
     {
         if(text === '') return null;
 
@@ -104,32 +104,25 @@ const useChatInputWidgetState = () =>
                     return null;
                 case ':iddqd':
                 case ':flip':
-                    GetRoomEngine().events.dispatchEvent(new RoomZoomEvent(roomSession.roomId, -1, true));
+                    GetEventDispatcher().dispatchEvent(new RoomZoomEvent(roomSession.roomId, -1, true));
 
                     return null;
                 case ':zoom':
-					let requestedZoomLevel = parseFloat(secondPart);
-					if (isNaN(requestedZoomLevel)) {
-						requestedZoomLevel = 1;
-					}
-					if (requestedZoomLevel >= 1 && requestedZoomLevel <= 5) {
-						GetRoomEngine().events.dispatchEvent(new RoomZoomEvent(roomSession.roomId, requestedZoomLevel, false));
-					} else if (requestedZoomLevel === 0) {
-						GetRoomEngine().events.dispatchEvent(new RoomZoomEvent(roomSession.roomId, 1, false));
-					} else {
-						GetRoomEngine().events.dispatchEvent(new RoomZoomEvent(roomSession.roomId, 1, false));
-					}
+                    GetEventDispatcher().dispatchEvent(new RoomZoomEvent(roomSession.roomId, parseFloat(secondPart), false));
 
                     return null;
                 case ':screenshot':
                     const texture = GetRoomEngine().createTextureFromRoom(roomSession.roomId, 1);
 
-                    const image = new Image();
+                    (async () =>
+                    {
+                        const image = new Image();
                     
-                    image.src = TextureUtils.generateImageUrl(texture);
-                    
-                    const newWindow = window.open('');
-                    newWindow.document.write(image.outerHTML);
+                        image.src = await TextureUtils.generateImageUrl(texture);
+                        
+                        const newWindow = window.open('');
+                        newWindow.document.write(image.outerHTML);
+                    })();
                     return null;
                 case ':pickall':
                     if(roomSession.isRoomOwner || GetSessionDataManager().isModerator)
@@ -138,7 +131,7 @@ const useChatInputWidgetState = () =>
                         {
                             GetSessionDataManager().sendSpecialCommandMessage(':pickall');
                         },
-                        null, null, null, LocalizeText('generic.alert.title'), null, 'pickall');
+                        null, null, null, LocalizeText('generic.alert.title'));
                     }
 
                     return null;
@@ -165,7 +158,7 @@ const useChatInputWidgetState = () =>
                     return null;
                 case ':togglefps': {
                     if(GetTicker().maxFPS > 0) GetTicker().maxFPS = 0;
-                    else GetTicker().maxFPS = GetConfiguration('system.animation.fps');
+                    else GetTicker().maxFPS = GetConfigurationValue('system.animation.fps');
 
                     return null;
                 }
@@ -187,10 +180,10 @@ const useChatInputWidgetState = () =>
         switch(chatType)
         {
             case ChatMessageTypeEnum.CHAT_DEFAULT:
-                roomSession.sendChatMessage(text, styleId, chatColour);
+                roomSession.sendChatMessage(text, styleId);
                 break;
             case ChatMessageTypeEnum.CHAT_SHOUT:
-                roomSession.sendShoutMessage(text, styleId, chatColour);
+                roomSession.sendShoutMessage(text, styleId);
                 break;
             case ChatMessageTypeEnum.CHAT_WHISPER:
                 roomSession.sendWhisperMessage(recipientName, text, styleId);
@@ -198,7 +191,7 @@ const useChatInputWidgetState = () =>
         }
     }
 
-    useRoomSessionManagerEvent<RoomSessionChatEvent>(RoomSessionChatEvent.FLOOD_EVENT, event =>
+    useNitroEvent<RoomSessionChatEvent>(RoomSessionChatEvent.FLOOD_EVENT, event =>
     {
         setFloodBlocked(true);
         setFloodBlockedSeconds(parseFloat(event.message));
@@ -215,7 +208,7 @@ const useChatInputWidgetState = () =>
         setSelectedUsername(userData.name);
     });
 
-    useRoomEngineEvent<RoomEngineObjectEvent>(RoomEngineObjectEvent.DESELECTED, event => setSelectedUsername(''));
+    useNitroEvent<RoomEngineObjectEvent>(RoomEngineObjectEvent.DESELECTED, event => setSelectedUsername(''));
 
     useEffect(() =>
     {
@@ -223,7 +216,7 @@ const useChatInputWidgetState = () =>
 
         let seconds = 0;
 
-        const interval = window.setInterval(() =>
+        const interval = setInterval(() =>
         {
             setFloodBlockedSeconds(prevValue =>
             {

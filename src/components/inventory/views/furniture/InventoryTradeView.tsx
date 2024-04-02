@@ -206,7 +206,7 @@ export const InventoryTradeView: FC<InventoryTradeViewProps> = props =>
                                 <Button variant="secondary" disabled={ !groupItem } onClick={ event => changeCount(groupItem.getUnlockedCount()) }>{ LocalizeText('inventory.trading.areoffering') }</Button>
                             </Column>
                         </Grid>
-                        <Base fullWidth className="badge bg-muted text-black">
+                        <Base fullWidth className="badge bg-muted">
                             { groupItem ? groupItem.name : LocalizeText('catalog_selectproduct') }
                         </Base>
                     </Column>
@@ -236,7 +236,7 @@ export const InventoryTradeView: FC<InventoryTradeViewProps> = props =>
                                 );
                             }) }
                         </AutoGrid>
-                        <Base fullWidth className="badge bg-muted text-black">
+                        <Base fullWidth className="badge bg-muted">
                             { ownGroupItem ? ownGroupItem.name : LocalizeText('catalog_selectproduct') }
                         </Base>
                     </Column>
@@ -255,7 +255,7 @@ export const InventoryTradeView: FC<InventoryTradeViewProps> = props =>
                                 return <LayoutGridItem key={ i } itemActive={ (otherGroupItem === item) } itemImage={ item.iconUrl } itemCount={ item.getTotalCount() } itemUniqueNumber={ item.stuffData.uniqueNumber } onClick={ event => setOtherGroupItem(item) } />;
                             }) }
                         </AutoGrid>
-                        <Base fullWidth className="badge bg-muted w-100 text-black">
+                        <Base fullWidth className="badge bg-muted w-100">
                             { otherGroupItem ? otherGroupItem.name : LocalizeText('catalog_selectproduct') }
                         </Base>
                     </Column>
@@ -263,7 +263,7 @@ export const InventoryTradeView: FC<InventoryTradeViewProps> = props =>
                 <Flex grow justifyContent="between">
                     <Button variant="danger" onClick={ cancelTrade }>{ LocalizeText('generic.cancel') }</Button>
                     { (tradeState === TradeState.TRADING_STATE_READY) &&
-                        <Button variant="secondary" disabled={ (!ownUser.itemCount && !otherUser.itemCount) } className="text-black" onClick={ progressTrade }>{ LocalizeText('inventory.trading.accept') }</Button> }
+                        <Button variant="secondary" disabled={ (!ownUser.itemCount && !otherUser.itemCount) } onClick={ progressTrade }>{ LocalizeText('inventory.trading.accept') }</Button> }
                     { (tradeState === TradeState.TRADING_STATE_RUNNING) &&
                         <Button variant="secondary" disabled={ (!ownUser.itemCount && !otherUser.itemCount) } onClick={ progressTrade }>{ LocalizeText(ownUser.accepts ? 'inventory.trading.modify' : 'inventory.trading.accept') }</Button> }
                     { (tradeState === TradeState.TRADING_STATE_COUNTDOWN) &&

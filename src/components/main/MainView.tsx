@@ -1,9 +1,9 @@
-import { HabboWebTools, ILinkEventTracker, RoomSessionEvent } from '@nitrots/nitro-renderer';
+import { AddLinkEventTracker, GetCommunication, HabboWebTools, ILinkEventTracker, RemoveLinkEventTracker, RoomSessionEvent } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
-import { AddEventLinkTracker, GetCommunication, RemoveLinkEventTracker } from '../../api';
 import { Base, TransitionAnimation, TransitionAnimationTypes } from '../../common';
-import { useRoomSessionManagerEvent } from '../../hooks';
+import { useNitroEvent } from '../../hooks';
 import { AchievementsView } from '../achievements/AchievementsView';
+import { AvatarEditorNewView } from '../avatar-editor-new/AvatarEditorView';
 import { AvatarEditorView } from '../avatar-editor/AvatarEditorView';
 import { CameraWidgetView } from '../camera/CameraWidgetView';
 import { CampaignView } from '../campaign/CampaignView';
@@ -20,7 +20,6 @@ import { HotelView } from '../hotel-view/HotelView';
 import { InventoryView } from '../inventory/InventoryView';
 import { ModToolsView } from '../mod-tools/ModToolsView';
 import { NavigatorView } from '../navigator/NavigatorView';
-import { NitrobubbleHiddenView } from '../nitrobubblehidden/NitrobubbleHiddenView';
 import { NitropediaView } from '../nitropedia/NitropediaView';
 import { RightSideView } from '../right-side/RightSideView';
 import { RoomView } from '../room/RoomView';
@@ -28,21 +27,20 @@ import { ToolbarView } from '../toolbar/ToolbarView';
 import { UserProfileView } from '../user-profile/UserProfileView';
 import { UserSettingsView } from '../user-settings/UserSettingsView';
 import { WiredView } from '../wired/WiredView';
-import { YoutubeTvView } from '../youtube-tv/YoutubeTvView';
 
 export const MainView: FC<{}> = props =>
 {
     const [ isReady, setIsReady ] = useState(false);
     const [ landingViewVisible, setLandingViewVisible ] = useState(true);
 
-    useRoomSessionManagerEvent<RoomSessionEvent>(RoomSessionEvent.CREATED, event => setLandingViewVisible(false));
-    useRoomSessionManagerEvent<RoomSessionEvent>(RoomSessionEvent.ENDED, event => setLandingViewVisible(event.openLandingView));
+    useNitroEvent<RoomSessionEvent>(RoomSessionEvent.CREATED, event => setLandingViewVisible(false));
+    useNitroEvent<RoomSessionEvent>(RoomSessionEvent.ENDED, event => setLandingViewVisible(event.openLandingView));
 
     useEffect(() =>
     {
         setIsReady(true);
 
-        GetCommunication().connection.onReady();
+        GetCommunication().connection.ready();
     }, []);
 
     useEffect(() =>
@@ -76,7 +74,7 @@ export const MainView: FC<{}> = props =>
             eventUrlPrefix: 'habblet/'
         };
 
-        AddEventLinkTracker(linkTracker);
+        AddLinkEventTracker(linkTracker);
 
         return () => RemoveLinkEventTracker(linkTracker);
     }, []);
@@ -92,9 +90,9 @@ export const MainView: FC<{}> = props =>
             <ChatHistoryView />
             <WiredView />
             <AvatarEditorView />
+            <AvatarEditorNewView />
             <AchievementsView />
             <NavigatorView />
-            <NitrobubbleHiddenView />
             <InventoryView />
             <CatalogView />
             <FriendsView />
@@ -110,7 +108,6 @@ export const MainView: FC<{}> = props =>
             <CampaignView />
             <GameCenterView />
             <FloorplanEditorView />
-			<YoutubeTvView />
         </Base>
     );
 }
