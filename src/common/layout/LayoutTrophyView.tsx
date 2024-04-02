@@ -1,9 +1,6 @@
 import { FC } from 'react';
+import { Base, Column, Flex, Text } from '..';
 import { LocalizeText } from '../../api';
-import { Base } from '../Base';
-import { Column } from '../Column';
-import { Flex } from '../Flex';
-import { Text } from '../Text';
 import { DraggableWindow } from '../draggable-window';
 
 interface LayoutTrophyViewProps

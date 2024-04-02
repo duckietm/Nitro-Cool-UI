@@ -1,5 +1,5 @@
-import { GetRenderer, GetTicker, NitroTicker, RoomPreviewer, TextureUtils } from '@nitrots/nitro-renderer';
-import { FC, MouseEvent, ReactNode, useEffect, useRef } from 'react';
+import { ColorConverter, GetTicker, IRoomRenderingCanvas, RoomPreviewer, TextureUtils } from '@nitrots/nitro-renderer';
+import { FC, MouseEvent, ReactNode, useEffect, useRef, useState } from 'react';
 
 export interface LayoutRoomPreviewerViewProps
 {
@@ -11,6 +11,7 @@ export interface LayoutRoomPreviewerViewProps
 export const LayoutRoomPreviewerView: FC<LayoutRoomPreviewerViewProps> = props =>
 {
     const { roomPreviewer = null, height = 0, children = null } = props;
+    const [ renderingCanvas, setRenderingCanvas ] = useState<IRoomRenderingCanvas>(null);
     const elementRef = useRef<HTMLDivElement>();
 
     const onClick = (event: MouseEvent<HTMLDivElement>) =>
@@ -23,33 +24,44 @@ export const LayoutRoomPreviewerView: FC<LayoutRoomPreviewerViewProps> = props =
 
     useEffect(() =>
     {
-        if(!elementRef) return;
+        if(!roomPreviewer) return;
 
-        const width = elementRef.current.parentElement.clientWidth;
-        const texture = TextureUtils.createRenderTexture(width, height);
-
-        const update = async (ticker: NitroTicker) =>
+        const update = (time: number) =>
         {
-            if(!roomPreviewer || !elementRef.current) return;
+            if(!roomPreviewer || !renderingCanvas || !elementRef.current) return;
         
             roomPreviewer.updatePreviewRoomView();
 
-            const renderingCanvas = roomPreviewer.getRenderingCanvas();
-
             if(!renderingCanvas.canvasUpdated) return;
 
-            GetRenderer().render({
-                target: texture,
-                container: renderingCanvas.master,
-                clear: true
-            });
+            elementRef.current.style.backgroundImage = `url(${ TextureUtils.generateImageUrl(renderingCanvas.master) })`;
+        }
 
-            let canvas = GetRenderer().texture.generateCanvas(texture);
-            const base64 = canvas.toDataURL('image/png');
-    
-            canvas = null;
+        if(!renderingCanvas)
+        {
+            if(elementRef.current && roomPreviewer)
+            {
+                const computed = document.defaultView.getComputedStyle(elementRef.current, null);
 
-            elementRef.current.style.backgroundImage = `url(${ base64 })`;
+                let backgroundColor = computed.backgroundColor;
+
+                backgroundColor = ColorConverter.rgbStringToHex(backgroundColor);
+                backgroundColor = backgroundColor.replace('#', '0x');
+
+                roomPreviewer.backgroundColor = parseInt(backgroundColor, 16);
+
+                const width = elementRef.current.parentElement.clientWidth;
+                
+                roomPreviewer.getRoomCanvas(width, height);
+
+                const canvas = roomPreviewer.getRenderingCanvas();
+
+                setRenderingCanvas(canvas);
+
+                canvas.canvasUpdated = true;
+
+                update(-1);
+            }
         }
 
         GetTicker().add(update);
@@ -62,22 +74,19 @@ export const LayoutRoomPreviewerView: FC<LayoutRoomPreviewerViewProps> = props =
 
             roomPreviewer.modifyRoomCanvas(width, height);
 
-            update(GetTicker());
+            update(-1);
         });
-
-        roomPreviewer.getRoomCanvas(width, height);
         
         resizeObserver.observe(elementRef.current);
 
         return () =>
         {
-            GetTicker().remove(update);
-
             resizeObserver.disconnect();
 
-            texture.destroy(true);
+            GetTicker().remove(update);
         }
-    }, [ roomPreviewer, elementRef, height ]);
+
+    }, [ renderingCanvas, roomPreviewer, elementRef, height ]);
 
     return (
         <div className="room-preview-container">

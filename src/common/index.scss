@@ -280,8 +280,7 @@
     }
 }
 
-.furni-image,
-.room-object-image {
+.furni-image {
     position: relative;
     width: 100%;
     height: 100%;
@@ -531,12 +530,12 @@
 }
 
 .nitro-progress-bar {
-    border: 1px solid $white;
+    border: 1px solid #fff;
     padding: 2px;
-    height: 20px;
-    border-radius: $border-radius;
+    height: 25px;
+    border-radius: 1em;
     overflow: hidden;
-    background: $primary;
+    background: #212529;
 
     &.large {
         height: 30px;
@@ -546,11 +545,8 @@
         height: 100%;
         z-index: 1;
         transition: all 1s;
-        border-radius: calc(#{$border-radius} / 2);
-        background: repeating-linear-gradient($tertiary,
-                $tertiary 50%,
-                $quaternary 50%,
-                $quaternary 100%);
+        border-radius: 1em;
+        background: repeating-linear-gradient(#d6baa1,#d6baa1 50%,#b69b83 0,#b69b83);
     }
 
     .nitro-progress-bar-text {

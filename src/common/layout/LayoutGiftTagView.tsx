@@ -1,8 +1,6 @@
 import { FC } from 'react';
+import { Column, Flex, Text } from '..';
 import { LocalizeText } from '../../api';
-import { Column } from '../Column';
-import { Flex } from '../Flex';
-import { Text } from '../Text';
 import { LayoutAvatarImageView } from './LayoutAvatarImageView';
 
 interface LayoutGiftTagViewProps

@@ -45,7 +45,15 @@ export const LayoutFurniImageView: FC<LayoutFurniImageViewProps> = props =>
         let imageResult: ImageResult = null;
 
         const listener: IGetImageListener = {
-            imageReady: async (id, texture, image) => setImageElement(await TextureUtils.generateImage(texture)),
+            imageReady: (id, texture, image) =>
+            {
+                if(!image && texture)
+                {
+                    image = TextureUtils.generateImage(texture);
+                }
+
+                image.onload = () => setImageElement(image);
+            },
             imageFailed: null
         };
 
@@ -59,9 +67,12 @@ export const LayoutFurniImageView: FC<LayoutFurniImageViewProps> = props =>
                 break;
         }
 
-        if(!imageResult) return;
+        if(imageResult)
+        {
+            const image = imageResult.getImage();
 
-        (async () => setImageElement(await TextureUtils.generateImage(imageResult.data)))();
+            image.onload = () => setImageElement(image);
+        }
     }, [ productType, productClassId, direction, extraData ]);
 
     if(!imageElement) return null;

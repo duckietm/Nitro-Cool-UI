@@ -1,8 +1,7 @@
+@use 'sass:math';
 // Base class
 //
 // Easily usable on <ul>, <ol>, or <div>.
-
-@use 'sass:math';
 
 .list-group {
   display: flex;
@@ -24,7 +23,6 @@
     counter-increment: section;
   }
 }
-
 
 // Interactive list items
 //
@@ -50,7 +48,6 @@
     background-color: $list-group-action-active-bg;
   }
 }
-
 
 // Individual list items
 //
@@ -98,7 +95,6 @@
   }
 }
 
-
 // Horizontal
 //
 // Change the layout of list group items from vertical (default) to horizontal.
@@ -139,7 +135,6 @@
   }
 }
 
-
 // Flush list items
 //
 // Remove borders and border-radius to keep list group items edge-to-edge. Most
@@ -157,7 +152,6 @@
   }
 }
 
-
 // scss-docs-start list-group-modifiers
 // List group contextual variants
 //
@@ -167,10 +161,17 @@
 @each $state, $value in $theme-colors {
   $list-group-variant-bg: shift-color($value, $list-group-item-bg-scale);
   $list-group-variant-color: shift-color($value, $list-group-item-color-scale);
-  @if (contrast-ratio($list-group-variant-bg, $list-group-variant-color) < $min-contrast-ratio) {
+  @if (
+    contrast-ratio($list-group-variant-bg, $list-group-variant-color) <
+      $min-contrast-ratio
+  ) {
     $list-group-variant-color: mix($value, color-contrast($list-group-variant-bg), math.abs($list-group-item-color-scale));
   }
 
-  @include list-group-item-variant($state, $list-group-variant-bg, $list-group-variant-color);
+  @include list-group-item-variant(
+    $state,
+    $list-group-variant-bg,
+    $list-group-variant-color
+  );
 }
 // scss-docs-end list-group-modifiers
