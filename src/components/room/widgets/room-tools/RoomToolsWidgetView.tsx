@@ -128,7 +128,7 @@ export const RoomToolsWidgetView: FC<{}> = props =>
             <Column center className="nitro-room-tools p-2">
                 <Base pointer title={ LocalizeText('room.settings.button.text') } className="icon icon-cog" onClick={ () => handleToolClick('settings') } />
                 <Base pointer title={ LocalizeText('room.zoom.button.text') } onClick={ () => handleToolClick('zoom') } className={ classNames('icon', (!isZoomedIn && 'icon-zoom-less'), (isZoomedIn && 'icon-zoom-more')) } />
-				<Base pointer pointer title={areBubblesMuted ? LocalizeText('room.unmute.button.text') : LocalizeText('room.mute.button.text')} className={areBubblesMuted ? "iconleftgen icon icon-chat-disablebubble" : "iconleftgen icon icon-chat-enablebubble"} onClick={ () => handleToolClick('hiddenbubbles') } />
+				<Base pointer title={areBubblesMuted ? LocalizeText('room.unmute.button.text') : LocalizeText('room.mute.button.text')} className={areBubblesMuted ? "iconleftgen icon icon-chat-disablebubble" : "iconleftgen icon icon-chat-enablebubble"} onClick={ () => handleToolClick('hiddenbubbles') } />
                 <Base pointer title={ LocalizeText('room.chathistory.button.text') } onClick={ () => handleToolClick('chat_history') } className="icon icon-chat-history" />
                 { navigatorData.canRate &&
                     <Base pointer title={ LocalizeText('room.like.button.text') } onClick={ () => handleToolClick('like_room') } className="icon icon-like-room" /> }
