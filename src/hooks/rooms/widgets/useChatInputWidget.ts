@@ -17,7 +17,7 @@ const useChatInputWidgetState = () =>
     const { showNitroAlert = null, showConfirm = null } = useNotification();
     const { roomSession = null } = useRoom();
 
-    const sendChat = (text: string, chatType: number, recipientName: string = '', styleId: number = 0) =>
+    const sendChat = (text: string, chatType: number, recipientName: string = '', styleId: number = 0, chatColour: string = '') =>
     {
         if(text === '') return null;
 
@@ -108,8 +108,17 @@ const useChatInputWidgetState = () =>
 
                     return null;
                 case ':zoom':
-                    GetEventDispatcher().dispatchEvent(new RoomZoomEvent(roomSession.roomId, parseFloat(secondPart), false));
-
+                    let requestedZoomLevel = parseFloat(secondPart);
+					if (isNaN(requestedZoomLevel)) {
+						requestedZoomLevel = 1;
+					}
+					if (requestedZoomLevel >= 1 && requestedZoomLevel <= 5) {
+						GetRoomEngine().events.dispatchEvent(new RoomZoomEvent(roomSession.roomId, requestedZoomLevel, false));
+					} else if (requestedZoomLevel === 0) {
+						GetRoomEngine().events.dispatchEvent(new RoomZoomEvent(roomSession.roomId, 1, false));
+					} else {
+						GetRoomEngine().events.dispatchEvent(new RoomZoomEvent(roomSession.roomId, 1, false));
+					};
                     return null;
                 case ':screenshot':
                     const texture = GetRoomEngine().createTextureFromRoom(roomSession.roomId, 1);
@@ -131,7 +140,7 @@ const useChatInputWidgetState = () =>
                         {
                             GetSessionDataManager().sendSpecialCommandMessage(':pickall');
                         },
-                        null, null, null, LocalizeText('generic.alert.title'));
+                        null, null, null, LocalizeText('generic.alert.title'), null, 'pickall');
                     }
 
                     return null;
@@ -180,10 +189,10 @@ const useChatInputWidgetState = () =>
         switch(chatType)
         {
             case ChatMessageTypeEnum.CHAT_DEFAULT:
-                roomSession.sendChatMessage(text, styleId);
+                roomSession.sendChatMessage(text, styleId, chatColour);
                 break;
             case ChatMessageTypeEnum.CHAT_SHOUT:
-                roomSession.sendShoutMessage(text, styleId);
+                roomSession.sendChatMessage(text, styleId, chatColour);
                 break;
             case ChatMessageTypeEnum.CHAT_WHISPER:
                 roomSession.sendWhisperMessage(recipientName, text, styleId);
@@ -216,7 +225,7 @@ const useChatInputWidgetState = () =>
 
         let seconds = 0;
 
-        const interval = setInterval(() =>
+        const interval = window.setInterval(() =>
         {
             setFloodBlockedSeconds(prevValue =>
             {

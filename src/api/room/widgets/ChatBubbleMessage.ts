@@ -22,10 +22,13 @@ export class ChatBubbleMessage
         public type: number = 0,
         public styleId: number = 0,
         public imageUrl: string = null,
-        public color: string = null
+        public color: string = null,
+		public chatColours: string = ""
     ) 
     {
         this.id = ++ChatBubbleMessage.BUBBLE_COUNTER;
+		this.color = color;
+		this.chatColours = chatColours;
     }
 
     public get top(): number

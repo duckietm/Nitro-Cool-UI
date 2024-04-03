@@ -1,14 +1,16 @@
 import { FigureUpdateEvent, GetSessionDataManager, RoomUnitChatStyleComposer, UserInfoDataParser, UserInfoEvent, UserSettingsEvent } from '@nitrots/nitro-renderer';
 import { useState } from 'react';
 import { useBetween } from 'use-between';
-import { SendMessageComposer } from '../../api';
+import { GetLocalStorage, SendMessageComposer } from '../../api';
 import { useMessageEvent } from '../events';
+import { useLocalStorage } from '../useLocalStorage';
 
 const useSessionInfoState = () =>
 {
     const [ userInfo, setUserInfo ] = useState<UserInfoDataParser>(null);
     const [ userFigure, setUserFigure ] = useState<string>(null);
-    const [ chatStyleId, setChatStyleId ] = useState<number>(0);
+    const [ chatStyleId, setChatStyleId ] = useLocalStorage<number>(0);
+	const [ chatColour, setChatColour ] = useLocalStorage<string>('chatColour', '');
     const [ userRespectRemaining, setUserRespectRemaining ] = useState<number>(0);
     const [ petRespectRemaining, setPetRespectRemaining ] = useState<number>(0);
 
@@ -17,6 +19,11 @@ const useSessionInfoState = () =>
         setChatStyleId(styleId);
 
         SendMessageComposer(new RoomUnitChatStyleComposer(styleId));
+    }
+	
+	const updateChatColour = (colour: string) =>
+    {
+        setChatColour(colour);
     }
 
     const respectUser = (userId: number) =>
@@ -57,7 +64,7 @@ const useSessionInfoState = () =>
         setChatStyleId(parser.chatType);
     });
 
-    return { userInfo, userFigure, chatStyleId, userRespectRemaining, petRespectRemaining, respectUser, respectPet, updateChatStyleId };
+    return { userInfo, userFigure, chatStyleId, userRespectRemaining, petRespectRemaining, respectUser, respectPet, updateChatStyleId, updateChatColour, chatColour };
 }
 
 export const useSessionInfo = () => useBetween(useSessionInfoState);

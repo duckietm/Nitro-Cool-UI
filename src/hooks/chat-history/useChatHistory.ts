@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useBetween } from 'use-between';
 import { ChatEntryType, ChatHistoryCurrentDate, IChatEntry, IRoomHistoryEntry, MessengerHistoryCurrentDate } from '../../api';
 import { useMessageEvent, useNitroEvent } from '../events';
+import { useLocalStorage } from '../useLocalStorage';
 
 const CHAT_HISTORY_MAX = 1000;
 const ROOM_HISTORY_MAX = 10;
@@ -13,10 +14,10 @@ let MESSENGER_HISTORY_COUNTER: number = 0;
 
 const useChatHistoryState = () =>
 {
-    const [ chatHistory, setChatHistory ] = useState<IChatEntry[]>([]);
-    const [ roomHistory, setRoomHistory ] = useState<IRoomHistoryEntry[]>([]);
-    const [ messengerHistory, setMessengerHistory ] = useState<IChatEntry[]>([]);
-    const [ needsRoomInsert, setNeedsRoomInsert ] = useState(false);
+	const [ chatHistory, setChatHistory ] = useLocalStorage<IChatEntry[]>('chatHistory', []);
+    const [ roomHistory, setRoomHistory ] = useLocalStorage<IRoomHistoryEntry[]>('roomHistory', []);
+    const [ messengerHistory, setMessengerHistory ] = useLocalStorage<IChatEntry[]>('messengerHistory', []);
+    const [ needsRoomInsert, setNeedsRoomInsert ] = useLocalStorage('needsRoomInsert', false);
 
     const addChatEntry = (entry: IChatEntry) =>
     {

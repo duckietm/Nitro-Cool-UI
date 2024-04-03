@@ -1,19 +1,23 @@
-import { GetSessionDataManager, HabboClubLevelEnum, RoomControllerLevel } from '@nitrots/nitro-renderer';
+import { CreateLinkEvent, GetSessionDataManager, HabboClubLevelEnum, RoomControllerLevel } from '@nitrots/nitro-renderer';
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { ChatMessageTypeEnum, GetClubMemberLevel, GetConfigurationValue, LocalizeText, RoomWidgetUpdateChatInputContentEvent } from '../../../../api';
-import { Text } from '../../../../common';
+import { ChatMessageTypeEnum, GetConfigurationValue, GetClubMemberLevel, LocalizeText, RoomWidgetUpdateChatInputContentEvent } from '../../../../api';
+import { Base, Flex, Text } from '../../../../common';
 import { useChatInputWidget, useRoom, useSessionInfo, useUiEvent } from '../../../../hooks';
 import { ChatInputStyleSelectorView } from './ChatInputStyleSelectorView';
+import { ChatInputEmojiSelectorView } from './ChatInputEmojiSelectorView';
+import { ChatInputColorSelectorView } from './ChatInputColorSelectorView';
+
 
 export const ChatInputView: FC<{}> = props =>
 {
     const [ chatValue, setChatValue ] = useState<string>('');
-    const { chatStyleId = 0, updateChatStyleId = null } = useSessionInfo();
+    const { chatStyleId = 0, updateChatStyleId = null, chatColour = '', updateChatColour = null } = useSessionInfo();
     const { selectedUsername = '', floodBlocked = false, floodBlockedSeconds = 0, setIsTyping = null, setIsIdle = null, sendChat = null } = useChatInputWidget();
+	const [ showInfoHabboPages, setShowInfohabboPages ] = useState<boolean>(false);
     const { roomSession = null } = useRoom();
-    const inputRef = useRef<HTMLInputElement>();
 
+    const inputRef = useRef<HTMLInputElement>();
     const chatModeIdWhisper = useMemo(() => LocalizeText('widgets.chatinput.mode.whisper'), []);
     const chatModeIdShout = useMemo(() => LocalizeText('widgets.chatinput.mode.shout'), []);
     const chatModeIdSpeak = useMemo(() => LocalizeText('widgets.chatinput.mode.speak'), []);
@@ -97,12 +101,12 @@ export const ChatInputView: FC<{}> = props =>
             else
             {
                 setChatValue('');
-                sendChat(text, chatType, recipientName, chatStyleId);
+                sendChat(text, chatType, recipientName, chatStyleId, chatColour);
             }
         }
 
         setChatValue(append);
-    }, [ chatModeIdWhisper, chatModeIdShout, chatModeIdSpeak, maxChatLength, chatStyleId, setIsTyping, setIsIdle, sendChat ]);
+    }, [ chatModeIdWhisper, chatModeIdShout, chatModeIdSpeak, maxChatLength, chatStyleId, setIsTyping, setIsIdle, sendChat, chatColour ]);
 
     const updateChatInput = useCallback((value: string) =>
     {
@@ -214,6 +218,11 @@ export const ChatInputView: FC<{}> = props =>
         return styleIds;
     }, []);
 
+	const addEmojiToChat = (emoji: string) => {
+		setChatValue(chatValue + emoji);
+		setIsTyping(true);
+	};
+	
     useEffect(() =>
     {
         document.body.addEventListener('keydown', onKeyDownEvent);
@@ -232,17 +241,33 @@ export const ChatInputView: FC<{}> = props =>
     }, [ chatValue ]);
 
     if(!roomSession || roomSession.isSpectator) return null;
-
+	
     return (
         createPortal(
-            <div className="nitro-chat-input-container">
-                <div className="input-sizer align-items-center">
+            <div className="nitro-chat-input-container" onMouseEnter={ () => setShowInfohabboPages(true) } onMouseLeave={ () => setTimeout(() => setShowInfohabboPages(false), 100) }>				
+			    <div className="input-sizer align-items-center">
                     { !floodBlocked &&
-                    <input ref={ inputRef } type="text" className="chat-input" placeholder={ LocalizeText('widgets.chatinput.default') } value={ chatValue } maxLength={ maxChatLength } onChange={ event => updateChatInput(event.target.value) } onMouseDown={ event => setInputFocus() } /> }
+                    <input 
+						ref={ inputRef } 
+						type="text" 
+						className="chat-input" 
+						placeholder={ LocalizeText('widgets.chatinput.default') } 
+						value={ chatValue } 
+						maxLength={ maxChatLength } 
+						onChange={ event => updateChatInput(event.target.value) } 
+						onMouseDown={ event => setInputFocus() } /> 
+					}
                     { floodBlocked &&
                     <Text variant="danger">{ LocalizeText('chat.input.alert.flood', [ 'time' ], [ floodBlockedSeconds.toString() ]) } </Text> }
                 </div>
-                <ChatInputStyleSelectorView chatStyleId={ chatStyleId } chatStyleIds={ chatStyleIds } selectChatStyleId={ updateChatStyleId } />
-            </div>, document.getElementById('toolbar-chat-input-container'))
+				<Flex>
+					<ChatInputEmojiSelectorView addChatEmoji={ addEmojiToChat } />
+					<ChatInputColorSelectorView chatColour={ chatColour } selectColour={ updateChatColour } />
+					<ChatInputStyleSelectorView chatStyleId={ chatStyleId } chatStyleIds={ chatStyleIds } selectChatStyleId={ updateChatStyleId } />
+					{
+						(showInfoHabboPages) && <Base className="info-habbopages" onClick={ () => CreateLinkEvent('habbopages/chat/chatting') }></Base>
+					}
+				</Flex>
+				</div>, document.getElementById('toolbar-chat-input-container'))
     );
 }

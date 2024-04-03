@@ -48,6 +48,7 @@ const useChatWidgetState = () =>
         let userType = 0;
         let petType = -1;
         let text = event.message;
+		let chatColours = event._chatColours
 
         if(userData)
         {
@@ -60,6 +61,7 @@ const useChatWidgetState = () =>
                 case RoomObjectType.PET:
                     imageUrl = await ChatBubbleUtilities.getPetImage(figure, 2, true, 64, roomObject.model.getValue<string>(RoomObjectVariable.FIGURE_POSTURE));
                     petType = new PetFigureData(figure).typeId;
+					chatColours = "black"
                     break;
                 case RoomObjectType.USER:
                     imageUrl = await ChatBubbleUtilities.getUserImage(figure);
@@ -67,6 +69,7 @@ const useChatWidgetState = () =>
                 case RoomObjectType.RENTABLE_BOT:
                 case RoomObjectType.BOT:
                     styleId = SystemChatStyleEnum.BOT;
+					chatColours = "black"
                     break;
             }
 
@@ -144,10 +147,11 @@ const useChatWidgetState = () =>
             chatType,
             styleId,
             imageUrl,
-            color);
+            color,
+			chatColours);
 
         setChatMessages(prevValue => [ ...prevValue, chatMessage ]);
-        addChatEntry({ id: -1, webId: userData.webID, entityId: userData.roomIndex, name: username, imageUrl, style: styleId, chatType: chatType, entityType: userData.type, message: formattedText, timestamp: ChatHistoryCurrentDate(), type: ChatEntryType.TYPE_CHAT, roomId: roomSession.roomId, color });
+        addChatEntry({ id: -1, webId: userData.webID, entityId: userData.roomIndex, name: username, imageUrl, style: styleId, chatType: chatType, entityType: userData.type, message: formattedText, timestamp: ChatHistoryCurrentDate(), type: ChatEntryType.TYPE_CHAT, roomId: roomSession.roomId, color, chatColours });
     });
 
     useNitroEvent<RoomDragEvent>(RoomDragEvent.ROOM_DRAG, event =>

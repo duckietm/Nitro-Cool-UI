@@ -1,6 +1,6 @@
-import { CreateLinkEvent, Dispose, DropBounce, EaseOut, GetConfiguration, GetSessionDataManager, JumpBy, Motions, NitroToolbarAnimateIconEvent, PerkAllowancesMessageEvent, PerkEnum, Queue, Wait } from '@nitrots/nitro-renderer';
+import { CreateLinkEvent, Dispose, DropBounce, EaseOut, GetSessionDataManager, JumpBy, Motions, NitroToolbarAnimateIconEvent, PerkAllowancesMessageEvent, PerkEnum, Queue, Wait } from '@nitrots/nitro-renderer';
 import { FC, useState } from 'react';
-import { MessengerIconState, OpenMessengerChat, VisitDesktop } from '../../api';
+import { GetConfigurationValue, MessengerIconState, OpenMessengerChat, VisitDesktop } from '../../api';
 import { Base, Flex, LayoutAvatarImageView, LayoutItemCountView, TransitionAnimation, TransitionAnimationTypes } from '../../common';
 import { useAchievements, useFriends, useInventoryUnseenTracker, useMessageEvent, useMessenger, useNitroEvent, useSessionInfo } from '../../hooks';
 import { ToolbarMeView } from './ToolbarMeView';
@@ -81,7 +81,7 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
                         { !isInRoom &&
                             <Base pointer className="navigation-item icon icon-house click-box" onClick={ event => CreateLinkEvent('navigator/goto/home') } /> }
                         <Base pointer className="navigation-item icon icon-rooms click-box" onClick={ event => CreateLinkEvent('navigator/toggle') } />
-                        { GetConfiguration('game.center.enabled') && <Base pointer className="navigation-item icon icon-game click-box" onClick={ event => CreateLinkEvent('games/toggle') } /> }
+                        { GetConfigurationValue('game.center.enabled') && <Base pointer className="navigation-item icon icon-game click-box" onClick={ event => CreateLinkEvent('games/toggle') } /> }
                         <Base pointer className="navigation-item icon icon-catalog click-box" onClick={ event => CreateLinkEvent('catalog/toggle') } />
                         <Base pointer className="navigation-item icon icon-inventory click-box" onClick={ event => CreateLinkEvent('inventory/toggle') }>
                             { (getFullCount > 0) &&
