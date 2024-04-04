@@ -109,6 +109,12 @@
 
     .friend-bar-button {
         z-index: 2;
+        margin: 0 0.2rem;
+        background-color: #d3d3d3;
+        color: #212131;
+        border: 2px solid #fff;
+        border-radius: 8px;
+        width: 30px;
     }
 
     .friend-bar-item {
@@ -135,6 +141,10 @@
 
             pointer-events: none;
         }
+		
+		.avatar-image {
+                max-height: 80px;
+            }
 
         &.friend-bar-search {
             .friend-bar-item-head {
