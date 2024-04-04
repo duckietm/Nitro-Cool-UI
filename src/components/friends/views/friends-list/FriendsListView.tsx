@@ -3,11 +3,11 @@ import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { LocalizeText, MessengerFriend, SendMessageComposer } from '../../../../api';
 import { Button, Flex, NitroCardAccordionSetView, NitroCardAccordionView, NitroCardContentView, NitroCardHeaderView, NitroCardView } from '../../../../common';
 import { useFriends } from '../../../../hooks';
+import { FriendsListGroupView } from './friends-list-group/FriendsListGroupView';
+import { FriendsListRequestView } from './friends-list-request/FriendsListRequestView';
 import { FriendsRemoveConfirmationView } from './FriendsListRemoveConfirmationView';
 import { FriendsRoomInviteView } from './FriendsListRoomInviteView';
 import { FriendsSearchView } from './FriendsListSearchView';
-import { FriendsListGroupView } from './friends-list-group/FriendsListGroupView';
-import { FriendsListRequestView } from './friends-list-request/FriendsListRequestView';
 
 export const FriendsListView: FC<{}> = props =>
 {
