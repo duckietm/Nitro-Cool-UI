@@ -1,3 +1,4 @@
+export * from './FurnitureClickComposer';
 export * from './FurnitureColorWheelComposer';
 export * from './FurnitureDiceActivateComposer';
 export * from './FurnitureDiceDeactivateComposer';

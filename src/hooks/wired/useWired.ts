@@ -1,4 +1,4 @@
-import { ConditionDefinition, Triggerable, TriggerDefinition, UpdateActionMessageComposer, UpdateConditionMessageComposer, UpdateTriggerMessageComposer, WiredActionDefinition, WiredFurniActionEvent, WiredFurniConditionEvent, WiredFurniTriggerEvent, WiredSaveSuccessEvent } from '@nitrots/nitro-renderer';
+import { AddonDefinition, ConditionDefinition, TriggerDefinition, Triggerable, UpdateActionMessageComposer, UpdateAddonMessageComposer, UpdateConditionMessageComposer, UpdateTriggerMessageComposer, WiredActionDefinition, WiredFurniActionEvent, WiredFurniAddonEvent, WiredFurniConditionEvent, WiredFurniTriggerEvent, WiredSaveSuccessEvent } from '@nitrots/nitro-renderer';
 import { useEffect, useState } from 'react';
 import { useBetween } from 'use-between';
 import { IsOwnerOfFloorFurniture, LocalizeText, SendMessageComposer, WiredFurniType, WiredSelectionVisualizer } from '../../api';
@@ -34,6 +34,10 @@ const useWiredState = () =>
             else if(trigger instanceof ConditionDefinition)
             {
                 SendMessageComposer(new UpdateConditionMessageComposer(trigger.id, intParams, stringParam, furniIds, trigger.stuffTypeSelectionCode));
+            }
+
+            else if (trigger instanceof AddonDefinition) {
+                SendMessageComposer(new UpdateAddonMessageComposer(trigger.id, intParams, stringParam, furniIds, trigger.stuffTypeSelectionCode));
             }
         }
 
@@ -103,6 +107,12 @@ const useWiredState = () =>
 
     useMessageEvent<WiredFurniTriggerEvent>(WiredFurniTriggerEvent, event =>
     {
+        const parser = event.getParser();
+
+        setTrigger(parser.definition);
+    });
+
+    useMessageEvent<WiredFurniAddonEvent>(WiredFurniAddonEvent, event => {
         const parser = event.getParser();
 
         setTrigger(parser.definition);

@@ -1,5 +1,6 @@
 export class OutgoingHeader
 {
+    public static CLICK_FURNITURE = 8001;
     public static ACHIEVEMENT_LIST = 219;
     public static AUTHENTICATION = -1;
     public static BOT_CONFIGURATION = 1986;
@@ -266,6 +267,7 @@ export class OutgoingHeader
     public static WIRED_ACTION_SAVE = 2281;
     public static WIRED_APPLY_SNAPSHOT = 3373;
     public static WIRED_CONDITION_SAVE = 3203;
+    public static WIRED_ADDON_SAVE = 8000;
     public static WIRED_OPEN = 768;
     public static WIRED_TRIGGER_SAVE = 1520;
     public static GET_ITEM_DATA = 3964;

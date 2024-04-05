@@ -1,4 +1,5 @@
 export * from './WiredFurniActionEvent';
+export * from './WiredFurniAddonEvent';
 export * from './WiredFurniConditionEvent';
 export * from './WiredFurniTriggerEvent';
 export * from './WiredOpenEvent';
