@@ -11,6 +11,7 @@ import { FriendsSearchView } from './FriendsListSearchView';
 
 export const FriendsListView: FC<{}> = props =>
 {
+	const [ isFromSearchToolbar, setIsFromSearchToolbar ] = useState<boolean>(false);
     const [ isVisible, setIsVisible ] = useState(false);
     const [ selectedFriendsIds, setSelectedFriendsIds ] = useState<number[]>([]);
     const [ showRoomInvite, setShowRoomInvite ] = useState<boolean>(false);
@@ -96,12 +97,15 @@ export const FriendsListView: FC<{}> = props =>
                 {
                     case 'show':
                         setIsVisible(true);
+						setIsFromSearchToolbar(false);
                         return;
                     case 'hide':
                         setIsVisible(false);
+						setIsFromSearchToolbar(false);
                         return;
                     case 'toggle':
                         setIsVisible(prevValue => !prevValue);
+						setIsFromSearchToolbar(true);
                         return;
                     case 'request':
                         if(parts.length < 4) return;

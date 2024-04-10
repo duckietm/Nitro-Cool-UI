@@ -128,19 +128,38 @@
         &.friend-bar-item-active {
             margin-bottom:21px;
         }
+		
+		&.friend-bar-search-item-active {
+            margin-bottom:10.5em;
+			background-color: #b69b83;
+			border: 2px solid #e2c1a3;
+        }
 
         .friend-bar-item-head {
             &.avatar {
-                top: -30px;
-                left: -30px;
+                top: -31px;
+                left: -25px;
             }
             &.group {
-                top: -5px;
-                left: -5px;
+                top: -31px;
+                left: -25px;
             }
 
             pointer-events: none;
         }
+		
+		.friend-bar-text {
+            overflow: hidden;
+            text-overflow: ellipsis;
+        //    white-space: nowrap;
+            font-size: 13px;
+            line-height: 1;
+            color: #fff;
+        }
+		
+		.font-size-friend {
+				font-size: 12px;
+			}
 		
 		.avatar-image {
                 max-height: 80px;
