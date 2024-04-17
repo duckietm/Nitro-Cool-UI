@@ -12,13 +12,16 @@ export interface ButtonProps extends FlexProps
 
 export const Button: FC<ButtonProps> = props =>
 {
-    const { variant = 'primary', size = 'sm', active = false, disabled = false, classNames = [], ...rest } = props;
+    const { variant = 'primary', size = 'sm', active = false, disabled = false, classNames = [], outline = false, tp = false, ...rest } = props;
 
     const getClassNames = useMemo(() =>
     {
         const newClassNames: string[] = [ 'btn' ];
 
-        if(variant) newClassNames.push('btn-' + variant);
+        if(outline && variant) newClassNames.push('btn-outline-' + variant)
+        else if (variant) newClassNames.push('btn-' + variant);
+        
+        if (tp) newClassNames.push('btn-transparent');
 
         if(size) newClassNames.push('btn-' + size);
 
@@ -29,7 +32,7 @@ export const Button: FC<ButtonProps> = props =>
         if(classNames.length) newClassNames.push(...classNames);
 
         return newClassNames;
-    }, [ variant, size, active, disabled, classNames ]);
+    }, [ variant, size, active, disabled, classNames, outline ]);
 
     return <Flex center classNames={ getClassNames } { ...rest } />;
 }

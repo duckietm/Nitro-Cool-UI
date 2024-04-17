@@ -1,4 +1,4 @@
-import { FC, useMemo } from 'react';
+import { FC, ReactNode, useMemo } from 'react';
 import { NotificationAlertType } from '../../api';
 import { NitroCardContentView, NitroCardHeaderView, NitroCardView, NitroCardViewProps } from '../card';
 
@@ -11,7 +11,7 @@ export interface LayoutNotificationAlertViewProps extends NitroCardViewProps
 
 export const LayoutNotificationAlertView: FC<LayoutNotificationAlertViewProps> = props =>
 {
-    const { title = '', onClose = null, classNames = [], children = null,type = NotificationAlertType.DEFAULT, ...rest } = props;
+    const { title = '', onClose = null, classNames = [], children = null,type = NotificationAlertType.DEFAULT, options = null, ...rest } = props;
 
     const getClassNames = useMemo(() =>
     {
@@ -30,6 +30,7 @@ export const LayoutNotificationAlertView: FC<LayoutNotificationAlertViewProps> =
             <NitroCardContentView grow justifyContent="between" overflow="hidden" className="text-black" gap={ 0 }>
                 { children }
             </NitroCardContentView>
+			{ options }
         </NitroCardView>
     );
 }
