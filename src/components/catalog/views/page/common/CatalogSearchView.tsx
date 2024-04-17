@@ -42,10 +42,10 @@ export const CatalogSearchView: FC<{}> = props =>
 
                 if((currentType === CatalogType.BUILDER) && (furniture.purchaseOfferId === -1) && (furniture.rentOfferId === -1))
                 {
-                    if((furniture.furniLine !== '') && (foundFurniLines.indexOf(furniture.furniLine) < 0))
-                    {
-                        if(searchValues.indexOf(search) >= 0) foundFurniLines.push(furniture.furniLine);
-                    }
+                    // if((furniture.furniLine !== '') && (foundFurniLines.indexOf(furniture.furniLine) < 0))
+                    // {
+                    //    if(searchValues.indexOf(search) >= 0) foundFurniLines.push(furniture.furniLine);
+                    // }
                 }
                 else
                 {

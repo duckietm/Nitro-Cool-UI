@@ -48,12 +48,9 @@ export const PurseView: FC<{}> = props =>
 
         for(const type of types)
         {
-            if((limit > -1) && (count === limit)) break;
-
-            if(seasonal) elements.push(<SeasonalView key={ type } type={ type } amount={ purse.activityPoints.get(type) } />);
-            else elements.push(<CurrencyView key={ type } type={ type } amount={ purse.activityPoints.get(type) } short={ currencyDisplayNumberShort } />);
-
-            count++;
+            if ((limit > -1) && (count === limit)) break;
+			elements.push(<CurrencyView key={ type } type={ type } amount={ purse.activityPoints.get(type) } short={ currencyDisplayNumberShort } />)
+			count++;
         }
 
         return elements;
