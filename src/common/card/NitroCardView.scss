@@ -170,8 +170,8 @@ $nitro-card-tabs-height: 42px;
 
             .nitro-card-header-report-camera {
                 cursor: pointer;
-                padding: 0px 2px;
-                margin-right: 4px;
+                padding: 1px 2px;
+                margin-right: 10px;
                 line-height: 1;
                 @include font-size($h7-font-size);
                 border-radius: $border-radius;

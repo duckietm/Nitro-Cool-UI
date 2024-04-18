@@ -61,9 +61,9 @@ export const CameraWidgetShowPhotoView: FC<CameraWidgetShowPhotoViewProps> = pro
             </Flex>
             { (currentPhotos.length > 1) &&
                 <Flex className="picture-preview-buttons">
-                    <FaArrowLeft className="cursor-pointer picture-preview-buttons-previous fa-icon" onClick={ previous } />
+                    <FaArrowLeft className="cursor-pointer" onClick={ previous } />
                     <Text underline className="cursor-pointer" onClick={ event => GetUserProfile(currentImage.oi) }>{ currentImage.o }</Text>
-                    <FaArrowRight className="cursor-pointer picture-preview-buttons-next fa-icon" onClick={ next } />
+                    <FaArrowRight className="cursor-pointer" onClick={ next } />
                 </Flex>
             }
         </Grid>
