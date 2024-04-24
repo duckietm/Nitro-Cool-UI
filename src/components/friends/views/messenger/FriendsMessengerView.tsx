@@ -103,105 +103,30 @@ export const FriendsMessengerView: FC<{}> = props =>
         }
     }, [ isVisible, activeThread, lastThreadId, visibleThreads, setActiveThreadId ]);
 
-
     if(!isVisible) return null;
-
-    function showSubMenuConsola(){
-        document.getElementById("submenuChatConsola").style.display = "flex";
-        document.getElementById("chatmasinfogen").style.display = "none"; 
-    }
-
-    function hideSubMenuConsola(){
-        document.getElementById("submenuChatConsola").style.display = "none";
-        document.getElementById("chatmasinfogen").style.display = "block";
-    }
-
-    var mediaRecorderConsola;
-    var audioChunksConsola = [];
-    var microphoneConsoeOn = document.getElementById("microphoneConsoeOn");
-    var microphoneConsoeOff = document.getElementById("microphoneConsoeOff");
-    var deleteAudioConsola = document.getElementById("deleteAudioConsola");
-
-    var deletedAudioConsola = false;
-function startRecordingConsola(){
-        
-    microphoneConsoeOn.style.display = "none";
-    microphoneConsoeOff.style.display = "inline-block";
-    deleteAudioConsola.style.display = "inline-block";
-    
-    navigator.mediaDevices.getUserMedia({audio:true})
-        .then(stream=> {
-            mediaRecorderConsola = new MediaRecorder(stream);
-            mediaRecorderConsola.start();
-
-            mediaRecorderConsola.addEventListener("dataavailable", event => {
-                audioChunksConsola.push(event.data);
-            });
-
-            mediaRecorderConsola.addEventListener("stop", () => {
-                microphoneConsoeOn.style.display = "inline-block";
-                microphoneConsoeOff.style.display = "none";
-                deleteAudioConsola.style.display = "none";
-
-                if(!deletedAudioConsola){
-                    const audioBlob = new Blob(audioChunksConsola);
-                    var fd = new FormData();
-                    fd.append("audio", audioBlob);
-                    fetch("https://int.habbeh.net/audio.php", {method:"POST", body: fd})
-                        .then((response) => response.text())
-                        .then((resp) => {
-                            sendMessage(activeThread, GetSessionDataManager().userId, "https://int.habbeh.net/audios/" + resp + ".mp3");
-                        });
-                }
-                
-                deletedAudioConsola = false;
-                audioChunksConsola = [];
-            });
-        });
-}
-
-
-    function stopRecordingConsola(){
-        microphoneConsoeOn.style.display = "inline-block";
-        microphoneConsoeOff.style.display = "none";
-        deleteAudioConsola.style.display = "none";
-        mediaRecorderConsola.stop();
-    }
-
-    function deleteRecordingConsola(){
-        microphoneConsoeOn.style.display = "inline-block";
-        microphoneConsoeOff.style.display = "none";
-        deleteAudioConsola.style.display = "none";
-        deletedAudioConsola = true;
-        mediaRecorderConsola.stop();
-    }
 
     return (
         <NitroCardView className="nitro-friends-messenger" uniqueKey="nitro-friends-messenger" theme="primary-slim">
-            <NitroCardHeaderView className="cardtitleplusconsola" headerText={ LocalizeText('messenger.window.title', [ 'OPEN_CHAT_COUNT' ], [ visibleThreads.length.toString() ]) } onCloseClick={ event => setIsVisible(false) } />
-            <NitroCardContentView className="cardheadplusconsola">
+            <NitroCardHeaderView headerText={ LocalizeText('messenger.window.title', [ 'OPEN_CHAT_COUNT' ], [ visibleThreads.length.toString() ]) } onCloseClick={ event => setIsVisible(false) } />
+            <NitroCardContentView>
                 <Grid overflow="hidden">
                     <Column size={ 4 } overflow="hidden">
-                        
                         <Text bold>{ LocalizeText('toolbar.icon.label.messenger') }</Text>
                         <Column fit overflow="auto">
                             <Column>
-                                { visibleThreads && (visibleThreads.length > 0) && visibleThreads.map(thread =>
-                                {
+                                { visibleThreads && (visibleThreads.length > 0) && visibleThreads.map(thread => {
                                     return (
-                                        <LayoutGridItem key={ thread.threadId } itemActive={ (activeThread === thread) } onClick={ event => setActiveThreadId(thread.threadId) }>
-                                            { thread.unread &&
-                                            <LayoutItemCountView count={ thread.unreadCount } /> }
-                                            <Flex fullWidth alignItems="center" gap={ 1 }>
-                                                <Flex alignItems="center" className="friend-head px-1">
-                                                    { (thread.participant.id > 0) &&
-                                                    <LayoutAvatarImageView figure={ thread.participant.figure } headOnly={ true } direction={ 3 } /> }
-                                                    { (thread.participant.id <= 0) &&
-                                                    <LayoutBadgeImageView isGroup={ true } badgeCode={ thread.participant.figure } /> }
-                                                </Flex>
-                                                <Text truncate grow>{ thread.participant.name }</Text>
-                                            </Flex>
-                                        </LayoutGridItem>
+										<LayoutGridItem key={ thread.threadId } itemActive={ (activeThread === thread) } onClick={ event => setActiveThreadId(thread.threadId) }>
+                                            { thread.unread && <LayoutItemCountView count={ thread.unreadCount } /> }
+											<Flex fullWidth alignItems="center" gap={ 1 }>
+												<Flex alignItems="center" className="friend-head px-2">
+													<LayoutAvatarImageView figure={
+														thread.participant.id > 0 ? thread.participant.figure : thread.participant.id <= 0 && thread.participant.figure === 'ADM' ? 'ha-3409-1413-70.lg-285-89.ch-3032-1334-109.sh-3016-110.hd-185-1359.ca-3225-110-62.wa-3264-62-62.fa-1206-90.hr-3322-1403' : thread.participant.figure 
+													} headOnly={true} direction={thread.participant.id > 0 ? 2 : 3} />
+											</Flex>
+											<Text truncate grow>{ thread.participant.name }</Text>
+										</Flex>
+									</LayoutGridItem>
                                     );
                                 }) }
                             </Column>
@@ -212,20 +137,18 @@ function startRecordingConsola(){
                             <>
                                 <Text bold center>{ LocalizeText('messenger.window.separator', [ 'FRIEND_NAME' ], [ activeThread.participant.name ]) }</Text>
                                 <Flex alignItems="center" justifyContent="between" gap={ 1 }>
-                                    <Flex gap={ 1 }>
-                                        <ButtonGroup>
-                                            <Button className="colornewbuttonfriend" onClick={ followFriend }>
-                                                <Base className="nitro-friends-spritesheet icon-follow" />
-                                            </Button>
-                                            <Button className="colornewbuttonfriend" onClick={ openProfile }>
-                                                <Base className="nitro-friends-spritesheet icon-profile-sm" />
-                                            </Button>
-                                        </ButtonGroup>
-                                        <Button variant="danger" onClick={ () => report(ReportType.IM, { reportedUserId: activeThread.participant.id }) }>
-                                            { LocalizeText('messenger.window.button.report') }
-                                        </Button>
-                                    </Flex>
-                                    <Button variant="danger" onClick={ event => closeThread(activeThread.threadId) }>
+									{activeThread && activeThread.participant.id > 0 && (
+										<Flex gap={1}>
+											<ButtonGroup>
+												<Button onClick={followFriend}><Base className="nitro-friends-spritesheet icon-follow" /></Button>
+												<Button onClick={openProfile}><Base className="nitro-friends-spritesheet icon-profile-sm" /></Button>
+											</ButtonGroup>
+											<Button variant="danger" onClick={() => report(ReportType.IM, { reportedUserId: activeThread.participant.id })}>
+												{LocalizeText('messenger.window.button.report')}
+											</Button>
+										</Flex>
+									)}
+                                    <Button onClick={ event => closeThread(activeThread.threadId) }>
                                         <FaTimes className="fa-icon" />
                                     </Button>
                                 </Flex>
@@ -235,8 +158,7 @@ function startRecordingConsola(){
                                     </Column>
                                 </Column>
                                 <Flex gap={ 1 }>
-                                    <input type="text" className="form-control form-control-sm" maxLength={ 255 } placeholder={ LocalizeText('messenger.window.input.default', [ 'FRIEND_NAME' ], [ activeThread.participant.name ]) } value={ messageText } onChange={ event => setMessageText(event.target.value) } onKeyDown={ onKeyDown } style={{paddingRight: 35}}/>
-                                    <div onClick={() => showSubMenuConsola()} className="masiconstoolgen icon chatmas-icon" id="chatmasinfogen" style={{ position: 'relative', width: '40px', height: '27px', marginTop: '4px', marginRight: '0px', marginLeft: '0px', float: 'inherit', right: '0px', }}/>
+                                    <input type="text" className="form-control form-control-sm" maxLength={ 255 } placeholder={ LocalizeText('messenger.window.input.default', [ 'FRIEND_NAME' ], [ activeThread.participant.name ]) } value={ messageText } onChange={ event => setMessageText(event.target.value) } onKeyDown={ onKeyDown } />
                                     <Button variant="success" onClick={ send }>
                                         { LocalizeText('widgets.chatinput.say') }
                                     </Button>
