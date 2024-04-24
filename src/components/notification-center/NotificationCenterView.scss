@@ -35,6 +35,13 @@
             min-width: auto;
         }
     }
+	
+	&.nitro-alert-credits {
+        width: 370px;
+        .notification-text {
+            min-width: auto;
+        }
+    }
 
     &.nitro-alert-moderation,
     &.nitro-alert-alert {
@@ -63,4 +70,12 @@
 }
 .topnotifications{
     margin-top: -6px;
+}
+
+.nitro-coolui-logo {
+	width: 150px;
+	height: 78px;
+	position: relative;
+	background-image: url("@/assets/images/notifications/coolui.png");
+	background-repeat: no-repeat;
 }
