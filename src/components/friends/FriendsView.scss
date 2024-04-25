@@ -124,9 +124,10 @@
         position: relative;
         padding-left:38px;
         text-align: left;
+		pointer-events: all;
 
         &.friend-bar-item-active {
-            margin-bottom:21px;
+
         }
 		
 		&.friend-bar-search-item-active {
@@ -173,6 +174,23 @@
                 height: 34px;
                 background-image: url('@/assets/images/toolbar/friend-search.png');
             }
+        }
+    }
+}
+
+.friends-myinfo {
+    > :first-child {
+        border-bottom: 1px dashed white;
+    }
+    
+    .myinfo-avatar {
+        height: 60px;
+        width: 60px;
+        display: flex;
+        justify-content: center;
+
+        .avatar-image {
+            margin-top: -17px;
         }
     }
 }

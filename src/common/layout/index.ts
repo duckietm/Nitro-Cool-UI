@@ -12,6 +12,7 @@ export * from './LayoutItemCountView';
 export * from './LayoutLoadingSpinnerView';
 export * from './LayoutMiniCameraView';
 export * from './LayoutNotificationAlertView';
+export * from './LayoutNotificationCredits';
 export * from './LayoutNotificationBubbleView';
 export * from './LayoutPetImageView';
 export * from './LayoutProgressBar';

@@ -1,5 +1,7 @@
 import { GetAvatarRenderManager, IAvatarFigureContainer, SaveWardrobeOutfitMessageComposer } from '@nitrots/nitro-renderer';
 import { FC, useCallback } from 'react';
+import { FaSave } from 'react-icons/fa';
+import { GiClothes } from 'react-icons/gi';
 import { GetClubMemberLevel, GetConfigurationValue, LocalizeText, SendMessageComposer } from '../../api';
 import { Base, Button, Flex, InfiniteGrid, LayoutAvatarImageView, LayoutCurrencyIcon, LayoutGridItem } from '../../common';
 import { useAvatarEditor } from '../../hooks';
@@ -48,11 +50,10 @@ export const AvatarEditorWardrobeView: FC<{}> = props =>
                     <LayoutAvatarImageView figure={ figureContainer.getFigureString() } gender={ gender } direction={ 2 } /> }
                     <Base className="avatar-shadow" />
                     { !hcDisabled && (clubLevel > 0) && <LayoutCurrencyIcon className="position-absolute top-1 start-1" type="hc" /> }
-                    <Flex gap={ 1 } className="button-container">
-                        <Button variant="link" fullWidth onClick={ event => saveFigureAtWardrobeIndex(index) }>{ LocalizeText('avatareditor.wardrobe.save') }</Button>
-                        { figureContainer &&
-                        <Button variant="link" fullWidth onClick={ event => wearFigureAtIndex(index) } disabled={ (clubLevel > GetClubMemberLevel()) }>{ LocalizeText('widget.generic_usable.button.use') }</Button> }
-                    </Flex>
+                    <Flex gap={1} className="button-container">
+						<Button variant="link" fullWidth onClick={() => saveFigureAtWardrobeIndex(index)} title={LocalizeText('avatareditor.wardrobe.save')}> <FaSave size={20} style={{ color: 'black' }} /> </Button>
+						{figureContainer && <Button variant="link" fullWidth onClick={event => wearFigureAtIndex(index)} disabled={(clubLevel > GetClubMemberLevel())} title={LocalizeText('widget.generic_usable.button.use')}> <GiClothes size={20} style={{ color: 'white' }} /> </Button>}
+					</Flex>
                 </LayoutGridItem>
             )
         } } />

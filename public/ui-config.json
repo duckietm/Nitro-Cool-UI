@@ -1,7 +1,7 @@
 {
     "image.library.notifications.url": "${image.library.url}notifications/%image%.png",
     "achievements.images.url": "${image.library.url}Quests/%image%.png",
-    "camera.url": "http://localhost/camera/photo",
+    "camera.url": "http://192.168.0.8/camera/photo",
     "thumbnails.url": "/camera/photo/thumb/%thumbnail%.png",
     "url.prefix": "",
     "habbopages.url": "${url.prefix}/",

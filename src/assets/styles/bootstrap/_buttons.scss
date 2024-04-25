@@ -114,3 +114,25 @@
 .btn-sm {
   @include button-size($btn-padding-y-sm, $btn-padding-x-sm, $btn-font-size-sm, $btn-border-radius-sm);
 }
+
+// Tool-Bar button left side
+.btn-toggle {
+  border-image-source: url("@/assets/images/buttons/toggle_bg.png");
+  border-image-slice: 6 6 6 6 fill;
+  border-image-width: 6px 6px 6px 6px;
+  cursor: pointer;
+
+  .toggle-icon {
+    background-repeat: no-repeat;
+    width: 6px;
+    height: 8px;
+
+    &.left {
+      background-image: url("@/assets/images/buttons/toggle_left.png");
+    }
+
+    &.right {
+      background-image: url("@/assets/images/buttons/toggle_right.png");
+    }
+  }
+}

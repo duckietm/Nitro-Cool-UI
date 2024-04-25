@@ -258,7 +258,7 @@
 }
 
 .nitro-avatar-editor {
-    width: $avatar-editor-width;
+    width: $avatar-editor-width + 50px;
     height: $avatar-editor-height;
 
     .category-item {
