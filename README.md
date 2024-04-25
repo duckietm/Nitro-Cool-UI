@@ -24,12 +24,6 @@
     -   Open `public/ui-config.json`
         -   Update `camera.url, thumbnails.url, url.prefix, habbopages.url`
     -   You can override any variable by passing it to `NitroConfig` in the index.html
-	
-	nitro-renderer>yarn install
-	\nitro-renderer>yarn link
-	\nitro-react>yarn install
-	yarn link "@nitrots/nitro-renderer"
-	yarn start
 
 ## Usage
 

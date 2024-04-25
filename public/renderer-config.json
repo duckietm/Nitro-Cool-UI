@@ -1,8 +1,8 @@
 {
-    "socket.url": "ws://localhost:2096",
-    "asset.url": "http://192.168.0.8/gamedata",
-    "image.library.url": "http://192.168.0.8/gamedata/c_images/",
-    "hof.furni.url": "http://192.168.0.8/gamedata",
+    "socket.url": "wss://websocket.website.com:2096",
+    "asset.url": "https://website.com/gamedata",
+    "image.library.url": "https://website.com/gamedata/c_images/",
+    "hof.furni.url": "https://website.com/gamedata",
     "images.url": "${asset.url}/images",
     "gamedata.url": "${asset.url}",
     "sounds.url": "${asset.url}/sounds/%sample%.mp3",

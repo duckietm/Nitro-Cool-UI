@@ -15,7 +15,7 @@
     <meta name="theme-color" content="#000000" />
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <base href="./">
+    <base href="/client/">
     <title>Nitro</title>
   </head>
   <body>
@@ -23,7 +23,7 @@
     <div id="root" class="w-100 h-100"></div>
     <script>
       window.NitroConfig = {
-        "config.urls": [ '/renderer-config.json', '/ui-config.json' ],
+        "config.urls": [ 'renderer-config.json', 'ui-config.json' ],
         "socket.url":  (new URLSearchParams(window.location.search).get('socket.url') || null),
         "sso.ticket": (new URLSearchParams(window.location.search).get('sso') || null),
         "forward.type": (new URLSearchParams(window.location.search).get('room') ? 2 : -1),
