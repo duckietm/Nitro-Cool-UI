@@ -14,7 +14,7 @@
     -   `git clone https://github.com/duckietm/Nitro-Cool-UI.git` <== For now switch to Dev-RendererV2 
 	-   `git clone https://github.com/duckietm/Nitro-Cool-UI-Renderer.git`
 	-   Install the dependencies for the renderer : cd C:\Github\Nitro-Cool-UI-Renderer
-    -   `yarn install`
+    	-   `yarn install`
 	-	Now we will create a Link for the CoolUI : `yarn link` This will give you a link address `yarn link "@nitrots/nitro-renderer"`
     -   Install the dependencies for Cool UI : cd C:\Github\Nitro-Cool-UI
 	-   `yarn install`
