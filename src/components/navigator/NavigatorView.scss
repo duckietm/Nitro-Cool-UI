@@ -1,31 +1,41 @@
 .nitro-navigator {
-    width: $navigator-width;
     height: $navigator-height;
+    min-width: $navigator-width;
+    max-width: $navigator-width;
+    min-height: $navigator-min-height;
+
+    &.expanded {
+        max-width: $navigator-width + 153px;
+        min-width: $navigator-width + 153px;
+    }
+
+    .nav-form {
+        width: 275px;
+    }
 
     .navigator-grid {
 
-        .navigator-item {
-
-            .badge {
-                width: 35px;
-                min-width: 35px;
-            }
-        }
 
         &:not(.two-columns) {
 
             .navigator-item {
-    
+
                 &:nth-child(odd) {
-                    background-color: $grid-active-bg-color;
+                    background-color: #daecfd;
                 }
+
+                &:nth-child(even) {
+                    background-color: #fff;
+                }
+
+
             }
         }
-    
+
         &.two-columns {
-    
+
             .navigator-item {
-        
+
                 &:nth-child(4n-2),
                 &:nth-child(4n-3) {
                     background: $grid-active-bg-color;
@@ -37,11 +47,25 @@
 
 .nitro-navigator-doorbell,
 .nitro-navigator-password {
-    width: 250px;
+    width: 300px;
 }
 
 .nitro-room-info {
     width: $room-info-width;
+    resize: none;
+}
+
+.text-tag {
+    font-size: 10px;
+    background-color: #CEE9FA;
+}
+
+.text-tag:hover {
+    background-color: #449FCF;
+}
+
+.text-embed {
+    font-size: 10px;
 }
 
 .nitro-room-link {
@@ -60,6 +84,212 @@
     }
 }
 
+
+.badge-empty {
+    background-image: url('@/assets/images/navigator/badge_empty.png');
+    background-repeat: no-repeat;
+    width: 40px;
+    height: 19px;
+    color: #fff;
+}
+
+.badge-success {
+    background-image: url('@/assets/images/navigator/badge_success.png');
+    background-repeat: no-repeat;
+    width: 40px;
+    height: 19px;
+    color: #fff;
+}
+
+.badge-danger {
+    background-image: url('@/assets/images/navigator/badge_danger.png');
+    background-repeat: no-repeat;
+    width: 40px;
+    height: 19px;
+    color: #fff;
+}
+
+.badge-warning {
+    background-image: url('@/assets/images/navigator/badge_warning.png');
+    background-repeat: no-repeat;
+    width: 40px;
+    height: 19px;
+    color: #fff;
+}
+
+.nav-category {
+    font-size: 12px;
+    color: #2b577b;
+    font-size: var(--bs-body-font-size);
+}
+
+.nav-icons {
+    color: #7dd8f6;
+}
+
+.minus-icon {
+    background-image: url('@/assets/images/navigator/minus.png');
+    background-repeat: no-repeat;
+    width: 18px;
+    height: 18px;
+}
+
+.plus-icon {
+    background-image: url('@/assets/images/navigator/plus.png');
+    background-repeat: no-repeat;
+    width: 18px;
+    height: 18px;
+}
+
+.nav-avatar-icon {
+    background-image: url('@/assets/images/navigator/avatar_icon.png');
+    background-repeat: no-repeat;
+    height: 8px;
+    width: 7px;
+}
+
+.nav-thumbnail {
+    border-image-source: url('@/assets/images/navigator/thumbnail_bg.png');
+    border-image-slice: 7 7 7 7 fill;
+    border-image-width: 7px 7px 7px 7px;
+}
+
+.nav-create-room {
+    background-image: url('@/assets/images/navigator/create_room.png');
+    background-repeat: no-repeat;
+    height: 60px;
+    width: 189px;
+    float: left;
+    cursor: pointer;
+}
+
+.nav-random-room {
+    background-image: url('@/assets/images/navigator/random_room.png');
+    background-repeat: no-repeat;
+    height: 60px;
+    width: 189px;
+    float: right;
+    margin-left: 15px;
+    cursor: pointer;
+}
+
+.nav-promote-room {
+    background-image: url('@/assets/images/navigator/promote_room.png');
+    background-repeat: no-repeat;
+    height: 60px;
+    width: 189px;
+    float: right;
+    margin-left: 15px;
+    cursor: pointer;
+}
+
+.nav-bottom {
+    max-height: 80px;
+    min-height: 80px;
+}
+
+.nav-bottom-buttons {
+    bottom: 18px;
+    left: 10px;
+}
+
+.nav-bottom-buttons-text {
+    font-size: 12px;
+
+    padding-top: 22px;
+    margin-left: 86px;
+}
+
+.nitro-room-creator {
+    width: $nitro-room-creator-width;
+    height: $nitro-room-creator-height;
+
+    textarea:focus, input:focus {
+        outline: none;
+    }
+
+    .room-creator-form-name {
+        height: 20px;
+        border: 1px solid grey;
+    }
+
+    .room-creator-form-desc {
+        height: 60px;
+        border: 1px solid grey;
+    }
+
+    .headline {
+    }
+
+    .content-area {
+        font-size: 12px;
+    }
+
+    .room-creator-info {
+        width: 240px;
+    }
+
+    .form-select {
+        width: 100%;
+    }
+
+    .room-creator-grid {
+        width: 305px;
+    }
+
+}
+
 .room-info {
     width: 275px;
+    color: #000;
+    image-rendering: pixelated;
+
+    .room-info-bg {
+        border-image-source: url('@/assets/images/navigator/white_bg.png');
+        border-image-slice: 6 6 6 6 fill;
+        border-image-width: 6px 6px 6px 6px;
+    }
+
+}
+
+.navigator-search-button {
+    right: 10px;
+    top: 11px;
+}
+
+.button-search-saves {
+    padding: 4px;
+    height: 17px;
+    margin-top: -1px;
+    font-size: 10px;
+    border-radius: 4px;
+    background-color: #FAA700;
+}
+
+.nitro-navigator-search-saves-result {
+    background-color: #fff;
+    width: 141px;
+    min-height: 494px;
+    max-height: 350px;
+    border-radius: 10px;
+
+    .bg-orange {
+        background-color: #FAA700;
+    }
+}
+
+.nitro-navigator-search-delete {
+    cursor: pointer;
+    background-image: url("@/assets/images/navigator/saves-search/delete_search.png");
+    width: 18px;
+    height: 18px;
+
+    &:hover {
+        background-image: url("@/assets/images/navigator/saves-search/delete_search_hover.png");
+
+        &:active {
+            background-image: url("@/assets/images/navigator/saves-search/delete_search_click.png");
+        }
+
+    }
 }

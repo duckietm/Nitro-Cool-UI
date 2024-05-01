@@ -58,7 +58,7 @@ export const NavigatorRoomSettingsModTabView: FC<NavigatorRoomSettingsTabViewPro
                         {
                             return (
                                 <Flex key={ index } shrink alignItems="center" gap={ 1 } overflow="hidden">
-                                    <UserProfileIconView userName={ user.userName } />
+                                    <UserProfileIconView userName={ user.userId } />
                                     <Text pointer grow onClick={ event => setSelectedUserId(user.userId) }> { user.userName }</Text>
                                 </Flex>
                             );

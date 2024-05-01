@@ -202,6 +202,71 @@
     background-color: rgba($black, 0.125);
 }
 
+.room-creator-grid-item {
+    height: var(--nitro-grid-column-min-height, unset);
+    background-position: center;
+    background-repeat: no-repeat;
+    border-image-source: url(@/assets/images/navigator/room-creator/room-bg.png);
+    border-image-slice:6 6 6 6 fill;
+    border-image-width:6px 6px 6px 6px;
+    overflow: hidden;
+
+    &.active {
+        border-image-source: url(@/assets/images/navigator/room-creator/room-bg-active.png) !important;
+        color: #fff !important;
+
+        .active-arrow {
+            background-image: url(@/assets/images/navigator/room-creator/arrow.png);
+            width: 18px;
+            height: 20px;
+            position: absolute;
+            top: 1px;
+            animation: MoveUpDown 1.7s linear infinite;
+
+            @keyframes MoveUpDown {
+                0%, 100% {
+                  top: 1px;
+                }
+                50% {
+                  top: 10px;
+                }
+              }
+
+        }
+    }
+
+    &.disabled {
+        cursor: not-allowed;
+
+        img {
+            opacity: 0.5;
+            filter: grayscale(1);
+        }
+    }
+
+    &.unseen {
+        background-color: rgba($success, 0.4);
+    }
+
+    .avatar-image {
+        background-position-y: -35px;
+    }
+
+    &.has-highlight {
+        &:after {
+            content: "";
+            z-index: 2;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            height: 1px;
+            width: 9px;
+            background-color: #fff;
+            opacity: 0.1;
+        }
+    }
+}
+
 #draggable-windows-container {
     position: absolute;
     top: 0;

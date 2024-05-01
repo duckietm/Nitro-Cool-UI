@@ -39,7 +39,7 @@ export const NitroSystemAlertView: FC<NotificationDefaultAlertViewProps> = props
 						<Text>- Jonas (Contributing)</Text>
 						<Text>- Ohlucas (Sunset resources)</Text>
 						<Text center bold small>v1.2.0</Text>
-						<Button fullWidth onClick={ event => window.open('https://github.com/duckietm/Nitro-Cool-UI') }>Cool UI Git</Button>
+						<Button fullWidth onClick={ event => window.open('https://git.krews.org/nitro/nitro-react') }>Cool UI Git</Button>
                     </Column>
                 </Column>
             </Grid>

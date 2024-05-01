@@ -3,7 +3,6 @@ $nitro-card-tabs-height: 42px;
 
 .nitro-card {
     resize: both;
-    padding: 0.5rem;
     background: #ededed;
     border-radius: 0.75rem!important;
     border: 2px solid #454566!important;
@@ -18,14 +17,15 @@ $nitro-card-tabs-height: 42px;
         border: $border-width solid $border-color;
 
         .nitro-card-header {
-            min-height: 28px;
-            max-height: 28px;
-            width: 100%;
-            padding: 1rem;
-            border-radius: 0.5rem;
-            background: #454566;
-            border: 2px solid #66669b;
-            margin-bottom: 0.25rem;
+            border-image-slice: 7 fill;
+            border-image-width: 7px;
+            border-image-repeat: repeat repeat;
+            color: #fff;
+			background: #454566;
+            height: 34px;
+            min-height: 34px;
+            line-height: 34px;
+            justify-content: center;
 
             .nitro-card-header-text {
                 color: $white;
@@ -35,24 +35,17 @@ $nitro-card-tabs-height: 42px;
 
             .nitro-card-header-close {
                 cursor: pointer;
-                padding: 2px 2px;
-                line-height: 1;
-                border-radius: $border-radius;
-                box-shadow: 0 0 0 1.6px $white;
-                border: 2px solid #921911;
-                background: repeating-linear-gradient(
-                    rgba(245, 80, 65, 1),
-                    rgba(245, 80, 65, 1) 50%,
-                    rgba(194, 48, 39, 1) 50%,
-                    rgba(194, 48, 39, 1) 100%
-                );
+                background-image: url("@/assets/images/boxes/card/close.png");
+                width: 19px;
+                height: 20px;
 
                 &:hover {
-                    filter: brightness(1.2);
-                }
+                    background-image: url("@/assets/images/boxes/card/close_hover.png");
 
-                &:active {
-                    filter: brightness(0.8);
+                    &:active {
+                        background-image: url("@/assets/images/boxes/card/close_click.png");
+                    }
+
                 }
             }
 
@@ -84,38 +77,35 @@ $nitro-card-tabs-height: 42px;
             background-color: #ededed;
 
             .nav-item {
-                padding: 0.2rem 0.4rem;
-                background-color: #dedede;
-                color: #000;
-                z-index: 1;
-                box-shadow: 0 0 0 1pt #fff !important;
-                border: 2px solid #454566!important;
-                border-radius: 0.5rem;
-                border-top-left-radius: 0.5rem !important;
-                border-top-right-radius: 0.5rem !important;
+        padding: $nav-link-padding-y $nav-link-padding-x;
+        background-color: $muted;
+        color: $black;
+        z-index: 1;
+        margin-bottom: -1px;
 
-                &.active {
-                    background-color: #e1e5ff;
+        &.active {
+          background-color: $light;
+          border-color: $border-color $border-color $light !important;
+          border-bottom: 1px solid black;
 
-                    &:before {
-                        background: $white;
-                    }
-                }
-
-                &:before {
-                    content: '';
-                    position: absolute;
-                    width: 93%;
-                    height: 3px;
-                    border-radius: 0.25rem;
-                    top: 1.5px;
-                    left: 0;
-                    right: 0;
-                    margin: auto;
-                    background: #c2c9d1;
-                    z-index: 1;
-                }
-            }
+          &:before {
+            background: $white;
+          }
+        }
+		&:before {
+          content: "";
+          position: absolute;
+          width: 93%;
+          height: 3px;
+          border-radius: 0.25rem;
+          top: 1.5px;
+          left: 0;
+          right: 0;
+          margin: auto;
+          background: #c2c9d1;
+          z-index: 1;	
+        }
+			}
         }
 
         .content-area {
@@ -130,12 +120,11 @@ $nitro-card-tabs-height: 42px;
             position: relative;
             min-height: 28px;
             max-height: 28px;
-            width: 100%;
-            padding: 1rem;
-            border-radius: 0.5rem;
             background: #454566;
-            border: 2px solid #66669b;
-            margin-bottom: 0.25rem;
+            box-shadow: 0 2px #366b8c;
+            width: 100%;
+            margin: 0;
+			font-size: 20px;
 
             .nitro-card-header-text {
                 color: $white;
@@ -146,25 +135,17 @@ $nitro-card-tabs-height: 42px;
 
             .nitro-card-header-close {
                 cursor: pointer;
-                padding: 0px 2px;
-                line-height: 1;
-                @include font-size($h7-font-size);
-                border-radius: $border-radius;
-                box-shadow: 0 0 0 1.6px $white;
-                border: 2px solid #921911;
-                background: repeating-linear-gradient(
-                    rgba(245, 80, 65, 1),
-                    rgba(245, 80, 65, 1) 50%,
-                    rgba(194, 48, 39, 1) 50%,
-                    rgba(194, 48, 39, 1) 100%
-                );
+                background-image: url("@/assets/images/boxes/card/close.png");
+                width: 19px;
+                height: 20px;
 
                 &:hover {
-                    filter: brightness(1.2);
-                }
+                    background-image: url("@/assets/images/boxes/card/close_hover.png");
 
-                &:active {
-                    filter: brightness(0.8);
+                    &:active {
+                        background-image: url("@/assets/images/boxes/card/close_click.png");
+                    }
+
                 }
             }
 
