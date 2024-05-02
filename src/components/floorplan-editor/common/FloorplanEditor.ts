@@ -198,6 +198,12 @@ export class FloorplanEditor
 
                 const asset = spritesheet.frames[assetName];
 
+                if (asset === undefined)
+                {
+                    console.warn(`Asset "${ assetName }" not found in spritesheet.`);
+                    continue;
+                }
+
                 this.renderer.drawImage(this._image, asset.frame.x, asset.frame.y, asset.frame.w, asset.frame.h, positionX, positionY, asset.frame.w, asset.frame.h);
             }
         }
