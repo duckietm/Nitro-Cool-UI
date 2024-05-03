@@ -25,25 +25,25 @@ export const FurnitureHighScoreView: FC<{}> = props =>
                             </ContextMenuHeaderView>
                             <ContextMenuListView overflow="hidden" gap={ 1 } className="h-100">
                                 <Column gap={ 1 }>
-                                    <Flex alignItems="center">
-                                        <Text center bold variant="white" className="col-8">
+                                    <Flex alignItems="center" className="px-2">
+                                        <Text bold variant="white" className="col-8">
                                             { LocalizeText('high.score.display.users.header') }
                                         </Text>
-                                        <Text center bold variant="white" className="col-4">
+                                         <Text align="end" bold variant="white" className="col-4">
                                             { LocalizeText('high.score.display.score.header') }
                                         </Text>
                                     </Flex>
                                     <hr className="m-0" />
                                 </Column>
-                                <Column overflow="auto" gap={ 1 } className="overflow-y-scroll">
+                                <Column overflow="auto" gap={ 1 } className="px-2 overflow-y-scroll">
                                     { stuffData.entries.map((entry, index) =>
                                     {
                                         return (
                                             <Flex key={ index } alignItems="center">
-                                                <Text center variant="white" className="col-8">
+                                                 <Text variant="white" className="col-8">
                                                     { entry.users.join(', ') }
                                                 </Text>
-                                                <Text center variant="white" className="col-4">
+                                                <Text align="end" variant="white" className="col-4">
                                                     { entry.score }
                                                 </Text>
                                             </Flex>
