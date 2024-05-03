@@ -1,40 +1,182 @@
 .nitro-inventory {
-    width: $inventory-width;
     height: $inventory-height;
+    min-height: $inventory-height;
+    max-height: $inventory-height + 150px;
+    width: $inventory-width;
+    min-width: $inventory-width;
+    max-width: $inventory-width;
+    color: #FFF;
 
-    .empty-image {
-        background: url('@/assets/images/inventory/empty.png') no-repeat;
-        width: 129px;
-        height: 181px;
+    input {
+        min-height: 20px;
+        max-height: 20px;
     }
 
-    .trade-button {
-        min-height: 0;
-        font-size: 8px;
-        padding: 1px 2px;
-        z-index: 5;
+    &.trading {
+        width: 535px;
+		min-height: $inventory-height + 315px !important;
+        max-width: $inventory-width + 15px !important;
+        min-width: $inventory-width + 15px !important;
+
+        .trading-inventory {
+            max-height: 240px;
+        }
+		
+		.nitro-item-count {
+            top: 0px;
+            right: -2px;
+            background-color: white;
+            padding: 0px;
+            padding-left: 3px;
+            padding-right: 3px;
+            color: #306A83;
+            border: 1px solid #2F6982;
+            font-weight: normal !important;
+            font-family: Goldfish;
+			}
+	}
+
+  .empty-image {
+    background: url("@/assets/images/inventory/empty.png");
+    background-repeat: no-repeat;
+    width: 129px;
+    height: 181px;
+  }
+  .empty-petsimage {
+    background: url("@/assets/images/inventory/petsempty.png");
+    background-repeat: no-repeat;
+    width: 220px;
+    height: 220px;
+  }
+  .empty-furniimage {
+    background: url("@/assets/images/inventory/furniempty.png");
+    background-repeat: no-repeat;
+    width: 220px;
+    height: 220px;
+  }
+  .empty-botsimage {
+    background: url("@/assets/images/inventory/botsempty.png");
+    background-repeat: no-repeat;
+    width: 220px;
+    height: 220px;
+  }
+
+  .bubble-inventory {
+    position: relative;
+    font-family: sans-serif;
+    font-size: 14px;
+    line-height: 5px;
+    width: auto;
+    background: #fff;
+    border-radius: 15px;
+    padding: 5px;
+    text-align: left;
+    color: #000;
+  }
+  .bubble-inventory-bottom-left:after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 15%;
+    width: 0;
+    height: 0;
+    border: 20px solid transparent;
+    border-top-color: #fff;
+    border-bottom: 0;
+    border-right: 0;
+    margin-left: -10px;
+    margin-bottom: -20px;
+  }
+
+  .trade-button {
+    min-height: 0;
+    font-size: 8px;
+    padding: 1px 2px;
+    z-index: 5;
+  }
+  
+  .trade-bg {
+        border-image-source: url('@/assets/images/inventory/trading_bg.png');
+        border-image-slice: 15 15 15 15 fill;
+        border-image-width: 15px 15px 15px 15px;
+		z-index: 1;
+    }
+
+    .credits-align {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 230px;
+    }
+
+    .quantity-input {
+        width: 49px;
+    }
+
+    .lock-design-left {
+        margin-left: 21px;
+        margin-right: 33px;
+    }
+
+    .lock-design-right {
+        margin-left: 21px;
+    }
+
+    .divisor {
+        height: 180px;
+        border-left: 2px solid #B4B4B4;
+        margin-top: 15px;
     }
 	
-	.tab-icon {
-        width:18px;
-        height:18px;
-        background-position: center;
-        background-repeat: no-repeat;
+	.inventory-items {
 
-        &.tab-inventory-furni {
-            background-image: url(@/assets/images/inventory/furni.png);
+        border-image-source: url(@/assets/images/inventory/item.png) !important;
+        border-image-slice: 6 6 6 6 fill !important;
+        border-image-width: 6px 6px 6px 6px !important;
+
+        &.active {
+            border-image-source: url(@/assets/images/inventory/selected_item.png) !important;
+            border-image-slice: 6 6 6 6 fill !important;
+            border-image-width: 6px 6px 6px 6px !important;
         }
 
-        &.tab-inventory-bots {
-            background-image: url(@/assets/images/inventory/bots.png);
+        &.unseen {
+            background-color: #9BCA64;
         }
 
-        &.tab-inventory-furni-tab-pets {
-            background-image: url(@/assets/images/inventory/pets.png);
-        }
-
-        &.tab-inventory-badges {
-            background-image: url(@/assets/images/inventory/ach.png);
+        .nitro-item-count {
+            top: 0px;
+            right: -2px;
+            background-color: white;
+            padding: 0px;
+            padding-left: 3px;
+            padding-right: 3px;
+            color: #306A83;
+            border: 1px solid #2F6982;
+            font-weight: normal !important;
+            font-family: Goldfish;
         }
     }
+}
+
+.calc-wrapper {
+    width: 96%;
+    height: calc(100% - 100px);
+}
+
+.size-list-badges {
+    width: 335px;
+}
+
+.size-badges {
+    width: 145px;
+}
+
+.nitro-inventory-category-filter {
+    background-color: #C9C9C9;
+    height: 25px;
+}
+
+.text-shadow-around-text {
+    text-shadow: -1px 0 white, 0 1px white, 1px 0 #ececec, 0 -1px white;
 }

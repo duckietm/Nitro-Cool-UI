@@ -1,6 +1,6 @@
 import { IRoomSession, RoomObjectVariable, RoomPreviewer } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
-import { attemptPetPlacement, GetRoomEngine, LocalizeText, UnseenItemCategory } from '../../../../api';
+import { GetRoomEngine, LocalizeText, UnseenItemCategory, attemptPetPlacement } from '../../../../api';
 import { AutoGrid, Button, Column, Grid, LayoutRoomPreviewerView, Text } from '../../../../common';
 import { useInventoryPets, useInventoryUnseenTracker } from '../../../../hooks';
 import { InventoryCategoryEmptyView } from '../InventoryCategoryEmptyView';
@@ -10,11 +10,12 @@ interface InventoryPetViewProps
 {
     roomSession: IRoomSession;
     roomPreviewer: RoomPreviewer;
+	isTrading: boolean;
 }
 
 export const InventoryPetView: FC<InventoryPetViewProps> = props =>
 {
-    const { roomSession = null, roomPreviewer = null } = props;
+    const { roomSession = null, roomPreviewer = null, isTrading = false } = props;
     const [ isVisible, setIsVisible ] = useState(false);
     const { petItems = null, selectedPet = null, activate = null, deactivate = null } = useInventoryPets();
     const { isUnseen = null, removeUnseen = null } = useInventoryUnseenTracker();
@@ -78,7 +79,7 @@ export const InventoryPetView: FC<InventoryPetViewProps> = props =>
                 </Column>
                 { selectedPet && selectedPet.petData &&
                     <Column grow justifyContent="between" gap={ 2 }>
-                        <Text grow>{ selectedPet.petData.name }</Text>
+                        <Text grow truncate>{ selectedPet.petData.name }</Text>
                         { !!roomSession &&
                             <Button variant="success" onClick={ event => attemptPetPlacement(selectedPet) }>
                                 { LocalizeText('inventory.furni.placetoroom') }

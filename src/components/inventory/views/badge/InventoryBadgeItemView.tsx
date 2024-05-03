@@ -11,7 +11,7 @@ export const InventoryBadgeItemView: FC<PropsWithChildren<{ badgeCode: string }>
     const unseen = isUnseen(UnseenItemCategory.BADGE, getBadgeId(badgeCode));
 
     return (
-        <LayoutGridItem itemActive={ (selectedBadgeCode === badgeCode) } itemUnseen={ unseen } onMouseDown={ event => setSelectedBadgeCode(badgeCode) } onDoubleClick={ event => toggleBadge(selectedBadgeCode) } { ...rest }>
+        <LayoutGridItem className="badge-container" itemActive={ (selectedBadgeCode === badgeCode) } itemUnseen={ unseen } onMouseDown={ event => setSelectedBadgeCode(badgeCode) } onDoubleClick={ event => toggleBadge(selectedBadgeCode) } { ...rest }>
             <LayoutBadgeImageView badgeCode={ badgeCode } />
             { children }
         </LayoutGridItem>
