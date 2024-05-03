@@ -84,7 +84,7 @@ export const InventoryCategoryFilterView: FC<InventoryCategoryFilterViewProps> =
         <Flex className="nitro-inventory-category-filter rounded p-1 mt-n1" style={ { width: currentTab === TAB_BADGES ? '320px' : '100%' } }>
             <Flex className="position-relative">
                 <Flex fullWidth alignItems="center" position="relative">
-                    <input type="text" className="form-control form-control-sm" value={ searchValue } onChange={ event => setSearchValue(event.target.value) } />
+                    <input type="text" className="form-control form-control-sm" value={ searchValue } onChange={ event => setSearchValue(event.target.value) } placeholder={ LocalizeText('catalog.search') }/>
                 </Flex>
                 { (searchValue && !!searchValue.length) && <i className="icon icon-clear position-absolute cursor-pointer end-1 top-1" onClick={ event => setSearchValue('') } /> }
             </Flex>

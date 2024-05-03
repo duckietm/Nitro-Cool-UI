@@ -42,25 +42,7 @@
     width: 129px;
     height: 181px;
   }
-  .empty-petsimage {
-    background: url("@/assets/images/inventory/petsempty.png");
-    background-repeat: no-repeat;
-    width: 220px;
-    height: 220px;
-  }
-  .empty-furniimage {
-    background: url("@/assets/images/inventory/furniempty.png");
-    background-repeat: no-repeat;
-    width: 220px;
-    height: 220px;
-  }
-  .empty-botsimage {
-    background: url("@/assets/images/inventory/botsempty.png");
-    background-repeat: no-repeat;
-    width: 220px;
-    height: 220px;
-  }
-
+  
   .bubble-inventory {
     position: relative;
     font-family: sans-serif;
@@ -161,7 +143,7 @@
 
 .calc-wrapper {
     width: 96%;
-    height: calc(100% - 100px);
+    height: calc(100% - 90px);
 }
 
 .size-list-badges {

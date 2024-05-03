@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from 'react';
 import { LocalizeBadgeName, LocalizeText, UnseenItemCategory } from '../../../../api';
 import { AutoGrid, Button, Column, Flex, Grid, LayoutBadgeImageView, Text } from '../../../../common';
-import { useAchievements, useInventoryBadges, useInventoryUnseenTracker } from '../../../../hooks';
+import { useInventoryBadges, useInventoryUnseenTracker } from '../../../../hooks';
 import { InventoryBadgeItemView } from './InventoryBadgeItemView';
 
 interface InventoryBadgeViewProps
@@ -15,7 +15,6 @@ export const InventoryBadgeView: FC<InventoryBadgeViewProps> = props =>
     const [ isVisible, setIsVisible ] = useState(false);
     const { activeBadgeCodes = [], selectedBadgeCode = null, isWearingBadge = null, canWearBadges = null, toggleBadge = null, getBadgeId = null, activate = null, deactivate = null } = useInventoryBadges();
     const { isUnseen = null, removeUnseen = null } = useInventoryUnseenTracker();
-    const { achievementScore = 0 } = useAchievements();
 
     useEffect(() =>
     {
@@ -41,7 +40,7 @@ export const InventoryBadgeView: FC<InventoryBadgeViewProps> = props =>
     }, []);
 
     return (
-        <div className="badge-wrapper calc-wrapper mt-n2">
+        <div className="calc-wrapper mt-n2">
             <Grid gap={ 1 }>
                 <Column overflow="hidden" className="size-list-badges mt-1">
                     <AutoGrid gap={ 1 } columnCount={ 5 }>
@@ -72,9 +71,6 @@ export const InventoryBadgeView: FC<InventoryBadgeViewProps> = props =>
                         <Button className="btn btn-primary mb-1" style={ { fontSize: '12px' } } disabled={ !isWearingBadge(selectedBadgeCode) && !canWearBadges() } onClick={ event => toggleBadge(selectedBadgeCode) }>{ LocalizeText(isWearingBadge(selectedBadgeCode) ? 'inventory.badges.clearbadge' : 'inventory.badges.wearbadge') }</Button>
                     </Flex>
                 }
-                <div className="nitro-progress-bar mt-1">
-                    <Text small center variant="white" style={ { marginTop: '-1px' } }>{ LocalizeText('achievements.categories.score', [ 'score' ], [ achievementScore.toString() ]) }</Text>
-                </div>
             </Column>
         </div>
     );
