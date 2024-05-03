@@ -372,7 +372,7 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
                         </Flex>
                         { (avatarInfo.purchaseOfferId > 0) &&
                             <Flex>
-                                <Button className="volter-button text-black" onClick={ event => processButtonAction('buy_one') }>
+                                <Button className="volter-button" onClick={ event => processButtonAction('buy_one') }>
                                     { LocalizeText('infostand.button.buy') }
                                 </Button>
                             </Flex> }
