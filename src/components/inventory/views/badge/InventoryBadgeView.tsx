@@ -40,7 +40,7 @@ export const InventoryBadgeView: FC<InventoryBadgeViewProps> = props =>
     }, []);
 
     return (
-        <div className="calc-wrapper mt-n2">
+        <div className="badge-wrapper calc-wrapper mt-n2">
             <Grid gap={ 1 }>
                 <Column overflow="hidden" className="size-list-badges mt-1">
                     <AutoGrid gap={ 1 } columnCount={ 5 }>

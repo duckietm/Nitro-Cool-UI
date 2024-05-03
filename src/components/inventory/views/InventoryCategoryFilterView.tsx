@@ -95,11 +95,6 @@ export const InventoryCategoryFilterView: FC<InventoryCategoryFilterViewProps> =
                             { [ InventoryFilterType.EVERYTHING, InventoryFilterType.FLOOR, InventoryFilterType.WALL ].map((type, index) => <option key={ index } value={ type }>{ LocalizeText(type) }</option>) }
                         </select>
                     </Flex>
-                    <Flex alignItems="center" position="relative" className="ms-2">
-                        <select className="form-select form-select-sm" value={ filterPlace } onChange={ event => setFilterPlace(event.target.value) } disabled={ currentTab === TAB_FURNITURE }>
-                            { [ InventoryFilterType.ANYWHERE, InventoryFilterType.IN_ROOM, InventoryFilterType.IN_INVENTORY ].map((type, index) => <option key={ index } value={ type }>{ LocalizeText(type) }</option>) }
-                        </select>
-                    </Flex>
                 </>
             }
         </Flex>

@@ -64,7 +64,7 @@ export const InventoryPetView: FC<InventoryPetViewProps> = props =>
         return () => setIsVisible(false);
     }, []);
 
-    if(!petItems || !petItems.length) return <InventoryCategoryEmptyView title={ LocalizeText('inventory.empty.pets.title') } desc={ LocalizeText('inventory.empty.pets.desc') } />;
+    if(!petItems || !petItems.length) return <InventoryCategoryEmptyView title={ LocalizeText('inventory.empty.pets.title') } desc={ LocalizeText('inventory.empty.pets.desc') } isTrading={ isTrading } />;
 
     return (
         <Grid>
