@@ -5,12 +5,11 @@ import { Base, BaseProps } from '../Base';
 export interface UserProfileIconViewProps extends BaseProps<HTMLDivElement>
 {
     userId?: number;
-    userName?: string;
 }
 
 export const UserProfileIconView: FC<UserProfileIconViewProps> = props =>
 {
-    const { userId = 0, userName = null, classNames = [], pointer = true, children = null, ...rest } = props;
+    const { userId = 0, classNames = [], pointer = true, children = null, ...rest } = props;
 
     const getClassNames = useMemo(() =>
     {
