@@ -467,6 +467,7 @@ export class OutgoingHeader
     public static RENTABLE_EXTEND_RENT_OR_BUYOUT_STRIP_ITEM = 2115;
     public static RENTABLE_EXTEND_RENT_OR_BUYOUT_FURNI = 1071;
     public static RENTABLE_GET_RENT_OR_BUYOUT_OFFER = 2518;
-	
+
+	public static FURNITURE_PICKUP_ALL = 10017;
 	public static DELETE_ITEM = 10018;
 }
