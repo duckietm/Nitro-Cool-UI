@@ -16,7 +16,7 @@ export interface LayoutBadgeImageViewProps extends BaseProps<HTMLDivElement>
 export const LayoutBadgeImageView: FC<LayoutBadgeImageViewProps> = props =>
 {
     const { badgeCode = null, isGroup = false, showInfo = false, customTitle = null, isGrayscale = false, scale = 1, classNames = [], style = {}, children = null, ...rest } = props;
-    const [ imageElement, setImageElement ] = useState<HTMLImageElement>(null);
+    const [ imageSrc, setImageSrc ] = useState<string>(null);
 
     const getClassNames = useMemo(() =>
     {
@@ -35,63 +35,53 @@ export const LayoutBadgeImageView: FC<LayoutBadgeImageViewProps> = props =>
     {
         let newStyle: CSSProperties = {};
 
-        if(imageElement)
+        if(scale !== 1)
         {
-            newStyle.backgroundImage = `url(${ imageElement.src })`;
-            newStyle.width = imageElement.width;
-            newStyle.height = imageElement.height;
+            newStyle.transform = `scale(${ scale })`;
 
-            if(scale !== 1)
-            {
-                newStyle.transform = `scale(${ scale })`;
-
-                if(!(scale % 1)) newStyle.imageRendering = 'pixelated';
-
-                newStyle.width = (imageElement.width * scale);
-                newStyle.height = (imageElement.height * scale);
-            }
+            if(!(scale % 1)) newStyle.imageRendering = 'pixelated';
         }
 
         if(Object.keys(style).length) newStyle = { ...newStyle, ...style };
 
         return newStyle;
-    }, [ imageElement, scale, style ]);
+    }, [ scale, style ]);
 
-    useEffect(() =>
-    {
-        if(!badgeCode || !badgeCode.length) return;
+    useEffect(() => {
+    if (!badgeCode || !badgeCode.length) return;
+	
+	let didSetBadge = false;
+	
+	const onBadgeImageReadyEvent = (event: BadgeImageReadyEvent) => {
+        if (event.badgeId !== badgeCode) return;
 
-        let didSetBadge = false;
+        const texture = event.image;
 
-        const onBadgeImageReadyEvent = (event: BadgeImageReadyEvent) =>
-        {
-            if(event.badgeId !== badgeCode) return;
-
-            const element = TextureUtils.generateImage(new NitroSprite(event.image));
-
-            element.onload = () => setImageElement(element);
-
-            didSetBadge = true;
-
-            GetSessionDataManager().events.removeEventListener(BadgeImageReadyEvent.IMAGE_READY, onBadgeImageReadyEvent);
+        if (texture && texture.baseTexture && texture.baseTexture.resource && texture.baseTexture.resource.source) {
+            setImageSrc(texture.baseTexture.resource.source.src);
         }
 
-        GetSessionDataManager().events.addEventListener(BadgeImageReadyEvent.IMAGE_READY, onBadgeImageReadyEvent);
+        didSetBadge = true;
 
-        const texture = isGroup ? GetSessionDataManager().getGroupBadgeImage(badgeCode) : GetSessionDataManager().getBadgeImage(badgeCode);
+        GetSessionDataManager().events.removeEventListener(BadgeImageReadyEvent.IMAGE_READY, onBadgeImageReadyEvent);
+    };
 
-        if(texture && !didSetBadge)
-        {
-            const element = TextureUtils.generateImage(new NitroSprite(texture));
+    GetSessionDataManager().events.addEventListener(BadgeImageReadyEvent.IMAGE_READY, onBadgeImageReadyEvent);
 
-            element.onload = () => setImageElement(element);
+    const texture = isGroup ? GetSessionDataManager().getGroupBadgeImage(badgeCode) : GetSessionDataManager().getBadgeImage(badgeCode);
+
+    if (texture && !didSetBadge) {
+        if (texture.baseTexture && texture.baseTexture.resource && texture.baseTexture.resource.source) {
+            setImageSrc(texture.baseTexture.resource.source.src);
         }
+    }
 
-        return () => GetSessionDataManager().events.removeEventListener(BadgeImageReadyEvent.IMAGE_READY, onBadgeImageReadyEvent);
-    }, [ badgeCode, isGroup ]);
+    return () => GetSessionDataManager().events.removeEventListener(BadgeImageReadyEvent.IMAGE_READY, onBadgeImageReadyEvent);
+	}, [badgeCode, isGroup]);
 
     return (
         <Base classNames={ getClassNames } style={ getStyle } { ...rest }>
+            {imageSrc && <img src={imageSrc} alt={badgeCode} />}
             { (showInfo && GetConfiguration<boolean>('badge.descriptions.enabled', true)) &&
                 <Base className="badge-information text-black py-1 px-2 small">
                     <div className="fw-bold mb-1">{ isGroup ? customTitle : LocalizeBadgeName(badgeCode) }</div>
