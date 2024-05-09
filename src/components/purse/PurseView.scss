@@ -46,31 +46,44 @@
 
     .nitro-purse-seasonal-currency {
 
+		position: relative;
         height: 30px;
-		background-color: rgba($dark, 0.95);
+		
+		background-color: rgba($dark, 0.55);
+		border-radius: 0.5rem !important;
 
         .seasonal-padding {
-            padding: 7px;
+            padding: 5px;
         }
 
-        .seasonal-bold {
-            padding-right: 3px;
-        }
-
-        .seasonal-amount {
-            padding-top: 7px;
-            padding-bottom: 7px;
-            padding-right: 3px;
-            width: 90px;
-        }
-
-        .nitro-seasonal-box {
-            border-image-slice: 6 6 6 6 fill;
-            border-image-width: 6px 6px 6px 6px;
-            top: 0px;
-            right: 0px;
-            height: 100%;
-        }
+        .seasonal-bold, .seasonal-amount {
+			margin-top: 4px;
+			display: flex;
+			align-items: center;
+			height: 30px;
+		}
+		
+		seasonal-bold {
+			flex: 2;
+			line-height: 10px;
+		}
+		.seasonal-amount {
+			flex: 1;
+			line-height: 20px;
+		}
+		
+		.nitro-seasonal-box {
+			border-image-slice: 6 6 6 6 fill;
+			border-image-width: 6px 6px 6px 6px;
+			top: 0px;
+			right: 0px;
+			height: 100%;
+			width: 20%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background-color: transparent;
+		}
 
         &.purple {
 
@@ -110,8 +123,7 @@
             .nitro-seasonal-box{
                 border-image-source: url(@/assets/images/purse/seasonal_bg_blue.png);
             }
-
-            .seasonal-bold {
+			.seasonal-bold {
                 color: #95c3e5;
             }
         }
