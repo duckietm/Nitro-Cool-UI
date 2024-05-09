@@ -14,28 +14,28 @@
     }
     .coffecurrencybutton {
       border-radius: 0.5rem !important;
-      background-color: #b69b83;
+      background-color: rgba(#b69b83, 0.75);
       border: 2px solid hsla(0deg, 0%, 100%, 0.5);
       margin-bottom: 3px;
       padding: 0px !important;
       width: 30px;
     }
     .borderhccontent {
-      background-color: #212131;
+      background-color: rgba(#212131, 0.75);
       border-radius: 0.5rem !important;
       border: 2px solid #383853;
       height: calc(100% - 3px);
     }
     .nitro-purse-button.currency--1 {
-      background: #e8b125;
+      background-color: rgba(#e8b125, 0.75);
       border: 2px solid #f4d892;
     }
     .nitro-purse-button.currency-0 {
-      background: #c364c1;
+      background-color: rgba(#c364c1, 0.75);
       border: 2px solid #e1b2e0;
     }
     .nitro-purse-button.currency-5 {
-      background: #6bafaa;
+      background-color: rgba(#6bafaa, 0.75);
       border: 2px solid #b5d7d5;
     }
     .allcurrencypurse {
@@ -47,8 +47,8 @@
   .nitro-purse-seasonal-currency {
     position: relative;
     height: 30px;
-    background-color: rgba($dark, 0.55);
-    border-radius: 0.5rem !important;
+	background: linear-gradient(to right, $dark, transparent);
+    border-radius: 0.6rem !important;
 
     .seasonal-padding {
       padding: 5px;
@@ -78,59 +78,49 @@
       top: 0px;
       right: 0px;
       height: 100%;
-      width: 20%;
+      width: 30%;
       display: flex;
       align-items: center;
       justify-content: center;
-      background-color: transparent;
     }
 
     &.purple {
       .nitro-seasonal-box {
-        border-image-source: url(@/assets/images/purse/seasonal_bg_purple.png);
-      }
-
-      .seasonal-bold {
-        color: #b17fbe;
+        background: linear-gradient(to left, #b17fbe, transparent);
+		border-top-right-radius: 0.5rem;
+        border-bottom-right-radius: 0.5rem;
       }
     }
 
     &.bronze {
       .nitro-seasonal-box {
-        border-image-source: url(@/assets/images/purse/seasonal_bg_bronze.png);
-      }
-
-      .seasonal-bold {
-        color: #d4943c;
+        background: linear-gradient(to left, #d4943c, transparent);
+		border-top-right-radius: 0.5rem;
+        border-bottom-right-radius: 0.5rem;
       }
     }
 
     &.pink {
       .nitro-seasonal-box {
-        border-image-source: url(@/assets/images/purse/seasonal_bg_pink.png);
-      }
-
-      .seasonal-bold {
-        color: #d89ba8;
+        background: linear-gradient(to left, #d89ba8, transparent);
+		border-top-right-radius: 0.5rem;
+        border-bottom-right-radius: 0.5rem;
       }
     }
 
     &.blue {
       .nitro-seasonal-box {
-        border-image-source: url(@/assets/images/purse/seasonal_bg_blue.png);
-      }
-      .seasonal-bold {
-        color: #95c3e5;
+        background: linear-gradient(to left, #95c3e5, transparent);
+		border-top-right-radius: 0.5rem;
+        border-bottom-right-radius: 0.5rem;
       }
     }
 
     &.red {
       .nitro-seasonal-box {
-        border-image-source: url(@/assets/images/purse/seasonal_bg_red.png);
-      }
-
-      .seasonal-bold {
-        color: #ff0004;
+        background: linear-gradient(to left, #ff0004, transparent);
+		border-top-right-radius: 0.5rem;
+        border-bottom-right-radius: 0.5rem;
       }
     }
   }
