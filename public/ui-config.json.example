@@ -106,11 +106,10 @@
     "avatareditor.show.clubitems.dimmed": true,
     "avatareditor.show.clubitems.first": true,
     "chat.history.max.items": 100,
-    "system.currency.types": [
-        -1,
-        0,
-        5
-    ],
+	"currency.display.number.short": false,
+    "currency.asset.icon.url": "${images.url}/wallet/%type%.png",
+    "currency.seasonal.color": "blue",
+    "system.currency.types": [ -1, 0, 5 ],
     "catalog.links": {
         "hc.buy_hc": "habbo_club",
         "hc.hc_gifts": "club_gifts",
@@ -128,9 +127,6 @@
         "enabled": false,
         "sound": "sound_respect_received"
     },
-    "currency.display.number.short": false,
-    "currency.asset.icon.url": "${images.url}/wallet/%type%.png",
-    "currency.seasonal.color": "bronze",
     "catalog.asset.url": "${image.library.url}catalogue",
     "catalog.asset.image.url": "${catalog.asset.url}/%name%.gif",
     "catalog.asset.icon.url": "${catalog.asset.url}/icon_%name%.png",

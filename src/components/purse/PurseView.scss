@@ -45,10 +45,87 @@
     }
 
     .nitro-purse-seasonal-currency {
-        background-color: #212131;
-        box-shadow: inset 0 5px rgba(38,38,57,.6), inset 0 -4px rgba(25,25,37,.6);
-        margin-bottom: 6px;
-        margin-top: -6px;
+
+        height: 30px;
+		background-color: rgba($dark, 0.95);
+
+        .seasonal-padding {
+            padding: 7px;
+        }
+
+        .seasonal-bold {
+            padding-right: 3px;
+        }
+
+        .seasonal-amount {
+            padding-top: 7px;
+            padding-bottom: 7px;
+            padding-right: 3px;
+            width: 90px;
+        }
+
+        .nitro-seasonal-box {
+            border-image-slice: 6 6 6 6 fill;
+            border-image-width: 6px 6px 6px 6px;
+            top: 0px;
+            right: 0px;
+            height: 100%;
+        }
+
+        &.purple {
+
+            .nitro-seasonal-box{
+                border-image-source: url(@/assets/images/purse/seasonal_bg_purple.png);
+            }
+
+            .seasonal-bold {
+                color: #b17fbe;
+            }
+        }
+
+        &.bronze {
+
+            .nitro-seasonal-box{
+                border-image-source: url(@/assets/images/purse/seasonal_bg_bronze.png);
+            }
+
+            .seasonal-bold {
+                color: #d4943c;
+            }
+        }
+
+        &.pink {
+
+            .nitro-seasonal-box{
+                border-image-source: url(@/assets/images/purse/seasonal_bg_pink.png);
+            }
+
+            .seasonal-bold {
+                color: #d89ba8;
+            }
+        }
+
+        &.blue {
+
+            .nitro-seasonal-box{
+                border-image-source: url(@/assets/images/purse/seasonal_bg_blue.png);
+            }
+
+            .seasonal-bold {
+                color: #95c3e5;
+            }
+        }
+
+        &.red {
+
+            .nitro-seasonal-box{
+                border-image-source: url(@/assets/images/purse/seasonal_bg_red.png);
+            }
+
+            .seasonal-bold {
+                color: #ff0004;
+            }
+        }
     }
 }
 .topcurrencygen{
