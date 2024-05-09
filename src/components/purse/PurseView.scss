@@ -1,145 +1,140 @@
 .nitro-purse-container {
-    font-size: $font-size-sm;
-    pointer-events: all;
+  font-size: $font-size-sm;
+  pointer-events: all;
 
-    .nitro-purse {
-        margin-top: 4px;
+  .nitro-purse {
+    margin-top: 4px;
 
-        .nitro-purse-subscription {
-            background-color: rgba($light, 0.1);
-        }
-    
-        .nitro-purse-button {
-            padding: 3px 2px;
-        }
-        .coffecurrencybutton{
-            border-radius: 0.5rem !important;
-            background-color: #b69b83;
-            border: 2px solid hsla(0deg, 0%, 100%, 0.5);
-            margin-bottom: 3px;
-            padding: 0px !important;
-            width: 30px;
-        }
-        .borderhccontent{
-            background-color: #212131;
-            border-radius: 0.5rem!important;
-            border: 2px solid #383853;
-            height: calc(100% - 3px);
-        }
-        .nitro-purse-button.currency--1 {
-            background: #e8b125;
-            border: 2px solid #f4d892;
-        }
-        .nitro-purse-button.currency-0 {
-            background: #c364c1;
-            border: 2px solid #e1b2e0;
-        }
-        .nitro-purse-button.currency-5 {
-            background: #6bafaa;
-            border: 2px solid #b5d7d5;
-        }
-        .allcurrencypurse{
-            border-radius: 7px!important;
-            margin-bottom: 5px;
-        }
+    .nitro-purse-subscription {
+      background-color: rgba($light, 0.1);
     }
 
-    .nitro-purse-seasonal-currency {
-
-		position: relative;
-        height: 30px;
-		
-		background-color: rgba($dark, 0.55);
-		border-radius: 0.5rem !important;
-
-        .seasonal-padding {
-            padding: 5px;
-        }
-
-        .seasonal-bold, .seasonal-amount {
-			margin-top: 4px;
-			display: flex;
-			align-items: center;
-			height: 30px;
-		}
-		
-		seasonal-bold {
-			flex: 2;
-			line-height: 10px;
-		}
-		.seasonal-amount {
-			flex: 1;
-			line-height: 20px;
-		}
-		
-		.nitro-seasonal-box {
-			border-image-slice: 6 6 6 6 fill;
-			border-image-width: 6px 6px 6px 6px;
-			top: 0px;
-			right: 0px;
-			height: 100%;
-			width: 20%;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			background-color: transparent;
-		}
-
-        &.purple {
-
-            .nitro-seasonal-box{
-                border-image-source: url(@/assets/images/purse/seasonal_bg_purple.png);
-            }
-
-            .seasonal-bold {
-                color: #b17fbe;
-            }
-        }
-
-        &.bronze {
-
-            .nitro-seasonal-box{
-                border-image-source: url(@/assets/images/purse/seasonal_bg_bronze.png);
-            }
-
-            .seasonal-bold {
-                color: #d4943c;
-            }
-        }
-
-        &.pink {
-
-            .nitro-seasonal-box{
-                border-image-source: url(@/assets/images/purse/seasonal_bg_pink.png);
-            }
-
-            .seasonal-bold {
-                color: #d89ba8;
-            }
-        }
-
-        &.blue {
-
-            .nitro-seasonal-box{
-                border-image-source: url(@/assets/images/purse/seasonal_bg_blue.png);
-            }
-			.seasonal-bold {
-                color: #95c3e5;
-            }
-        }
-
-        &.red {
-
-            .nitro-seasonal-box{
-                border-image-source: url(@/assets/images/purse/seasonal_bg_red.png);
-            }
-
-            .seasonal-bold {
-                color: #ff0004;
-            }
-        }
+    .nitro-purse-button {
+      padding: 3px 2px;
     }
+    .coffecurrencybutton {
+      border-radius: 0.5rem !important;
+      background-color: #b69b83;
+      border: 2px solid hsla(0deg, 0%, 100%, 0.5);
+      margin-bottom: 3px;
+      padding: 0px !important;
+      width: 30px;
+    }
+    .borderhccontent {
+      background-color: #212131;
+      border-radius: 0.5rem !important;
+      border: 2px solid #383853;
+      height: calc(100% - 3px);
+    }
+    .nitro-purse-button.currency--1 {
+      background: #e8b125;
+      border: 2px solid #f4d892;
+    }
+    .nitro-purse-button.currency-0 {
+      background: #c364c1;
+      border: 2px solid #e1b2e0;
+    }
+    .nitro-purse-button.currency-5 {
+      background: #6bafaa;
+      border: 2px solid #b5d7d5;
+    }
+    .allcurrencypurse {
+      border-radius: 7px !important;
+      margin-bottom: 5px;
+    }
+  }
+
+  .nitro-purse-seasonal-currency {
+    position: relative;
+    height: 30px;
+    background-color: rgba($dark, 0.55);
+    border-radius: 0.5rem !important;
+
+    .seasonal-padding {
+      padding: 5px;
+    }
+
+    .seasonal-bold,
+    .seasonal-amount {
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      height: 30px;
+    }
+
+    .seasonal-bold {
+      flex: 3;
+      line-height: 10px;
+    }
+
+    .seasonal-amount {
+      flex: 1;
+      line-height: 20px;
+    }
+
+    .nitro-seasonal-box {
+      border-image-slice: 6 6 6 6 fill;
+      border-image-width: 6px 6px 6px 6px;
+      top: 0px;
+      right: 0px;
+      height: 100%;
+      width: 20%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: transparent;
+    }
+
+    &.purple {
+      .nitro-seasonal-box {
+        border-image-source: url(@/assets/images/purse/seasonal_bg_purple.png);
+      }
+
+      .seasonal-bold {
+        color: #b17fbe;
+      }
+    }
+
+    &.bronze {
+      .nitro-seasonal-box {
+        border-image-source: url(@/assets/images/purse/seasonal_bg_bronze.png);
+      }
+
+      .seasonal-bold {
+        color: #d4943c;
+      }
+    }
+
+    &.pink {
+      .nitro-seasonal-box {
+        border-image-source: url(@/assets/images/purse/seasonal_bg_pink.png);
+      }
+
+      .seasonal-bold {
+        color: #d89ba8;
+      }
+    }
+
+    &.blue {
+      .nitro-seasonal-box {
+        border-image-source: url(@/assets/images/purse/seasonal_bg_blue.png);
+      }
+      .seasonal-bold {
+        color: #95c3e5;
+      }
+    }
+
+    &.red {
+      .nitro-seasonal-box {
+        border-image-source: url(@/assets/images/purse/seasonal_bg_red.png);
+      }
+
+      .seasonal-bold {
+        color: #ff0004;
+      }
+    }
+  }
 }
-.topcurrencygen{
-    margin-top: 2px;
+.topcurrencygen {
+  margin-top: 2px;
 }
