@@ -1,6 +1,6 @@
 # Nitro React v2.1
 
-Credits: Thanks to wassehk on discord for this release!
+Credits: Thanks to Genaro on discord for this release!
 
 ## Prerequisites
 
