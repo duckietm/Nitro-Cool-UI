@@ -34,7 +34,7 @@ export const NitroSystemAlertView: FC<NotificationDefaultAlertViewProps> = props
                 <Column size={ 10 }>
                     <Column alignItems="left" gap={ 0 }>
                         <Text center bold fontSize={ 5 }>Cool UI</Text>
-                        <Text>Was created by Wassehk</Text>
+                        <Text>Was created by Genaro</Text>
 						<Text>- DuckieTM (Re-Design)</Text>
 						<Text>- Jonas (Contributing)</Text>
 						<Text>- Ohlucas (Sunset resources)</Text>
