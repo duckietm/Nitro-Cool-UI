@@ -44,10 +44,29 @@ export const CameraWidgetView: FC<{}> = props =>
     }
 
     const checkoutPictureUrl = (pictureUrl: string) =>
-    {
-        setSavedPictureUrl(pictureUrl);
-        setMode(MODE_CHECKOUT);
-    }
+	{
+		const expectedPrefix = 'data:image/';
+		
+		if (!pictureUrl.startsWith(expectedPrefix)) {
+			return;
+		}
+
+		const sanitizedUrl = sanitizeImageUrl(pictureUrl);
+		if (!sanitizedUrl) {
+			return;
+		}
+
+		setSavedPictureUrl(sanitizedUrl);
+		setMode(MODE_CHECKOUT);
+	}
+
+		const sanitizeImageUrl = (imageUrl: string): string | null => {
+			if (!imageUrl.startsWith('data:image/')) {
+				return null;
+			}
+
+		return imageUrl;
+	}
 
     useRoomSessionManagerEvent<RoomSessionEvent>(RoomSessionEvent.ENDED, event => setMode(MODE_NONE));
 

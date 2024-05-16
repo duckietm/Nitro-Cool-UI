@@ -1,8 +1,8 @@
-import { CameraPublishStatusMessageEvent, CameraPurchaseOKMessageEvent, CameraStorageUrlMessageEvent, PublishPhotoMessageComposer, PurchasePhotoMessageComposer } from '@nitrots/nitro-renderer';
+import { CameraPublishStatusMessageEvent, CameraPurchaseOKMessageEvent, CameraStorageUrlMessageEvent, NotEnoughBalanceMessageEvent, PublishPhotoMessageComposer, PurchasePhotoMessageComposer } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { CreateLinkEvent, GetConfiguration, GetRoomEngine, LocalizeText, SendMessageComposer } from '../../../api';
 import { Button, Column, Flex, LayoutCurrencyIcon, LayoutImage, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../common';
-import { useMessageEvent } from '../../../hooks';
+import { useMessageEvent, useNotification } from '../../../hooks';
 
 export interface CameraWidgetCheckoutViewProps
 {
@@ -21,6 +21,7 @@ export const CameraWidgetCheckoutView: FC<CameraWidgetCheckoutViewProps> = props
     const [ wasPicturePublished, setWasPicturePublished ] = useState(false);
     const [ isWaiting, setIsWaiting ] = useState(false);
     const [ publishCooldown, setPublishCooldown ] = useState(0);
+    const { simpleAlert } = useNotification();
 
     const publishDisabled = useMemo(() => GetConfiguration<boolean>('camera.publish.disabled', false), []);
 
@@ -34,6 +35,8 @@ export const CameraWidgetCheckoutView: FC<CameraWidgetCheckoutViewProps> = props
     {
         const parser = event.getParser();
 
+        if (!parser.ok) simpleAlert(LocalizeText('camera.publish.wait', [ 'minutes' ], [ Math.floor(parser.secondsToWait / 60).toString().replace('-', '') ]), null, null, null, LocalizeText('camera.purchase.pleasewait'));
+
         setPublishUrl(parser.extraDataId);
         setPublishCooldown(parser.secondsToWait);
         setWasPicturePublished(parser.ok);
@@ -45,6 +48,19 @@ export const CameraWidgetCheckoutView: FC<CameraWidgetCheckoutViewProps> = props
         const parser = event.getParser();
 
         setPictureUrl(GetConfiguration<string>('camera.url') + '/' + parser.url);
+    });
+
+    useMessageEvent<NotEnoughBalanceMessageEvent>(NotEnoughBalanceMessageEvent, event =>
+    {
+        const parser = event.getParser();
+        
+        if (!parser) return null;
+
+        if (parser.notEnoughCredits && !parser.notEnoughActivityPoints) simpleAlert(LocalizeText('catalog.alert.notenough.credits.description'), null, null, null, LocalizeText('catalog.alert.notenough.title'));
+        
+        if (!parser.notEnoughCredits && parser.notEnoughActivityPoints) simpleAlert(LocalizeText(`catalog.alert.notenough.activitypoints.description.${ parser.activityPointType }`), null, null, null, LocalizeText(`catalog.alert.notenough.activitypoints.title.${ parser.activityPointType }`));
+        
+        setIsWaiting(false);
     });
 
     const processAction = (type: string, value: string | number = null) =>
