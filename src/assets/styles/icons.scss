@@ -337,6 +337,27 @@
         width: 7px;
         height: 17px;
     }
+	
+	&.icon-lock-open {
+        background: url('@/assets/images/inventory/trading/lock_open.png');
+        background-repeat: no-repeat;
+        height: 43px;
+        width: 29px;
+    }
+
+    &.icon-lock-locked {
+        background: url('@/assets/images/inventory/trading/lock_locked.png');
+        background-repeat: no-repeat;
+        height: 44px;
+        width: 36px;
+    }
+
+    &.icon-confirmed {
+        background: url('@/assets/images/inventory/confirmed.png');
+        background-repeat: no-repeat;
+        height: 18px;
+        width: 18px;
+    }
 
     &.icon-sign-heart {
         background: url('@/assets/images/icons/sign-heart.png');

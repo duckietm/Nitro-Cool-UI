@@ -1,18 +1,17 @@
-import { NotificationBubbleItem, NotificationBubbleType } from '../../../../api';
-import { NotificationClubGiftBubbleView } from './NotificationClubGiftBubbleView';
-import { NotificationDefaultBubbleView } from './NotificationDefaultBubbleView';
+import { NotificationBubbleItem, NotificationBubbleType } from "../../../../api";
+import { NotificationClubGiftBubbleView } from "./NotificationClubGiftBubbleView";
+import { NotificationDefaultBubbleView } from "./NotificationDefaultBubbleView";
 
-export const GetBubbleLayout = (item: NotificationBubbleItem, onClose: () => void) =>
-{
-    if(!item) return null;
+export const GetBubbleLayout = ( item: NotificationBubbleItem, onClose: () => void ) => {
 
-    const props = { key: item.id, item, onClose };
+  if (!item) return null;
 
-    switch(item.notificationType)
-    {
-        case NotificationBubbleType.CLUBGIFT:
-            return <NotificationClubGiftBubbleView { ...props } />
-        default:
-            return <NotificationDefaultBubbleView { ...props } />
-    }
-}
+  const props = { key: item.id, item, onClose };
+
+  switch (item.notificationType) {
+    case NotificationBubbleType.CLUBGIFT:
+      return <NotificationClubGiftBubbleView {...props} />;
+    default:
+      return <NotificationDefaultBubbleView {...props} />;
+  }
+};
