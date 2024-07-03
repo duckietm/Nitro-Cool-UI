@@ -18,7 +18,7 @@
 	-	Now we will create a Link for the CoolUI : `yarn link` This will give you a link address `yarn link "@nitrots/nitro-renderer"`
     -   Install the dependencies for Cool UI : cd C:\Github\Nitro-Cool-UI
 	-   `yarn install`
-	-   `yarn "@nitrots/nitro-renderer` <== This will link the renderer in the project
+	-   `yarn link "@nitrots/nitro-renderer` <== This will link the renderer in the project
 -   Rename a few files
     -   Rename `public/renderer-config.json.example` to `public/renderer-config.json`
     -   Rename `public/ui-config.json.example` to `public/ui-config.json`
