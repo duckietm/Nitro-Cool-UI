@@ -1,50 +1,44 @@
 {
-  "name": "@nitrots/nitro-renderer",
-  "description": "Javascript library for rendering Nitro in the browser using PixiJS",
-  "version": "2.0.0",
+  "name": "nitro-react",
+  "version": "2.2",
+  "homepage": ".",
   "private": true,
-  "type": "module",
-  "workspaces": [
-    "packages/*"
-  ],
-  "publishConfig": {
-    "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/billsonnn/nitro-renderer.git"
-  },
-  "license": "GPL-3.0",
-  "bugs": {
-    "url": "https://github.com/billsonnn/nitro-renderer/issues"
-  },
-  "homepage": "https://github.com/billsonnn/nitro-renderer",
   "scripts": {
-    "build": "vite build",
-    "compile": "tsc --project ./tsconfig.json --noEmit false",
-    "eslint": "eslint ./src ./packages/*/src",
-    "eslint-fix": "eslint ./src --fix"
-
+    "start": "vite --host --base=/client/",
+    "build": "vite build --base=/client/",
+    "build:prod": "npx browserslist@latest --update-db && yarn build",
+    "eslint": "eslint src --ext .ts,.tsx"
   },
-  "main": "./index",
   "dependencies": {
-    "howler": "^2.2.4",
-    "pako": "^2.1.0",
-    "pixi-filters": "^6.0.4",
-    "pixi.js": "^8.1.6",
-	"clientjs": "^0.2.1"
+	"@emoji-mart/data": "^1.1.2",
+	"@emoji-mart/react": "^1.1.1",
+    "@tanstack/react-virtual": "3.2.0",
+	"emoji-mart": "^5.5.2",
+	"emoji-toolkit": "8.0.0",
+	"framer-motion": "^11.2.12",
+    "react": "^18.2.0",
+    "react-bootstrap": "^2.2.2",
+    "react-dom": "^18.2.0",
+    "react-icons": "^5.0.1",
+    "react-slider": "^2.0.6",
+    "react-youtube": "^7.13.1",
+    "use-between": "^1.3.5"
   },
   "devDependencies": {
-    "@eslint/js": "^9.5.0",
-    "@rollup/plugin-typescript": "^11.1.6",
-    "@types/eslint__js": "^8.42.3",
-    "@types/howler": "^2.2.11",
-    "@types/node": "^20.14.4",
-    "@types/pako": "^2.0.3",
-    "eslint": "^9.5.0",
-    "tslib": "^2.3.1",
-    "typescript": "~5.4.2",
-    "typescript-eslint": "^7.13.1",
-    "vite": "^5.1.3"
+    "@types/node": "^20.11.30",
+    "@types/react": "^18.2.67",
+    "@types/react-dom": "^18.2.22",
+    "@types/react-slider": "^1.3.6",
+    "@typescript-eslint/eslint-plugin": "^7.3.1",
+    "@typescript-eslint/parser": "^7.3.1",
+    "@vitejs/plugin-react": "^4.2.1",
+    "eslint": "^8.57.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-jsx-a11y": "^6.8.0",
+    "eslint-plugin-react": "^7.34.1",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "sass": "^1.72.0",
+    "typescript": "^5.4.2",
+    "vite": "^5.1.6"
   }
 }
