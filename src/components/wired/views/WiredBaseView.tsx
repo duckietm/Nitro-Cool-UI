@@ -11,11 +11,12 @@ export interface WiredBaseViewProps
     hasSpecialInput: boolean;
     save: () => void;
     validate?: () => boolean;
+    maxItemSelectionCount?: number;
 }
 
 export const WiredBaseView: FC<PropsWithChildren<WiredBaseViewProps>> = props =>
 {
-    const { wiredType = '', requiresFurni = WiredFurniType.STUFF_SELECTION_OPTION_NONE, save = null, validate = null, children = null, hasSpecialInput = false } = props;
+    const { wiredType = '', requiresFurni = WiredFurniType.STUFF_SELECTION_OPTION_NONE, save = null, validate = null, children = null, hasSpecialInput = false, maxItemSelectionCount = 5 } = props; // Default to 5
     const [ wiredName, setWiredName ] = useState<string>(null);
     const [ wiredDescription, setWiredDescription ] = useState<string>(null);
     const [ needsSave, setNeedsSave ] = useState<boolean>(false);
@@ -83,7 +84,11 @@ export const WiredBaseView: FC<PropsWithChildren<WiredBaseViewProps>> = props =>
         }
 
         setAllowsFurni(requiresFurni);
-    }, [ trigger, hasSpecialInput, requiresFurni, setIntParams, setStringParam, setFurniIds, setAllowsFurni ]);
+
+        // Set max item selection count
+        WiredSelectionVisualizer.setMaxItemSelectionCount(maxItemSelectionCount); // Use the passed value
+
+    }, [ trigger, hasSpecialInput, requiresFurni, setIntParams, setStringParam, setFurniIds, setAllowsFurni, maxItemSelectionCount ]);
 
     return (
         <NitroCardView uniqueKey="nitro-wired" className="nitro-wired" theme="primary-slim">
@@ -101,7 +106,7 @@ export const WiredBaseView: FC<PropsWithChildren<WiredBaseViewProps>> = props =>
                 { (requiresFurni > WiredFurniType.STUFF_SELECTION_OPTION_NONE) &&
                     <>
                         <hr className="m-0 bg-dark" />
-                        <WiredFurniSelectorView />
+                        <WiredFurniSelectorView maxItemSelectionCount={ maxItemSelectionCount } /> {/* Pass the count */}
                     </> }
                 <Flex alignItems="center" gap={ 1 }>
                     <Button fullWidth variant="success" onClick={ onSave }>{ LocalizeText('wiredfurni.ready') }</Button>
