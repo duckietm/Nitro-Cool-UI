@@ -13,7 +13,8 @@ const useWiredState = () =>
     const [ furniIds, setFurniIds ] = useState<number[]>([]);
     const [ actionDelay, setActionDelay ] = useState<number>(0);
     const [ allowsFurni, setAllowsFurni ] = useState<number>(WiredFurniType.STUFF_SELECTION_OPTION_NONE);
-    const { showConfirm = null } = useNotification();
+    const [ maxItemSelectionCount, setMaxItemSelectionCount ] = useState<number>(5);
+    const { showConfirm } = useNotification();
 
     const saveWired = () =>
     {
@@ -69,7 +70,7 @@ const useWiredState = () =>
                 WiredSelectionVisualizer.hide(objectId);
             }
 
-            else if(newFurniIds.length < trigger.maximumItemSelectionCount)
+            else if(newFurniIds.length < maxItemSelectionCount)
             {
                 newFurniIds.push(objectId);
 
@@ -127,7 +128,7 @@ const useWiredState = () =>
         }
     }, [ trigger ]);
 
-    return { trigger, setTrigger, intParams, setIntParams, stringParam, setStringParam, furniIds, setFurniIds, actionDelay, setActionDelay, setAllowsFurni, saveWired, selectObjectForWired };
+    return { trigger, setTrigger, intParams, setIntParams, stringParam, setStringParam, furniIds, setFurniIds, actionDelay, setActionDelay, setAllowsFurni, saveWired, selectObjectForWired, maxItemSelectionCount, setMaxItemSelectionCount };
 }
 
 export const useWired = () => useBetween(useWiredState);

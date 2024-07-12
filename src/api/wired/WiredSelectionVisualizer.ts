@@ -5,6 +5,12 @@ import { GetRoomEngine } from '..';
 export class WiredSelectionVisualizer
 {
     private static _selectionShader: NitroFilter = new WiredSelectionFilter([ 1, 1, 1 ], [ 0.6, 0.6, 0.6 ]);
+    private static _maxItemSelectionCount: number = 0;
+
+    public static setMaxItemSelectionCount(count: number): void
+    {
+        WiredSelectionVisualizer._maxItemSelectionCount = count;
+    }
 
     public static show(furniId: number): void
     {
