@@ -58,10 +58,16 @@ export const FriendsMessengerThreadGroup: FC<{ thread: MessengerThread, group: M
             </Base>
             <Base className={ 'bg-light text-black border-radius mb-2 rounded py-1 px-2 messages-group-' + (isOwnChat ? 'right' : 'left') }>
                 <Base className="fw-bold">
+				<Base className="small text-muted">{ group.chats[0].date.toLocaleTimeString() }</Base>
                     { isOwnChat && GetSessionDataManager().userName }
                     { !isOwnChat && (groupChatData ? groupChatData.username : thread.participant.name) }
+                    
                 </Base>
-                { group.chats.map((chat, index) => <Base key={ index } className="text-break">{ chat.message }</Base>) }
+                { group.chats.map((chat, index) => (
+                    <Base key={ index } className="text-break">
+                        { chat.message }
+                    </Base>
+                )) }
             </Base>
             { isOwnChat &&
                 <Base shrink className="message-avatar">
