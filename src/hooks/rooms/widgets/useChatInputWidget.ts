@@ -108,17 +108,8 @@ const useChatInputWidgetState = () =>
 
                     return null;
                 case ':zoom':
-                    let requestedZoomLevel = parseFloat(secondPart);
-					if (isNaN(requestedZoomLevel)) {
-						requestedZoomLevel = 1;
-					}
-					if (requestedZoomLevel >= 1 && requestedZoomLevel <= 5) {
-						GetRoomEngine().events.dispatchEvent(new RoomZoomEvent(roomSession.roomId, requestedZoomLevel, false));
-					} else if (requestedZoomLevel === 0) {
-						GetRoomEngine().events.dispatchEvent(new RoomZoomEvent(roomSession.roomId, 1, false));
-					} else {
-						GetRoomEngine().events.dispatchEvent(new RoomZoomEvent(roomSession.roomId, 1, false));
-					};
+                    GetEventDispatcher().dispatchEvent(new RoomZoomEvent(roomSession.roomId, parseInt(secondPart)));
+
                     return null;
                 case ':screenshot':
                     const texture = GetRoomEngine().createTextureFromRoom(roomSession.roomId, 1);

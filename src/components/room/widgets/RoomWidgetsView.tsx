@@ -21,7 +21,7 @@ export const RoomWidgetsView: FC<{}> = props =>
     const { roomSession = null } = useRoom();
     const { simpleAlert = null } = useNotification();
 
-    useNitroEvent<RoomZoomEvent>(RoomZoomEvent.ROOM_ZOOM, event => GetRoomEngine().setRoomInstanceRenderingCanvasScale(event.roomId, 1, event.level, null, null, false, event.asDelta));
+    useNitroEvent<RoomZoomEvent>(RoomZoomEvent.ROOM_ZOOM, event => GetRoomEngine().setRoomInstanceRenderingCanvasScale(event.roomId, 1, (((event.level)<1) ? 0.5 : (1 << (Math.floor(event.level) - 1))), null, null, event.isFlipForced));
 
     useNitroEvent<RoomEngineObjectEvent>(
         [

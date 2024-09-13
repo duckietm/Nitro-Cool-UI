@@ -1,4 +1,4 @@
-import { GetAssetManager, GetAvatarRenderManager, GetCommunication, GetConfiguration, GetLocalizationManager, GetRoomCameraWidgetManager, GetRoomEngine, GetRoomSessionManager, GetSessionDataManager, GetSoundManager, GetStage, GetTexturePool, GetTicker, HabboWebTools, LegacyExternalInterface, LoadGameUrlEvent, NitroLogger, NitroVersion, PrepareRenderer } from '@nitrots/nitro-renderer';
+import { GetAssetManager, GetAvatarRenderManager, GetCommunication, GetConfiguration, GetLocalizationManager, GetRoomEngine, GetRoomSessionManager, GetSessionDataManager, GetSoundManager, GetStage, GetTexturePool, GetTicker, HabboWebTools, LegacyExternalInterface, LoadGameUrlEvent, NitroLogger, NitroVersion, PrepareRenderer } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
 import { GetUIVersion } from './api';
 import { Base } from './common';
@@ -57,7 +57,6 @@ export const App: FC<{}> = props =>
                         GetSoundManager().init(),
                         GetSessionDataManager().init(),
                         GetRoomSessionManager().init(),
-                        GetRoomCameraWidgetManager().init()
                     ]
                 );
 

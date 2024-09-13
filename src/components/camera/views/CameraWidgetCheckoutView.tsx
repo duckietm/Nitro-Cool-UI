@@ -70,7 +70,7 @@ export const CameraWidgetCheckoutView: FC<CameraWidgetCheckoutViewProps> = props
                 onCancelClick();
                 return;
         }
-    }
+    };
 
     useEffect(() =>
     {
@@ -156,4 +156,4 @@ export const CameraWidgetCheckoutView: FC<CameraWidgetCheckoutViewProps> = props
             </NitroCardContentView>
         </NitroCardView>
     );
-}
+};

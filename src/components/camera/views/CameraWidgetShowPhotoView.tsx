@@ -26,7 +26,7 @@ export const CameraWidgetShowPhotoView: FC<CameraWidgetShowPhotoViewProps> = pro
 
             return newIndex;
         });
-    }
+    };
 
     const previous = () =>
     {
@@ -38,7 +38,7 @@ export const CameraWidgetShowPhotoView: FC<CameraWidgetShowPhotoViewProps> = pro
 
             return newIndex;
         });
-    }
+    };
 
     useEffect(() =>
     {
@@ -68,4 +68,4 @@ export const CameraWidgetShowPhotoView: FC<CameraWidgetShowPhotoViewProps> = pro
             }
         </Grid>
     );
-}
+};

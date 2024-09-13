@@ -28,9 +28,9 @@ export const CameraWidgetCaptureView: FC<CameraWidgetCaptureViewProps> = props =
         if(!elementRef || !elementRef.current) return null;
 
         const frameBounds = elementRef.current.getBoundingClientRect();
-        
+
         return new NitroRectangle(Math.floor(frameBounds.x), Math.floor(frameBounds.y), Math.floor(frameBounds.width), Math.floor(frameBounds.height));
-    }
+    };
 
     const takePicture = async () =>
     {
@@ -55,7 +55,7 @@ export const CameraWidgetCaptureView: FC<CameraWidgetCaptureViewProps> = props =
         clone.push(new CameraPicture(texture, await TextureUtils.generateImageUrl(texture)));
 
         setCameraRoll(clone);
-    }
+    };
 
     return (
         <DraggableWindow uniqueKey="nitro-camera-capture">
@@ -66,7 +66,7 @@ export const CameraWidgetCaptureView: FC<CameraWidgetCaptureViewProps> = props =
                         <FaTimes className="fa-icon" />
                     </div>
                     { !selectedPicture && <div ref={ elementRef } className="camera-area camera-view-finder" /> }
-                    { selectedPicture && 
+                    { selectedPicture &&
                         <div className="camera-area camera-frame">
                             <div className="camera-frame-preview-actions w-100 position-absolute bottom-0 py-2 text-center">
                                 <button className="btn btn-success me-3" title={ LocalizeText('camera.editor.button.tooltip') } onClick={ onEdit }>{ LocalizeText('camera.editor.button.text') }</button>
@@ -87,4 +87,4 @@ export const CameraWidgetCaptureView: FC<CameraWidgetCaptureViewProps> = props =
             </Column>
         </DraggableWindow>
     );
-}
+};

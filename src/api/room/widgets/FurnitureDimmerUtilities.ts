@@ -19,9 +19,16 @@ export class FurnitureDimmerUtilities
     }
 
     public static previewDimmer(color: number, brightness: number, bgOnly: boolean): void
-    {
-        GetRoomEngine().updateObjectRoomColor(GetRoomSession().roomId, color, brightness, bgOnly);
+{
+    const roomSession = GetRoomSession();
+    
+    if (!roomSession || !roomSession.roomId) {
+        console.error('Room session or roomId is not available.');
+        return;
     }
+
+    GetRoomEngine().updateObjectRoomColor(roomSession.roomId, color, brightness, bgOnly);
+}
 
     public static scaleBrightness(value: number): number
     {
