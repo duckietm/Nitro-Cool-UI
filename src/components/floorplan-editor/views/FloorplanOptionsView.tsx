@@ -141,6 +141,10 @@ export const FloorplanOptionsView: FC<{}> = props =>
 						<LayoutGridItem onClick={ event => FloorplanEditor.instance.toggleSelectAll() }>
 							<i className="icon icon-set-select" />
 						</LayoutGridItem>
+						<LayoutGridItem itemActive={ FloorplanEditor.instance.squareSelectMode } onClick={ event => {
+							FloorplanEditor.instance.setSquareSelectMode(!FloorplanEditor.instance.squareSelectMode);} 
+							}><i className="icon icon-set-select" />
+						</LayoutGridItem>
                     </Flex>
                 </Column>
                 <Column alignItems="center" size={ 4 }>
