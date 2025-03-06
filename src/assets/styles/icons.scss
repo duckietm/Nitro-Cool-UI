@@ -682,6 +682,12 @@
         width: 80px;
         height: 45px;
     }
+	
+	&.icon-set-select {
+        background-image: url('@/assets/images/floorplaneditor/icon-select.png');
+        width: 40px;
+        height: 40px;
+    }
 
     &.icon-tickets {
         background-image: url('@/assets/images/icons/tickets.png');

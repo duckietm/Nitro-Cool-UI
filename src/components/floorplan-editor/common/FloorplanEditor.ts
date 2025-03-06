@@ -94,7 +94,7 @@ export class FloorplanEditor
                 const dx = Math.abs(mousePositionX - centreX);
                 const dy = Math.abs(mousePositionY - centreY);
 
-                const solution = (dx / (width * 0.5) + dy / (height * 0.5) <= 1);//todo: improve this
+                const solution = (dx / (width * 0.5) + dy / (height * 0.5) <= 1); //todo: improve this
                 
                 if(solution)
                 {
@@ -104,14 +104,12 @@ export class FloorplanEditor
                         {
                             this.onClick(x, y);
                         }
-                    
                         else if(this._lastUsedTile.x !== x || this._lastUsedTile.y !== y)
                         {
                             this._lastUsedTile.x = x;
                             this._lastUsedTile.y = y;
                             this.onClick(x, y);
                         }
-                    
                     }
                     return true;
                 }
@@ -120,31 +118,30 @@ export class FloorplanEditor
         return false;
     }
 
-    private onClick(x: number, y: number): void
+    private onClick(x: number, y: number, render: boolean = true, force: boolean = false): void
     {
         const tile = this._tilemap[y][x];
-        const heightIndex = HEIGHT_SCHEME.indexOf(tile.height);
-
+        // When forcing, treat background ('x') as index 0.
+        let currentHeightIndex = (tile.height === 'x' && force) ? 0 : HEIGHT_SCHEME.indexOf(tile.height);
         let futureHeightIndex = 0;
-
+        
         switch(this._actionSettings.currentAction)
         {
             case FloorAction.DOOR:
-
-                if(tile.height !== 'x')
+                if (!force && tile.height !== 'x')
                 {
                     this._doorLocation.x = x;
                     this._doorLocation.y = y;
-                    this.renderTiles();
+                    if(render) this.renderTiles();
                 }
                 return;
             case FloorAction.UP:
-                if(tile.height === 'x') return;
-                futureHeightIndex = heightIndex + 1;
+                if (!force && tile.height === 'x') return;
+                futureHeightIndex = currentHeightIndex + 1;
                 break;
             case FloorAction.DOWN:
-                if(tile.height === 'x' || (heightIndex <= 1)) return;
-                futureHeightIndex = heightIndex - 1;
+                if (!force && (tile.height === 'x' || (currentHeightIndex <= 1))) return;
+                futureHeightIndex = currentHeightIndex - 1;
                 break;
             case FloorAction.SET:
                 futureHeightIndex = HEIGHT_SCHEME.indexOf(this._actionSettings.currentHeight);
@@ -153,27 +150,23 @@ export class FloorplanEditor
                 futureHeightIndex = 0;
                 break;
         }
-
+        
         if(futureHeightIndex === -1) return;
-
-        if(heightIndex === futureHeightIndex) return;
-
-        if(futureHeightIndex > 0)
+        if(currentHeightIndex === futureHeightIndex) return;
+        
+        // Only update _width and _height if not forcing.
+        if (!force && futureHeightIndex > 0)
         {
-            if((x + 1) > this._width) this._width = x + 1;
-
-            if((y + 1) > this._height) this._height = y + 1;
+            if ((x + 1) > this._width) this._width = x + 1;
+            if ((y + 1) > this._height) this._height = y + 1;
         }
-
+        
         const newHeight = HEIGHT_SCHEME[futureHeightIndex];
-
-        if(!newHeight) return;
-
-        // if(tile.isBlocked) return;
-
+        if (!newHeight) return;
+        
         this._tilemap[y][x].height = newHeight;
-
-        this.renderTiles();
+        
+        if(render) this.renderTiles();
     }
 
     public renderTiles(): void
@@ -205,6 +198,51 @@ export class FloorplanEditor
                 }
 
                 this.renderer.drawImage(this._image, asset.frame.x, asset.frame.y, asset.frame.w, asset.frame.h, positionX, positionY, asset.frame.w, asset.frame.h);
+
+                // If the tile is selected, draw a semi-transparent blue overlay.
+                if (tile.selected)
+                {
+                    this.renderer.fillStyle = 'rgba(0, 0, 255, 0.3)';
+                    this.renderer.fillRect(positionX, positionY, asset.frame.w, asset.frame.h);
+                }
+            }
+        }
+    }
+
+    public toggleSelectAll(): void
+	{
+    
+		const newState = true;
+    
+    
+		for (let y = 0; y < this._tilemap.length; y++)
+			{
+				for (let x = 0; x < this._tilemap[y].length; x++)
+			{
+			this._tilemap[y][x].selected = newState;
+            this.onClick(x, y, false, true);
+        }
+    }
+        
+    this.recalcActiveArea();
+    this.renderTiles();
+	}
+
+
+    // New helper method to recalculate active area dimensions.
+    private recalcActiveArea(): void
+    {
+        this._width = 0;
+        this._height = 0;
+        for (let y = 0; y < this._tilemap.length; y++)
+        {
+            for (let x = 0; x < this._tilemap[y].length; x++)
+            {
+                if (this._tilemap[y][x].height !== 'x')
+                {
+                    if ((x + 1) > this._width) this._width = x + 1;
+                    if ((y + 1) > this._height) this._height = y + 1;
+                }
             }
         }
     }
@@ -307,7 +345,6 @@ export class FloorplanEditor
             }
         }
 
-
         const rows = [];
 
         for(let y = 0; y < this._height; y++)
@@ -317,7 +354,6 @@ export class FloorplanEditor
             for(let x = 0; x < this._width; x++)
             {
                 const tile = this._tilemap[y][x];
-
                 row[x] = tile.height;
             }
 
@@ -341,8 +377,8 @@ export class FloorplanEditor
 
     public clearCanvas(): void
     {
-        this.renderer.fillStyle = '0x000000';
-        this.renderer.fillRect(0, 0, this._renderer.canvas.width, this._renderer.canvas.height);
+        this.renderer.fillStyle = '#000000';
+		this.renderer.fillRect(0, 0, this._renderer.canvas.width, this._renderer.canvas.height);
     }
 
     public get renderer(): CanvasRenderingContext2D

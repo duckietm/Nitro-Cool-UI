@@ -138,6 +138,9 @@ export const FloorplanOptionsView: FC<{}> = props =>
                         <LayoutGridItem itemActive={ (floorAction === FloorAction.DOOR) } onClick={ event => selectAction(FloorAction.DOOR) }>
                             <i className="icon icon-set-door" />
                         </LayoutGridItem>
+						<LayoutGridItem onClick={ event => FloorplanEditor.instance.toggleSelectAll() }>
+							<i className="icon icon-set-select" />
+						</LayoutGridItem>
                     </Flex>
                 </Column>
                 <Column alignItems="center" size={ 4 }>
