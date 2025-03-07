@@ -14,55 +14,28 @@ export const NotificationCenterView: FC<{}> = props =>
     {
         if(!alerts || !alerts.length) return null;
 
-        const elements: ReactNode[] = [];
-
-        for(const alert of alerts)
-        {
-            const element = GetAlertLayout(alert, () => closeAlert(alert));
-
-            elements.push(element);
-        }
-
-        return elements;
+        return alerts.map((alert) => GetAlertLayout(alert, () => closeAlert(alert)));
     }, [ alerts, closeAlert ]);
 
     const getBubbleAlerts = useMemo(() =>
     {
         if(!bubbleAlerts || !bubbleAlerts.length) return null;
 
-        const elements: ReactNode[] = [];
-
-        for(const alert of bubbleAlerts)
-        {
+        return bubbleAlerts.map((alert) => {
             const element = GetBubbleLayout(alert, () => closeBubbleAlert(alert));
-
             if(alert.notificationType === NotificationBubbleType.CLUBGIFT)
             {
-                elements.unshift(element);
-
-                continue;
+                return element;
             }
-
-            elements.push(element);
-        }
-
-        return elements;
+            return element;
+        });
     }, [ bubbleAlerts, closeBubbleAlert ]);
 
     const getConfirms = useMemo(() =>
     {
         if(!confirms || !confirms.length) return null;
 
-        const elements: ReactNode[] = [];
-
-        for(const confirm of confirms)
-        {
-            const element = GetConfirmLayout(confirm, () => closeConfirm(confirm));
-
-            elements.push(element);
-        }
-
-        return elements;
+        return confirms.map((confirm) => GetConfirmLayout(confirm, () => closeConfirm(confirm)));
     }, [ confirms, closeConfirm ]);
 
     return (
