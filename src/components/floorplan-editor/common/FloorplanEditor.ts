@@ -11,7 +11,7 @@ export class FloorplanEditor {
     public static readonly TILE_BLOCKED = 'r_blocked';
     public static readonly TILE_DOOR = 'r_door';
 
-    private _squareSelectMode: boolean = false; // Mode flag (name remains for compatibility)
+    private _squareSelectMode: boolean = false;
     private _selectionStart: NitroPoint = null;
     private _selectionEnd: NitroPoint = null;
 
@@ -23,8 +23,9 @@ export class FloorplanEditor {
     private _lastUsedTile: NitroPoint;
     private _renderer: CanvasRenderingContext2D;
     private _actionSettings: ActionSettings;
-
     private _image: HTMLImageElement;
+
+    private _zoomLevel: number = 1.0;
 
     constructor() {
         const width = TILE_SIZE * MAX_NUM_TILE_PER_AXIS + 20;
@@ -58,6 +59,7 @@ export class FloorplanEditor {
             this._selectionEnd = null;
         }
     }
+
     public get squareSelectMode(): boolean {
         return this._squareSelectMode;
     }
@@ -72,7 +74,7 @@ export class FloorplanEditor {
     public onPointerDown(event: PointerEvent): void {
         if (this._squareSelectMode) {
             event.preventDefault();
-            const location = new NitroPoint(event.offsetX, event.offsetY);
+            const location = new NitroPoint(event.offsetX / this._zoomLevel, event.offsetY / this._zoomLevel);
             const [tileX, tileY] = getTileFromScreenPosition(location.x, location.y);
             const roundedX = Math.floor(tileX);
             const roundedY = Math.floor(tileY);
@@ -82,23 +84,21 @@ export class FloorplanEditor {
             return;
         }
         if (event.button === 2) return;
-        const location = new NitroPoint(event.offsetX, event.offsetY);
+        const location = new NitroPoint(event.offsetX / this._zoomLevel, event.offsetY / this._zoomLevel);
         this._isPointerDown = true;
         this.tileHitDetection(location, true);
     }
 
     public onPointerMove(event: PointerEvent): void {
         if (!this._isPointerDown) return;
+        const location = new NitroPoint(event.offsetX / this._zoomLevel, event.offsetY / this._zoomLevel);
         if (this._squareSelectMode && this._selectionStart) {
-            const location = new NitroPoint(event.offsetX, event.offsetY);
             const [tileX, tileY] = getTileFromScreenPosition(location.x, location.y);
             this._selectionEnd.x = Math.floor(tileX);
             this._selectionEnd.y = Math.floor(tileY);
             this.renderTiles();
-            // Optionally, you could add a temporary overlay here if desired.
             return;
         }
-        const location = new NitroPoint(event.offsetX, event.offsetY);
         this.tileHitDetection(location, false);
     }
 
@@ -173,6 +173,9 @@ export class FloorplanEditor {
 
     public renderTiles(): void {
         this.clearCanvas();
+        this._renderer.save();
+        this._renderer.scale(this._zoomLevel, this._zoomLevel);
+
         for (let y = 0; y < this._tilemap.length; y++) {
             for (let x = 0; x < this.tilemap[y].length; x++) {
                 const tile = this.tilemap[y][x];
@@ -187,10 +190,18 @@ export class FloorplanEditor {
                     console.warn(`Asset "${assetName}" not found in spritesheet.`);
                     continue;
                 }
-                this.renderer.drawImage(this._image, asset.frame.x, asset.frame.y, asset.frame.w, asset.frame.h,
-                    positionX, positionY, asset.frame.w, asset.frame.h);
-                
-                // While dragging in selection mode, overlay green on tiles within the selection region.
+                this.renderer.drawImage(
+                    this._image,
+                    asset.frame.x,
+                    asset.frame.y,
+                    asset.frame.w,
+                    asset.frame.h,
+                    positionX,
+                    positionY,
+                    asset.frame.w,
+                    asset.frame.h
+                );
+
                 if (this._squareSelectMode && this._isPointerDown && this._selectionStart && this._selectionEnd) {
                     const selMinX = Math.min(this._selectionStart.x, this._selectionEnd.x);
                     const selMaxX = Math.max(this._selectionStart.x, this._selectionEnd.x);
@@ -202,22 +213,51 @@ export class FloorplanEditor {
                         continue;
                     }
                 }
-                
+
                 if (tile.selected) {
-                    this.renderer.fillStyle = 'rgba(0, 0, 255, 0.3)';
+                    this.renderer.fillStyle = tile.isBlocked ? 'rgb(128, 0, 128)' : 'rgba(0, 0, 255, 0.3)';
                     this.renderer.fillRect(positionX, positionY, asset.frame.w, asset.frame.h);
                 }
             }
         }
+        this._renderer.restore();
     }
 
-    // Toggle select all (always selects)
     public toggleSelectAll(): void {
-        const newState = true;
         for (let y = 0; y < this._tilemap.length; y++) {
             for (let x = 0; x < this._tilemap[y].length; x++) {
-                this._tilemap[y][x].selected = newState;
-                this.onClick(x, y, false, true);
+                this._tilemap[y][x].selected = true;
+                if (this._actionSettings.currentAction !== FloorAction.DOOR) {
+                    const tile = this._tilemap[y][x];
+                    let currentHeightIndex = tile.height === 'x' ? 0 : HEIGHT_SCHEME.indexOf(tile.height);
+                    let futureHeightIndex = 0;
+                    switch (this._actionSettings.currentAction) {
+                        case FloorAction.UP:
+                            if (tile.height === 'x') continue;
+                            futureHeightIndex = currentHeightIndex + 1;
+                            break;
+                        case FloorAction.DOWN:
+                            if (tile.height === 'x' || currentHeightIndex <= 1) continue;
+                            futureHeightIndex = currentHeightIndex - 1;
+                            break;
+                        case FloorAction.SET:
+                            futureHeightIndex = HEIGHT_SCHEME.indexOf(this._actionSettings.currentHeight);
+                            break;
+                        case FloorAction.UNSET:
+                            futureHeightIndex = 0;
+                            break;
+                        default:
+                            continue;
+                    }
+                    if (futureHeightIndex !== -1 && currentHeightIndex !== futureHeightIndex) {
+                        const newHeight = HEIGHT_SCHEME[futureHeightIndex];
+                        if (newHeight) {
+                            this._tilemap[y][x].height = newHeight;
+                            if ((x + 1) > this._width) this._width = x + 1;
+                            if ((y + 1) > this._height) this._height = y + 1;
+                        }
+                    }
+                }
             }
         }
         this.recalcActiveArea();
@@ -353,6 +393,29 @@ export class FloorplanEditor {
     public clearCanvas(): void {
         this.renderer.fillStyle = '#000000';
         this.renderer.fillRect(0, 0, this._renderer.canvas.width, this._renderer.canvas.height);
+    }
+
+    public zoomIn(): void {
+        this._zoomLevel = Math.min(this._zoomLevel + 0.1, 2.0);
+        this.adjustCanvasSize();
+        this.renderTiles();
+    }
+
+    public zoomOut(): void {
+        this._zoomLevel = Math.max(this._zoomLevel - 0.1, 0.5);
+        this.adjustCanvasSize();
+        this.renderTiles();
+    }
+
+    private adjustCanvasSize(): void {
+        const baseWidth = TILE_SIZE * MAX_NUM_TILE_PER_AXIS + 20;
+        const baseHeight = (TILE_SIZE * MAX_NUM_TILE_PER_AXIS) / 2 + 100;
+        this._renderer.canvas.width = baseWidth * this._zoomLevel;
+        this._renderer.canvas.height = baseHeight * this._zoomLevel;
+    }
+
+    public get zoomLevel(): number {
+        return this._zoomLevel;
     }
 
     public get renderer(): CanvasRenderingContext2D {
