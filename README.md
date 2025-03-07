@@ -54,3 +54,8 @@ yarn build
 
 -   A `dist` folder will be generated, these are the files that must be uploaded to your webserver
 -   Consult your CMS documentation for compatibility with Nitro and how to add the production files
+
+# Want to help !
+Discord: https://discord.gg/txfNucJv
+
+Please beware all is Free so don't get scammed !!
