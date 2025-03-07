@@ -688,6 +688,24 @@
         width: 40px;
         height: 40px;
     }
+	
+	&.icon-set-deselect {
+        background-image: url('@/assets/images/floorplaneditor/icon-deselect.png');
+        width: 40px;
+        height: 40px;
+    }
+	
+	&.icon-set-squaresselect {
+        background-image: url('@/assets/images/floorplaneditor/icon-squaresselect.png');
+        width: 40px;
+        height: 40px;
+    }
+	
+	&.icon-set-active-squaresselect {
+        background-image: url('@/assets/images/floorplaneditor/icon-squaresselect.png');
+        width: 40px;
+        height: 40px;
+    }
 
     &.icon-tickets {
         background-image: url('@/assets/images/icons/tickets.png');

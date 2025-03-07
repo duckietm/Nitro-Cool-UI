@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useState, useEffect } from 'react';
 import { FaCaretLeft, FaCaretRight } from 'react-icons/fa';
 import { LocalizeText } from '../../../api';
 import { Column, Flex, LayoutGridItem, Slider, Text } from '../../../common';
@@ -17,12 +17,24 @@ export const FloorplanOptionsView: FC<{}> = props =>
     const { visualizationSettings = null, setVisualizationSettings = null } = useFloorplanEditorContext();
     const [ floorAction, setFloorAction ] = useState(FloorAction.SET);
     const [ floorHeight, setFloorHeight ] = useState(0);
-    
+    const [ isSquareSelectMode, setIsSquareSelectMode ] = useState(FloorplanEditor.instance.squareSelectMode);
+
+    useEffect(() =>
+    {
+        setIsSquareSelectMode(FloorplanEditor.instance.squareSelectMode);
+    }, []);
+
     const selectAction = (action: number) =>
     {
         setFloorAction(action);
-
         FloorplanEditor.instance.actionSettings.currentAction = action;
+    }
+
+    const toggleSquareSelectMode = () =>
+    {
+        const newMode = !FloorplanEditor.instance.squareSelectMode;
+        FloorplanEditor.instance.setSquareSelectMode(newMode);
+        setIsSquareSelectMode(newMode);
     }
 
     const changeDoorDirection = () =>
@@ -47,11 +59,8 @@ export const FloorplanOptionsView: FC<{}> = props =>
     const onFloorHeightChange = (value: number) =>
     {
         if(isNaN(value) || (value <= 0)) value = 0;
-
         if(value > 26) value = 26;
-
         setFloorHeight(value);
-
         FloorplanEditor.instance.actionSettings.currentHeight = value.toString(36);
     }
 
@@ -60,9 +69,7 @@ export const FloorplanOptionsView: FC<{}> = props =>
         setVisualizationSettings(prevValue =>
         {
             const newValue = { ...prevValue };
-
             newValue.thicknessFloor = value;
-
             return newValue;
         });
     }
@@ -72,9 +79,7 @@ export const FloorplanOptionsView: FC<{}> = props =>
         setVisualizationSettings(prevValue =>
         {
             const newValue = { ...prevValue };
-
             newValue.thicknessWall = value;
-    
             return newValue;
         });
     }
@@ -82,15 +87,11 @@ export const FloorplanOptionsView: FC<{}> = props =>
     const onWallHeightChange = (value: number) =>
     {
         if(isNaN(value) || (value <= 0)) value = MIN_WALL_HEIGHT;
-
         if(value > MAX_WALL_HEIGHT) value = MAX_WALL_HEIGHT;
-
         setVisualizationSettings(prevValue =>
         {
             const newValue = { ...prevValue };
-
             newValue.wallHeight = value;
-
             return newValue;
         });
     }
@@ -98,18 +99,14 @@ export const FloorplanOptionsView: FC<{}> = props =>
     const increaseWallHeight = () =>
     {
         let height = (visualizationSettings.wallHeight + 1);
-
         if(height > MAX_WALL_HEIGHT) height = MAX_WALL_HEIGHT;
-
         onWallHeightChange(height);
     }
 
     const decreaseWallHeight = () =>
     {
         let height = (visualizationSettings.wallHeight - 1);
-
         if(height <= 0) height = MIN_WALL_HEIGHT;
-
         onWallHeightChange(height);
     }
 
@@ -134,15 +131,19 @@ export const FloorplanOptionsView: FC<{}> = props =>
                             <LayoutGridItem itemActive={ (floorAction === FloorAction.DOWN) } onClick={ event => selectAction(FloorAction.DOWN) }>
                                 <i className="icon icon-decrease-height" />
                             </LayoutGridItem>
-							<LayoutGridItem itemActive={ (floorAction === FloorAction.DOOR) } onClick={ event => selectAction(FloorAction.DOOR) }>
-								<i className="icon icon-set-door" />
-							</LayoutGridItem>
-							<LayoutGridItem onClick={ event => FloorplanEditor.instance.toggleSelectAll() }>
-								<i className="icon icon-set-select" />
-							</LayoutGridItem>
-							<LayoutGridItem itemActive={ FloorplanEditor.instance.squareSelectMode } onClick={ event => { FloorplanEditor.instance.setSquareSelectMode(!FloorplanEditor.instance.squareSelectMode);} }><i className="icon icon-set-select" />
-						</LayoutGridItem>
-						</Flex>
+                            <LayoutGridItem itemActive={ (floorAction === FloorAction.DOOR) } onClick={ event => selectAction(FloorAction.DOOR) }>
+                                <i className="icon icon-set-door" />
+                            </LayoutGridItem>
+                            <LayoutGridItem onClick={ event => FloorplanEditor.instance.toggleSelectAll() }>
+                                <i className={`icon ${floorAction === FloorAction.UNSET ? 'icon-set-deselect' : 'icon-set-select'}`} />
+                            </LayoutGridItem>
+                            <LayoutGridItem 
+                                itemActive={ isSquareSelectMode } 
+                                onClick={ toggleSquareSelectMode }
+                            >
+                                <i className={`icon ${isSquareSelectMode ? 'icon-set-active-squaresselect' : 'icon-set-squaresselect'}`} />
+                            </LayoutGridItem>
+                        </Flex>
                     </Flex>
                 </Column>
                 <Column alignItems="center" size={ 4 }>
@@ -167,7 +168,16 @@ export const FloorplanOptionsView: FC<{}> = props =>
                         step={ 1 }
                         value={ floorHeight }
                         onChange={ event => onFloorHeightChange(event) }
-                        renderThumb={ ({ style, ...rest }, state) => <div style={ { backgroundColor: `#${ COLORMAP[state.valueNow.toString(33)] }`, ...style } } { ...rest }>{ state.valueNow }</div> } />
+                        renderThumb={ ({ style, key, ...rest }, state) => (
+                            <div 
+                                key={key} 
+                                style={{ backgroundColor: `#${COLORMAP[state.valueNow.toString(33)]}`, ...style }} 
+                                {...rest}
+                            >
+                                {state.valueNow}
+                            </div>
+                        )}
+                    />
                 </Column>
                 <Column size={ 6 }>
                     <Text bold>{ LocalizeText('floor.plan.editor.room.options') }</Text>

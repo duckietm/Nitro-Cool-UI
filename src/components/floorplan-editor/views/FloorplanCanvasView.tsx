@@ -1,6 +1,6 @@
 import { GetOccupiedTilesMessageComposer, GetRoomEntryTileMessageComposer, NitroPoint, RoomEntryTileMessageEvent, RoomOccupiedTilesMessageEvent } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useRef, useState } from 'react';
-import { FaArrowDown, FaArrowLeft, FaArrowRight, FaArrowUp, FaSearchPlus, FaSearchMinus } from 'react-icons/fa'; // Added FaSearchPlus and FaSearchMinus for zoom icons
+import { FaArrowDown, FaArrowLeft, FaArrowRight, FaArrowUp, FaDotCircle, FaSearchPlus, FaSearchMinus, FaUndo } from 'react-icons/fa';
 import { SendMessageComposer } from '../../../api';
 import { Base, Button, Column, ColumnProps, Flex, Grid } from '../../../common';
 import { useMessageEvent } from '../../../hooks';
@@ -113,6 +113,13 @@ export const FloorplanCanvasView: FC<ColumnProps> = props =>
         FloorplanEditor.instance.zoomOut();
     };
 
+    // Handler for resetting zoom to original level (1.0)
+    const handleResetZoom = () => {
+        FloorplanEditor.instance._zoomLevel = 1.0; // Reset to default zoom
+        FloorplanEditor.instance.adjustCanvasSize();
+        FloorplanEditor.instance.renderTiles();
+    };
+
     useEffect(() =>
     {
         return () =>
@@ -186,6 +193,9 @@ export const FloorplanCanvasView: FC<ColumnProps> = props =>
                     <Flex justifyContent="left" gap={ 1 }>
                         <Button shrink onClick={ handleZoomIn }>
                             <FaSearchPlus className="fa-icon" />
+                        </Button>
+                        <Button shrink onClick={ handleResetZoom }>
+                            <FaDotCircle className="fa-icon" />
                         </Button>
                         <Button shrink onClick={ handleZoomOut }>
                             <FaSearchMinus className="fa-icon" />
