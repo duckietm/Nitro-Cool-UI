@@ -19,7 +19,6 @@ const useCameraState = () =>
 
     useMessageEvent<InitCameraMessageEvent>(InitCameraMessageEvent, event =>
     {
-
         const parser = event.getParser();
 
         setPrice({ credits: parser.creditPrice, duckets: parser.ducketPrice, publishDucketPrice: parser.publishDucketPrice });
@@ -27,14 +26,11 @@ const useCameraState = () =>
 
     useEffect(() =>
     {
-        if(!GetRoomCameraWidgetManager().isLoaded)
-        {
-            GetRoomCameraWidgetManager().init();
+        if(GetRoomCameraWidgetManager().isLoaded) return;
 
-            SendMessageComposer(new RequestCameraConfigurationComposer());
+        GetRoomCameraWidgetManager().init();
 
-            return;
-        }
+        SendMessageComposer(new RequestCameraConfigurationComposer());
     }, []);
 
     return { availableEffects, cameraRoll, setCameraRoll, selectedPictureIndex, setSelectedPictureIndex, myLevel, price };

@@ -19,9 +19,6 @@ export const CameraWidgetEffectListItemView: FC<CameraWidgetEffectListItemViewPr
     const { effect = null, thumbnailUrl = null, isActive = false, isLocked = false, selectEffect = null, removeEffect = null } = props;
 
     return (
-        <>
-            asassa
-
             <LayoutGridItem itemActive={ isActive } title={ LocalizeText(!isLocked ? (`camera.effect.name.${ effect.name }`) : `camera.effect.required.level ${ effect.minLevel }`) } onClick={ event => (!isActive && selectEffect()) }>
                 { isActive &&
                     <Button className="rounded-circle remove-effect" variant="danger" onClick={ removeEffect }>
@@ -39,6 +36,5 @@ export const CameraWidgetEffectListItemView: FC<CameraWidgetEffectListItemViewPr
                         { effect.minLevel }
                     </Text> }
             </LayoutGridItem>
-        </>
     );
 };
