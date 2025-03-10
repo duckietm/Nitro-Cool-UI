@@ -1,8 +1,7 @@
 import { CreateLinkEvent, Dispose, DropBounce, EaseOut, GetSessionDataManager, JumpBy, Motions, NitroToolbarAnimateIconEvent, PerkAllowancesMessageEvent, PerkEnum, Queue, Wait } from '@nitrots/nitro-renderer';
-import { AnimatePresence, motion } from 'framer-motion';
 import { FC, useState } from 'react';
 import { GetConfigurationValue, MessengerIconState, OpenMessengerChat, VisitDesktop } from '../../api';
-import { Flex, LayoutAvatarImageView, LayoutItemCountView } from '../../common';
+import { Flex, LayoutAvatarImageView, LayoutItemCountView, TransitionAnimation, TransitionAnimationTypes } from '../../common';
 import { useAchievements, useFriends, useInventoryUnseenTracker, useMessageEvent, useMessenger, useNitroEvent, useSessionInfo } from '../../hooks';
 import { ToolbarItemView } from './ToolbarItemView';
 import { ToolbarMeView } from './ToolbarMeView';
@@ -65,10 +64,9 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
 
     return (
         <>
-            <AnimatePresence> { isMeExpanded && <motion.div initial={ { opacity: 0 }} animate={ { opacity: 1 }} exit={ { opacity: 0 }}>
-					<ToolbarMeView useGuideTool={ useGuideTool } unseenAchievementCount={ getTotalUnseen } setMeExpanded={ setMeExpanded } />
-				</motion.div> }
-            </AnimatePresence>
+            <TransitionAnimation inProp={ isMeExpanded } timeout={ 300 } type={ TransitionAnimationTypes.FADE_IN }>
+                <ToolbarMeView setMeExpanded={ setMeExpanded } unseenAchievementCount={ getTotalUnseen } useGuideTool={ useGuideTool } />
+            </TransitionAnimation>
             <Flex alignItems="center" className="absolute bottom-[0] left-[0] w-full h-[55px] bg-[rgba(28,_28,_32,_.95)] [box-shadow:inset_0_5px_#22222799,_inset_0_-4px_#12121599] py-1 px-3" gap={ 2 } justifyContent="between">
                 <Flex alignItems="center" gap={ 2 }>
                     <Flex alignItems="center" gap={ 2 }>

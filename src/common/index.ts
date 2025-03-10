@@ -17,5 +17,6 @@ export * from './card/tabs';
 export * from './draggable-window';
 export * from './layout';
 export * from './layout/limited-edition';
+export * from './transitions';
 export * from './types';
 export * from './utils';

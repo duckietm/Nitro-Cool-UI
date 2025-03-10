@@ -1,4 +1,3 @@
-export * from './useFurnitureAreaHideWidget';
 export * from './useFurnitureBackgroundColorWidget';
 export * from './useFurnitureBadgeDisplayWidget';
 export * from './useFurnitureContextMenuWidget';

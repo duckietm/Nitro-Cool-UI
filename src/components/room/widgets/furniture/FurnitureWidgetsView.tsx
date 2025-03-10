@@ -1,5 +1,4 @@
 import { FC } from 'react';
-import { FurnitureAreaHideView } from './FurnitureAreaHideView';
 import { FurnitureBackgroundColorView } from './FurnitureBackgroundColorView';
 import { FurnitureBadgeDisplayView } from './FurnitureBadgeDisplayView';
 import { FurnitureCraftingView } from './FurnitureCraftingView';
@@ -43,7 +42,6 @@ export const FurnitureWidgetsView: FC<{}> = props =>
             <FurnitureTrophyView />
             <FurnitureContextMenuView />
             <FurnitureYoutubeDisplayView />
-			<FurnitureAreaHideView />
         </>
     );
 };

@@ -195,7 +195,7 @@ export const CameraWidgetEditorView: FC<CameraWidgetEditorViewProps> = props =>
             <NitroCardContentView>
                 <Grid>
                     <Column overflow="hidden" size={ 5 }>
-                        <CameraWidgetEffectListView effects={ getEffectList() } myLevel={ myLevel } processAction={ processAction } selectedEffects={ selectedEffects } thumbnails={ effectsThumbnails } />
+                        <CameraWidgetEffectListView myLevel={ myLevel } selectedEffects={ selectedEffects } effects={ getEffectList() } thumbnails={ effectsThumbnails } processAction={ processAction } />
                     </Column>
                     <Column justifyContent="between" overflow="hidden" size={ 7 }>
                         <Column center>
@@ -205,14 +205,12 @@ export const CameraWidgetEditorView: FC<CameraWidgetEditorViewProps> = props =>
                                     <Text>{ LocalizeText('camera.effect.name.' + selectedEffectName) }</Text>
                                     <ReactSlider
                                         className={ 'nitro-slider' }
-												 
-                                        max={ 1 }
                                         min={ 0 }
-                                        renderThumb={ (props, state) => <div { ...props }>{ state.valueNow }</div> }
+                                        max={ 1 }
                                         step={ 0.01 }
-                                        value={ getCurrentEffect.alpha }
-                                        onChange={ event => setSelectedEffectAlpha(event) } />
-																																			   
+                                        value={ getCurrentEffect.strength }
+                                        onChange={ event => setSelectedEffectAlpha(event) }
+                                        renderThumb={ ({ key, ...props }, state) => <div key={ key } { ...props }>{ state.valueNow }</div> } />
                                 </Column> }
                         </Column>
                         <div className="flex justify-between">

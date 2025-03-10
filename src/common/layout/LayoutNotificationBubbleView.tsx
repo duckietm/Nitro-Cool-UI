@@ -1,6 +1,6 @@
-import { AnimatePresence, motion } from 'framer-motion';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { Flex, FlexProps } from '../Flex';
+import { TransitionAnimation, TransitionAnimationTypes } from '../transitions';
 
 export interface LayoutNotificationBubbleViewProps extends FlexProps
 {
@@ -16,7 +16,7 @@ export const LayoutNotificationBubbleView: FC<LayoutNotificationBubbleViewProps>
 
     const getClassNames = useMemo(() =>
     {
-        const newClassNames: string[] = [ 'nitro-notification-bubble', 'rounded' ];
+        const newClassNames: string[] = [ 'text-sm bg-[#1c1c20f2] px-[5px] py-[6px] [box-shadow:inset_0_5px_#22222799,_inset_0_-4px_#12121599] ', 'rounded' ];
 
         if(classNames.length) newClassNames.push(...classNames);
 
@@ -45,14 +45,8 @@ export const LayoutNotificationBubbleView: FC<LayoutNotificationBubbleViewProps>
     }, [ fadesOut, timeoutMs, onClose ]);
 
     return (
-        <AnimatePresence>
-            { isVisible &&
-                <motion.div
-                    initial={ { opacity: 0 }}
-                    animate={ { opacity: 1 }}
-                    exit={ { opacity: 0 }}>
-                    <Flex overflow={ overflow } classNames={ getClassNames } onClick={ onClose } { ...rest } />
-                </motion.div> }
-        </AnimatePresence>
+        <TransitionAnimation inProp={ isVisible } timeout={ 300 } type={ TransitionAnimationTypes.FADE_IN }>
+            <Flex classNames={ getClassNames } overflow={ overflow } onClick={ onClose } { ...rest } />
+        </TransitionAnimation>
     );
 };
