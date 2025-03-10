@@ -14,10 +14,7 @@ export const NitroSystemAlertView: FC<NotificationDefaultAlertViewProps> = props
     return (
         <LayoutNotificationAlertView title={ title } onClose={ onClose } { ...rest }>
             <Grid>
-                <Column center size={ 5 }>
-                    <object data="https://assets.nitrodev.co/logos/nitro-n-dark.svg" height="100" width="100">&nbsp;</object>
-                </Column>
-                <Column size={ 7 }>
+                <Column size={ 12 }>
                     <Column alignItems="center" gap={ 0 }>
                         <Text bold fontSize={ 4 }>Nitro React</Text>
                         <Text>v{ GetUIVersion() }</Text>
@@ -26,13 +23,19 @@ export const NitroSystemAlertView: FC<NotificationDefaultAlertViewProps> = props
                         <Text><b>Renderer:</b> v{ GetRendererVersion() }</Text>
                         <Column fullWidth gap={ 1 }>
                             <Button fullWidth variant="success" onClick={ event => window.open('https://discord.nitrodev.co') }>Discord</Button>
-                            <div className="flex gap-1">
-                                <Button fullWidth onClick={ event => window.open('https://git.krews.org/nitro/nitro-react') }>Git</Button>
-                                <Button fullWidth onClick={ event => window.open('https://git.krews.org/nitro/nitro-react/-/issues') }>Bug Report</Button>
-                            </div>
                         </Column>
                     </Column>
+					<div className="alertView_nitro-coolui-logo"></div>
+					<Column size={ 12 }>
+						<Column alignItems="center" gap={ 0 }>
+							<Text center bold fontSize={ 5 }>Cool UI</Text>
+							<Text>- DuckieTM (Design)</Text>
+							<Text center bold small>v3.0.0</Text>
+							<Button fullWidth onClick={ event => window.open('https://github.com/duckietm/Nitro-Cool-UI') }>Cool UI Git</Button>
+						</Column>
+					</Column>
                 </Column>
+			
             </Grid>
         </LayoutNotificationAlertView>
     );
