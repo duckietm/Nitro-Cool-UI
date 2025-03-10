@@ -16,14 +16,14 @@ interface AvatarInfoWidgetDecorateViewProps
 export const AvatarInfoWidgetDecorateView: FC<AvatarInfoWidgetDecorateViewProps> = props =>
 {
     const { userId = -1, userName = '', roomIndex = -1, setIsDecorating = null } = props;
-    
+
     return (
-        <ContextMenuView objectId={ roomIndex } category={ RoomObjectCategory.UNIT } onClose={ null }>
+        <ContextMenuView category={ RoomObjectCategory.UNIT } objectId={ roomIndex } onClose={ null }>
             <ContextMenuListView>
                 <ContextMenuListItemView onClick={ event => setIsDecorating(false) }>
                     { LocalizeText('widget.avatar.stop_decorating') }
                 </ContextMenuListItemView>
             </ContextMenuListView>
         </ContextMenuView>
-    )
-}
+    );
+};

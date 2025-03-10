@@ -1,8 +1,8 @@
-import { FlatControllerAddedEvent, FlatControllerRemovedEvent, FlatControllersEvent, RemoveAllRightsMessageComposer, RoomGiveRightsComposer, RoomTakeRightsComposer, RoomUsersWithRightsComposer } from '@nitrots/nitro-renderer';
+import { FlatControllerAddedEvent, FlatControllerRemovedEvent, FlatControllersEvent, RemoveAllRightsMessageComposer, RoomTakeRightsComposer, RoomUsersWithRightsComposer } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
 import { IRoomData, LocalizeText, SendMessageComposer } from '../../../../api';
 import { Button, Column, Flex, Grid, Text, UserProfileIconView } from '../../../../common';
-import { useFriends, useMessageEvent } from '../../../../hooks';
+import { useMessageEvent } from '../../../../hooks';
 
 interface NavigatorRoomSettingsTabViewProps
 {
@@ -14,11 +14,6 @@ export const NavigatorRoomSettingsRightsTabView: FC<NavigatorRoomSettingsTabView
 {
     const { roomData = null } = props;
     const [ usersWithRights, setUsersWithRights ] = useState<Map<number, string>>(new Map());
-    const { onlineFriends = [], offlineFriends = [] } = useFriends();
-
-    const allFriends = [ ...onlineFriends, ...offlineFriends ];
-
-    const friendWitoutRights = allFriends.filter(friend => !usersWithRights.has(friend.id));
 
     useMessageEvent<FlatControllersEvent>(FlatControllersEvent, event =>
     {
@@ -58,7 +53,7 @@ export const NavigatorRoomSettingsRightsTabView: FC<NavigatorRoomSettingsTabView
             newValue.delete(parser.userId);
 
             return newValue;
-        }); 
+        });
     });
 
     useEffect(() =>
@@ -72,41 +67,25 @@ export const NavigatorRoomSettingsRightsTabView: FC<NavigatorRoomSettingsTabView
                 <Text bold>
                     { LocalizeText('navigator.flatctrls.userswithrights', [ 'displayed', 'total' ], [ usersWithRights.size.toString(), usersWithRights.size.toString() ]) }
                 </Text>
-                <Flex overflow="hidden" className="p-2 bg-white rounded list-container">
-                    <Column fullWidth overflow="auto" gap={ 1 }>
+                <Flex className="bg-white rounded list-container p-2" overflow="hidden">
+                    <Column fullWidth gap={ 1 } overflow="auto">
                         { Array.from(usersWithRights.entries()).map(([ id, name ], index) =>
                         {
                             return (
                                 <Flex key={ index } shrink alignItems="center" gap={ 1 } overflow="hidden">
-                                    <UserProfileIconView userId={ id } />
-                                    <Text pointer grow onClick={ event => SendMessageComposer(new RoomTakeRightsComposer(id)) }> { name }</Text>
+                                    <UserProfileIconView userName={ name } />
+                                    <Text grow pointer onClick={ event => SendMessageComposer(new RoomTakeRightsComposer(id)) }> { name }</Text>
                                 </Flex>
                             );
                         }) }
                     </Column>
                 </Flex>
-                <Button variant="danger" disabled={ !usersWithRights.size } onClick={ event => SendMessageComposer(new RemoveAllRightsMessageComposer(roomData.roomId)) } >
+            </Column>
+            <Column justifyContent="end" size={ 6 }>
+                <Button disabled={ !usersWithRights.size } variant="danger" onClick={ event => SendMessageComposer(new RemoveAllRightsMessageComposer(roomData.roomId)) } >
                     { LocalizeText('navigator.flatctrls.clear') }
                 </Button>
             </Column>
-            <Column size={ 6 }>
-                <Text bold>
-                    { LocalizeText('navigator.flatctrls.friends', [ 'displayed', 'total' ], [ friendWitoutRights.length.toString(), allFriends.length.toString() ]) }
-                </Text>
-                <Flex overflow="hidden" className="p-2 bg-white rounded list-container">
-                    <Column fullWidth overflow="auto" gap={ 1 }>
-                        { friendWitoutRights.map((friend, index) =>
-                        {
-                            return (
-                                <Flex key={ index } shrink alignItems="center" gap={ 1 } overflow="hidden">
-                                    <UserProfileIconView userId={ friend.id } />
-                                    <Text pointer grow onClick={ event => SendMessageComposer(new RoomGiveRightsComposer(friend.id)) }> { friend.name }</Text>
-                                </Flex>
-                            );
-                        }) }
-                    </Column>
-                </Flex>
-            </Column>
         </Grid>
     );
-}
+};

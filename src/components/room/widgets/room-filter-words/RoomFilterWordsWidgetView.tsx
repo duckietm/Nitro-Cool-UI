@@ -1,8 +1,9 @@
 import { UpdateRoomFilterMessageComposer } from '@nitrots/nitro-renderer';
 import { FC, useState } from 'react';
 import { LocalizeText, SendMessageComposer } from '../../../../api';
-import { Button, classNames, Column, Flex, Grid, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../../common';
+import { Button, Column, Flex, Grid, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../../common';
 import { useFilterWordsWidget, useNavigator } from '../../../../hooks';
+import { NitroInput, classNames } from '../../../../layout';
 
 export const RoomFilterWordsWidgetView: FC<{}> = props =>
 {
@@ -14,14 +15,14 @@ export const RoomFilterWordsWidgetView: FC<{}> = props =>
 
     const processAction = (isAddingWord: boolean) =>
     {
-        if ((isSelectingWord) ? (!selectedWord) : (!word)) return;
+        if((isSelectingWord) ? (!selectedWord) : (!word)) return;
 
         SendMessageComposer(new UpdateRoomFilterMessageComposer(navigatorData.enteredGuestRoom.roomId, isAddingWord, (isSelectingWord ? selectedWord : word)));
         setSelectedWord('');
         setWord('bobba');
         setIsSelectingWord(false);
 
-        if (isAddingWord && wordsFilter.includes((isSelectingWord ? selectedWord : word))) return;
+        if(isAddingWord && wordsFilter.includes((isSelectingWord ? selectedWord : word))) return;
 
         setWordsFilter(prevValue =>
         {
@@ -31,42 +32,42 @@ export const RoomFilterWordsWidgetView: FC<{}> = props =>
 
             return newWords;
         });
-    }
+    };
 
     const onTyping = (word: string) =>
     {
         setWord(word);
         setIsSelectingWord(false);
-    }
+    };
 
     const onSelectedWord = (word: string) =>
     {
         setSelectedWord(word);
         setIsSelectingWord(true);
-    }
+    };
 
-    if (!isVisible) return null;
+    if(!isVisible) return null;
 
     return (
         <NitroCardView className="nitro-guide-tool no-resize" theme="primary-slim">
             <NitroCardHeaderView headerText={ LocalizeText('navigator.roomsettings.roomfilter') } onCloseClick={ () => onClose() } />
             <NitroCardContentView className="text-black">
-                <Grid className="d-flex align-items-center justify-content-end gap-2">
-                    <input type="text" className="form-control form-control-sm" maxLength={ 255 } value={ word } onChange={ event => onTyping(event.target.value) } />
+                <Grid className="flex items-center gap-2 justify-end">
+                    <NitroInput maxLength={ 255 } type="text" value={ word } onChange={ event => onTyping(event.target.value) } />
                     <Button onClick={ () => processAction(true) }>{ LocalizeText('navigator.roomsettings.roomfilter.addword') }</Button>
                 </Grid>
-                <Column overflow="auto" gap={ 0 } className="form-control form-control-sm" style={ { height: '100px' } }>
+                <Column className="min-h-[calc(1.5em+ .5rem+2px)] px-[.5rem] py-[.25rem]  rounded-[.2rem] form-control-sm" gap={ 0 } overflow="auto" style={ { height: '100px' } }>
                     { wordsFilter && (wordsFilter.length > 0) && wordsFilter.map((word, index) =>
                     {
                         return (
-                            <Flex key={ index } alignItems="center" className={ classNames('rounded p-1', (selectedWord === word) && 'bg-muted') } pointer onClick={ event => onSelectedWord(word) }>
+                            <Flex key={ index } pointer alignItems="center" className={ classNames('rounded p-1', (selectedWord === word) && 'bg-muted') } onClick={ event => onSelectedWord(word) }>
                                 <Text truncate>{ word }</Text>
                             </Flex>
-                        )
+                        );
                     }) }
                 </Column>
-                <Grid className="d-flex align-items-center justify-content-end gap-2">
-                    <Button variant="danger" onClick={ () => processAction(false) } disabled={ wordsFilter.length === 0 || !isSelectingWord }>{ LocalizeText('navigator.roomsettings.roomfilter.removeword') }</Button>
+                <Grid className="flex items-center gap-2 justify-end">
+                    <Button disabled={ wordsFilter.length === 0 || !isSelectingWord } variant="danger" onClick={ () => processAction(false) }>{ LocalizeText('navigator.roomsettings.roomfilter.removeword') }</Button>
                 </Grid>
             </NitroCardContentView>
         </NitroCardView>

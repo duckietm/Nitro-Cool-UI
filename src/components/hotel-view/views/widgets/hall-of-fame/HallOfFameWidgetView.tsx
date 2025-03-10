@@ -19,19 +19,19 @@ export const HallOfFameWidgetView: FC<HallOfFameWidgetViewProps> = props =>
 
     useEffect(() =>
     {
-        const campaign: string = conf ? conf['campaign'] : '';  
+        const campaign: string = conf ? conf['campaign'] : '';
         SendMessageComposer(new GetCommunityGoalHallOfFameMessageComposer(campaign));
     }, [ conf ]);
 
     if(!data) return null;
 
     return (
-        <div className="hall-of-fame d-flex px-2">
+        <div className="bg-[#0000004d] rounded-[.25rem] justify-center flex">
             { data.hof && (data.hof.length > 0) && data.hof.map((entry, index) =>
             {
-                return <HallOfFameItemView key={ index } data={ entry } goalCode={ data.goalCode } />;
+                return <HallOfFameItemView key={ index } data={ entry } level={ (index + 1) } />;
             }
             ) }
         </div>
     );
-}
+};

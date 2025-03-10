@@ -1,6 +1,6 @@
-import { FriendlyTime, GetModeratorUserInfoMessageComposer, ModeratorUserInfoData, ModeratorUserInfoEvent } from '@nitrots/nitro-renderer';
+import { CreateLinkEvent, GetModeratorUserInfoMessageComposer, ModeratorUserInfoData, ModeratorUserInfoEvent } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useMemo, useState } from 'react';
-import { CreateLinkEvent, LocalizeText, SendMessageComposer } from '../../../../api';
+import { FriendlyTime, LocalizeText, SendMessageComposer } from '../../../../api';
 import { Button, Column, DraggableWindowPosition, Grid, NitroCardContentView, NitroCardHeaderView, NitroCardView } from '../../../../common';
 import { useMessageEvent } from '../../../../hooks';
 import { ModToolsUserModActionView } from './ModToolsUserModActionView';
@@ -89,9 +89,9 @@ export const ModToolsUserView: FC<ModToolsUserViewProps> = props =>
     useMessageEvent<ModeratorUserInfoEvent>(ModeratorUserInfoEvent, event =>
     {
         const parser = event.getParser();
-    
+
         if(!parser || parser.data.userId !== userId) return;
-    
+
         setUserInfo(parser.data);
     });
 
@@ -108,7 +108,7 @@ export const ModToolsUserView: FC<ModToolsUserViewProps> = props =>
                 <NitroCardHeaderView headerText={ LocalizeText('modtools.userinfo.title', [ 'username' ], [ userInfo.userName ]) } onCloseClick={ () => onCloseClick() } />
                 <NitroCardContentView className="text-black">
                     <Grid overflow="hidden">
-                        <Column size={ 8 } overflow="auto">
+                        <Column overflow="auto" size={ 8 }>
                             <table className="table table-striped table-sm table-text-small text-black m-0">
                                 <tbody>
                                     { userProperties.map( (property, index) =>
@@ -128,7 +128,7 @@ export const ModToolsUserView: FC<ModToolsUserViewProps> = props =>
                                 </tbody>
                             </table>
                         </Column>
-                        <Column size={ 4 } gap={ 1 }>
+                        <Column gap={ 1 } size={ 4 }>
                             <Button onClick={ event => CreateLinkEvent(`mod-tools/open-user-chatlog/${ userId }`) }>
                                 Room Chat
                             </Button>
@@ -153,4 +153,4 @@ export const ModToolsUserView: FC<ModToolsUserViewProps> = props =>
                 <ModToolsUserRoomVisitsView userId={ userId } onCloseClick={ () => setRoomVisitsVisible(false) } /> }
         </>
     );
-}
+};

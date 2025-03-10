@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { LocalizeText } from '../../../../../api';
-import { Button, Column, Flex, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../../../common';
+import { Button, Column, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../../../common';
 import { useRoom } from '../../../../../hooks';
 
 interface EffectBoxConfirmViewProps
@@ -19,22 +19,22 @@ export const EffectBoxConfirmView: FC<EffectBoxConfirmViewProps> = props =>
         roomSession.useMultistateItem(objectId);
 
         onClose();
-    }
-    
+    };
+
     return (
         <NitroCardView className="nitro-use-product-confirmation">
             <NitroCardHeaderView headerText={ LocalizeText('effectbox.header.title') } onCloseClick={ onClose } />
             <NitroCardContentView center>
-                <Flex gap={ 2 }>
+                <div className="flex gap-2">
                     <Column justifyContent="between">
                         <Text>{ LocalizeText('effectbox.header.description') }</Text>
-                        <Flex alignItems="center" justifyContent="between">
+                        <div className="flex items-center justify-between">
                             <Button variant="danger" onClick={ onClose }>{ LocalizeText('generic.cancel') }</Button>
                             <Button variant="success" onClick={ useProduct }>{ LocalizeText('generic.ok') }</Button>
-                        </Flex>
+                        </div>
                     </Column>
-                </Flex>
+                </div>
             </NitroCardContentView>
         </NitroCardView>
     );
-}
+};

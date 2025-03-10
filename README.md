@@ -1,6 +1,4 @@
-# Nitro React v2.1
-
-Credits: Thanks to Genaro on discord for this release!
+# v2.2.0 - Cool UI Beta !! Use at Own Risk as it is still in Beta !!
 
 ## Prerequisites
 
@@ -11,12 +9,16 @@ Credits: Thanks to Genaro on discord for this release!
 
 ## Installation
 
--   First you should open terminal and navigate to the folder where you want to clone Nitro
--   Clone Nitro
-    -   `git clone https://github.com/duckietm/Nitro-Cool-UI.git`
--   Install the dependencies
-    -   `yarn install`
-    -   This may take some time, please be patient
+-   First you should open terminal and navigate to the folder where you want to clone Nitro and Nitro-Renderer
+-   Clone Nitro (Expl. C:\Github\)
+    -   `git clone https://github.com/duckietm/Nitro-Cool-UI.git` <== For now switch to Dev-RendererV2 
+	-   `git clone https://github.com/duckietm/Nitro-Cool-UI-Renderer.git`
+	-   Install the dependencies for the renderer : cd C:\Github\Nitro-Cool-UI-Renderer
+    	-   `yarn install`
+	-	Now we will create a Link for the CoolUI : `yarn link` This will give you a link address `yarn link "@nitrots/nitro-renderer"`
+    -   Install the dependencies for Cool UI : cd C:\Github\Nitro-Cool-UI
+	-   `yarn install`
+	-   `yarn link "@nitrots/nitro-renderer` <== This will link the renderer in the project
 -   Rename a few files
     -   Rename `public/renderer-config.json.example` to `public/renderer-config.json`
     -   Rename `public/ui-config.json.example` to `public/ui-config.json`
@@ -25,16 +27,13 @@ Credits: Thanks to Genaro on discord for this release!
         -   Update `socket.url, asset.url, image.library.url, & hof.furni.url`
     -   Open `public/ui-config.json`
         -   Update `camera.url, thumbnails.url, url.prefix, habbopages.url`
+	-   `yarn build` <== the final step to build the DIST folder this is where your browser needs to point / or upload this to your /client if you do the compile on a other machine (preferd)
     -   You can override any variable by passing it to `NitroConfig` in the index.html
-	
--   Make the following changes
-	- ExternalTesxts.json
-	`"room.mute.button.text": "Hide chat",`
-	`"room.unmute.button.text": "Unhide chat",`
 
 ## Usage
 
 -   To use Nitro you need `.nitro` assets generated, see [nitro-converter](https://git.krews.org/nitro/nitro-converter) for instructions
+-   See [Morningstar Websockets](https://git.krews.org/nitro/ms-websockets) for instructions on configuring websockets on your server
 
 ### Development
 
@@ -49,13 +48,8 @@ yarn start
 To build a production version of Nitro just run the following command
 
 ```
-yarn build
+yarn build:prod
 ```
 
 -   A `dist` folder will be generated, these are the files that must be uploaded to your webserver
 -   Consult your CMS documentation for compatibility with Nitro and how to add the production files
-
-# Want to help !
-Discord: https://discord.gg/txfNucJv
-
-Please beware all is Free so don't get scammed !!

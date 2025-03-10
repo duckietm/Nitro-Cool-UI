@@ -202,71 +202,6 @@
     background-color: rgba($black, 0.125);
 }
 
-.room-creator-grid-item {
-    height: var(--nitro-grid-column-min-height, unset);
-    background-position: center;
-    background-repeat: no-repeat;
-    border-image-source: url(@/assets/images/navigator/room-creator/room-bg.png);
-    border-image-slice:6 6 6 6 fill;
-    border-image-width:6px 6px 6px 6px;
-    overflow: hidden;
-
-    &.active {
-        border-image-source: url(@/assets/images/navigator/room-creator/room-bg-active.png) !important;
-        color: #fff !important;
-
-        .active-arrow {
-            background-image: url(@/assets/images/navigator/room-creator/arrow.png);
-            width: 18px;
-            height: 20px;
-            position: absolute;
-            top: 1px;
-            animation: MoveUpDown 1.7s linear infinite;
-
-            @keyframes MoveUpDown {
-                0%, 100% {
-                  top: 1px;
-                }
-                50% {
-                  top: 10px;
-                }
-              }
-
-        }
-    }
-
-    &.disabled {
-        cursor: not-allowed;
-
-        img {
-            opacity: 0.5;
-            filter: grayscale(1);
-        }
-    }
-
-    &.unseen {
-        background-color: rgba($success, 0.4);
-    }
-
-    .avatar-image {
-        background-position-y: -35px;
-    }
-
-    &.has-highlight {
-        &:after {
-            content: "";
-            z-index: 2;
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            height: 1px;
-            width: 9px;
-            background-color: #fff;
-            opacity: 0.1;
-        }
-    }
-}
-
 #draggable-windows-container {
     position: absolute;
     top: 0;
@@ -304,7 +239,7 @@
     z-index: 1;
 }
 
-.badge-image {
+.relative  {
     position: relative;
     width: 40px;
     height: 40px;
@@ -345,7 +280,8 @@
     }
 }
 
-.furni-image {
+.furni-image,
+.room-object-image {
     position: relative;
     width: 100%;
     height: 100%;
@@ -406,8 +342,10 @@
         left: 0;
         height: 100%;
         width: 100%;
-        background-color: $white;
+        border-radius: $border-radius;
+        background-color: $light;
         background-repeat: no-repeat;
+        background-position: center;
         overflow: hidden;
 
         &.border-0 {
@@ -593,12 +531,12 @@
 }
 
 .nitro-progress-bar {
-    border: 1px solid #fff;
+    border: 1px solid $white;
     padding: 2px;
-    height: 25px;
-    border-radius: 1em;
+    height: 20px;
+    border-radius: $border-radius;
     overflow: hidden;
-    background: #212529;
+    background: $primary;
 
     &.large {
         height: 30px;
@@ -608,8 +546,11 @@
         height: 100%;
         z-index: 1;
         transition: all 1s;
-        border-radius: 1em;
-        background: repeating-linear-gradient(#d6baa1,#d6baa1 50%,#b69b83 0,#b69b83);
+        border-radius: calc(#{$border-radius} / 2);
+        background: repeating-linear-gradient($tertiary,
+                $tertiary 50%,
+                $quaternary 50%,
+                $quaternary 100%);
     }
 
     .nitro-progress-bar-text {

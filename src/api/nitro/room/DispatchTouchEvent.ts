@@ -1,5 +1,4 @@
-import { MouseEventType, TouchEventType } from '@nitrots/nitro-renderer';
-import { GetRoomEngine } from './GetRoomEngine';
+import { GetRoomEngine, MouseEventType, TouchEventType } from '@nitrots/nitro-renderer';
 
 let didMouseMove = false;
 let lastClick = 0;
@@ -21,7 +20,7 @@ export const DispatchTouchEvent = (event: TouchEvent, canvasId: number = 1, long
         x = event.changedTouches[0].clientX;
         y = event.changedTouches[0].clientY;
     }
-    
+
     let eventType = event.type;
 
     if(longTouch) eventType = TouchEventType.TOUCH_LONG;
@@ -54,7 +53,7 @@ export const DispatchTouchEvent = (event: TouchEvent, canvasId: number = 1, long
             break;
         case MouseEventType.DOUBLE_CLICK:
             break;
-        case TouchEventType.TOUCH_START:            
+        case TouchEventType.TOUCH_START:
             eventType = MouseEventType.MOUSE_DOWN;
 
             didMouseMove = false;
@@ -73,10 +72,10 @@ export const DispatchTouchEvent = (event: TouchEvent, canvasId: number = 1, long
         default: return;
     }
 
-    if (eventType === TouchEventType.TOUCH_START) 
+    if(eventType === TouchEventType.TOUCH_START)
     {
         GetRoomEngine().dispatchMouseEvent(canvasId, x, y, eventType, altKey, ctrlKey, shiftKey, false);
     }
 
     GetRoomEngine().dispatchMouseEvent(canvasId, x, y, eventType, altKey, ctrlKey, shiftKey, false);
-}
+};

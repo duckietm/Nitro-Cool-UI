@@ -1,5 +1,5 @@
-import { FurniturePlacePaintComposer, RoomObjectCategory, RoomObjectPlacementSource, RoomObjectType } from '@nitrots/nitro-renderer';
-import { CreateLinkEvent, GetRoomEngine, GetRoomSessionManager, SendMessageComposer } from '../nitro';
+import { CreateLinkEvent, FurniturePlacePaintComposer, GetRoomEngine, GetRoomSessionManager, RoomObjectCategory, RoomObjectPlacementSource, RoomObjectType } from '@nitrots/nitro-renderer';
+import { SendMessageComposer } from '../nitro';
 import { FurniCategory } from './FurniCategory';
 import { GroupItem } from './GroupItem';
 import { IBotItem } from './IBotItem';
@@ -19,12 +19,12 @@ export const setPlacingItemId = (id: number) => (itemIdInPlacing = id);
 export const cancelRoomObjectPlacement = () =>
 {
     if(getPlacingItemId() === -1) return;
-    
+
     GetRoomEngine().cancelRoomObjectPlacement();
 
     setPlacingItemId(-1);
     setObjectMoverRequested(false);
-}
+};
 
 export const attemptPetPlacement = (petItem: IPetItem, flag: boolean = false) =>
 {
@@ -47,7 +47,7 @@ export const attemptPetPlacement = (petItem: IPetItem, flag: boolean = false) =>
     }
 
     return true;
-}
+};
 
 export const attemptItemPlacement = (groupItem: GroupItem, flag: boolean = false) =>
 {
@@ -92,7 +92,7 @@ export const attemptItemPlacement = (groupItem: GroupItem, flag: boolean = false
     }
 
     return true;
-}
+};
 
 
 export const attemptBotPlacement = (botItem: IBotItem, flag: boolean = false) =>
@@ -114,4 +114,4 @@ export const attemptBotPlacement = (botItem: IBotItem, flag: boolean = false) =>
     }
 
     return true;
-}
+};

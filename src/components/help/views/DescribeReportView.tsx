@@ -1,6 +1,6 @@
 import { FC, useState } from 'react';
 import { LocalizeText, ReportState, ReportType } from '../../../api';
-import { Button, Column, Flex, Text } from '../../../common';
+import { Button, Flex, Text } from '../../../common';
 import { useHelp } from '../../../hooks';
 
 export const DescribeReportView: FC<{}> = props =>
@@ -18,7 +18,7 @@ export const DescribeReportView: FC<{}> = props =>
 
             return { ...prevValue, message, currentStep };
         });
-    }
+    };
 
     const back = () =>
     {
@@ -26,17 +26,17 @@ export const DescribeReportView: FC<{}> = props =>
         {
             return { ...prevValue, currentStep: (prevValue.currentStep - 1) };
         });
-    }
+    };
 
     return (
         <>
-            <Column gap={ 1 }>
+            <div className="flex flex-col gap-1">
                 <Text fontSize={ 4 }>{ LocalizeText('help.emergency.chat_report.subtitle') }</Text>
                 <Text>{ LocalizeText('help.cfh.input.text') }</Text>
-            </Column>
-            <textarea className="form-control h-100" value={ message } onChange={ event => setMessage(event.target.value) } />
+            </div>
+            <textarea className="min-h-[calc(1.5em+ .5rem+2px)] px-[.5rem] py-[.25rem]  rounded-[.2rem] h-full" value={ message } onChange={ event => setMessage(event.target.value) } />
             <Flex gap={ 2 } justifyContent="between">
-                <Button variant="secondary" disabled={ !(activeReport.reportType === ReportType.BULLY || activeReport.reportType === ReportType.EMERGENCY) } onClick={ back }>
+                <Button disabled={ !(activeReport.reportType === ReportType.BULLY || activeReport.reportType === ReportType.EMERGENCY) } variant="secondary" onClick={ back }>
                     { LocalizeText('generic.back') }
                 </Button>
                 <Button disabled={ (message.length < 15) } onClick={ submitMessage }>
@@ -45,4 +45,4 @@ export const DescribeReportView: FC<{}> = props =>
             </Flex>
         </>
     );
-}
+};

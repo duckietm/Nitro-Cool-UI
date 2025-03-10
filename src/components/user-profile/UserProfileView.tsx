@@ -1,12 +1,12 @@
-import { ExtendedProfileChangedMessageEvent, RelationshipStatusInfoEvent, RelationshipStatusInfoMessageParser, RoomEngineObjectEvent, RoomObjectCategory, RoomObjectType, UserCurrentBadgesComposer, UserCurrentBadgesEvent, UserProfileEvent, UserProfileParser, UserRelationshipsComposer } from '@nitrots/nitro-renderer';
+import { CreateLinkEvent, ExtendedProfileChangedMessageEvent, GetSessionDataManager, RelationshipStatusInfoEvent, RelationshipStatusInfoMessageParser, RoomEngineObjectEvent, RoomObjectCategory, RoomObjectType, UserCurrentBadgesComposer, UserCurrentBadgesEvent, UserProfileEvent, UserProfileParser, UserRelationshipsComposer } from '@nitrots/nitro-renderer';
 import { FC, useState } from 'react';
-import { CreateLinkEvent, GetRoomSession, GetSessionDataManager, GetUserProfile, LocalizeText, SendMessageComposer } from '../../api';
-import { Column, Flex, Grid, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../common';
-import { useMessageEvent, useRoomEngineEvent } from '../../hooks';
-import { BadgesContainerView } from './views/BadgesContainerView';
-import { FriendsContainerView } from './views/FriendsContainerView';
-import { GroupsContainerView } from './views/GroupsContainerView';
-import { UserContainerView } from './views/UserContainerView';
+import { GetRoomSession, GetUserProfile, LocalizeText, SendMessageComposer } from '../../api';
+import { Flex, Grid, LayoutBadgeImageView, Text } from '../../common';
+import { useMessageEvent, useNitroEvent } from '../../hooks';
+import { NitroCard } from '../../layout';
+import { FriendsContainerView } from './FriendsContainerView';
+import { GroupsContainerView } from './GroupsContainerView';
+import { UserContainerView } from './UserContainerView';
 
 export const UserProfileView: FC<{}> = props =>
 {
@@ -19,14 +19,14 @@ export const UserProfileView: FC<{}> = props =>
         setUserProfile(null);
         setUserBadges([]);
         setUserRelationships(null);
-    }
+    };
 
     const onLeaveGroup = () =>
     {
         if(!userProfile || (userProfile.id !== GetSessionDataManager().userId)) return;
 
         GetUserProfile(userProfile.id);
-    }
+    };
 
     useMessageEvent<UserCurrentBadgesEvent>(UserCurrentBadgesEvent, event =>
     {
@@ -78,7 +78,7 @@ export const UserProfileView: FC<{}> = props =>
         GetUserProfile(parser.userId);
     });
 
-    useRoomEngineEvent<RoomEngineObjectEvent>(RoomEngineObjectEvent.SELECTED, event =>
+    useNitroEvent<RoomEngineObjectEvent>(RoomEngineObjectEvent.SELECTED, event =>
     {
         if(!userProfile) return;
 
@@ -94,29 +94,32 @@ export const UserProfileView: FC<{}> = props =>
     if(!userProfile) return null;
 
     return (
-        <NitroCardView uniqueKey="nitro-user-profile" theme="primary-slim" className="user-profile">
-            <NitroCardHeaderView headerText={ LocalizeText('extendedprofile.caption') } onCloseClick={ onClose } />
-            <NitroCardContentView overflow="hidden">
+        <NitroCard className="w-[470px] h-[460px]" uniqueKey="nitro-user-profile">
+            <NitroCard.Header
+                headerText={ LocalizeText('extendedprofile.caption') }
+                onCloseClick={ onClose } />
+            <NitroCard.Content
+                className="overflow-hidden">
                 <Grid fullHeight={ false } gap={ 2 }>
-                    <Column size={ 7 } gap={ 1 } className="user-container pe-2">
+                    <div className="flex flex-col col-span-7 gap-1 border-r border-r-gray pe-2">
                         <UserContainerView userProfile={ userProfile } />
-                        <Grid columnCount={ 5 } fullHeight className="bg-muted rounded px-2 py-1">
-                            <BadgesContainerView fullWidth center badges={ userBadges } />
-                        </Grid>
-                    </Column>
-                    <Column size={ 5 }>
+                        <div className="flex items-center justify-center w-full gap-3 p-2 rounded bg-muted">
+                            { userBadges && (userBadges.length > 0) && userBadges.map((badge, index) => <LayoutBadgeImageView key={ badge } badgeCode={ badge } />) }
+                        </div>
+                    </div>
+                    <div className="flex flex-col col-span-5">
                         { userRelationships &&
-                            <FriendsContainerView relationships={ userRelationships } friendsCount={ userProfile.friendsCount } /> }
-                    </Column>
+                            <FriendsContainerView friendsCount={ userProfile.friendsCount } relationships={ userRelationships } /> }
+                    </div>
                 </Grid>
-                <Flex alignItems="center" className="rooms-button-container px-2 py-1">
+                <Flex alignItems="center" className="px-2 py-1 border-t border-b border-t-gray border-b-gray">
                     <Flex alignItems="center" gap={ 1 } onClick={ event => CreateLinkEvent(`navigator/search/hotel_view/owner:${ userProfile.username }`) }>
-                        <i className="icon icon-rooms" />
-                        <Text bold underline pointer>{ LocalizeText('extendedprofile.rooms') }</Text>
+                        <i className="nitro-icon icon-rooms" />
+                        <Text bold pointer underline>{ LocalizeText('extendedprofile.rooms') }</Text>
                     </Flex>
                 </Flex>
-                <GroupsContainerView fullWidth itsMe={ userProfile.id === GetSessionDataManager().userId } groups={ userProfile.groups } onLeaveGroup={ onLeaveGroup } />
-            </NitroCardContentView>
-        </NitroCardView>
-    )
-}
+                <GroupsContainerView fullWidth groups={ userProfile.groups } itsMe={ userProfile.id === GetSessionDataManager().userId } onLeaveGroup={ onLeaveGroup } />
+            </NitroCard.Content>
+        </NitroCard>
+    );
+};

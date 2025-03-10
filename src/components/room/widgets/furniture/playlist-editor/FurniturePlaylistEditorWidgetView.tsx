@@ -15,15 +15,15 @@ export const FurniturePlaylistEditorWidgetView: FC<{}> = props =>
         <NitroCardView className="nitro-playlist-editor-widget" theme="primary-slim">
             <NitroCardHeaderView headerText={ LocalizeText('playlist.editor.title') } onCloseClick={ onClose } />
             <NitroCardContentView>
-                <div className="d-flex flex-row gap-1 h-100">
-                    <div className="w-50 position-relative overflow-hidden h-100 rounded d-flex flex-column">
+                <div className="flex flex-row gap-1 h-full">
+                    <div className="w-50 relative overflow-hidden h-full rounded flex flex-col">
                         <DiskInventoryView addToPlaylist={ addToPlaylist } diskInventory={ diskInventory } />
                     </div>
-                    <div className="w-50 position-relative overflow-hidden h-100 rounded d-flex flex-column">
-                        <SongPlaylistView furniId={ objectId } removeFromPlaylist={ removeFromPlaylist } playlist={ playlist } togglePlayPause={ togglePlayPause } currentPlayingIndex={ currentPlayingIndex }/>
+                    <div className="w-50 relative overflow-hidden h-full rounded flex flex-col">
+                        <SongPlaylistView currentPlayingIndex={ currentPlayingIndex } furniId={ objectId } playlist={ playlist } removeFromPlaylist={ removeFromPlaylist } togglePlayPause={ togglePlayPause } />
                     </div>
                 </div>
             </NitroCardContentView>
         </NitroCardView>
     );
-}
+};

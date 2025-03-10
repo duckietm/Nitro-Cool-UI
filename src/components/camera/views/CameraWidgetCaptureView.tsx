@@ -1,8 +1,8 @@
-import { NitroRectangle, TextureUtils } from '@nitrots/nitro-renderer';
+import { GetRoomEngine, NitroRectangle, TextureUtils } from '@nitrots/nitro-renderer';
 import { FC, useRef } from 'react';
 import { FaTimes } from 'react-icons/fa';
-import { CameraPicture, CreateLinkEvent, GetRoomEngine, GetRoomSession, LocalizeText, PlaySound, SoundNames } from '../../../api';
-import { Column, DraggableWindow, Flex } from '../../../common';
+import { CameraPicture, GetRoomSession, LocalizeText, PlaySound, SoundNames } from '../../../api';
+import { Button, Column, DraggableWindow } from '../../../common';
 import { useCamera, useNotification } from '../../../hooks';
 
 export interface CameraWidgetCaptureViewProps
@@ -28,11 +28,11 @@ export const CameraWidgetCaptureView: FC<CameraWidgetCaptureViewProps> = props =
         if(!elementRef || !elementRef.current) return null;
 
         const frameBounds = elementRef.current.getBoundingClientRect();
-        
-        return new NitroRectangle(Math.floor(frameBounds.x), Math.floor(frameBounds.y), Math.floor(frameBounds.width), Math.floor(frameBounds.height));
-    }
 
-    const takePicture = () =>
+        return new NitroRectangle(Math.floor(frameBounds.x), Math.floor(frameBounds.y), Math.floor(frameBounds.width), Math.floor(frameBounds.height));
+    };
+
+    const takePicture = async () =>
     {
         if(selectedPictureIndex > -1)
         {
@@ -52,40 +52,39 @@ export const CameraWidgetCaptureView: FC<CameraWidgetCaptureViewProps> = props =
         }
 
         PlaySound(SoundNames.CAMERA_SHUTTER);
-        clone.push(new CameraPicture(texture, TextureUtils.generateImageUrl(texture)));
+        clone.push(new CameraPicture(texture, await TextureUtils.generateImageUrl(texture)));
 
         setCameraRoll(clone);
-    }
+    };
 
     return (
         <DraggableWindow uniqueKey="nitro-camera-capture">
-            <Column center className="nitro-camera-capture" gap={ 0 }>
-                { selectedPicture && <img alt="" className="camera-area" src={ selectedPicture.imageUrl } /> }
-                <div className="camera-canvas drag-handler">
-					<div className="position-absolute info-camera" onClick={ () => CreateLinkEvent('habbopages/camera') }></div>
-                    <div className="position-absolute header-close" onClick={ onClose }>
+            <Column center className="relative" gap={ 0 }>
+                { selectedPicture && <img alt="" className="absolute top-[37px] left-[10px] w-[320px] h-[320px]" src={ selectedPicture.imageUrl } /> }
+                <div className="relative w-[340px] h-[462px] bg-[url('@/assets/images/room-widgets/camera-widget/camera-spritesheet.png')] bg-[-1px_-1px] drag-handler">
+                    <div className="absolute top-[8px] right-[8px] rounded-[.25rem] [box-shadow:0_0_0_1.5px_#fff] border-[2px] border-[solid] border-[#921911] bg-[repeating-linear-gradient(rgb(245,_80,_65),_rgb(245,_80,_65)_50%,_rgb(194,_48,_39)_50%,_rgb(194,_48,_39)_100%)] cursor-pointer leading-none px-[3px] py-px" onClick={ onClose }>
                         <FaTimes className="fa-icon" />
                     </div>
-                    { !selectedPicture && <div ref={ elementRef } className="camera-area camera-view-finder" /> }
-                    { selectedPicture && 
-                        <div className="camera-area camera-frame">
-                            <div className="camera-frame-preview-actions w-100 position-absolute bottom-0 py-2 text-center">
-                                <button className="btn btn-success me-3" title={ LocalizeText('camera.editor.button.tooltip') } onClick={ onEdit }>{ LocalizeText('camera.editor.button.text') }</button>
-                                <button className="btn btn-danger" onClick={ onDelete }>{ LocalizeText('camera.delete.button.text') }</button>
+                    { !selectedPicture && <div ref={ elementRef } className="absolute top-[37px] left-[10px] w-[320px] h-[320px] bg-[url('@/assets/images/room-widgets/camera-widget/camera-spritesheet.png')] bg-[-343px_-1px]" /> }
+                    { selectedPicture &&
+                        <div className="absolute top-[37px] left-[10px] w-[320px] h-[320px] ">
+                            <div className="bg-[rgba(0,_0,_0,_0.5)] w-full absolute bottom-0 py-2 text-center inline-flex justify-center">
+                                <Button className="me-3" title={ LocalizeText('camera.editor.button.tooltip') } variant="success" onClick={ onEdit }>{ LocalizeText('camera.editor.button.text') }</Button>
+                                <Button variant="danger" onClick={ onDelete }>{ LocalizeText('camera.delete.button.text') }</Button>
                             </div>
                         </div> }
-                    <div className="d-flex justify-content-center">
-                        <div className="camera-button" title={ LocalizeText('camera.take.photo.button.tooltip') } onClick={ takePicture } />
+                    <div className="flex justify-center">
+                        <div className="w-[94px] h-[94px] cursor-pointer mt-[362px] bg-[url('@/assets/images/room-widgets/camera-widget/camera-spritesheet.png')] bg-[-343px_-321px]" title={ LocalizeText('camera.take.photo.button.tooltip') } onClick={ takePicture } />
                     </div>
                 </div>
                 { (cameraRoll.length > 0) &&
-                    <Flex gap={ 2 } justifyContent="center" className="camera-roll d-flex justify-content-center py-2">
+                    <div className="w-[330px] bg-[#bab8b4] rounded-bl-[10px] rounded-br-[10px] border-[1px] border-[solid] border-[black] [box-shadow:inset_1px_0px_white,_inset_-1px_-1px_white] flex justify-center py-2">
                         { cameraRoll.map((picture, index) =>
                         {
-                            return <img alt="" key={ index } src={ picture.imageUrl } onClick={ event => setSelectedPictureIndex(index) } />;
+                            return <img key={ index } alt="" className="w-[56px] h-[56px] border-[1px] border-[solid] border-[black] object-contain [image-rendering:initial]" src={ picture.imageUrl } onClick={ event => setSelectedPictureIndex(index) } />;
                         }) }
-                    </Flex> }
+                    </div> }
             </Column>
         </DraggableWindow>
     );
-}
+};

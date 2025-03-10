@@ -1,6 +1,6 @@
-import { GroupPurchasedEvent, GroupSettingsComposer, ILinkEventTracker } from '@nitrots/nitro-renderer';
+import { AddLinkEventTracker, GroupPurchasedEvent, GroupSettingsComposer, ILinkEventTracker, RemoveLinkEventTracker } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
-import { AddEventLinkTracker, RemoveLinkEventTracker, SendMessageComposer, TryVisitRoom } from '../../api';
+import { SendMessageComposer, TryVisitRoom } from '../../api';
 import { useGroup, useMessageEvent } from '../../hooks';
 import { GroupCreatorView } from './views/GroupCreatorView';
 import { GroupInformationStandaloneView } from './views/GroupInformationStandaloneView';
@@ -26,9 +26,9 @@ export const GroupsView: FC<{}> = props =>
             linkReceived: (url: string) =>
             {
                 const parts = url.split('/');
-        
+
                 if(parts.length < 2) return;
-        
+
                 switch(parts[1])
                 {
                     case 'create':
@@ -36,7 +36,7 @@ export const GroupsView: FC<{}> = props =>
                         return;
                     case 'manage':
                         if(!parts[2]) return;
-        
+
                         setCreatorVisible(false);
                         SendMessageComposer(new GroupSettingsComposer(Number(parts[2])));
                         return;
@@ -45,11 +45,11 @@ export const GroupsView: FC<{}> = props =>
             eventUrlPrefix: 'groups/'
         };
 
-        AddEventLinkTracker(linkTracker);
+        AddLinkEventTracker(linkTracker);
 
         return () => RemoveLinkEventTracker(linkTracker);
     }, []);
-    
+
     return (
         <>
             { isCreatorVisible &&

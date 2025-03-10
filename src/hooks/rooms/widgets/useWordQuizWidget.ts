@@ -1,7 +1,7 @@
-import { AvatarAction, IQuestion, RoomSessionWordQuizEvent } from '@nitrots/nitro-renderer';
+import { AvatarAction, GetRoomEngine, IQuestion, RoomSessionWordQuizEvent } from '@nitrots/nitro-renderer';
 import { useEffect, useState } from 'react';
-import { GetRoomEngine, VoteValue } from '../../../api';
-import { useRoomSessionManagerEvent } from '../../events';
+import { VoteValue } from '../../../api';
+import { useNitroEvent } from '../../events';
 import { useRoom } from '../useRoom';
 import { usePollWidget } from './usePollWidget';
 
@@ -23,7 +23,7 @@ const useWordQuizWidgetState = () =>
     {
         setPollId(-1);
         setQuestion(null);
-    }
+    };
 
     const vote = (vote: string) =>
     {
@@ -32,9 +32,9 @@ const useWordQuizWidgetState = () =>
         answerPoll(pollId, question.id, [ vote ]);
 
         setAnswerSent(true);
-    }
+    };
 
-    useRoomSessionManagerEvent<RoomSessionWordQuizEvent>(RoomSessionWordQuizEvent.ANSWERED, event =>
+    useNitroEvent<RoomSessionWordQuizEvent>(RoomSessionWordQuizEvent.ANSWERED, event =>
     {
         const userData = roomSession.userDataManager.getUserData(event.userId);
 
@@ -59,7 +59,7 @@ const useWordQuizWidgetState = () =>
         GetRoomEngine().updateRoomObjectUserGesture(roomSession.roomId, userData.roomIndex, AvatarAction.getGestureId((event.value === '0') ? AvatarAction.GESTURE_SAD : AvatarAction.GESTURE_SMILE));
     });
 
-    useRoomSessionManagerEvent<RoomSessionWordQuizEvent>(RoomSessionWordQuizEvent.FINISHED, event =>
+    useNitroEvent<RoomSessionWordQuizEvent>(RoomSessionWordQuizEvent.FINISHED, event =>
     {
         if(question && (question.id === event.questionId))
         {
@@ -77,7 +77,7 @@ const useWordQuizWidgetState = () =>
         setUserAnswers(new Map());
     });
 
-    useRoomSessionManagerEvent<RoomSessionWordQuizEvent>(RoomSessionWordQuizEvent.QUESTION, event =>
+    useNitroEvent<RoomSessionWordQuizEvent>(RoomSessionWordQuizEvent.QUESTION, event =>
     {
         setPollId(event.id);
         setQuestion(event.question);
@@ -123,7 +123,7 @@ const useWordQuizWidgetState = () =>
 
                 return copy;
             });
-        }
+        };
 
         const interval = setInterval(() => checkSignFade(), 1000);
 
@@ -140,10 +140,10 @@ const useWordQuizWidgetState = () =>
 
                 return null;
             });
-        }
+        };
     }, []);
 
     return { question, answerSent, answerCounts, userAnswers, vote };
-}
+};
 
 export const useWordQuizWidget = useWordQuizWidgetState;

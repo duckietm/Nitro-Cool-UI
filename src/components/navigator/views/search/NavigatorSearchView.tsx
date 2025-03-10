@@ -1,14 +1,12 @@
 import { FC, KeyboardEvent, useEffect, useState } from 'react';
+import { FaSearch } from 'react-icons/fa';
 import { INavigatorSearchFilter, LocalizeText, SearchFilterOptions } from '../../../../api';
-import { Flex } from '../../../../common';
+import { Button } from '../../../../common';
 import { useNavigator } from '../../../../hooks';
 
-export interface NavigatorSearchViewProps
-{
+export const NavigatorSearchView: FC<{
     sendSearch: (searchValue: string, contextCode: string) => void;
-}
-
-export const NavigatorSearchView: FC<NavigatorSearchViewProps> = props =>
+}> = props =>
 {
     const { sendSearch = null } = props;
     const [ searchFilterIndex, setSearchFilterIndex ] = useState(0);
@@ -26,7 +24,7 @@ export const NavigatorSearchView: FC<NavigatorSearchViewProps> = props =>
         const searchQuery = ((searchFilter.query ? (searchFilter.query + ':') : '') + searchValue);
 
         sendSearch((searchQuery || ''), topLevelContext.code);
-    }
+    };
 
     const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) =>
     {
@@ -63,19 +61,21 @@ export const NavigatorSearchView: FC<NavigatorSearchViewProps> = props =>
     }, [ searchResult ]);
 
     return (
-        <Flex fullWidth gap={ 1 } className="mb-2">
-            <Flex shrink>
-                <select className="form-select form-select-sm" value={ searchFilterIndex } onChange={ event => setSearchFilterIndex(parseInt(event.target.value)) }>
+        <div className="flex w-full gap-1">
+            <div className="flex shrink-0">
+                <select className="form-select" value={ searchFilterIndex } onChange={ event => setSearchFilterIndex(parseInt(event.target.value)) }>
                     { SearchFilterOptions.map((filter, index) =>
                     {
-                        return <option key={ index } value={ index }>{ LocalizeText('navigator.filter.' + filter.name) }</option>
+                        return <option key={ index } value={ index }>{ LocalizeText('navigator.filter.' + filter.name) }</option>;
                     }) }
                 </select>
-            </Flex>
-            <Flex fullWidth gap={ 2 }>
-                <input type="text" className="form-control form-control-sm" placeholder={ LocalizeText('navigator.filter.input.placeholder') } value={ searchValue } onChange={ event => setSearchValue(event.target.value) } onKeyDown={ event => handleKeyDown(event) } />
-                <i className="icon icon-pen navigator-search-button position-absolute" onClick={ processSearch } />
-            </Flex>
-        </Flex>
+            </div>
+            <div className="flex w-full gap-1">
+                <input className="w-full form-control" placeholder={ LocalizeText('navigator.filter.input.placeholder') } type="text" value={ searchValue } onChange={ event => setSearchValue(event.target.value) } onKeyDown={ event => handleKeyDown(event) } />
+                <Button variant="primary" onClick={ processSearch }>
+                    <FaSearch className="fa-icon" />
+                </Button>
+            </div>
+        </div>
     );
-}
+};

@@ -1,5 +1,5 @@
 import { FC, useMemo } from 'react';
-import { Base, BaseProps } from '..';
+import { Base, BaseProps } from '../Base';
 
 interface LayoutRarityLevelViewProps extends BaseProps<HTMLDivElement>
 {
@@ -25,4 +25,4 @@ export const LayoutRarityLevelView: FC<LayoutRarityLevelViewProps> = props =>
             { children }
         </Base>
     );
-}
+};

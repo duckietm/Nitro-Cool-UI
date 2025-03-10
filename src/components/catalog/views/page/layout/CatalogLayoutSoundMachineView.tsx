@@ -1,7 +1,7 @@
-import { GetOfficialSongIdMessageComposer, MusicPriorities, OfficialSongIdMessageEvent } from '@nitrots/nitro-renderer';
+import { GetOfficialSongIdMessageComposer, GetSoundManager, MusicPriorities, OfficialSongIdMessageEvent } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
-import { GetConfiguration, GetNitroInstance, LocalizeText, ProductTypeEnum, SendMessageComposer } from '../../../../../api';
-import { Button, Column, Flex, Grid, LayoutImage, Text } from '../../../../../common';
+import { GetConfigurationValue, LocalizeText, ProductTypeEnum, SendMessageComposer } from '../../../../../api';
+import { Button, Column, Grid, LayoutImage, Text } from '../../../../../common';
 import { useCatalog, useMessageEvent } from '../../../../../hooks';
 import { CatalogHeaderView } from '../../catalog-header/CatalogHeaderView';
 import { CatalogAddOnBadgeWidgetView } from '../widgets/CatalogAddOnBadgeWidgetView';
@@ -20,7 +20,7 @@ export const CatalogLayoutSoundMachineView: FC<CatalogLayoutProps> = props =>
     const [ officialSongId, setOfficialSongId ] = useState('');
     const { currentOffer = null, currentPage = null } = useCatalog();
 
-    const previewSong = (previewSongId: number) => GetNitroInstance().soundManager.musicController?.playSong(previewSongId, MusicPriorities.PRIORITY_PURCHASE_PREVIEW, 15, 0, 0, 0);
+    const previewSong = (previewSongId: number) => GetSoundManager().musicController?.playSong(previewSongId, MusicPriorities.PRIORITY_PURCHASE_PREVIEW, 15, 0, 0, 0);
 
     useMessageEvent<OfficialSongIdMessageEvent>(OfficialSongIdMessageEvent, event =>
     {
@@ -59,23 +59,23 @@ export const CatalogLayoutSoundMachineView: FC<CatalogLayoutProps> = props =>
             setSongId(-1);
         }
 
-        return () => GetNitroInstance().soundManager.musicController?.stop(MusicPriorities.PRIORITY_PURCHASE_PREVIEW);
+        return () => GetSoundManager().musicController?.stop(MusicPriorities.PRIORITY_PURCHASE_PREVIEW);
     }, [ currentOffer ]);
 
     useEffect(() =>
     {
-        return () => GetNitroInstance().soundManager.musicController?.stop(MusicPriorities.PRIORITY_PURCHASE_PREVIEW);
+        return () => GetSoundManager().musicController?.stop(MusicPriorities.PRIORITY_PURCHASE_PREVIEW);
     }, []);
 
     return (
         <>
             <Grid>
-                <Column size={ 7 } overflow="hidden">
-                    { GetConfiguration('catalog.headers') &&
-                        <CatalogHeaderView imageUrl={ currentPage.localization.getImage(0) }/> }
+                <Column overflow="hidden" size={ 7 }>
+                    { GetConfigurationValue('catalog.headers') &&
+                        <CatalogHeaderView imageUrl={ currentPage.localization.getImage(0) } /> }
                     <CatalogItemGridWidgetView />
                 </Column>
-                <Column center={ !currentOffer } size={ 5 } overflow="hidden">
+                <Column center={ !currentOffer } overflow="hidden" size={ 5 }>
                     { !currentOffer &&
                         <>
                             { !!page.localization.getImage(1) &&
@@ -84,25 +84,25 @@ export const CatalogLayoutSoundMachineView: FC<CatalogLayoutProps> = props =>
                         </> }
                     { currentOffer &&
                         <>
-                            <Flex center overflow="hidden" style={ { height: 140 } }>
+                            <div className="flex items-center justify-center overflow-hidden" style={ { height: 140 } }>
                                 { (currentOffer.product.productType !== ProductTypeEnum.BADGE) &&
                                     <>
                                         <CatalogViewProductWidgetView />
                                         <CatalogAddOnBadgeWidgetView className="bg-muted rounded bottom-1 end-1" />
                                     </> }
                                 { (currentOffer.product.productType === ProductTypeEnum.BADGE) && <CatalogAddOnBadgeWidgetView className="scale-2" /> }
-                            </Flex>
+                            </div>
                             <Column grow gap={ 1 }>
-                                <CatalogLimitedItemWidgetView fullWidth />
+                                <CatalogLimitedItemWidgetView />
                                 <Text grow truncate>{ currentOffer.localizationName }</Text>
                                 { songId > -1 && <Button onClick={ () => previewSong(songId) }>{ LocalizeText('play_preview_button') }</Button>
                                 }
-                                <Flex justifyContent="between">
-                                    <Column gap={ 1 }>
+                                <div className="flex justify-between">
+                                    <div className="flex flex-col gap-1">
                                         <CatalogSpinnerWidgetView />
-                                    </Column>
-                                    <CatalogTotalPriceWidget justifyContent="end" alignItems="end" />
-                                </Flex>
+                                    </div>
+                                    <CatalogTotalPriceWidget alignItems="end" justifyContent="end" />
+                                </div>
                                 <CatalogPurchaseWidgetView />
                             </Column>
                         </> }
@@ -110,4 +110,4 @@ export const CatalogLayoutSoundMachineView: FC<CatalogLayoutProps> = props =>
             </Grid>
         </>
     );
-}
+};

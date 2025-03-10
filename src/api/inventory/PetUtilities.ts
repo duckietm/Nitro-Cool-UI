@@ -1,7 +1,6 @@
-import { PetData } from '@nitrots/nitro-renderer';
-import { CreateLinkEvent } from '../nitro';
-import { cancelRoomObjectPlacement, getPlacingItemId } from './InventoryUtilities';
+import { CreateLinkEvent, PetData } from '@nitrots/nitro-renderer';
 import { IPetItem } from './IPetItem';
+import { cancelRoomObjectPlacement, getPlacingItemId } from './InventoryUtilities';
 import { UnseenItemCategory } from './UnseenItemCategory';
 
 export const getAllPetIds = (petItems: IPetItem[]) => petItems.map(item => item.petData.id);
@@ -13,7 +12,7 @@ export const addSinglePetItem = (petData: PetData, set: IPetItem[], unseen: bool
     if(unseen)
     {
         //petItem.isUnseen = true;
-        
+
         set.unshift(petItem);
     }
     else
@@ -22,7 +21,7 @@ export const addSinglePetItem = (petData: PetData, set: IPetItem[], unseen: bool
     }
 
     return petItem;
-}
+};
 
 export const removePetItemById = (id: number, set: IPetItem[]) =>
 {
@@ -40,7 +39,7 @@ export const removePetItemById = (id: number, set: IPetItem[]) =>
 
                 CreateLinkEvent('inventory/open');
             }
-            
+
             set.splice(index, 1);
 
             return petItem;
@@ -50,7 +49,7 @@ export const removePetItemById = (id: number, set: IPetItem[]) =>
     }
 
     return null;
-}
+};
 
 export const processPetFragment = (set: IPetItem[], fragment: Map<number, PetData>, isUnseen: (category: number, itemId: number) => boolean) =>
 {
@@ -76,7 +75,7 @@ export const processPetFragment = (set: IPetItem[], fragment: Map<number, PetDat
     }
 
     return set;
-}
+};
 
 export const mergePetFragments = (fragment: Map<number, PetData>, totalFragments: number, fragmentNumber: number, fragments: Map<number, PetData>[]) =>
 {
@@ -101,4 +100,4 @@ export const mergePetFragments = (fragment: Map<number, PetData>, totalFragments
     fragments = null;
 
     return merged;
-}
+};

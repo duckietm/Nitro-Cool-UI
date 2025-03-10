@@ -12,7 +12,7 @@ export const CatalogLayoutVipGiftsView: FC<CatalogLayoutProps> = props =>
     const { catalogOptions = null, setCatalogOptions = null } = useCatalog();
     const { clubGifts = null } = catalogOptions;
     const { showConfirm = null } = useNotification();
-    
+
     const giftsAvailable = useCallback(() =>
     {
         if(!clubGifts) return '';
@@ -41,22 +41,22 @@ export const CatalogLayoutVipGiftsView: FC<CatalogLayoutProps> = props =>
         }, null);
     }, [ setCatalogOptions, showConfirm ]);
 
-    const sortGifts = useMemo(() => 
+    const sortGifts = useMemo(() =>
     {
-        let gifts = clubGifts.offers.sort((a,b) => 
+        let gifts = clubGifts.offers.sort((a,b) =>
         {
             return clubGifts.getOfferExtraData(a.offerId).daysRequired - clubGifts.getOfferExtraData(b.offerId).daysRequired;
-        })
+        });
         return gifts;
     },[ clubGifts ]);
-    
-    
+
+
     return (
         <>
-            <Text truncate shrink fontWeight="bold">{ giftsAvailable() }</Text>
-            <AutoGrid columnCount={ 1 } className="nitro-catalog-layout-vip-gifts-grid">
-                { (clubGifts.offers.length > 0) && sortGifts.map(offer => <VipGiftItem key={ offer.offerId } offer={ offer } isAvailable={ (clubGifts.getOfferExtraData(offer.offerId).isSelectable && (clubGifts.giftsAvailable > 0)) } onSelect={ selectGift } daysRequired={ clubGifts.getOfferExtraData(offer.offerId).daysRequired }/>) }
+            <Text shrink truncate fontWeight="bold">{ giftsAvailable() }</Text>
+            <AutoGrid className="nitro-catalog-layout-vip-gifts-grid" columnCount={ 1 }>
+                { (clubGifts.offers.length > 0) && sortGifts.map(offer => <VipGiftItem key={ offer.offerId } daysRequired={ clubGifts.getOfferExtraData(offer.offerId).daysRequired } isAvailable={ (clubGifts.getOfferExtraData(offer.offerId).isSelectable && (clubGifts.giftsAvailable > 0)) } offer={ offer } onSelect={ selectGift }/>) }
             </AutoGrid>
         </>
-    )
-}
+    );
+};

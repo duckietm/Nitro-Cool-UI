@@ -1,5 +1,5 @@
 import { CSSProperties, FC, useMemo } from 'react';
-import { GetConfiguration } from '../../api';
+import { GetConfigurationValue } from '../../api';
 import { Base, BaseProps } from '../Base';
 
 export interface CurrencyIconProps extends BaseProps<HTMLDivElement>
@@ -13,7 +13,7 @@ export const LayoutCurrencyIcon: FC<CurrencyIconProps> = props =>
 
     const getClassNames = useMemo(() =>
     {
-        const newClassNames: string[] = [ 'nitro-currency-icon topcurrencygen' ];
+        const newClassNames: string[] = [ 'nitro-currency-icon', 'bg-center bg-no-repeat w-[15px] h-[15px]' ];
 
         if(classNames.length) newClassNames.push(...classNames);
 
@@ -22,8 +22,8 @@ export const LayoutCurrencyIcon: FC<CurrencyIconProps> = props =>
 
     const urlString = useMemo(() =>
     {
-        let url = GetConfiguration<string>('currency.asset.icon.url', '');
-    
+        let url = GetConfigurationValue<string>('currency.asset.icon.url', '');
+
         url = url.replace('%type%', type.toString());
 
         return `url(${ url })`;
@@ -40,5 +40,5 @@ export const LayoutCurrencyIcon: FC<CurrencyIconProps> = props =>
         return newStyle;
     }, [ style, urlString ]);
 
-    return <Base classNames={ getClassNames } style={ getStyle } { ...rest } />
-}
+    return <Base classNames={ getClassNames } style={ getStyle } { ...rest } />;
+};

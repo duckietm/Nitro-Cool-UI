@@ -1,18 +1,14 @@
-import { AvatarFigurePartType, AvatarScaleType, AvatarSetType, GetGuestRoomResultEvent, NitroPoint, PetFigureData, RoomChatSettings, RoomChatSettingsEvent, RoomDragEvent, RoomObjectCategory, RoomObjectType, RoomObjectVariable, RoomSessionChatEvent, RoomUserData, SystemChatStyleEnum, TextureUtils, Vector3d } from '@nitrots/nitro-renderer';
+import { GetGuestRoomResultEvent, GetRoomEngine, PetFigureData, RoomChatSettings, RoomChatSettingsEvent, RoomDragEvent, RoomObjectCategory, RoomObjectType, RoomObjectVariable, RoomSessionChatEvent, RoomUserData, SystemChatStyleEnum } from '@nitrots/nitro-renderer';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ChatBubbleMessage, ChatEntryType, ChatHistoryCurrentDate, GetAvatarRenderManager, GetConfiguration, GetRoomEngine, GetRoomObjectScreenLocation, IRoomChatSettings, LocalizeText, PlaySound, RoomChatFormatter } from '../../../api';
-import { useMessageEvent, useRoomEngineEvent, useRoomSessionManagerEvent } from '../../events';
+import { ChatBubbleMessage, ChatBubbleUtilities, ChatEntryType, ChatHistoryCurrentDate, GetConfigurationValue, GetRoomObjectScreenLocation, IRoomChatSettings, LocalizeText, PlaySound, RoomChatFormatter } from '../../../api';
+import { useMessageEvent, useNitroEvent } from '../../events';
 import { useRoom } from '../useRoom';
 import { useChatHistory } from './../../chat-history';
 
-const avatarColorCache: Map<string, number> = new Map();
-const avatarImageCache: Map<string, string> = new Map();
-const petImageCache: Map<string, string> = new Map();
-
 const useChatWidgetState = () =>
 {
-    const [ chatMessages, setChatMessages ] = useState<ChatBubbleMessage[]>([]);
-    const [ chatSettings, setChatSettings ] = useState<IRoomChatSettings>({
+    const [chatMessages, setChatMessages] = useState<ChatBubbleMessage[]>([]);
+    const [chatSettings, setChatSettings] = useState<IRoomChatSettings>({
         mode: RoomChatSettings.CHAT_MODE_FREE_FLOW,
         weight: RoomChatSettings.CHAT_BUBBLE_WIDTH_NORMAL,
         speed: RoomChatSettings.CHAT_SCROLL_SPEED_NORMAL,
@@ -36,69 +32,12 @@ const useChatWidgetState = () =>
             case RoomChatSettings.CHAT_SCROLL_SPEED_SLOW:
                 return 12000;
         }
-    }, [ chatSettings ]);
+    }, [chatSettings]);
 
-    const setFigureImage = (figure: string) =>
+    useNitroEvent<RoomSessionChatEvent>(RoomSessionChatEvent.CHAT_EVENT, async event =>
     {
-        const avatarImage = GetAvatarRenderManager().createAvatarImage(figure, AvatarScaleType.LARGE, null, {
-            resetFigure: figure => 
-            {
-                if(isDisposed.current) return;
-
-                setFigureImage(figure);
-            },
-            dispose: () => 
-            {},
-            disposed: false
-        });
-
-        if(!avatarImage) return;
-
-        const image = avatarImage.getCroppedImage(AvatarSetType.HEAD);
-        const color = avatarImage.getPartColor(AvatarFigurePartType.CHEST);
-
-        avatarColorCache.set(figure, ((color && color.rgb) || 16777215));
-
-        avatarImage.dispose();
-
-        avatarImageCache.set(figure, image.src);
-
-        return image.src;
-    }
-
-    const getUserImage = (figure: string) =>
-    {
-        let existing = avatarImageCache.get(figure);
-
-        if(!existing) existing = setFigureImage(figure);
-
-        return existing;
-    }
-
-    const getPetImage = (figure: string, direction: number, _arg_3: boolean, scale: number = 64, posture: string = null) =>
-    {
-        let existing = petImageCache.get((figure + posture));
-
-        if(existing) return existing;
-
-        const figureData = new PetFigureData(figure);
-        const typeId = figureData.typeId;
-        const image = GetRoomEngine().getRoomObjectPetImage(typeId, figureData.paletteId, figureData.color, new Vector3d((direction * 45)), scale, null, false, 0, figureData.customParts, posture);
-
-        if(image)
-        {
-            existing = TextureUtils.generateImageUrl(image.data);
-
-            petImageCache.set((figure + posture), existing);
-        }
-
-        return existing;
-    }
-
-    useRoomSessionManagerEvent<RoomSessionChatEvent>(RoomSessionChatEvent.CHAT_EVENT, event =>
-    {
-		const roomObject = GetRoomEngine().getRoomObject(roomSession.roomId, event.objectId, RoomObjectCategory.UNIT);
-        const bubbleLocation = roomObject ? GetRoomObjectScreenLocation(roomSession.roomId, roomObject?.id, RoomObjectCategory.UNIT) : new NitroPoint();
+        const roomObject = GetRoomEngine().getRoomObject(roomSession.roomId, event.objectId, RoomObjectCategory.UNIT);
+        const bubbleLocation = roomObject ? GetRoomObjectScreenLocation(roomSession.roomId, roomObject?.id, RoomObjectCategory.UNIT) : { x: 0, y: 0 };
         const userData = roomObject ? roomSession.userDataManager.getUserDataByIndex(event.objectId) : new RoomUserData(-1);
 
         let username = '';
@@ -109,9 +48,8 @@ const useChatWidgetState = () =>
         let userType = 0;
         let petType = -1;
         let text = event.message;
-		let chatColours = event._chatColours
-		
-		if(userData)
+
+        if(userData)
         {
             userType = userData.type;
 
@@ -120,30 +58,28 @@ const useChatWidgetState = () =>
             switch(userType)
             {
                 case RoomObjectType.PET:
-                    imageUrl = getPetImage(figure, 2, true, 64, roomObject.model.getValue<string>(RoomObjectVariable.FIGURE_POSTURE));
+                    imageUrl = await ChatBubbleUtilities.getPetImage(figure, 2, true, 64, roomObject.model.getValue<string>(RoomObjectVariable.FIGURE_POSTURE));
                     petType = new PetFigureData(figure).typeId;
-					chatColours = "black"
                     break;
                 case RoomObjectType.USER:
-                    imageUrl = getUserImage(figure);
+                    imageUrl = await ChatBubbleUtilities.getUserImage(figure);
                     break;
                 case RoomObjectType.RENTABLE_BOT:
                 case RoomObjectType.BOT:
                     styleId = SystemChatStyleEnum.BOT;
-					chatColours = "black"
                     break;
             }
 
-            avatarColor = avatarColorCache.get(figure);
+            avatarColor = ChatBubbleUtilities.AVATAR_COLOR_CACHE.get(figure);
             username = userData.name;
         }
 
         switch(chatType)
         {
             case RoomSessionChatEvent.CHAT_TYPE_RESPECT:
-                text = LocalizeText('widgets.chatbubble.respect', [ 'username' ], [ username ]);
+                text = LocalizeText('widgets.chatbubble.respect', ['username'], [username]);
 
-                if(GetConfiguration('respect.options')['enabled']) PlaySound(GetConfiguration('respect.options')['sound']);
+                if(GetConfigurationValue('respect.options')['enabled']) PlaySound(GetConfigurationValue('respect.options')['sound']);
 
                 break;
             case RoomSessionChatEvent.CHAT_TYPE_PETREVIVE:
@@ -172,31 +108,31 @@ const useChatWidgetState = () =>
                     if(newUserData) targetUserName = newUserData.name;
                 }
 
-                text = LocalizeText(textKey, [ 'petName', 'userName' ], [ username, targetUserName ]);
+                text = LocalizeText(textKey, ['petName', 'userName'], [username, targetUserName]);
                 break;
             }
             case RoomSessionChatEvent.CHAT_TYPE_PETRESPECT:
-                text = LocalizeText('widget.chatbubble.petrespect', [ 'petname' ], [ username ]);
+                text = LocalizeText('widget.chatbubble.petrespect', ['petname'], [username]);
                 break;
             case RoomSessionChatEvent.CHAT_TYPE_PETTREAT:
-                text = LocalizeText('widget.chatbubble.pettreat', [ 'petname' ], [ username ]);
+                text = LocalizeText('widget.chatbubble.pettreat', ['petname'], [username]);
                 break;
             case RoomSessionChatEvent.CHAT_TYPE_HAND_ITEM_RECEIVED:
-                text = LocalizeText('widget.chatbubble.handitem', [ 'username', 'handitem' ], [ username, LocalizeText(('handitem' + event.extraParam)) ]);
+                text = LocalizeText('widget.chatbubble.handitem', ['username', 'handitem'], [username, LocalizeText(('handitem' + event.extraParam))]);
                 break;
             case RoomSessionChatEvent.CHAT_TYPE_MUTE_REMAINING: {
                 const hours = ((event.extraParam > 0) ? Math.floor((event.extraParam / 3600)) : 0).toString();
                 const minutes = ((event.extraParam > 0) ? Math.floor((event.extraParam % 3600) / 60) : 0).toString();
                 const seconds = (event.extraParam % 60).toString();
 
-                text = LocalizeText('widget.chatbubble.mutetime', [ 'hours', 'minutes', 'seconds' ], [ hours, minutes, seconds ]);
+                text = LocalizeText('widget.chatbubble.mutetime', ['hours', 'minutes', 'seconds'], [hours, minutes, seconds]);
                 break;
             }
         }
 
         const formattedText = RoomChatFormatter(text);
         const color = (avatarColor && (('#' + (avatarColor.toString(16).padStart(6, '0'))) || null));
-	
+
         const chatMessage = new ChatBubbleMessage(
             userData.roomIndex,
             RoomObjectCategory.UNIT,
@@ -204,18 +140,17 @@ const useChatWidgetState = () =>
             text,
             formattedText,
             username,
-            new NitroPoint(bubbleLocation.x, bubbleLocation.y),
+            { x: bubbleLocation.x, y: bubbleLocation.y },
             chatType,
             styleId,
             imageUrl,
-            color,
-			chatColours);
+            color);
 
-        setChatMessages(prevValue => [ ...prevValue, chatMessage ]);
-        addChatEntry({ id: -1, webId: userData.webID, entityId: userData.roomIndex, name: username, imageUrl, style: styleId, chatType: chatType, entityType: userData.type, message: formattedText, timestamp: ChatHistoryCurrentDate(), type: ChatEntryType.TYPE_CHAT, roomId: roomSession.roomId, color, chatColours });
+        setChatMessages(prevValue => [...prevValue, chatMessage]);
+        addChatEntry({ id: -1, webId: userData.webID, entityId: userData.roomIndex, name: username, imageUrl, style: styleId, chatType: chatType, entityType: userData.type, message: formattedText, timestamp: ChatHistoryCurrentDate(), type: ChatEntryType.TYPE_CHAT, roomId: roomSession.roomId, color });
     });
 
-    useRoomEngineEvent<RoomDragEvent>(RoomDragEvent.ROOM_DRAG, event =>
+    useNitroEvent<RoomDragEvent>(RoomDragEvent.ROOM_DRAG, event =>
     {
         if(!chatMessages.length || (event.roomId !== roomSession.roomId)) return;
 
@@ -229,14 +164,14 @@ const useChatWidgetState = () =>
         const parser = event.getParser();
 
         if(!parser.roomEnter) return;
-        
+
         setChatSettings(parser.chat);
     });
 
     useMessageEvent<RoomChatSettingsEvent>(RoomChatSettingsEvent, event =>
     {
         const parser = event.getParser();
-        
+
         setChatSettings(parser.chat);
     });
 
@@ -247,10 +182,10 @@ const useChatWidgetState = () =>
         return () =>
         {
             isDisposed.current = true;
-        }
+        };
     }, []);
 
     return { chatMessages, setChatMessages, chatSettings, getScrollSpeed };
-}
+};
 
 export const useChatWidget = useChatWidgetState;

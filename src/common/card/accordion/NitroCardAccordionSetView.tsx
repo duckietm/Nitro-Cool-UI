@@ -18,9 +18,9 @@ export const NitroCardAccordionSetView: FC<NitroCardAccordionSetViewProps> = pro
     const onClick = () =>
     {
         closeAll();
-        
+
         setIsOpen(prevValue => !prevValue);
-    }
+    };
 
     const onClose = useCallback(() => setIsOpen(false), []);
 
@@ -62,23 +62,23 @@ export const NitroCardAccordionSetView: FC<NitroCardAccordionSetViewProps> = pro
                 const index = newClosers.indexOf(closeFunction);
 
                 if(index >= 0) newClosers.splice(index, 1);
-    
+
                 return newClosers;
             });
-        }
+        };
     }, [ onClose, setClosers ]);
 
     return (
         <Column classNames={ getClassNames } gap={ gap } { ...rest }>
-            <Flex pointer justifyContent="between" className="nitro-card-accordion-set-header px-2 py-1" onClick={ onClick }>
+            <Flex pointer className="nitro-card-accordion-set-header px-2 py-1" justifyContent="between" onClick={ onClick }>
                 <Text>{ headerText }</Text>
                 { isOpen && <FaCaretUp className="fa-icon" /> }
                 { !isOpen && <FaCaretDown className="fa-icon" /> }
             </Flex>
             { isOpen &&
-                <Column fullHeight overflow="auto" gap={ 0 } className="nitro-card-accordion-set-content">
+                <Column fullHeight className="nitro-card-accordion-set-content" gap={ 0 } overflow="auto">
                     { children }
                 </Column> }
         </Column>
     );
-}
+};

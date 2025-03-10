@@ -3,9 +3,9 @@ import { ColorUtils } from '../../../../api';
 import { DraggableWindow, DraggableWindowPosition } from '../../../../common';
 import { useFurnitureStickieWidget } from '../../../../hooks';
 
-const STICKIE_COLORS = [ '9CCEFF','FF9CFF', '9CFF9C','FFFF33' ];
+const STICKIE_COLORS = [ '9CCEFF', 'FF9CFF', '9CFF9C', 'FFFF33' ];
 const STICKIE_COLOR_NAMES = [ 'blue', 'pink', 'green', 'yellow' ];
-const STICKIE_TYPES = [ 'post_it','post_it_shakesp', 'post_it_dreams','post_it_xmas', 'post_it_vd', 'post_it_juninas' ];
+const STICKIE_TYPES = [ 'post_it', 'post_it_shakesp', 'post_it_dreams', 'post_it_xmas', 'post_it_vd', 'post_it_juninas' ];
 const STICKIE_TYPE_NAMES = [ 'post_it', 'shakesp', 'dreams', 'christmas', 'heart', 'juninas' ];
 
 const getStickieColorName = (color: string) =>
@@ -15,7 +15,7 @@ const getStickieColorName = (color: string) =>
     if(index === -1) index = 0;
 
     return STICKIE_COLOR_NAMES[index];
-}
+};
 
 const getStickieTypeName = (type: string) =>
 {
@@ -24,7 +24,7 @@ const getStickieTypeName = (type: string) =>
     if(index === -1) index = 0;
 
     return STICKIE_TYPE_NAMES[index];
-}
+};
 
 export const FurnitureStickieView: FC<{}> = props =>
 {
@@ -41,26 +41,26 @@ export const FurnitureStickieView: FC<{}> = props =>
     return (
         <DraggableWindow handleSelector=".drag-handler" windowPosition={ DraggableWindowPosition.TOP_LEFT }>
             <div className={ 'nitro-stickie nitro-stickie-image stickie-' + (type == 'post_it' ? getStickieColorName(color) : getStickieTypeName(type)) }>
-                <div className="d-flex align-items-center stickie-header drag-handler">
-                    <div className="d-flex align-items-center flex-grow-1 h-100">
+                <div className="flex items-center stickie-header drag-handler">
+                    <div className="flex items-center !flex-grow h-full">
                         { canModify &&
-                        <>
-                            <div className="nitro-stickie-image stickie-trash header-trash" onClick={ trash }></div>
-                            { type == 'post_it' &&
-                                <>
-                                    { STICKIE_COLORS.map(color =>
-                                    {
-                                        return <div key={ color } className="stickie-color ms-1" onClick={ event => updateColor(color) } style={ { backgroundColor: ColorUtils.makeColorHex(color) } } />
-                                    }) }
-                                </> }
-                        </> }
+                            <>
+                                <div className="nitro-stickie-image stickie-trash header-trash" onClick={ trash }></div>
+                                { type == 'post_it' &&
+                                    <>
+                                        { STICKIE_COLORS.map(color =>
+                                        {
+                                            return <div key={ color } className="stickie-color ms-1" style={ { backgroundColor: ColorUtils.makeColorHex(color) } } onClick={ event => updateColor(color) } />;
+                                        }) }
+                                    </> }
+                            </> }
                     </div>
-                    <div className="d-flex align-items-center nitro-stickie-image stickie-close header-close" onClick={ onClose }></div>
+                    <div className="flex items-center nitro-stickie-image stickie-close header-close" onClick={ onClose }></div>
                 </div>
                 <div className="stickie-context">
-                    { (!isEditing || !canModify) ? <div className="context-text" onClick={ event => (canModify && setIsEditing(true)) }>{ text }</div> : <textarea className="context-text" defaultValue={ text } tabIndex={ 0 } onBlur={ event => updateText(event.target.value) } autoFocus></textarea> }
+                    { (!isEditing || !canModify) ? <div className="context-text" onClick={ event => (canModify && setIsEditing(true)) }>{ text }</div> : <textarea autoFocus className="context-text" defaultValue={ text } tabIndex={ 0 } onBlur={ event => updateText(event.target.value) }></textarea> }
                 </div>
             </div>
         </DraggableWindow>
     );
-}
+};

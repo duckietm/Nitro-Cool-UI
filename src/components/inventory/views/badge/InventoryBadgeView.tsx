@@ -1,19 +1,14 @@
 import { FC, useEffect, useState } from 'react';
 import { LocalizeBadgeName, LocalizeText, UnseenItemCategory } from '../../../../api';
-import { AutoGrid, Button, Column, Flex, Grid, LayoutBadgeImageView, Text } from '../../../../common';
+import { LayoutBadgeImageView } from '../../../../common';
 import { useInventoryBadges, useInventoryUnseenTracker } from '../../../../hooks';
+import { InfiniteGrid, NitroButton } from '../../../../layout';
 import { InventoryBadgeItemView } from './InventoryBadgeItemView';
 
-interface InventoryBadgeViewProps
+export const InventoryBadgeView: FC<{}> = props =>
 {
-    filteredBadgeCodes: string[];
-}
-
-export const InventoryBadgeView: FC<InventoryBadgeViewProps> = props =>
-{
-    const { filteredBadgeCodes = [] } = props;
     const [ isVisible, setIsVisible ] = useState(false);
-    const { activeBadgeCodes = [], selectedBadgeCode = null, isWearingBadge = null, canWearBadges = null, toggleBadge = null, getBadgeId = null, activate = null, deactivate = null } = useInventoryBadges();
+    const { badgeCodes = [], activeBadgeCodes = [], selectedBadgeCode = null, isWearingBadge = null, canWearBadges = null, toggleBadge = null, getBadgeId = null, activate = null, deactivate = null } = useInventoryBadges();
     const { isUnseen = null, removeUnseen = null } = useInventoryUnseenTracker();
 
     useEffect(() =>
@@ -40,38 +35,36 @@ export const InventoryBadgeView: FC<InventoryBadgeViewProps> = props =>
     }, []);
 
     return (
-        <div className="badge-wrapper calc-wrapper mt-n2">
-            <Grid gap={ 1 }>
-                <Column overflow="hidden" className="size-list-badges mt-1">
-                    <AutoGrid gap={ 1 } columnCount={ 5 }>
-                        { filteredBadgeCodes && filteredBadgeCodes.length > 0 && filteredBadgeCodes.map((badgeCode, index) =>
-                        {
-                            if (isWearingBadge(badgeCode)) return null;
-
-                            return <InventoryBadgeItemView key={ index } badgeCode={ badgeCode } />;
-                        }) }
-                    </AutoGrid>
-                </Column>
-                <Column className="justify-content-between size-badges position-absolute end-2 mt-n4" overflow="auto">
-                    <Column overflow="hidden">
-                        <Text center bold>{ LocalizeText('inventory.badges.activebadges') }</Text>
-                        <AutoGrid gap={ 1 } columnCount={ 5 }>
-                            { activeBadgeCodes && (activeBadgeCodes.length > 0) && activeBadgeCodes.map((badgeCode, index) => <InventoryBadgeItemView key={ index } badgeCode={ badgeCode } />) }
-                        </AutoGrid>
-                    </Column>
-                </Column>
-            </Grid>
-            <Column gap={ 0 } position="absolute" className="bottom-2" style={ { width: '96%' } }>
+        <div className="grid h-full grid-cols-12 gap-2">
+            <div className="flex flex-col col-span-7 gap-1 overflow-hidden">
+                <InfiniteGrid<string>
+                    columnCount={ 5 }
+                    estimateSize={ 50 }
+                    itemRender={ item => <InventoryBadgeItemView badgeCode={ item } /> }
+                    items={ badgeCodes.filter(code => !isWearingBadge(code)) } />
+            </div>
+            <div className="flex flex-col justify-between col-span-5 overflow-auto">
+                <div className="flex flex-col gap-2 overflow-hidden">
+                    <span className="text-sm truncate grow">{ LocalizeText('inventory.badges.activebadges') }</span>
+                    <InfiniteGrid<string>
+                        columnCount={ 3 }
+                        estimateSize={ 50 }
+                        itemRender={ item => <InventoryBadgeItemView badgeCode={ item } /> }
+                        items={ activeBadgeCodes } />
+                </div>
                 { !!selectedBadgeCode &&
-                    <Flex className="bg-white pb-1 px-2 rounded mt-2" style={ { height: '50px' } } justifyContent={ 'between' } alignItems={ 'end' } gap={ 2 }>
-                        <Flex alignItems="start" gap={ 2 }>
+                    <div className="flex flex-col gap-2">
+                        <div className="items-center gap-2">
                             <LayoutBadgeImageView shrink badgeCode={ selectedBadgeCode } />
-                            <Text className="font-bold mt-2">{ LocalizeBadgeName(selectedBadgeCode) }</Text>
-                        </Flex>
-                        <Button className="btn btn-primary mb-1" style={ { fontSize: '12px' } } disabled={ !isWearingBadge(selectedBadgeCode) && !canWearBadges() } onClick={ event => toggleBadge(selectedBadgeCode) }>{ LocalizeText(isWearingBadge(selectedBadgeCode) ? 'inventory.badges.clearbadge' : 'inventory.badges.wearbadge') }</Button>
-                    </Flex>
-                }
-            </Column>
+                            <span className="text-sm truncate grow">{ LocalizeBadgeName(selectedBadgeCode) }</span>
+                        </div>
+                        <NitroButton
+                            disabled={ !isWearingBadge(selectedBadgeCode) && !canWearBadges() }
+                            onClick={ event => toggleBadge(selectedBadgeCode) }>
+                            { LocalizeText(isWearingBadge(selectedBadgeCode) ? 'inventory.badges.clearbadge' : 'inventory.badges.wearbadge') }
+                        </NitroButton>
+                    </div> }
+            </div>
         </div>
     );
-}
+};

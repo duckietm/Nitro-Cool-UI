@@ -1,8 +1,8 @@
-import { FloorHeightMapEvent, ILinkEventTracker, NitroPoint, RoomEngineEvent, RoomVisualizationSettingsEvent, UpdateFloorPropertiesMessageComposer } from '@nitrots/nitro-renderer';
+import { AddLinkEventTracker, FloorHeightMapEvent, ILinkEventTracker, RemoveLinkEventTracker, RoomEngineEvent, RoomVisualizationSettingsEvent, UpdateFloorPropertiesMessageComposer } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
-import { AddEventLinkTracker, LocalizeText, RemoveLinkEventTracker, SendMessageComposer } from '../../api';
-import { Button, ButtonGroup, Flex, NitroCardContentView, NitroCardHeaderView, NitroCardView } from '../../common';
-import { useMessageEvent, useRoomEngineEvent } from '../../hooks';
+import { LocalizeText, SendMessageComposer } from '../../api';
+import { Button, NitroCardContentView, NitroCardHeaderView, NitroCardView } from '../../common';
+import { useMessageEvent, useNitroEvent } from '../../hooks';
 import { FloorplanEditorContextProvider } from './FloorplanEditorContext';
 import { FloorplanEditor } from './common/FloorplanEditor';
 import { IFloorplanSettings } from './common/IFloorplanSettings';
@@ -43,18 +43,18 @@ export const FloorplanEditorView: FC<{}> = props =>
             convertNumbersForSaving(visualizationSettings.thicknessFloor),
             (visualizationSettings.wallHeight - 1)
         ));
-    }
+    };
 
     const revertChanges = () =>
     {
         setVisualizationSettings({ wallHeight: originalFloorplanSettings.wallHeight, thicknessWall: originalFloorplanSettings.thicknessWall, thicknessFloor: originalFloorplanSettings.thicknessFloor, entryPointDir: originalFloorplanSettings.entryPointDir });
-        
-        FloorplanEditor.instance.doorLocation = new NitroPoint(originalFloorplanSettings.entryPoint[0], originalFloorplanSettings.entryPoint[1]);
+
+        FloorplanEditor.instance.doorLocation = { x: originalFloorplanSettings.entryPoint[0], y: originalFloorplanSettings.entryPoint[1] };
         FloorplanEditor.instance.setTilemap(originalFloorplanSettings.tilemap, originalFloorplanSettings.reservedTiles);
         FloorplanEditor.instance.renderTiles();
-    }
+    };
 
-    useRoomEngineEvent<RoomEngineEvent>(RoomEngineEvent.DISPOSED, event => setIsVisible(false));
+    useNitroEvent<RoomEngineEvent>(RoomEngineEvent.DISPOSED, event => setIsVisible(false));
 
     useMessageEvent<FloorHeightMapEvent>(FloorHeightMapEvent, event =>
     {
@@ -113,7 +113,7 @@ export const FloorplanEditorView: FC<{}> = props =>
                 const parts = url.split('/');
 
                 if(parts.length < 2) return;
-        
+
                 switch(parts[1])
                 {
                     case 'show':
@@ -130,7 +130,7 @@ export const FloorplanEditorView: FC<{}> = props =>
             eventUrlPrefix: 'floor-editor/'
         };
 
-        AddEventLinkTracker(linkTracker);
+        AddLinkEventTracker(linkTracker);
 
         return () => RemoveLinkEventTracker(linkTracker);
     }, []);
@@ -138,23 +138,23 @@ export const FloorplanEditorView: FC<{}> = props =>
     return (
         <FloorplanEditorContextProvider value={ { originalFloorplanSettings: originalFloorplanSettings, setOriginalFloorplanSettings: setOriginalFloorplanSettings, visualizationSettings: visualizationSettings, setVisualizationSettings: setVisualizationSettings } }>
             { isVisible &&
-                <NitroCardView uniqueKey="floorpan-editor" className="nitro-floorplan-editor" theme="primary-slim">
+                <NitroCardView className="w-[760px] h-[500px]" theme="primary-slim" uniqueKey="floorpan-editor">
                     <NitroCardHeaderView headerText={ LocalizeText('floor.plan.editor.title') } onCloseClick={ () => setIsVisible(false) } />
                     <NitroCardContentView overflow="hidden">
                         <FloorplanOptionsView />
                         <FloorplanCanvasView overflow="hidden" />
-                        <Flex justifyContent="between">
+                        <div className="flex justify-between">
                             <Button onClick={ revertChanges }>{ LocalizeText('floor.plan.editor.reload') }</Button>
-                            <ButtonGroup>
+                            <div className="relative inline-flex align-middle">
                                 <Button disabled={ true }>{ LocalizeText('floor.plan.editor.preview') }</Button>
                                 <Button onClick={ event => setImportExportVisible(true) }>{ LocalizeText('floor.plan.editor.import.export') }</Button>
                                 <Button onClick={ saveFloorChanges }>{ LocalizeText('floor.plan.editor.save') }</Button>
-                            </ButtonGroup>
-                        </Flex>
+                            </div>
+                        </div>
                     </NitroCardContentView>
                 </NitroCardView> }
             { importExportVisible &&
                 <FloorplanImportExportView onCloseClick={ () => setImportExportVisible(false) } /> }
         </FloorplanEditorContextProvider>
     );
-}
+};

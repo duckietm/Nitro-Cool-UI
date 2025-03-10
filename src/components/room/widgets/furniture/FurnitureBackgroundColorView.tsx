@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { ColorUtils, LocalizeText } from '../../../../api';
-import { Button, Column, NitroCardContentView, NitroCardHeaderView, NitroCardView } from '../../../../common';
+import { Button, NitroCardContentView, NitroCardHeaderView, NitroCardView } from '../../../../common';
 import { useFurnitureBackgroundColorWidget } from '../../../../hooks';
 
 export const FurnitureBackgroundColorView: FC<{}> = props =>
@@ -10,21 +10,21 @@ export const FurnitureBackgroundColorView: FC<{}> = props =>
     if(objectId === -1) return null;
 
     return (
-        <NitroCardView theme="primary-slim" className="nitro-room-widget-toner">
+        <NitroCardView className="nitro-room-widget-toner" theme="primary-slim">
             <NitroCardHeaderView headerText={ LocalizeText('widget.backgroundcolor.title') } onCloseClick={ onClose } />
-            <NitroCardContentView overflow="hidden" justifyContent="between">
-                <Column overflow="auto" gap={ 1 }>
-                    <input type="color" className="form-control" value={ ColorUtils.makeColorNumberHex(color) } onChange={ event => setColor(ColorUtils.convertFromHex(event.target.value)) } />
-                </Column>
-                <Column gap={ 1 }>
+            <NitroCardContentView justifyContent="between" overflow="hidden">
+                <div className="flex flex-col gap-1 overflow-auto">
+                    <input className="min-h-[calc(1.5em+ .5rem+2px)] px-[.5rem] py-[.25rem]  rounded-[.2rem]" type="color" value={ ColorUtils.makeColorNumberHex(color) } onChange={ event => setColor(ColorUtils.convertFromHex(event.target.value)) } />
+                </div>
+                <div className="flex flex-col gap-1">
                     <Button fullWidth variant="primary" onClick={ toggleToner }>
                         { LocalizeText('widget.backgroundcolor.button.on') }
                     </Button>
                     <Button fullWidth variant="primary" onClick={ applyToner }>
                         { LocalizeText('widget.backgroundcolor.button.apply') }
                     </Button>
-                </Column>
+                </div>
             </NitroCardContentView>
         </NitroCardView>
     );
-}
+};

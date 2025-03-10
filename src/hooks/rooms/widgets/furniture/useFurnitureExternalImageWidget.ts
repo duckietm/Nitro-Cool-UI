@@ -1,7 +1,7 @@
-import { RoomEngineTriggerWidgetEvent, RoomObjectCategory, RoomObjectVariable } from '@nitrots/nitro-renderer';
+import { GetRoomEngine, RoomEngineTriggerWidgetEvent, RoomObjectCategory, RoomObjectVariable } from '@nitrots/nitro-renderer';
 import { useState } from 'react';
-import { GetRoomEngine, IPhotoData } from '../../../../api';
-import { useRoomEngineEvent } from '../../../events';
+import { IPhotoData } from '../../../../api';
+import { useNitroEvent } from '../../../events';
 import { useFurniRemovedEvent } from '../../engine';
 import { useRoom } from '../../useRoom';
 
@@ -19,9 +19,9 @@ const useFurnitureExternalImageWidgetState = () =>
         setCategory(-1);
         setCurrentPhotoIndex(-1);
         setCurrentPhotos([]);
-    }
+    };
 
-    useRoomEngineEvent<RoomEngineTriggerWidgetEvent>(RoomEngineTriggerWidgetEvent.REQUEST_EXTERNAL_IMAGE, event =>
+    useNitroEvent<RoomEngineTriggerWidgetEvent>(RoomEngineTriggerWidgetEvent.REQUEST_EXTERNAL_IMAGE, event =>
     {
         const roomObject = GetRoomEngine().getRoomObject(event.roomId, event.objectId, event.category);
         const roomTotalImages = GetRoomEngine().getRoomObjects(roomSession?.roomId, RoomObjectCategory.WALL);
@@ -32,7 +32,7 @@ const useFurnitureExternalImageWidgetState = () =>
 
         roomTotalImages.forEach(object =>
         {
-            if (object.type !== 'external_image_wallitem_poster_small') return null;
+            if(object.type !== 'external_image_wallitem_poster_small') return null;
 
             const data = object.model.getValue<string>(RoomObjectVariable.FURNITURE_DATA);
             const jsonData: IPhotoData = JSON.parse(data);
@@ -52,7 +52,7 @@ const useFurnitureExternalImageWidgetState = () =>
 
             if(roomObjectPhotoData)
             {
-                index = datas.findIndex(data => (data.w === roomObjectPhotoData.w))
+                index = datas.findIndex(data => (data.u === roomObjectPhotoData.u));
             }
 
             if(index < 0) index = 0;
@@ -69,6 +69,6 @@ const useFurnitureExternalImageWidgetState = () =>
     });
 
     return { objectId, currentPhotoIndex, currentPhotos, onClose };
-}
+};
 
 export const useFurnitureExternalImageWidget = useFurnitureExternalImageWidgetState;

@@ -1,7 +1,7 @@
-import { RoomEngineObjectEvent, RoomEngineUseProductEvent, RoomObjectCategory, RoomObjectType, RoomObjectVariable, RoomSessionPetInfoUpdateEvent, RoomSessionPetStatusUpdateEvent, RoomSessionUserDataUpdateEvent } from '@nitrots/nitro-renderer';
+import { GetRoomEngine, GetSessionDataManager, RoomEngineObjectEvent, RoomEngineUseProductEvent, RoomObjectCategory, RoomObjectType, RoomObjectVariable, RoomSessionPetInfoUpdateEvent, RoomSessionPetStatusUpdateEvent, RoomSessionUserDataUpdateEvent } from '@nitrots/nitro-renderer';
 import { useEffect, useState } from 'react';
-import { AvatarInfoFurni, AvatarInfoName, AvatarInfoPet, AvatarInfoRentableBot, AvatarInfoUser, AvatarInfoUtilities, CanManipulateFurniture, FurniCategory, GetRoomEngine, GetSessionDataManager, IAvatarInfo, IsOwnerOfFurniture, RoomWidgetUpdateRoomObjectEvent, UseProductItem } from '../../../api';
-import { useRoomEngineEvent, useRoomSessionManagerEvent, useUiEvent } from '../../events';
+import { AvatarInfoFurni, AvatarInfoName, AvatarInfoPet, AvatarInfoRentableBot, AvatarInfoUser, AvatarInfoUtilities, CanManipulateFurniture, FurniCategory, IAvatarInfo, IsOwnerOfFurniture, RoomWidgetUpdateRoomObjectEvent, UseProductItem } from '../../../api';
+import { useNitroEvent, useUiEvent } from '../../events';
 import { useFriends } from '../../friends';
 import { useWired } from '../../wired';
 import { useObjectDeselectedEvent, useObjectRollOutEvent, useObjectRollOverEvent, useObjectSelectedEvent } from '../engine';
@@ -30,7 +30,7 @@ const useAvatarInfoWidgetState = () =>
 
             return newValue;
         });
-    }
+    };
 
     const removeProductBubble = (index: number) =>
     {
@@ -43,13 +43,13 @@ const useAvatarInfoWidgetState = () =>
 
             return newValue;
         });
-    }
+    };
 
     const updateConfirmingProduct = (product: UseProductItem) =>
     {
         setConfirmingProduct(product);
         setProductBubbles([]);
-    }
+    };
 
     const getObjectName = (objectId: number, category: number) =>
     {
@@ -60,7 +60,7 @@ const useAvatarInfoWidgetState = () =>
         setActiveNameBubble(name);
 
         if(category !== RoomObjectCategory.UNIT) setProductBubbles([]);
-    }
+    };
 
     const getObjectInfo = (objectId: number, category: number) =>
     {
@@ -102,18 +102,18 @@ const useAvatarInfoWidgetState = () =>
         if(!info) return;
 
         setAvatarInfo(info);
-    }
+    };
 
     const processUsableRoomObject = (objectId: number) =>
     {
-    }
+    };
 
     const refreshPetInfo = () =>
     {
         // roomSession.userDataManager.requestPetInfo(petData.id);
-    }
+    };
 
-    useRoomSessionManagerEvent<RoomSessionUserDataUpdateEvent>(RoomSessionUserDataUpdateEvent.USER_DATA_UPDATED, event =>
+    useNitroEvent<RoomSessionUserDataUpdateEvent>(RoomSessionUserDataUpdateEvent.USER_DATA_UPDATED, event =>
     {
         if(!event.addedUsers.length) return;
 
@@ -148,7 +148,7 @@ const useAvatarInfoWidgetState = () =>
         });
     });
 
-    useRoomSessionManagerEvent<RoomSessionPetInfoUpdateEvent>(RoomSessionPetInfoUpdateEvent.PET_INFO, event =>
+    useNitroEvent<RoomSessionPetInfoUpdateEvent>(RoomSessionPetInfoUpdateEvent.PET_INFO, event =>
     {
         const petData = event.petInfo;
 
@@ -164,7 +164,7 @@ const useAvatarInfoWidgetState = () =>
         setPendingPetId(-1);
     });
 
-    useRoomSessionManagerEvent<RoomSessionPetStatusUpdateEvent>(RoomSessionPetStatusUpdateEvent.PET_STATUS_UPDATE, event =>
+    useNitroEvent<RoomSessionPetStatusUpdateEvent>(RoomSessionPetStatusUpdateEvent.PET_STATUS_UPDATE, event =>
     {
     /*     var _local_2:Boolean;
         var _local_3:Boolean;
@@ -188,12 +188,12 @@ const useAvatarInfoWidgetState = () =>
             this._container.events.dispatchEvent(_local_7); */
     });
 
-    useRoomEngineEvent<RoomEngineUseProductEvent>(RoomEngineUseProductEvent.USE_PRODUCT_FROM_INVENTORY, event =>
+    useNitroEvent<RoomEngineUseProductEvent>(RoomEngineUseProductEvent.USE_PRODUCT_FROM_INVENTORY, event =>
     {
         // this._Str_23199((k as RoomEngineUseProductEvent).inventoryStripId, (k as RoomEngineUseProductEvent).furnitureTypeId);
     });
 
-    useRoomEngineEvent<RoomEngineUseProductEvent>(RoomEngineUseProductEvent.USE_PRODUCT_FROM_ROOM, event =>
+    useNitroEvent<RoomEngineUseProductEvent>(RoomEngineUseProductEvent.USE_PRODUCT_FROM_ROOM, event =>
     {
         const roomObject = GetRoomEngine().getRoomObject(roomSession.roomId, event.objectId, RoomObjectCategory.FLOOR);
 
@@ -257,7 +257,7 @@ const useAvatarInfoWidgetState = () =>
         if(useProductBubbles.length) setProductBubbles(useProductBubbles);
     });
 
-    useRoomEngineEvent<RoomEngineObjectEvent>(RoomEngineObjectEvent.REQUEST_MANIPULATION, event =>
+    useNitroEvent<RoomEngineObjectEvent>(RoomEngineObjectEvent.REQUEST_MANIPULATION, event =>
     {
         if(!CanManipulateFurniture(roomSession, event.objectId, event.category)) return;
 
@@ -350,6 +350,6 @@ const useAvatarInfoWidgetState = () =>
     }, [ roomSession, isDecorating ]);
 
     return { avatarInfo, setAvatarInfo, activeNameBubble, setActiveNameBubble, nameBubbles, productBubbles, confirmingProduct, isDecorating, setIsDecorating, removeNameBubble, removeProductBubble, updateConfirmingProduct, getObjectName };
-}
+};
 
 export const useAvatarInfoWidget = useAvatarInfoWidgetState;

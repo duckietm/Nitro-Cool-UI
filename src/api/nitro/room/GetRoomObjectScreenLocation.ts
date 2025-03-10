@@ -1,4 +1,4 @@
-import { GetRoomEngine } from './GetRoomEngine';
+import { GetRoomEngine } from '@nitrots/nitro-renderer';
 
 export const GetRoomObjectScreenLocation = (roomId: number, objectId: number, category: number, canvasId = 1) =>
 {
@@ -10,4 +10,4 @@ export const GetRoomObjectScreenLocation = (roomId: number, objectId: number, ca
     point.y = Math.round(point.y);
 
     return point;
-}
+};

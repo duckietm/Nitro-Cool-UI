@@ -1,7 +1,7 @@
-import { ControlYoutubeDisplayPlaybackMessageComposer, GetYoutubeDisplayStatusMessageComposer, RoomEngineTriggerWidgetEvent, RoomId, SecurityLevel, SetYoutubeDisplayPlaylistMessageComposer, YoutubeControlVideoMessageEvent, YoutubeDisplayPlaylist, YoutubeDisplayPlaylistsEvent, YoutubeDisplayVideoMessageEvent } from '@nitrots/nitro-renderer';
+import { ControlYoutubeDisplayPlaybackMessageComposer, GetRoomEngine, GetSessionDataManager, GetYoutubeDisplayStatusMessageComposer, RoomEngineTriggerWidgetEvent, RoomId, SecurityLevel, SetYoutubeDisplayPlaylistMessageComposer, YoutubeControlVideoMessageEvent, YoutubeDisplayPlaylist, YoutubeDisplayPlaylistsEvent, YoutubeDisplayVideoMessageEvent } from '@nitrots/nitro-renderer';
 import { useState } from 'react';
-import { GetRoomEngine, GetSessionDataManager, IsOwnerOfFurniture, SendMessageComposer, YoutubeVideoPlaybackStateEnum } from '../../../../api';
-import { useMessageEvent, useRoomEngineEvent } from '../../../events';
+import { IsOwnerOfFurniture, SendMessageComposer, YoutubeVideoPlaybackStateEnum } from '../../../../api';
+import { useMessageEvent, useNitroEvent } from '../../../events';
 import { useFurniRemovedEvent } from '../../engine';
 
 const CONTROL_COMMAND_PREVIOUS_VIDEO = 0;
@@ -32,7 +32,7 @@ const useFurnitureYoutubeWidgetState = () =>
         setSelectedVideo(null);
         setPlaylists(null);
         setHasControl(false);
-    }
+    };
 
     const previous = () => SendMessageComposer(new ControlYoutubeDisplayPlaybackMessageComposer(objectId, CONTROL_COMMAND_PREVIOUS_VIDEO));
 
@@ -54,14 +54,14 @@ const useFurnitureYoutubeWidgetState = () =>
 
         setSelectedVideo(video);
         SendMessageComposer(new SetYoutubeDisplayPlaylistMessageComposer(objectId, video));
-    }
+    };
 
-    useRoomEngineEvent<RoomEngineTriggerWidgetEvent>(RoomEngineTriggerWidgetEvent.REQUEST_YOUTUBE, event =>
+    useNitroEvent<RoomEngineTriggerWidgetEvent>(RoomEngineTriggerWidgetEvent.REQUEST_YOUTUBE, event =>
     {
         if(RoomId.isRoomPreviewerId(event.roomId)) return;
 
         const roomObject = GetRoomEngine().getRoomObject(event.roomId, event.objectId, event.category);
-    
+
         if(!roomObject) return;
 
         setObjectId(event.objectId);
@@ -122,6 +122,6 @@ const useFurnitureYoutubeWidgetState = () =>
     });
 
     return { objectId, videoId, videoStart, videoEnd, currentVideoState, selectedVideo, playlists, onClose, previous, next, pause, play, selectVideo };
-}
+};
 
 export const useFurnitureYoutubeWidget = useFurnitureYoutubeWidgetState;

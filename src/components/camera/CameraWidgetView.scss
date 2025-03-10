@@ -25,23 +25,6 @@
             filter: brightness(0.8);
         }
     }
-	
-	.info-camera {
-        top: 8px;
-        right: 36px;
-        cursor: pointer;
-        background-image: url("@/assets/images/boxes/card/questionmark.png");
-        width: 19px;
-        height: 20px;
-
-            &:hover {
-                background-image: url("@/assets/images/boxes/card/questionmark_hover.png");
-
-            &:active {
-                background-image: url("@/assets/images/boxes/card/questionmark_click.png");
-            }
-        }
-    }
 
     .camera-area {
         position: absolute;

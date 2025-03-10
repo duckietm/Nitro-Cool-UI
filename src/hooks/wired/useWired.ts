@@ -1,4 +1,4 @@
-import { ConditionDefinition, Triggerable, TriggerDefinition, UpdateActionMessageComposer, UpdateConditionMessageComposer, UpdateTriggerMessageComposer, WiredActionDefinition, WiredFurniActionEvent, WiredFurniConditionEvent, WiredFurniTriggerEvent, WiredSaveSuccessEvent } from '@nitrots/nitro-renderer';
+import { ConditionDefinition, OpenMessageComposer, Triggerable, TriggerDefinition, UpdateActionMessageComposer, UpdateConditionMessageComposer, UpdateTriggerMessageComposer, WiredActionDefinition, WiredFurniActionEvent, WiredFurniConditionEvent, WiredFurniTriggerEvent, WiredOpenEvent, WiredSaveSuccessEvent } from '@nitrots/nitro-renderer';
 import { useEffect, useState } from 'react';
 import { useBetween } from 'use-between';
 import { IsOwnerOfFloorFurniture, LocalizeText, SendMessageComposer, WiredFurniType, WiredSelectionVisualizer } from '../../api';
@@ -13,8 +13,7 @@ const useWiredState = () =>
     const [ furniIds, setFurniIds ] = useState<number[]>([]);
     const [ actionDelay, setActionDelay ] = useState<number>(0);
     const [ allowsFurni, setAllowsFurni ] = useState<number>(WiredFurniType.STUFF_SELECTION_OPTION_NONE);
-    const [ maxItemSelectionCount, setMaxItemSelectionCount ] = useState<number>(5);
-    const { showConfirm } = useNotification();
+    const { showConfirm = null } = useNotification();
 
     const saveWired = () =>
     {
@@ -36,20 +35,20 @@ const useWiredState = () =>
             {
                 SendMessageComposer(new UpdateConditionMessageComposer(trigger.id, intParams, stringParam, furniIds, trigger.stuffTypeSelectionCode));
             }
-        }
+        };
 
         if(!IsOwnerOfFloorFurniture(trigger.id))
         {
             showConfirm(LocalizeText('wiredfurni.nonowner.change.confirm.body'), () =>
             {
-                save(trigger)
+                save(trigger);
             }, null, null, null, LocalizeText('wiredfurni.nonowner.change.confirm.title'));
         }
         else
         {
             save(trigger);
         }
-    }
+    };
 
     const selectObjectForWired = (objectId: number, category: number) =>
     {
@@ -70,7 +69,7 @@ const useWiredState = () =>
                 WiredSelectionVisualizer.hide(objectId);
             }
 
-            else if(newFurniIds.length < maxItemSelectionCount)
+            else if(newFurniIds.length < trigger.maximumItemSelectionCount)
             {
                 newFurniIds.push(objectId);
 
@@ -79,7 +78,14 @@ const useWiredState = () =>
 
             return newFurniIds;
         });
-    }
+    };
+
+    useMessageEvent<WiredOpenEvent>(WiredOpenEvent, event =>
+    {
+        const parser = event.getParser();
+
+        SendMessageComposer(new OpenMessageComposer(parser.stuffId));
+    });
 
     useMessageEvent<WiredSaveSuccessEvent>(WiredSaveSuccessEvent, event =>
     {
@@ -121,14 +127,14 @@ const useWiredState = () =>
             setFurniIds(prevValue =>
             {
                 if(prevValue && prevValue.length) WiredSelectionVisualizer.clearSelectionShaderFromFurni(prevValue);
-    
+
                 return [];
             });
             setAllowsFurni(WiredFurniType.STUFF_SELECTION_OPTION_NONE);
-        }
+        };
     }, [ trigger ]);
 
-    return { trigger, setTrigger, intParams, setIntParams, stringParam, setStringParam, furniIds, setFurniIds, actionDelay, setActionDelay, setAllowsFurni, saveWired, selectObjectForWired, maxItemSelectionCount, setMaxItemSelectionCount };
-}
+    return { trigger, setTrigger, intParams, setIntParams, stringParam, setStringParam, furniIds, setFurniIds, actionDelay, setActionDelay, setAllowsFurni, saveWired, selectObjectForWired };
+};
 
 export const useWired = () => useBetween(useWiredState);

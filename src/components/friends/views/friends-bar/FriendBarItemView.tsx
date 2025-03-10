@@ -1,7 +1,7 @@
-import { FindNewFriendsMessageComposer, MouseEventType } from '@nitrots/nitro-renderer';
+import { MouseEventType } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useRef, useState } from 'react';
-import { GetUserProfile, LocalizeText, MessengerFriend, OpenMessengerChat, SendMessageComposer } from '../../../../api';
-import { Base, Button, LayoutAvatarImageView } from '../../../../common';
+import { GetUserProfile, LocalizeText, MessengerFriend, OpenMessengerChat } from '../../../../api';
+import { Button, LayoutAvatarImageView, LayoutBadgeImageView } from '../../../../common';
 import { useFriends } from '../../../../hooks';
 
 export const FriendBarItemView: FC<{ friend: MessengerFriend }> = props =>
@@ -23,7 +23,7 @@ export const FriendBarItemView: FC<{ friend: MessengerFriend }> = props =>
             {
                 setVisible(false);
             }
-        }
+        };
 
         document.addEventListener(MouseEventType.MOUSE_CLICK, onClick);
 
@@ -33,36 +33,27 @@ export const FriendBarItemView: FC<{ friend: MessengerFriend }> = props =>
     if(!friend)
     {
         return (
-            <div ref={ elementRef } className={ 'btn btn-friendsgen friend-bar-item friend-bar-search ' + (isVisible ? 'friend-bar-search-item-active' : '') } onClick={ event => setVisible(prevValue => !prevValue) }>
-                <div className="friend-bar-item-head position-absolute"/>
-                <div className="friend-bar-text">{ LocalizeText('friend.bar.find.title') }</div>
-                { isVisible &&
-                    <div className="search-content mt-3">
-                        <div className="bg-white text-black px-1 py-1 font-size-friend">{ LocalizeText('friend.bar.find.text') }</div>
-                        <Button className="mt-2 mb-4" variant="white" onClick={ () => SendMessageComposer(new FindNewFriendsMessageComposer()) }>{ LocalizeText('friend.bar.find.button') }</Button>
-                    </div>
-                }
-            </div>
+            <Button className="border w-[130px] mx-[3px] my-[0] z-0 relative pl-[37px] text-left friend-bar-search" justifyContent="start" size="md">
+                <div className="absolute -top-[3px] left-[5px] w-[31px] h-[34px] bg-[url('@/assets/images/toolbar/friend-search.png')]" />
+                <div className="truncate">{ LocalizeText('friend.bar.find.title') }</div>
+            </Button>
         );
     }
 
     return (
-        <div ref={ elementRef } className={ 'btn btn-friendsgensuccess friend-bar-item ' + (isVisible ? 'friend-bar-item-active' : '') } onClick={ event => setVisible(prevValue => !prevValue) }>
-            <div className={ `friend-bar-item-head position-absolute ${ friend.id > 0 ? 'avatar': 'group' }` }>
-                { (friend.id > 0) && <LayoutAvatarImageView headOnly={ !isVisible } figure={ friend.figure } direction={ isVisible ? 2 : 3 } /> }
-                { (friend.id <= 0) && <LayoutAvatarImageView headOnly={ !isVisible } figure={
-                    (friend.id <= 0 && friend.figure === 'ADM') ? 'ha-3409-1413-70.lg-285-89.ch-3032-1334-109.sh-3016-110.hd-185-1359.ca-3225-110-62.wa-3264-62-62.fa-1206-90.hr-3322-1403' : friend.figure
-                    } isgroup={friend.id <= 0 ? 1 : 0} direction={isVisible ? 2 : 3} /> }
+        <Button className={ ' block w-[130px] mx-[3px] my-[0] z-0 relative pl-[37px] text-left' + (isVisible ? 'mb-[21px]' : '') } justifyContent="start" size="md" variant={ 'success' } onClick={ event => setVisible(prevValue => !prevValue) }>
+            <div className={ `friend-bar-item-head absolute ${ friend.id > 0 ? '-top-[30px] -left-[30px]' : '-top-[5px] -left-[3.5px]' }` }>
+                { (friend.id > 0) && <LayoutAvatarImageView direction={ 2 } figure={ friend.figure } headOnly={ true } /> }
+                { (friend.id <= 0) && <LayoutBadgeImageView badgeCode={ friend.figure } isGroup={ true } /> }
             </div>
-            
-            <div className="text-truncate">{ friend.name }</div>
+            <div className="truncate">{ friend.name }</div>
             { isVisible &&
-            <div className="d-flex justify-content-between">
-                <Base className="nitro-friends-spritesheet icon-friendbar-chat cursor-pointer" onClick={ event => OpenMessengerChat(friend.id) } />
-                { friend.followingAllowed &&
-                <Base className="nitro-friends-spritesheet icon-friendbar-visit cursor-pointer" onClick={ event => followFriend(friend) } /> }
-                <Base className="nitro-friends-spritesheet icon-profile cursor-pointer" onClick={ event => GetUserProfile(friend.id) } />
-            </div> }
-        </div>
+                <div className="flex justify-between">
+                    <div className="cursor-pointer nitro-friends-spritesheet icon-friendbar-chat" onClick={ event => OpenMessengerChat(friend.id) } />
+                    { friend.followingAllowed &&
+                        <div className="cursor-pointer nitro-friends-spritesheet icon-friendbar-visit" onClick={ event => followFriend(friend) } /> }
+                    <div className="cursor-pointer nitro-friends-spritesheet icon-profile" onClick={ event => GetUserProfile(friend.id) } />
+                </div> }
+        </Button>
     );
-}
+};

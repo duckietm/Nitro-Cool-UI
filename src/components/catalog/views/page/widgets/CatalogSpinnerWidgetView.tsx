@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { FaCaretLeft, FaCaretRight } from 'react-icons/fa';
 import { LocalizeText } from '../../../../../api';
-import { Flex, Text } from '../../../../../common';
+import { Text } from '../../../../../common';
 import { useCatalog } from '../../../../../hooks';
 
 const MIN_VALUE: number = 1;
@@ -29,18 +29,18 @@ export const CatalogSpinnerWidgetView: FC<{}> = props =>
 
             return newValue;
         });
-    }
+    };
 
     if(!currentOffer || !currentOffer.bundlePurchaseAllowed) return null;
 
     return (
         <>
             <Text>{ LocalizeText('catalog.bundlewidget.spinner.select.amount') }</Text>
-            <Flex alignItems="center" gap={ 1 }>
+            <div className="flex items-center gap-1">
                 <FaCaretLeft className="text-black cursor-pointer fa-icon" onClick={ event => updateQuantity(quantity - 1) } />
-                <input type="number" className="form-control form-control-sm quantity-input" value={ quantity } onChange={ event => updateQuantity(event.target.valueAsNumber) } />
+                <input className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none min-h-[17px] h-[17px] w-[28px] px-[4px] py-[0] text-right  rounded-[.2rem]" type="number" value={ quantity } onChange={ event => updateQuantity(event.target.valueAsNumber) } />
                 <FaCaretRight className="text-black cursor-pointer fa-icon" onClick={ event => updateQuantity(quantity + 1) } />
-            </Flex>
+            </div>
         </>
     );
-}
+};

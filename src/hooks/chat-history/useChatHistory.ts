@@ -2,8 +2,7 @@ import { GetGuestRoomResultEvent, NewConsoleMessageEvent, RoomInviteEvent, RoomS
 import { useState } from 'react';
 import { useBetween } from 'use-between';
 import { ChatEntryType, ChatHistoryCurrentDate, IChatEntry, IRoomHistoryEntry, MessengerHistoryCurrentDate } from '../../api';
-import { useMessageEvent, useRoomSessionManagerEvent } from '../events';
-import { useLocalStorage } from '../useLocalStorage';
+import { useMessageEvent, useNitroEvent } from '../events';
 
 const CHAT_HISTORY_MAX = 1000;
 const ROOM_HISTORY_MAX = 10;
@@ -14,10 +13,10 @@ let MESSENGER_HISTORY_COUNTER: number = 0;
 
 const useChatHistoryState = () =>
 {
-    const [ chatHistory, setChatHistory ] = useLocalStorage<IChatEntry[]>('chatHistory', []);
-    const [ roomHistory, setRoomHistory ] = useLocalStorage<IRoomHistoryEntry[]>('roomHistory', []);
-    const [ messengerHistory, setMessengerHistory ] = useLocalStorage<IChatEntry[]>('messengerHistory', []);
-    const [ needsRoomInsert, setNeedsRoomInsert ] = useLocalStorage('needsRoomInsert', false);
+    const [ chatHistory, setChatHistory ] = useState<IChatEntry[]>([]);
+    const [ roomHistory, setRoomHistory ] = useState<IRoomHistoryEntry[]>([]);
+    const [ messengerHistory, setMessengerHistory ] = useState<IChatEntry[]>([]);
+    const [ needsRoomInsert, setNeedsRoomInsert ] = useState(false);
 
     const addChatEntry = (entry: IChatEntry) =>
     {
@@ -33,7 +32,7 @@ const useChatHistoryState = () =>
 
             return newValue;
         });
-    }
+    };
 
     const addRoomHistoryEntry = (entry: IRoomHistoryEntry) =>
     {
@@ -47,7 +46,7 @@ const useChatHistoryState = () =>
 
             return newValue;
         });
-    }
+    };
 
     const addMessengerEntry = (entry: IChatEntry) =>
     {
@@ -63,9 +62,9 @@ const useChatHistoryState = () =>
 
             return newValue;
         });
-    }
+    };
 
-    useRoomSessionManagerEvent<RoomSessionEvent>(RoomSessionEvent.STARTED, event => setNeedsRoomInsert(true));
+    useNitroEvent<RoomSessionEvent>(RoomSessionEvent.STARTED, event => setNeedsRoomInsert(true));
 
     useMessageEvent<GetGuestRoomResultEvent>(GetGuestRoomResultEvent, event =>
     {
@@ -98,8 +97,8 @@ const useChatHistoryState = () =>
 
         addMessengerEntry({ id: -1, webId: parser.senderId, entityId: -1, name: '', message: parser.messageText, roomId: -1, timestamp: MessengerHistoryCurrentDate(), type: ChatEntryType.TYPE_IM });
     });
-    
+
     return { addChatEntry, chatHistory, roomHistory, messengerHistory };
-}
+};
 
 export const useChatHistory = () => useBetween(useChatHistoryState);

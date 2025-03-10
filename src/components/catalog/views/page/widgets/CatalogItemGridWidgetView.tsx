@@ -27,7 +27,7 @@ export const CatalogItemGridWidgetView: FC<CatalogItemGridWidgetViewProps> = pro
         offer.activate();
 
         if(offer.isLazy) return;
-        
+
         setCurrentOffer(offer);
 
         if(offer.product && (offer.product.productType === ProductTypeEnum.WALL))
@@ -35,18 +35,18 @@ export const CatalogItemGridWidgetView: FC<CatalogItemGridWidgetViewProps> = pro
             setPurchaseOptions(prevValue =>
             {
                 const newValue = { ...prevValue };
-    
+
                 newValue.extraData = (offer.product.extraParam || null);
-    
+
                 return newValue;
             });
         }
-    }
+    };
 
     return (
-        <AutoGrid innerRef={ elementRef } columnCount={ columnCount } { ...rest }>
+        <AutoGrid columnCount={ columnCount } innerRef={ elementRef } { ...rest }>
             { currentPage.offers && (currentPage.offers.length > 0) && currentPage.offers.map((offer, index) => <CatalogGridOfferView key={ index } itemActive={ (currentOffer && (currentOffer.offerId === offer.offerId)) } offer={ offer } selectOffer={ selectOffer } />) }
             { children }
         </AutoGrid>
     );
-}
+};

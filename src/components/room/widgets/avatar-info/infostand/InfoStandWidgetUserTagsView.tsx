@@ -1,6 +1,6 @@
-import { NavigatorSearchComposer } from '@nitrots/nitro-renderer';
+import { CreateLinkEvent, NavigatorSearchComposer } from '@nitrots/nitro-renderer';
 import { FC } from 'react';
-import { CreateLinkEvent, SendMessageComposer } from '../../../../../api';
+import { SendMessageComposer } from '../../../../../api';
 import { Flex, Text } from '../../../../../common';
 
 interface InfoStandWidgetUserTagsViewProps
@@ -12,7 +12,7 @@ const processAction = (tag: string) =>
 {
     CreateLinkEvent(`navigator/search/${ tag }`);
     SendMessageComposer(new NavigatorSearchComposer('hotel_view', `tag:${ tag }`));
-}
+};
 
 export const InfoStandWidgetUserTagsView: FC<InfoStandWidgetUserTagsViewProps> = props =>
 {
@@ -24,8 +24,8 @@ export const InfoStandWidgetUserTagsView: FC<InfoStandWidgetUserTagsViewProps> =
         <>
             <hr className="m-0" />
             <Flex className="flex-tags">
-                { tags && (tags.length > 0) && tags.map((tag, index) => <Text key={ index } variant="white" className="text-tags" onClick={ event => processAction(tag) }>{ tag }</Text>) }
+                { tags && (tags.length > 0) && tags.map((tag, index) => <Text key={ index } className="text-tags" variant="white" onClick={ event => processAction(tag) }>{ tag }</Text>) }
             </Flex>
         </>
     );
-}
+};

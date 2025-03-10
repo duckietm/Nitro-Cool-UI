@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { GetConfiguration, ProductTypeEnum } from '../../../../../api';
+import { GetConfigurationValue, ProductTypeEnum } from '../../../../../api';
 import { Column, Flex, Grid, LayoutImage, Text } from '../../../../../common';
 import { useCatalog } from '../../../../../hooks';
 import { CatalogHeaderView } from '../../catalog-header/CatalogHeaderView';
@@ -20,15 +20,15 @@ export const CatalogLayoutDefaultView: FC<CatalogLayoutProps> = props =>
     return (
         <>
             <Grid>
-                <Column size={ 7 } overflow="hidden">
-                    { GetConfiguration('catalog.headers') &&
-                        <CatalogHeaderView imageUrl={ currentPage.localization.getImage(0) }/> }
+                <Column overflow="hidden" size={ 7 }>
+                    { GetConfigurationValue('catalog.headers') &&
+                        <CatalogHeaderView imageUrl={ currentPage.localization.getImage(0) } /> }
                     <CatalogItemGridWidgetView />
                 </Column>
-                <Column center={ !currentOffer } size={ 5 } overflow="hidden">
+                <Column center={ !currentOffer } overflow="hidden" size={ 5 }>
                     { !currentOffer &&
                         <>
-                            { !!page.localization.getImage(1) && 
+                            { !!page.localization.getImage(1) &&
                                 <LayoutImage imageUrl={ page.localization.getImage(1) } /> }
                             <Text center dangerouslySetInnerHTML={ { __html: page.localization.getText(0) } } />
                         </> }
@@ -43,14 +43,14 @@ export const CatalogLayoutDefaultView: FC<CatalogLayoutProps> = props =>
                                 { (currentOffer.product.productType === ProductTypeEnum.BADGE) && <CatalogAddOnBadgeWidgetView className="scale-2" /> }
                             </Flex>
                             <Column grow gap={ 1 }>
-                                <CatalogLimitedItemWidgetView fullWidth />
-                                <Text grow >{ currentOffer.localizationName }</Text>
-                                <Flex justifyContent="between">
-                                    <Column gap={ 1 }>
+                                <CatalogLimitedItemWidgetView />
+                                <Text grow truncate>{ currentOffer.localizationName }</Text>
+                                <div className="flex justify-between">
+                                    <div className="flex flex-col gap-1">
                                         <CatalogSpinnerWidgetView />
-                                    </Column>
-                                    <CatalogTotalPriceWidget justifyContent="end" alignItems="end" />
-                                </Flex>
+                                    </div>
+                                    <CatalogTotalPriceWidget alignItems="end" justifyContent="end" />
+                                </div>
                                 <CatalogPurchaseWidgetView />
                             </Column>
                         </> }
@@ -58,4 +58,4 @@ export const CatalogLayoutDefaultView: FC<CatalogLayoutProps> = props =>
             </Grid>
         </>
     );
-}
+};

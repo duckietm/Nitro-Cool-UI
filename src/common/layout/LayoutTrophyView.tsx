@@ -1,6 +1,9 @@
 import { FC } from 'react';
-import { Base, Column, Flex, Text } from '..';
 import { LocalizeText } from '../../api';
+import { Base } from '../Base';
+import { Column } from '../Column';
+import { Flex } from '../Flex';
+import { Text } from '../Text';
 import { DraggableWindow } from '../draggable-window';
 
 interface LayoutTrophyViewProps
@@ -19,9 +22,9 @@ export const LayoutTrophyView: FC<LayoutTrophyViewProps> = props =>
 
     return (
         <DraggableWindow handleSelector=".drag-handler">
-            <Column gap={ 0 } alignItems="center" className={ `nitro-layout-trophy trophy-${ color }` }>
-                <Flex center fullWidth position="relative" className="trophy-header drag-handler">
-                    <Base position="absolute" pointer className="trophy-close" onClick={ onCloseClick } />
+            <Column alignItems="center" className={ `nitro-layout-trophy trophy-${ color }` } gap={ 0 }>
+                <Flex center fullWidth className="trophy-header drag-handler" position="relative">
+                    <Base pointer className="trophy-close" position="absolute" onClick={ onCloseClick } />
                     <Text bold>{ LocalizeText('widget.furni.trophy.title') }</Text>
                 </Flex>
                 <Column className="trophy-content py-1" gap={ 1 }>
@@ -29,11 +32,11 @@ export const LayoutTrophyView: FC<LayoutTrophyViewProps> = props =>
                         <Text bold>{ customTitle }</Text> }
                     { message }
                 </Column>
-                <Flex alignItems="center" justifyContent="between" className="trophy-footer mt-1">
+                <Flex alignItems="center" className="trophy-footer mt-1" justifyContent="between">
                     <Text bold>{ date }</Text>
                     <Text bold>{ senderName }</Text>
                 </Flex>
             </Column>
         </DraggableWindow>
     );
-}
+};

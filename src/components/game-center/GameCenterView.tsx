@@ -1,29 +1,28 @@
-import { ILinkEventTracker } from '@nitrots/nitro-renderer';
+import { AddLinkEventTracker, ILinkEventTracker, RemoveLinkEventTracker } from '@nitrots/nitro-renderer';
 import { useEffect } from 'react';
-import { AddEventLinkTracker, RemoveLinkEventTracker } from '../../api';
 import { Flex } from '../../common';
 import { useGameCenter } from '../../hooks';
 import { GameListView } from './views/GameListView';
 import { GameStageView } from './views/GameStageView';
 import { GameView } from './views/GameView';
 
-export const GameCenterView = () => 
+export const GameCenterView = () =>
 {
-    const{ isVisible, setIsVisible, games, accountStatus } = useGameCenter();
+    const { isVisible, setIsVisible, games, accountStatus } = useGameCenter();
 
     useEffect(() =>
     {
         const toggleGameCenter = () =>
         {
             setIsVisible(prev => !prev);
-        }
+        };
 
         const linkTracker: ILinkEventTracker = {
             linkReceived: (url: string) =>
             {
                 const value = url.split('/');
-                
-                switch(value[1]) 
+
+                switch(value[1])
                 {
                     case 'toggle':
                         toggleGameCenter();
@@ -33,18 +32,18 @@ export const GameCenterView = () =>
             eventUrlPrefix: 'games/'
         };
 
-        AddEventLinkTracker(linkTracker);
+        AddLinkEventTracker(linkTracker);
 
         return () => RemoveLinkEventTracker(linkTracker);
-    }, [ ]);
+    }, [ setIsVisible ]);
 
     if(!isVisible || !games || !accountStatus) return;
-    
-    return <Flex position="absolute" className="top-0 bottom-0 start-0 end-0 bg-black" justifyContent="center">
-        <Flex className="game-center-main" column>
+
+    return <Flex className="top-0 bottom-0 start-0 end-0 bg-black" justifyContent="center" position="absolute">
+        <Flex column className="game-center-main">
             <GameView/>
             <GameListView />
         </Flex>
         <GameStageView />
-    </Flex>
-}
+    </Flex>;
+};

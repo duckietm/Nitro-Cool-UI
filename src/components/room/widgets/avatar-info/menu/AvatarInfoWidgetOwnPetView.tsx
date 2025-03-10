@@ -1,6 +1,6 @@
-import { PetRespectComposer, PetType, RoomObjectCategory, RoomObjectType, RoomObjectVariable, RoomUnitGiveHandItemPetComposer } from '@nitrots/nitro-renderer';
+import { CreateLinkEvent, PetRespectComposer, PetType, RoomObjectCategory, RoomObjectType, RoomObjectVariable, RoomUnitGiveHandItemPetComposer } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useMemo, useState } from 'react';
-import { AvatarInfoPet, CreateLinkEvent, GetConfiguration, GetOwnRoomObject, LocalizeText, SendMessageComposer } from '../../../../../api';
+import { AvatarInfoPet, GetConfigurationValue, GetOwnRoomObject, LocalizeText, SendMessageComposer } from '../../../../../api';
 import { useRoom, useSessionInfo } from '../../../../../hooks';
 import { ContextMenuHeaderView } from '../../context-menu/ContextMenuHeaderView';
 import { ContextMenuListItemView } from '../../context-menu/ContextMenuListItemView';
@@ -104,13 +104,13 @@ export const AvatarInfoWidgetOwnPetView: FC<AvatarInfoWidgetOwnPetViewProps> = p
                     roomSession.compostPlant(avatarInfo.id);
                     break;
                 case 'buy_saddle':
-                    CreateLinkEvent('catalog/open/' + GetConfiguration('catalog.links')['pets.buy_saddle']);
+                    CreateLinkEvent('catalog/open/' + GetConfigurationValue('catalog.links')['pets.buy_saddle']);
                     break;
             }
         }
 
         if(hideMenu) onClose();
-    }
+    };
 
     useEffect(() =>
     {
@@ -125,7 +125,7 @@ export const AvatarInfoWidgetOwnPetView: FC<AvatarInfoWidgetOwnPetViewProps> = p
     }, [ avatarInfo ]);
 
     return (
-        <ContextMenuView objectId={ avatarInfo.roomIndex } category={ RoomObjectCategory.UNIT } userType={ RoomObjectType.PET } onClose={ onClose } collapsable={ true }>
+        <ContextMenuView category={ RoomObjectCategory.UNIT } collapsable={ true } objectId={ avatarInfo.roomIndex } userType={ RoomObjectType.PET } onClose={ onClose }>
             <ContextMenuHeaderView>
                 { avatarInfo.name }
             </ContextMenuHeaderView>
@@ -155,8 +155,8 @@ export const AvatarInfoWidgetOwnPetView: FC<AvatarInfoWidgetOwnPetViewProps> = p
                     <ContextMenuListItemView onClick={ event => processAction('mount') }>
                         { LocalizeText('infostand.button.mount') }
                     </ContextMenuListItemView>
-                    <ContextMenuListItemView onClick={ event => processAction('toggle_riding_permission') } gap={ 1 }>
-                        <input type="checkbox" checked={ !!avatarInfo.publiclyRideable } readOnly={ true } />
+                    <ContextMenuListItemView gap={ 1 } onClick={ event => processAction('toggle_riding_permission') }>
+                        <input checked={ !!avatarInfo.publiclyRideable } readOnly={ true } type="checkbox" />
                         { LocalizeText('infostand.button.toggle_riding_permission') }
                     </ContextMenuListItemView>
                     { (petRespectRemaining > 0) &&
@@ -202,8 +202,8 @@ export const AvatarInfoWidgetOwnPetView: FC<AvatarInfoWidgetOwnPetViewProps> = p
                         </ContextMenuListItemView> }
                     { !avatarInfo.dead && (avatarInfo.level === avatarInfo.maximumLevel) && avatarInfo.breedable &&
                         <>
-                            <ContextMenuListItemView onClick={ event => processAction('toggle_breeding_permission') } gap={ 1 }>
-                                <input type="checkbox" checked={ avatarInfo.publiclyBreedable } readOnly={ true } />
+                            <ContextMenuListItemView gap={ 1 } onClick={ event => processAction('toggle_breeding_permission') }>
+                                <input checked={ avatarInfo.publiclyBreedable } readOnly={ true } type="checkbox" />
                                 { LocalizeText('infostand.button.toggle_breeding_permission') }
                             </ContextMenuListItemView>
                             <ContextMenuListItemView onClick={ event => processAction('breed') }>
@@ -217,4 +217,4 @@ export const AvatarInfoWidgetOwnPetView: FC<AvatarInfoWidgetOwnPetViewProps> = p
                 </ContextMenuListItemView> }
         </ContextMenuView>
     );
-}
+};

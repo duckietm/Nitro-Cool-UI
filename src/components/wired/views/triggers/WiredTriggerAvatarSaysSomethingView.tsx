@@ -1,7 +1,9 @@
+import { GetSessionDataManager } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
-import { GetSessionDataManager, LocalizeText, WiredFurniType } from '../../../../api';
-import { Column, Flex, Text } from '../../../../common';
+import { LocalizeText, WiredFurniType } from '../../../../api';
+import { Text } from '../../../../common';
 import { useWired } from '../../../../hooks';
+import { NitroInput } from '../../../../layout';
 import { WiredTriggerBaseView } from './WiredTriggerBaseView';
 
 export const WiredTriggerAvatarSaysSomethingView: FC<{}> = props =>
@@ -14,31 +16,31 @@ export const WiredTriggerAvatarSaysSomethingView: FC<{}> = props =>
     {
         setStringParam(message);
         setIntParams([ triggererAvatar ]);
-    }
+    };
 
     useEffect(() =>
     {
         setMessage(trigger.stringData);
         setTriggererAvatar((trigger.intData.length > 0) ? trigger.intData[0] : 0);
     }, [ trigger ]);
-    
+
     return (
-        <WiredTriggerBaseView requiresFurni={ WiredFurniType.STUFF_SELECTION_OPTION_NONE } hasSpecialInput={ true } save={ save }>
-            <Column gap={ 1 }>
+        <WiredTriggerBaseView hasSpecialInput={ true } requiresFurni={ WiredFurniType.STUFF_SELECTION_OPTION_NONE } save={ save }>
+            <div className="flex flex-col gap-1">
                 <Text bold>{ LocalizeText('wiredfurni.params.whatissaid') }</Text>
-                <input type="text" className="form-control form-control-sm" value={ message } onChange={ event => setMessage(event.target.value) } />
-            </Column>
-            <Column gap={ 1 }>
+                <NitroInput type="text" value={ message } onChange={ event => setMessage(event.target.value) } />
+            </div>
+            <div className="flex flex-col gap-1">
                 <Text bold>{ LocalizeText('wiredfurni.params.picktriggerer') }</Text>
-                <Flex alignItems="center" gap={ 1 }>
-                    <input className="form-check-input" type="radio" name="triggererAvatar" id="triggererAvatar0" checked={ (triggererAvatar === 0) } onChange={ event => setTriggererAvatar(0) } />
+                <div className="flex items-center gap-1">
+                    <input checked={ (triggererAvatar === 0) } className="form-check-input" id="triggererAvatar0" name="triggererAvatar" type="radio" onChange={ event => setTriggererAvatar(0) } />
                     <Text>{ LocalizeText('wiredfurni.params.anyavatar') }</Text>
-                </Flex>
-                <Flex alignItems="center" gap={ 1 }>
-                    <input className="form-check-input" type="radio" name="triggererAvatar" id="triggererAvatar1" checked={ (triggererAvatar === 1) } onChange={ event => setTriggererAvatar(1) } />
+                </div>
+                <div className="flex items-center gap-1">
+                    <input checked={ (triggererAvatar === 1) } className="form-check-input" id="triggererAvatar1" name="triggererAvatar" type="radio" onChange={ event => setTriggererAvatar(1) } />
                     <Text>{ GetSessionDataManager().userName }</Text>
-                </Flex>
-            </Column>
+                </div>
+            </div>
         </WiredTriggerBaseView>
     );
-}
+};

@@ -14,7 +14,7 @@ export const LayoutProgressBar: FC<LayoutProgressBarProps> = props =>
 
     const getClassNames = useMemo(() =>
     {
-        const newClassNames: string[] = [ 'nitro-progress-bar', 'text-white' ];
+        const newClassNames: string[] = [ 'border-[1px] border-[solid] border-[#fff] p-[2px] h-[20px] rounded-[.25rem] overflow-hidden bg-[#1E7295]        ', 'text-white' ];
 
         if(classNames.length) newClassNames.push(...classNames);
 
@@ -22,11 +22,11 @@ export const LayoutProgressBar: FC<LayoutProgressBarProps> = props =>
     }, [ classNames ]);
 
     return (
-        <Column position={ position } justifyContent={ justifyContent } classNames={ getClassNames } { ...rest }>
+        <Column classNames={ getClassNames } justifyContent={ justifyContent } position={ position } { ...rest }>
             { text && (text.length > 0) &&
-                <Flex fit center position="absolute" className="nitro-progress-bar-text small">{ text }</Flex> }
-            <Base className="nitro-progress-bar-inner" style={ { width: (~~((((progress - 0) * (100 - 0)) / (maxProgress - 0)) + 0) + '%') } } />
+                <Flex center fit className="[text-shadow:0px_4px_4px_rgba(0,_0,_0,_.25)] z-20" position="absolute">{ text }</Flex> }
+            <Base className="h-full z-10 [transition:all_1s] rounded-[.125rem] bg-[repeating-linear-gradient(#2DABC2,_#2DABC2_50%,_#2B91A7_50%,_#2B91A7_100%)]" style={ { width: (~~((((progress - 0) * (100 - 0)) / (maxProgress - 0)) + 0) + '%') } } />
             { children }
         </Column>
     );
-}
+};

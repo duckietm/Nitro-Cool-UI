@@ -1,8 +1,9 @@
-import { BotCommandConfigurationEvent, BotRemoveComposer, BotSkillSaveComposer, RequestBotCommandConfigurationComposer, RoomObjectCategory, RoomObjectType } from '@nitrots/nitro-renderer';
+import { BotCommandConfigurationEvent, BotRemoveComposer, BotSkillSaveComposer, CreateLinkEvent, RequestBotCommandConfigurationComposer, RoomObjectCategory, RoomObjectType } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
-import { AvatarInfoRentableBot, BotSkillsEnum, DispatchUiEvent, GetConfiguration, GetNitroInstance, LocalizeText, RoomWidgetUpdateRentableBotChatEvent, SendMessageComposer } from '../../../../../api';
-import { Button, Column, Flex, Text } from '../../../../../common';
+import { AvatarInfoRentableBot, BotSkillsEnum, DispatchUiEvent, GetConfigurationValue, LocalizeText, RoomWidgetUpdateRentableBotChatEvent, SendMessageComposer } from '../../../../../api';
+import { Button, Column, Text } from '../../../../../common';
 import { useMessageEvent } from '../../../../../hooks';
+import { NitroInput } from '../../../../../layout';
 import { ContextMenuHeaderView } from '../../context-menu/ContextMenuHeaderView';
 import { ContextMenuListItemView } from '../../context-menu/ContextMenuListItemView';
 import { ContextMenuView } from '../../context-menu/ContextMenuView';
@@ -109,7 +110,7 @@ export const AvatarInfoWidgetRentableBotView: FC<AvatarInfoWidgetRentableBotView
                     SendMessageComposer(new BotSkillSaveComposer(avatarInfo.webID, BotSkillsEnum.DANCE, ''));
                     break;
                 case 'nux_take_tour':
-                    GetNitroInstance().createLinkEvent('help/tour');
+                    CreateLinkEvent('help/tour');
                     SendMessageComposer(new BotSkillSaveComposer(avatarInfo.webID, BotSkillsEnum.NUX_TAKE_TOUR, ''));
                     break;
                 case 'pick':
@@ -121,7 +122,7 @@ export const AvatarInfoWidgetRentableBotView: FC<AvatarInfoWidgetRentableBotView
         }
 
         if(hideMenu) onClose();
-    }
+    };
 
     useEffect(() =>
     {
@@ -131,7 +132,7 @@ export const AvatarInfoWidgetRentableBotView: FC<AvatarInfoWidgetRentableBotView
     const canControl = (avatarInfo.amIOwner || avatarInfo.amIAnyRoomController);
 
     return (
-        <ContextMenuView objectId={ avatarInfo.roomIndex } category={ RoomObjectCategory.UNIT } userType={ RoomObjectType.RENTABLE_BOT } onClose={ onClose } collapsable={ true }>
+        <ContextMenuView category={ RoomObjectCategory.UNIT } collapsable={ true } objectId={ avatarInfo.roomIndex } userType={ RoomObjectType.RENTABLE_BOT } onClose={ onClose }>
             <ContextMenuHeaderView>
                 { avatarInfo.name }
             </ContextMenuHeaderView>
@@ -175,23 +176,23 @@ export const AvatarInfoWidgetRentableBotView: FC<AvatarInfoWidgetRentableBotView
                         </ContextMenuListItemView> }
                 </> }
             { (mode === MODE_CHANGE_NAME) &&
-                <Column className="menu-item" onClick={ null } gap={ 1 }>
+                <Column className="menu-item" gap={ 1 } onClick={ null }>
                     <Text variant="white">{ LocalizeText('bot.skill.name.configuration.new.name') }</Text>
-                    <input type="text" className="form-control form-control-sm" value={ newName } maxLength={ GetConfiguration<number>('bot.name.max.length', 15) } onChange={ event => setNewName(event.target.value) } />
-                    <Flex alignItems="center" justifyContent="between" gap={ 1 }>
+                    <NitroInput maxLength={ GetConfigurationValue<number>('bot.name.max.length', 15) } type="text" value={ newName } onChange={ event => setNewName(event.target.value) } />
+                    <div className="flex items-center justify-between gap-1">
                         <Button fullWidth variant="secondary" onClick={ event => processAction(null) }>{ LocalizeText('cancel') }</Button>
                         <Button fullWidth variant="success" onClick={ event => processAction('save_bot_name') }>{ LocalizeText('save') }</Button>
-                    </Flex>
+                    </div>
                 </Column> }
             { (mode === MODE_CHANGE_MOTTO) &&
-                <Column className="menu-item" onClick={ null } gap={ 1 }>
+                <Column className="menu-item" gap={ 1 } onClick={ null }>
                     <Text variant="white">{ LocalizeText('bot.skill.name.configuration.new.motto') }</Text>
-                    <input type="text" className="form-control form-control-sm" value={ newMotto } maxLength={ GetConfiguration<number>('motto.max.length', 38) } onChange={ event => setNewMotto(event.target.value) } />
-                    <Flex alignItems="center" justifyContent="between" gap={ 1 }>
+                    <NitroInput maxLength={ GetConfigurationValue<number>('motto.max.length', 38) } type="text" value={ newMotto } onChange={ event => setNewMotto(event.target.value) } />
+                    <div className="flex items-center justify-between gap-1">
                         <Button fullWidth variant="secondary" onClick={ event => processAction(null) }>{ LocalizeText('cancel') }</Button>
                         <Button fullWidth variant="success" onClick={ event => processAction('save_bot_motto') }>{ LocalizeText('save') }</Button>
-                    </Flex>
+                    </div>
                 </Column> }
         </ContextMenuView>
     );
-}
+};

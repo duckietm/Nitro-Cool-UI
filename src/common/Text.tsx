@@ -2,11 +2,11 @@ import { FC, useMemo } from 'react';
 import { Base, BaseProps } from './Base';
 import { ColorVariantType, FontSizeType, FontWeightType, TextAlignType } from './types';
 
-export interface TextProps extends BaseProps<HTMLDivElement>
-{
+export interface TextProps extends BaseProps<HTMLDivElement> {
     variant?: ColorVariantType;
     fontWeight?: FontWeightType;
     fontSize?: FontSizeType;
+    fontSizeCustom?: number;
     align?: TextAlignType;
     bold?: boolean;
     underline?: boolean;
@@ -20,44 +20,49 @@ export interface TextProps extends BaseProps<HTMLDivElement>
     textBreak?: boolean;
 }
 
-export const Text: FC<TextProps> = props =>
-{
-    const { variant = 'black', fontWeight = null, fontSize = 0, align = null, bold = false, underline = false, italics = false, truncate = false, center = false, textEnd = false, small = false, wrap = false, noWrap = false, textBreak = false, ...rest } = props;
+export const Text: FC<TextProps> = props => {
+    const {
+        variant = 'black',
+        fontWeight = null,
+        fontSize = 0,
+        fontSizeCustom,
+        align = null,
+        bold = false,
+        underline = false,
+        italics = false,
+        truncate = false,
+        center = false,
+        textEnd = false,
+        small = false,
+        wrap = false,
+        noWrap = false,
+        textBreak = false,
+        ...rest
+    } = props;
 
-    const getClassNames = useMemo(() =>
-    {
-        const newClassNames: string[] = [ 'd-inline' ];
+    const getClassNames = useMemo(() => {
+        const newClassNames: string[] = ['inline'];
 
-        if(variant) newClassNames.push('text-' + variant);
-
-        if(bold) newClassNames.push('fw-bold');
-
-        if(fontWeight) newClassNames.push('fw-' + fontWeight);
-
-        if(fontSize) newClassNames.push('fs-' + fontSize);
-
-        if(align) newClassNames.push('text-' + align);
-
-        if(underline) newClassNames.push('text-decoration-underline');
-
-        if(italics) newClassNames.push('fst-italic');
-
-        if(truncate) newClassNames.push('text-truncate');
-
-        if(center) newClassNames.push('text-center');
-
-        if(textEnd) newClassNames.push('text-end');
-
-        if(small) newClassNames.push('small');
-
-        if(wrap) newClassNames.push('text-wrap');
-
-        if(noWrap) newClassNames.push('text-nowrap');
-
-        if(textBreak) newClassNames.push('text-break');
+        if (variant) newClassNames.push('text-' + variant);
+        if (bold) newClassNames.push('font-bold');
+        if (fontWeight) newClassNames.push('font-' + fontWeight);
+        if (fontSize) newClassNames.push('fs-' + fontSize);
+        if (fontSizeCustom) newClassNames.push('fs-custom');
+        if (align) newClassNames.push('text-' + align);
+        if (underline) newClassNames.push('underline');
+        if (italics) newClassNames.push('italic');
+        if (truncate) newClassNames.push('text-truncate');
+        if (center) newClassNames.push('text-center');
+        if (textEnd) newClassNames.push('text-end');
+        if (small) newClassNames.push('text-sm');
+        if (wrap) newClassNames.push('text-wrap');
+        if (noWrap) newClassNames.push('text-nowrap');
+        if (textBreak) newClassNames.push('text-break');
 
         return newClassNames;
-    }, [ variant, fontWeight, fontSize, align, bold, underline, italics, truncate, center, textEnd, small, wrap, noWrap, textBreak ]);
+    }, [variant, fontWeight, fontSize, fontSizeCustom, align, bold, underline, italics, truncate, center, textEnd, small, wrap, noWrap, textBreak]);
 
-    return <Base classNames={ getClassNames } { ...rest } />;
-}
+    const style = fontSizeCustom ? { '--font-size': `${fontSizeCustom}px` } as React.CSSProperties : undefined;
+
+    return <Base classNames={getClassNames} style={style} {...rest} />;
+};

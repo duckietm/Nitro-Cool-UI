@@ -1,8 +1,10 @@
-import { Dispose, DropBounce, EaseOut, JumpBy, Motions, NitroToolbarAnimateIconEvent, PerkAllowancesMessageEvent, PerkEnum, Queue, Wait } from '@nitrots/nitro-renderer';
+import { CreateLinkEvent, Dispose, DropBounce, EaseOut, GetSessionDataManager, JumpBy, Motions, NitroToolbarAnimateIconEvent, PerkAllowancesMessageEvent, PerkEnum, Queue, Wait } from '@nitrots/nitro-renderer';
+import { AnimatePresence, motion } from 'framer-motion';
 import { FC, useState } from 'react';
-import { CreateLinkEvent, GetConfiguration, GetSessionDataManager, MessengerIconState, OpenMessengerChat, VisitDesktop } from '../../api';
-import { Base, Flex, LayoutAvatarImageView, LayoutItemCountView, TransitionAnimation, TransitionAnimationTypes } from '../../common';
-import { useAchievements, useFriends, useInventoryUnseenTracker, useMessageEvent, useMessenger, useRoomEngineEvent, useSessionInfo } from '../../hooks';
+import { GetConfigurationValue, MessengerIconState, OpenMessengerChat, VisitDesktop } from '../../api';
+import { Flex, LayoutAvatarImageView, LayoutItemCountView } from '../../common';
+import { useAchievements, useFriends, useInventoryUnseenTracker, useMessageEvent, useMessenger, useNitroEvent, useSessionInfo } from '../../hooks';
+import { ToolbarItemView } from './ToolbarItemView';
 import { ToolbarMeView } from './ToolbarMeView';
 
 export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
@@ -16,22 +18,20 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
     const { requests = [] } = useFriends();
     const { iconState = MessengerIconState.HIDDEN } = useMessenger();
     const isMod = GetSessionDataManager().isModerator;
-    
+
     useMessageEvent<PerkAllowancesMessageEvent>(PerkAllowancesMessageEvent, event =>
     {
-        const parser = event.getParser();
-
-        setUseGuideTool(parser.isAllowed(PerkEnum.USE_GUIDE_TOOL));
+        setUseGuideTool(event.getParser().isAllowed(PerkEnum.USE_GUIDE_TOOL));
     });
 
-    useRoomEngineEvent<NitroToolbarAnimateIconEvent>(NitroToolbarAnimateIconEvent.ANIMATE_ICON, event =>
+    useNitroEvent<NitroToolbarAnimateIconEvent>(NitroToolbarAnimateIconEvent.ANIMATE_ICON, event =>
     {
         const animationIconToToolbar = (iconName: string, image: HTMLImageElement, x: number, y: number) =>
         {
             const target = (document.body.getElementsByClassName(iconName)[0] as HTMLElement);
 
             if(!target) return;
-            
+
             image.className = 'toolbar-icon-animation';
             image.style.visibility = 'visible';
             image.style.left = (x + 'px');
@@ -58,54 +58,56 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
             const motion = new Queue(new EaseOut(new JumpBy(image, wait, ((targetBounds.x - imageBounds.x) + height), (targetBounds.y - imageBounds.y), 100, 1), 1), new Dispose(image));
 
             Motions.runMotion(motion);
-        }
+        };
 
         animationIconToToolbar('icon-inventory', event.image, event.x, event.y);
     });
 
     return (
         <>
-            <TransitionAnimation type={ TransitionAnimationTypes.FADE_IN } inProp={ isMeExpanded } timeout={ 300 }>
-                <ToolbarMeView useGuideTool={ useGuideTool } unseenAchievementCount={ getTotalUnseen } setMeExpanded={ setMeExpanded } />
-            </TransitionAnimation>
-            <Flex alignItems="center" justifyContent="between" gap={ 2 } className="nitro-toolbar py-1 px-3">
-                <Flex gap={ 2 } alignItems="center" className="widthsizemax">
+            <AnimatePresence> { isMeExpanded && <motion.div initial={ { opacity: 0 }} animate={ { opacity: 1 }} exit={ { opacity: 0 }}>
+					<ToolbarMeView useGuideTool={ useGuideTool } unseenAchievementCount={ getTotalUnseen } setMeExpanded={ setMeExpanded } />
+				</motion.div> }
+            </AnimatePresence>
+            <Flex alignItems="center" className="absolute bottom-[0] left-[0] w-full h-[55px] bg-[rgba(28,_28,_32,_.95)] [box-shadow:inset_0_5px_#22222799,_inset_0_-4px_#12121599] py-1 px-3" gap={ 2 } justifyContent="between">
+                <Flex alignItems="center" gap={ 2 }>
                     <Flex alignItems="center" gap={ 2 }>
-                        <Flex center pointer className={ 'navigation-item item-avatar ' + (isMeExpanded ? 'active ' : '') } onClick={ event => setMeExpanded(!isMeExpanded) }>
-                            <LayoutAvatarImageView figure={ userFigure } headOnly={ true } direction={ 2 } position="absolute" />
+                        <Flex center pointer className={ 'relative w-[50px] h-[45px] overflow-hidden ' + (isMeExpanded ? 'active ' : '') } onClick={ event => setMeExpanded(!isMeExpanded) }>
+                            <LayoutAvatarImageView className="-ml-[5px] mt-[25px]" direction={ 2 } figure={ userFigure } position="absolute" />
                             { (getTotalUnseen > 0) &&
                                 <LayoutItemCountView count={ getTotalUnseen } /> }
                         </Flex>
                         { isInRoom &&
-                            <Base pointer className="navigation-item icon icon-habbo click-box" onClick={ event => VisitDesktop() } /> }
+                            <ToolbarItemView icon="habbo" onClick={ event => VisitDesktop() } /> }
                         { !isInRoom &&
-                            <Base pointer className="navigation-item icon icon-house click-box" onClick={ event => CreateLinkEvent('navigator/goto/home') } /> }
-                        <Base pointer className="navigation-item icon icon-rooms click-box" onClick={ event => CreateLinkEvent('navigator/toggle') } />
-                        { GetConfiguration('game.center.enabled') && <Base pointer className="navigation-item icon icon-game click-box" onClick={ event => CreateLinkEvent('games/toggle') } /> }
-                        <Base pointer className="navigation-item icon icon-catalog click-box" onClick={ event => CreateLinkEvent('catalog/toggle') } />
-                        <Base pointer className="navigation-item icon icon-inventory click-box" onClick={ event => CreateLinkEvent('inventory/toggle') }>
+                            <ToolbarItemView icon="house" onClick={ event => CreateLinkEvent('navigator/goto/home') } /> }
+                        <ToolbarItemView icon="rooms" onClick={ event => CreateLinkEvent('navigator/toggle') } />
+                        { GetConfigurationValue('game.center.enabled') &&
+                            <ToolbarItemView icon="game" onClick={ event => CreateLinkEvent('games/toggle') } /> }
+                        <ToolbarItemView icon="catalog" onClick={ event => CreateLinkEvent('catalog/toggle') } />
+                        <ToolbarItemView icon="inventory" onClick={ event => CreateLinkEvent('inventory/toggle') }>
                             { (getFullCount > 0) &&
                                 <LayoutItemCountView count={ getFullCount } /> }
-                        </Base>
+                        </ToolbarItemView>
                         { isInRoom &&
-                            <Base pointer className="navigation-item icon icon-camera click-box" onClick={ event => CreateLinkEvent('camera/toggle') } /> }
+                            <ToolbarItemView icon="camera" onClick={ event => CreateLinkEvent('camera/toggle') } /> }
                         { isMod &&
-                            <Base pointer className="navigation-item icon icon-modtools click-box" onClick={ event => CreateLinkEvent('mod-tools/toggle') } /> }
+                            <ToolbarItemView icon="modtools" onClick={ event => CreateLinkEvent('mod-tools/toggle') } /> }
                     </Flex>
                     <Flex alignItems="center" id="toolbar-chat-input-container" />
                 </Flex>
                 <Flex alignItems="center" gap={ 2 }>
                     <Flex gap={ 2 }>
-                        <Base pointer className="navigation-item icon icon-friendall click-box friendsmovilgen" onClick={ event => CreateLinkEvent('friends/toggle') }>
+                        <ToolbarItemView icon="friendall" onClick={ event => CreateLinkEvent('friends/toggle') }>
                             { (requests.length > 0) &&
                                 <LayoutItemCountView count={ requests.length } /> }
-                        </Base>
+                        </ToolbarItemView>
                         { ((iconState === MessengerIconState.SHOW) || (iconState === MessengerIconState.UNREAD)) &&
-                            <Base pointer className={ `navigation-item icon icon-message click-box mensajesmovilgen ${ (iconState === MessengerIconState.UNREAD) && 'is-unseen' }` } onClick={ event => OpenMessengerChat() } /> }
+                            <ToolbarItemView className={ (iconState === MessengerIconState.UNREAD) && 'is-unseen' } icon="message" onClick={ event => OpenMessengerChat() } /> }
                     </Flex>
-                    <Base id="toolbar-friend-bar-container" className="d-none d-lg-block" />
+                    <div className="hidden lg:block" id="toolbar-friend-bar-container" />
                 </Flex>
             </Flex>
         </>
     );
-}
+};

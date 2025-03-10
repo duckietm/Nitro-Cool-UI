@@ -23,21 +23,22 @@ export const Grid: FC<GridProps> = props =>
     {
         const newClassNames: string[] = [];
 
+
         if(inline) newClassNames.push('inline-grid');
-        else newClassNames.push('grid');
+        else newClassNames.push('grid grid-rows-[repeat(var(--bs-rows,_1),_1fr)] grid-cols-[repeat(var(--bs-columns,_12),_1fr)]');
 
         if(gap) newClassNames.push('gap-' + gap);
         else if(gap === 0) newClassNames.push('gap-0');
 
-        if(maxContent) newClassNames.push('flex-basis-max-content');
+        if(maxContent) newClassNames.push('[flex-basis:max-content]');
 
-        if(alignSelf) newClassNames.push('align-self-' + alignSelf);
+        if(alignSelf) newClassNames.push('self-' + alignSelf);
 
-        if(alignItems) newClassNames.push('align-items-' + alignItems);
+        if(alignItems) newClassNames.push('items-' + alignItems);
 
-        if(justifyContent) newClassNames.push('justify-content-' + justifyContent);
+        if(justifyContent) newClassNames.push('justify-' + justifyContent);
 
-        if(!alignItems && !justifyContent && center) newClassNames.push('align-items-center', 'justify-content-center');
+        if(!alignItems && !justifyContent && center) newClassNames.push('items-center', 'justify-center');
 
         if(classNames.length) newClassNames.push(...classNames);
 
@@ -57,7 +58,7 @@ export const Grid: FC<GridProps> = props =>
 
     return (
         <GridContextProvider value={ { isCssGrid: true } }>
-            <Base fullHeight={ fullHeight } classNames={ getClassNames } style={ getStyle } { ...rest } />
+            <Base classNames={ getClassNames } fullHeight={ fullHeight } style={ getStyle } { ...rest } />
         </GridContextProvider>
     );
-}
+};

@@ -1,12 +1,12 @@
-import { CraftableProductsEvent, CraftComposer, CraftingRecipeEvent, CraftingRecipeIngredientParser, CraftingRecipesAvailableEvent, CraftingResultEvent, GetCraftableProductsComposer, GetCraftingRecipeComposer, RoomEngineTriggerWidgetEvent, RoomWidgetEnum } from '@nitrots/nitro-renderer';
+import { CraftableProductsEvent, CraftComposer, CraftingRecipeEvent, CraftingRecipeIngredientParser, CraftingRecipesAvailableEvent, CraftingResultEvent, GetCraftableProductsComposer, GetCraftingRecipeComposer, GetRoomContentLoader, GetRoomEngine, RoomEngineTriggerWidgetEvent, RoomWidgetEnum } from '@nitrots/nitro-renderer';
 import { useEffect, useState } from 'react';
-import { GetRoomEngine, ICraftingIngredient, ICraftingRecipe, LocalizeText, SendMessageComposer } from '../../../../api';
-import { useMessageEvent, useRoomEngineEvent } from '../../../events';
+import { ICraftingIngredient, ICraftingRecipe, LocalizeText, SendMessageComposer } from '../../../../api';
+import { useMessageEvent, useNitroEvent } from '../../../events';
 import { useInventoryFurni } from '../../../inventory';
 import { useNotification } from './../../../notification';
 
 const useFurnitureCraftingWidgetState = () =>
-{    
+{
     const [ objectId, setObjectId ] = useState(-1);
     const [ recipes, setRecipes ] = useState<ICraftingRecipe[]>([]);
     const [ selectedRecipe, setSelectedRecipe ] = useState<ICraftingRecipe>(null);
@@ -43,15 +43,15 @@ const useFurnitureCraftingWidgetState = () =>
     const selectRecipe = (recipe: ICraftingRecipe) =>
     {
         setSelectedRecipe(recipe);
- 
+
         const cache = cachedIngredients.get(recipe.name);
 
         if(!cache) SendMessageComposer(new GetCraftingRecipeComposer(recipe.name));
-    }
+    };
 
-    useRoomEngineEvent<RoomEngineTriggerWidgetEvent>(RoomEngineTriggerWidgetEvent.OPEN_WIDGET, event => 
+    useNitroEvent<RoomEngineTriggerWidgetEvent>(RoomEngineTriggerWidgetEvent.OPEN_WIDGET, event =>
     {
-        if (event.widget !== RoomWidgetEnum.CRAFTING) return;
+        if(event.widget !== RoomWidgetEnum.CRAFTING) return;
 
         setObjectId(event.objectId);
         resetData();
@@ -62,7 +62,7 @@ const useFurnitureCraftingWidgetState = () =>
     {
         const parser = event.getParser();
 
-        if (!parser.isActive()) 
+        if(!parser.isActive())
         {
             setObjectId(-1);
 
@@ -76,7 +76,7 @@ const useFurnitureCraftingWidgetState = () =>
             for(const recipe of parser.recipes)
             {
                 //@ts-ignore
-                const itemId = GetRoomEngine().roomContentLoader._activeObjectTypeIds.get(recipe.itemName);
+                const itemId = GetRoomContentLoader()._activeObjectTypeIds.get(recipe.itemName);
                 const iconUrl = GetRoomEngine().getFurnitureFloorIconUrl(itemId);
 
                 newValue.push({
@@ -131,14 +131,14 @@ const useFurnitureCraftingWidgetState = () =>
             for(const name of ingredientNames)
             {
                 //@ts-ignore
-                const itemId = GetRoomEngine().roomContentLoader._activeObjectTypeIds.get(name);
+                const itemId = GetRoomContentLoader()._activeObjectTypeIds.get(name);
                 const iconUrl = GetRoomEngine().getFurnitureFloorIconUrl(itemId);
 
                 const inventoryItems = getItemsByType(itemId);
 
                 let amountAvailable = 0;
 
-                if (inventoryItems) for (const inventoryItem of inventoryItems) amountAvailable += inventoryItem.items.length;
+                if(inventoryItems) for(const inventoryItem of inventoryItems) amountAvailable += inventoryItem.items.length;
 
                 newValue.push({
                     name: name,
@@ -161,6 +161,6 @@ const useFurnitureCraftingWidgetState = () =>
     }, [ objectId, activate, deactivate ]);
 
     return { objectId, recipes, ingredients, selectedRecipe, requiredIngredients, isCrafting, selectRecipe, craft, onClose };
-}
+};
 
 export const useFurnitureCraftingWidget = useFurnitureCraftingWidgetState;

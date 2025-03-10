@@ -1,5 +1,4 @@
-import { FurnitureListItemParser, IObjectData } from '@nitrots/nitro-renderer';
-import { GetRoomEngine } from '../nitro';
+import { FurnitureListItemParser, GetRoomEngine, IObjectData } from '@nitrots/nitro-renderer';
 import { FurniCategory } from './FurniCategory';
 import { FurnitureItem } from './FurnitureItem';
 import { GroupItem } from './GroupItem';
@@ -36,7 +35,7 @@ const addSingleFurnitureItem = (set: GroupItem[], item: FurnitureItem, unseen: b
     }
 
     return groupItem;
-}
+};
 
 const addGroupableFurnitureItem = (set: GroupItem[], item: FurnitureItem, unseen: boolean) =>
 {
@@ -86,7 +85,7 @@ const addGroupableFurnitureItem = (set: GroupItem[], item: FurnitureItem, unseen
             const index = set.indexOf(existingGroup);
 
             if(index >= 0) set.splice(index, 1);
-            
+
             set.unshift(existingGroup);
         }
 
@@ -109,7 +108,7 @@ const addGroupableFurnitureItem = (set: GroupItem[], item: FurnitureItem, unseen
     }
 
     return existingGroup;
-}
+};
 
 export const addFurnitureItem = (set: GroupItem[], item: FurnitureItem, unseen: boolean) =>
 {
@@ -121,7 +120,7 @@ export const addFurnitureItem = (set: GroupItem[], item: FurnitureItem, unseen: 
     {
         addGroupableFurnitureItem(set, item, unseen);
     }
-}
+};
 
 export const mergeFurniFragments = (fragment: Map<number, FurnitureListItemParser>, totalFragments: number, fragmentNumber: number, fragments: Map<number, FurnitureListItemParser>[]) =>
 {
@@ -146,7 +145,7 @@ export const mergeFurniFragments = (fragment: Map<number, FurnitureListItemParse
     fragments = null;
 
     return merged;
-}
+};
 
 export const getAllItemIds = (groupItems: GroupItem[]) =>
 {
@@ -169,4 +168,4 @@ export const getAllItemIds = (groupItems: GroupItem[]) =>
     }
 
     return itemIds;
-}
+};

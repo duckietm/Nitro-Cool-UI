@@ -1,6 +1,5 @@
-import { IssueMessageData } from '@nitrots/nitro-renderer';
+import { GetSessionDataManager, IssueMessageData } from '@nitrots/nitro-renderer';
 import { FC, useState } from 'react';
-import { GetSessionDataManager } from '../../../../api';
 import { NitroCardContentView, NitroCardHeaderView, NitroCardTabsItemView, NitroCardTabsView, NitroCardView } from '../../../../common';
 import { useModTools } from '../../../../hooks';
 import { ModToolsIssueInfoView } from './ModToolsIssueInfoView';
@@ -41,7 +40,7 @@ export const ModToolsTicketsView: FC<ModToolsTicketsViewProps> = props =>
 
             return newValue;
         });
-    }
+    };
 
     const handleIssue = (issueId: number) =>
     {
@@ -54,20 +53,20 @@ export const ModToolsTicketsView: FC<ModToolsTicketsViewProps> = props =>
             else newValue.splice(existingIndex, 1);
 
             return newValue;
-        })
-    }
+        });
+    };
 
     const CurrentTabComponent = () =>
     {
         switch(currentTab)
         {
             case 0: return <ModToolsOpenIssuesTabView openIssues={ openIssues }/>;
-            case 1: return <ModToolsMyIssuesTabView myIssues={ myIssues } handleIssue={ handleIssue }/>;
+            case 1: return <ModToolsMyIssuesTabView handleIssue={ handleIssue } myIssues={ myIssues }/>;
             case 2: return <ModToolsPickedIssuesTabView pickedIssues={ pickedIssues }/>;
         }
 
         return null;
-    }
+    };
 
     return (
         <>
@@ -88,4 +87,4 @@ export const ModToolsTicketsView: FC<ModToolsTicketsViewProps> = props =>
             { issueInfoWindows && (issueInfoWindows.length > 0) && issueInfoWindows.map(issueId => <ModToolsIssueInfoView key={ issueId } issueId={ issueId } onIssueInfoClosed={ closeIssue } />) }
         </>
     );
-}
+};

@@ -1,6 +1,6 @@
-import { ContextMenuEnum, CustomUserNotificationMessageEvent, RoomObjectCategory } from '@nitrots/nitro-renderer';
+import { ContextMenuEnum, CustomUserNotificationMessageEvent, GetSessionDataManager, RoomObjectCategory } from '@nitrots/nitro-renderer';
 import { FC } from 'react';
-import { GetGroupInformation, GetSessionDataManager, LocalizeText } from '../../../../../api';
+import { GetGroupInformation, LocalizeText } from '../../../../../api';
 import { EFFECTBOX_OPEN, GROUP_FURNITURE, MONSTERPLANT_SEED_CONFIRMATION, MYSTERYTROPHY_OPEN_DIALOG, PURCHASABLE_CLOTHING_CONFIRMATION, useFurnitureContextMenuWidget, useMessageEvent, useNotification } from '../../../../../hooks';
 import { ContextMenuHeaderView } from '../../context-menu/ContextMenuHeaderView';
 import { ContextMenuListItemView } from '../../context-menu/ContextMenuListItemView';
@@ -52,7 +52,7 @@ export const FurnitureContextMenuView: FC<{}> = props =>
                 <FurnitureMysteryTrophyOpenDialogView objectId={ confirmingObjectId } onClose={ closeConfirm } /> }
             <FurnitureMysteryBoxOpenDialogView ownerId={ objectOwnerId } />
             { (objectId >= 0) && mode &&
-                <ContextMenuView objectId={ objectId } category={ RoomObjectCategory.FLOOR } onClose={ onClose } fades={ true }>
+                <ContextMenuView category={ RoomObjectCategory.FLOOR } fades={ true } objectId={ objectId } onClose={ onClose }>
                     { (mode === ContextMenuEnum.FRIEND_FURNITURE) &&
                         <>
                             <ContextMenuHeaderView>
@@ -126,5 +126,5 @@ export const FurnitureContextMenuView: FC<{}> = props =>
                         </> }
                 </ContextMenuView> }
         </>
-    )
-}
+    );
+};

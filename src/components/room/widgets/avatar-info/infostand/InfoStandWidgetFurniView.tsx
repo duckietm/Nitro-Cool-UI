@@ -1,8 +1,10 @@
-import { CrackableDataType, GroupInformationComposer, GroupInformationEvent, NowPlayingEvent, RoomControllerLevel, RoomObjectCategory, RoomObjectOperationType, RoomObjectVariable, RoomWidgetEnumItemExtradataParameter, RoomWidgetFurniInfoUsagePolicyEnum, SetObjectDataMessageComposer, SongInfoReceivedEvent, StringDataType } from '@nitrots/nitro-renderer';
+import { CrackableDataType, CreateLinkEvent, GetRoomEngine, GetSoundManager, GroupInformationComposer, GroupInformationEvent, NowPlayingEvent, RoomControllerLevel, RoomObjectCategory, RoomObjectOperationType, RoomObjectVariable, RoomWidgetEnumItemExtradataParameter, RoomWidgetFurniInfoUsagePolicyEnum, SetObjectDataMessageComposer, SongInfoReceivedEvent, StringDataType } from '@nitrots/nitro-renderer';
 import { FC, useCallback, useEffect, useState } from 'react';
-import { AvatarInfoFurni, CreateLinkEvent, GetGroupInformation, GetNitroInstance, GetRoomEngine, LocalizeText, SendMessageComposer } from '../../../../../api';
-import { Base, Button, Column, Flex, LayoutBadgeImageView, LayoutLimitedEditionCompactPlateView, LayoutRarityLevelView, Text, UserProfileIconView } from '../../../../../common';
-import { useMessageEvent, useRoom, useSoundEvent } from '../../../../../hooks';
+import { FaTimes } from 'react-icons/fa';
+import { AvatarInfoFurni, GetGroupInformation, LocalizeText, SendMessageComposer } from '../../../../../api';
+import { Button, Column, Flex, LayoutBadgeImageView, LayoutLimitedEditionCompactPlateView, LayoutRarityLevelView, LayoutRoomObjectImageView, Text, UserProfileIconView } from '../../../../../common';
+import { useMessageEvent, useNitroEvent, useRoom } from '../../../../../hooks';
+import { NitroInput } from '../../../../../layout';
 
 interface InfoStandWidgetFurniViewProps
 {
@@ -38,18 +40,17 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
     const [ songId, setSongId ] = useState<number>(-1);
     const [ songName, setSongName ] = useState<string>('');
     const [ songCreator, setSongCreator ] = useState<string>('');
-	const [itemLocation, setItemLocation] = useState<{ x: number; y: number; z: number; }>({ x: -1, y: -1, z: -1 });
 
-    useSoundEvent<NowPlayingEvent>(NowPlayingEvent.NPE_SONG_CHANGED, event =>
+    useNitroEvent<NowPlayingEvent>(NowPlayingEvent.NPE_SONG_CHANGED, event =>
     {
         setSongId(event.id);
     }, (isJukeBox || isSongDisk));
 
-    useSoundEvent<NowPlayingEvent>(SongInfoReceivedEvent.SIR_TRAX_SONG_INFO_RECEIVED, event =>
+    useNitroEvent<NowPlayingEvent>(SongInfoReceivedEvent.SIR_TRAX_SONG_INFO_RECEIVED, event =>
     {
         if(event.id !== songId) return;
 
-        const songInfo = GetNitroInstance().soundManager.musicController.getSongInfo(event.id);
+        const songInfo = GetSoundManager().musicController.getSongInfo(event.id);
 
         if(!songInfo) return;
 
@@ -75,12 +76,6 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
         let furniIsJukebox = false;
         let furniIsSongDisk = false;
         let furniSongId = -1;
-		
-		const roomObject = GetRoomEngine().getRoomObject( roomSession.roomId, avatarInfo.id, avatarInfo.isWallItem ? RoomObjectCategory.WALL : RoomObjectCategory.FLOOR );
-		const location = roomObject.getLocation();
-		if (location) {
-			setItemLocation({ x: location.x, y: location.y, z: location.z, });
-		}
 
         const isValidController = (avatarInfo.roomControllerLevel >= RoomControllerLevel.GUEST);
 
@@ -113,11 +108,11 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
 
             else if(avatarInfo.extraParam === RoomWidgetEnumItemExtradataParameter.JUKEBOX)
             {
-                const playlist = GetNitroInstance().soundManager.musicController.getRoomItemPlaylist();
+                const playlist = GetSoundManager().musicController.getRoomItemPlaylist();
 
                 if(playlist)
                 {
-                    furniSongId = playlist.nowPlayingSongId;
+                    furniSongId = playlist.currentSongId;
                 }
 
                 furniIsJukebox = true;
@@ -212,7 +207,7 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
 
     useEffect(() =>
     {
-        const songInfo = GetNitroInstance().soundManager.musicController.getSongInfo(songId);
+        const songInfo = GetSoundManager().musicController.getSongInfo(songId);
 
         setSongName(songInfo?.name ?? '');
         setSongCreator(songInfo?.creator ?? '');
@@ -333,156 +328,148 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
     if(!avatarInfo) return null;
 
     return (
-        <Column gap={ 1 } alignItems="end">
-            <Column className="nitro-infostand">
-                <Column overflow="visible" className="container-fluid content-area" gap={ 1 }>
-                    <Column gap={ 1 }>
-                        <Flex alignItems="center" justifyContent="between" gap={ 1 }>
-                            { !(isSongDisk) && <Text variant="white" wrap>{ avatarInfo.name }</Text> }
-                            { (songName.length > 0) && <Text variant="white" wrap>{ songName }</Text> }
-                            <i className="infostand-close" onClick={ onClose } />
+        <Column alignItems="end" gap={ 1 }>
+            <Column className="relative min-w-[190px] max-w-[190px] z-30 pointer-events-auto bg-[rgba(28,_28,_32,_.95)] [box-shadow:inset_0_5px_#22222799,_inset_0_-4px_#12121599] rounded">
+                <Column className="h-full p-[8px] overflow-auto" gap={ 1 } overflow="visible">
+                    <div className="flex flex-col gap-1">
+                        <Flex alignItems="center" gap={ 1 } justifyContent="between">
+                            <Text small wrap variant="white">{ avatarInfo.name }</Text>
+                            <FaTimes className="cursor-pointer fa-icon" onClick={ onClose } />
                         </Flex>
-                        <hr className="m-0" />
-                    </Column>
-                    <Column gap={ 1 }>
-                        <Flex position="relative" gap={ 1 }>
+                        <hr className="m-0 bg-[#0003] border-[0] opacity-[.5] h-px" />
+                    </div>
+                    <div className="flex flex-col gap-1">
+                        <Flex gap={ 1 } position="relative">
                             { avatarInfo.stuffData.isUnique &&
-                                <div className="position-absolute end-0">
+                                <div className="absolute end-0">
                                     <LayoutLimitedEditionCompactPlateView uniqueNumber={ avatarInfo.stuffData.uniqueNumber } uniqueSeries={ avatarInfo.stuffData.uniqueSeries } />
                                 </div> }
                             { (avatarInfo.stuffData.rarityLevel > -1) &&
-                                <div className="position-absolute end-0">
+                                <div className="absolute end-0">
                                     <LayoutRarityLevelView level={ avatarInfo.stuffData.rarityLevel } />
                                 </div> }
-                            { avatarInfo.image && avatarInfo.image.src.length &&
-                                <img className="d-block mx-auto" src={ avatarInfo.image.src } alt="" /> }
+                            <Flex center fullWidth>
+                                <LayoutRoomObjectImageView category={ avatarInfo.category } objectId={ avatarInfo.id } roomId={ roomSession.roomId } />
+                            </Flex>
                         </Flex>
-                        <hr className="m-0" />
-                    </Column>
-                    <Column gap={ 1 }>
-                        <Text fullWidth wrap textBreak variant="white">{ avatarInfo.description }</Text>
-                        <hr className="m-0" />
-                    </Column>
-                    <Column gap={ 1 }>
-                        <Flex alignItems="center" gap={ 1 }>
+                        <hr className="m-0 bg-[#0003] border-[0] opacity-[.5] h-px" />
+                    </div>
+                    <div className="flex flex-col gap-1">
+                        <Text fullWidth small textBreak wrap variant="white">{ avatarInfo.description }</Text>
+                        <hr className="m-0 bg-[#0003] border-[0] opacity-[.5] h-px" />
+                    </div>
+                    <div className="flex flex-col gap-1">
+                        <div className="flex items-center gap-1">
                             <UserProfileIconView userId={ avatarInfo.ownerId } />
-                            <Text variant="white" wrap>
+                            <Text small wrap variant="white">
                                 { LocalizeText('furni.owner', [ 'name' ], [ avatarInfo.ownerName ]) }
                             </Text>
-                        </Flex>
+                        </div>
                         { (avatarInfo.purchaseOfferId > 0) &&
                             <Flex>
-                                <Button className="volter-button" onClick={ event => processButtonAction('buy_one') }>
+                                <Text pointer small underline variant="white" onClick={ event => processButtonAction('buy_one') }>
                                     { LocalizeText('infostand.button.buy') }
-                                </Button>
+                                </Text>
                             </Flex> }
-                    </Column>
+                    </div>
                     { (isJukeBox || isSongDisk) &&
-                        <Column gap={ 1 }>
-                            <hr className="m-0" />
+                        <div className="flex flex-col gap-1">
+                            <hr className="m-0 bg-[#0003] border-[0] opacity-[.5] h-px" />
                             { (songId === -1) &&
-                                <Text variant="white" small wrap>
+                                <Text small wrap variant="white">
                                     { LocalizeText('infostand.jukebox.text.not.playing') }
                                 </Text> }
                             { !!songName.length &&
-                                <Flex alignItems="center" gap={ 1 }>
-                                    <Base className="icon disk-icon" />
-                                    <Text variant="white" small wrap>
+                                <div className="flex items-center gap-1">
+                                    <div className="icon disk-icon" />
+                                    <Text small wrap variant="white">
                                         { songName }
                                     </Text>
-                                </Flex> }
+                                </div> }
                             { !!songCreator.length &&
-                                <Flex alignItems="center" gap={ 1 }>
-                                    <Base className="icon disk-creator" />
-                                    <Text variant="white" small wrap>
+                                <div className="flex items-center gap-1">
+                                    <div className="icon disk-creator" />
+                                    <Text small wrap variant="white">
                                         { songCreator }
                                     </Text>
-                                </Flex> }
-                        </Column> }
-                    <Column gap={ 1 }>
+                                </div> }
+                        </div> }
+                    <div className="flex flex-col gap-1">
                         { isCrackable &&
                             <>
-                                <hr className="m-0" />
-                                <Text variant="white" wrap>{ LocalizeText('infostand.crackable_furni.hits_remaining', [ 'hits', 'target' ], [ crackableHits.toString(), crackableTarget.toString() ]) }</Text>
+                                <hr className="m-0 bg-[#0003] border-[0] opacity-[.5] h-px" />
+                                <Text small wrap variant="white">{ LocalizeText('infostand.crackable_furni.hits_remaining', [ 'hits', 'target' ], [ crackableHits.toString(), crackableTarget.toString() ]) }</Text>
                             </> }
                         { avatarInfo.groupId > 0 &&
                             <>
-                                <hr className="m-0" />
+                                <hr className="m-0 bg-[#0003] border-[0] opacity-[.5] h-px" />
                                 <Flex pointer alignItems="center" gap={ 2 } onClick={ () => GetGroupInformation(avatarInfo.groupId) }>
                                     <LayoutBadgeImageView badgeCode={ getGroupBadgeCode() } isGroup={ true } />
-                                    <Text variant="white" underline>{ groupName }</Text>
+                                    <Text underline variant="white">{ groupName }</Text>
                                 </Flex>
                             </> }
-							<>
-								<hr className="m-0" />
-								<Text small wrap variant="white">
-								X = {itemLocation.x}  and  Y = {itemLocation.y}<br />
-								BuildHeight = {itemLocation.z < 0.01 ? 0 : itemLocation.z}<br />
-								{ canSeeFurniId && <Text wrap variant="white"> Room Furnishing ID: { avatarInfo.id }</Text> }
-							</Text>
-							</>
-							{itemLocation.x > -1}
                         { godMode &&
                             <>
-                                <hr className="m-0" />
+                                <hr className="m-0 bg-[#0003] border-[0] opacity-[.5] h-px" />
+                                { canSeeFurniId && <Text small wrap variant="white">ID: { avatarInfo.id }</Text> }
                                 { (furniKeys.length > 0) &&
                                     <>
-                                        <hr className="m-0"/>
-                                        <Column gap={ 1 }>
+                                        <hr className="m-0 bg-[#0003] border-[0] opacity-[.5] h-px" />
+                                        <div className="flex flex-col gap-1">
                                             { furniKeys.map((key, index) =>
                                             {
                                                 return (
                                                     <Flex key={ index } alignItems="center" gap={ 1 }>
-                                                        <Text wrap align="end" variant="white" className="col-4">{ key }</Text>
-                                                        <input type="text" className="form-control form-control-sm" value={ furniValues[index] } onChange={ event => onFurniSettingChange(index, event.target.value) }/>
+                                                        <Text small wrap align="end" className="col-span-4" variant="white">{ key }</Text>
+                                                        <NitroInput type="text" value={ furniValues[index] } onChange={ event => onFurniSettingChange(index, event.target.value) } />
                                                     </Flex>);
                                             }) }
-                                        </Column>
+                                        </div>
                                     </> }
                             </> }
                         { (customKeys.length > 0) &&
                             <>
-                                <hr className="m-0 my-1"/>
-                                <Column gap={ 1 }>
+                                <hr className="m-0 bg-[#0003] border-[0] opacity-[.5] h-px" />
+                                <div className="flex flex-col gap-1">
                                     { customKeys.map((key, index) =>
                                     {
                                         return (
                                             <Flex key={ index } alignItems="center" gap={ 1 }>
-                                                <Text small wrap align="end" variant="white" className="col-4">{ key }</Text>
-                                                <input type="text" className="form-control form-control-sm" value={ customValues[index] } onChange={ event => onCustomVariableChange(index, event.target.value) }/>
+                                                <Text small wrap align="end" className="col-span-4" variant="white">{ key }</Text>
+                                                <NitroInput type="text" value={ customValues[index] } onChange={ event => onCustomVariableChange(index, event.target.value) } />
                                             </Flex>);
                                     }) }
-                                </Column>
+                                </div>
                             </> }
-                    </Column>
+                    </div>
                 </Column>
             </Column>
-            <Flex gap={ 2 } justifyContent="end">
+            <Flex gap={ 1 } justifyContent="end">
                 { canMove &&
-                    <Button className="infostand-buttons px-2" onClick={ event => processButtonAction('move') }>
+                    <Button variant="dark" onClick={ event => processButtonAction('move') }>
                         { LocalizeText('infostand.button.move') }
                     </Button> }
                 { canRotate &&
-                    <Button className="infostand-buttons px-2" onClick={ event => processButtonAction('rotate') }>
+                    <Button variant="dark" onClick={ event => processButtonAction('rotate') }>
                         { LocalizeText('infostand.button.rotate') }
                     </Button> }
                 { (pickupMode !== PICKUP_MODE_NONE) &&
-                    <Button className="infostand-buttons px-2" onClick={ event => processButtonAction('pickup') }>
+                    <Button variant="dark" onClick={ event => processButtonAction('pickup') }>
                         { LocalizeText((pickupMode === PICKUP_MODE_EJECT) ? 'infostand.button.eject' : 'infostand.button.pickup') }
                     </Button> }
                 { canUse &&
-                    <Button className="infostand-buttons px-2" onClick={ event => processButtonAction('use') }>
+                    <Button variant="dark" onClick={ event => processButtonAction('use') }>
                         { LocalizeText('infostand.button.use') }
                     </Button> }
                 { ((furniKeys.length > 0 && furniValues.length > 0) && (furniKeys.length === furniValues.length)) &&
-                    <Button className="infostand-buttons px-2" onClick={ () => processButtonAction('save_branding_configuration') }>
+                    <Button variant="dark" onClick={ () => processButtonAction('save_branding_configuration') }>
                         { LocalizeText('save') }
                     </Button> }
                 { ((customKeys.length > 0 && customValues.length > 0) && (customKeys.length === customValues.length)) &&
-                    <Button className="infostand-buttons px-2" onClick={ () => processButtonAction('save_custom_variables') }>
+                    <Button variant="dark" onClick={ () => processButtonAction('save_custom_variables') }>
                         { LocalizeText('save') }
                     </Button> }
             </Flex>
         </Column>
     );
-}
+};

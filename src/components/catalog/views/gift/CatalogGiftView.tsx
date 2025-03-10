@@ -1,10 +1,11 @@
-import { GiftReceiverNotFoundEvent, PurchaseFromCatalogAsGiftComposer } from '@nitrots/nitro-renderer';
+import { GetSessionDataManager, GiftReceiverNotFoundEvent, PurchaseFromCatalogAsGiftComposer } from '@nitrots/nitro-renderer';
 import { ChangeEvent, FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-import { ColorUtils, GetSessionDataManager, LocalizeText, MessengerFriend, ProductTypeEnum, SendMessageComposer } from '../../../../api';
-import { Base, Button, ButtonGroup, Column, Flex, FormGroup, LayoutCurrencyIcon, LayoutFurniImageView, LayoutGiftTagView, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text, classNames } from '../../../../common';
+import { ColorUtils, LocalizeText, MessengerFriend, ProductTypeEnum, SendMessageComposer } from '../../../../api';
+import { Button, Column, Flex, FormGroup, LayoutCurrencyIcon, LayoutFurniImageView, LayoutGiftTagView, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../../common';
 import { CatalogEvent, CatalogInitGiftEvent, CatalogPurchasedEvent } from '../../../../events';
 import { useCatalog, useFriends, useMessageEvent, useUiEvent } from '../../../../hooks';
+import { classNames } from '../../../../layout';
 
 export const CatalogGiftView: FC<{}> = props =>
 {
@@ -22,7 +23,7 @@ export const CatalogGiftView: FC<{}> = props =>
     const [ maxBoxIndex, setMaxBoxIndex ] = useState<number>(0);
     const [ maxRibbonIndex, setMaxRibbonIndex ] = useState<number>(0);
     const [ receiverNotFound, setReceiverNotFound ] = useState<boolean>(false);
-    const { catalogOptions = null, getNodesByOfferId = null } = useCatalog();
+    const { catalogOptions = null } = useCatalog();
     const { friends } = useFriends();
     const { giftConfiguration = null } = catalogOptions;
     const [ boxTypes, setBoxTypes ] = useState<number[]>([]);
@@ -53,16 +54,16 @@ export const CatalogGiftView: FC<{}> = props =>
 
     const boxExtraData = useMemo(() =>
     {
-        if (!giftConfiguration) return '';
+        if(!giftConfiguration) return '';
 
         return ((boxTypes[selectedBoxIndex] * 1000) + giftConfiguration.ribbonTypes[selectedRibbonIndex]).toString();
     }, [ giftConfiguration, selectedBoxIndex, selectedRibbonIndex, boxTypes ]);
 
     const isColorable = useMemo(() =>
     {
-        if (!giftConfiguration) return false;
+        if(!giftConfiguration) return false;
 
-        if (isBoxDefault) return false;
+        if(isBoxDefault) return false;
 
         const boxType = boxTypes[selectedBoxIndex];
 
@@ -72,9 +73,9 @@ export const CatalogGiftView: FC<{}> = props =>
     const colourId = useMemo(() =>
     {
         return isBoxDefault ? boxTypes[selectedBoxIndex] : selectedColorId;
-    },[ isBoxDefault, boxTypes, selectedBoxIndex, selectedColorId ])
+    }, [ isBoxDefault, boxTypes, selectedBoxIndex, selectedColorId ]);
 
-    const allFriends = friends.filter( (friend: MessengerFriend) => friend.id !== -1 );
+    const allFriends = friends.filter((friend: MessengerFriend) => friend.id !== -1);
 
     const onTextChanged = (e: ChangeEvent<HTMLInputElement>) =>
     {
@@ -82,7 +83,7 @@ export const CatalogGiftView: FC<{}> = props =>
 
         let suggestions = [];
 
-        if (value.length > 0)
+        if(value.length > 0)
         {
             suggestions = allFriends.sort().filter((friend: MessengerFriend) => friend.name.includes(value));
         }
@@ -96,7 +97,7 @@ export const CatalogGiftView: FC<{}> = props =>
     {
         setReceiverName(friendName);
         setIsAutocompleteVisible(false);
-    }
+    };
 
     const handleAction = useCallback((action: string) =>
     {
@@ -121,19 +122,10 @@ export const CatalogGiftView: FC<{}> = props =>
                     return;
                 }
 
-                let buyPageId = pageId
-
-                if(buyPageId === -1)
-                {
-                    const nodes = getNodesByOfferId(offerId);
-
-                    if(nodes) buyPageId = nodes[0].pageId;
-                }
-
-                SendMessageComposer(new PurchaseFromCatalogAsGiftComposer(buyPageId, offerId, extraData, receiverName, message, colourId, selectedBoxIndex, selectedRibbonIndex, showMyFace));
+                SendMessageComposer(new PurchaseFromCatalogAsGiftComposer(pageId, offerId, extraData, receiverName, message, colourId, selectedBoxIndex, selectedRibbonIndex, showMyFace));
                 return;
         }
-    }, [ colourId, extraData, maxBoxIndex, maxRibbonIndex, message, offerId, pageId, receiverName, selectedBoxIndex, selectedRibbonIndex, showMyFace, getNodesByOfferId ]);
+    }, [ colourId, extraData, maxBoxIndex, maxRibbonIndex, message, offerId, pageId, receiverName, selectedBoxIndex, selectedRibbonIndex, showMyFace ]);
 
     useMessageEvent<GiftReceiverNotFoundEvent>(GiftReceiverNotFoundEvent, event => setReceiverNotFound(true));
 
@@ -166,20 +158,20 @@ export const CatalogGiftView: FC<{}> = props =>
 
     const createBoxTypes = useCallback(() =>
     {
-        if (!giftConfiguration) return;
+        if(!giftConfiguration) return;
 
         setBoxTypes(prev =>
         {
             let newPrev = [ ...giftConfiguration.boxTypes ];
 
-            newPrev.push(giftConfiguration.defaultStuffTypes[ Math.floor((Math.random() * (giftConfiguration.defaultStuffTypes.length - 1))) ]);
+            newPrev.push(giftConfiguration.defaultStuffTypes[Math.floor((Math.random() * (giftConfiguration.defaultStuffTypes.length - 1)))]);
 
-            setMaxBoxIndex(newPrev.length- 1);
+            setMaxBoxIndex(newPrev.length - 1);
             setMaxRibbonIndex(newPrev.length - 1);
 
             return newPrev;
-        })
-    },[ giftConfiguration ])
+        });
+    }, [ giftConfiguration ]);
 
     useEffect(() =>
     {
@@ -193,8 +185,7 @@ export const CatalogGiftView: FC<{}> = props =>
 
             if(!giftData) continue;
 
-            if (giftData.colors && giftData.colors.length > 0) newColors.push({ id: colorId, color: ColorUtils.makeColorNumberHex(giftData.colors[0]) });
-            else newColors.push({ id: colorId, color: '#000000' });
+            if(giftData.colors && giftData.colors.length > 0) newColors.push({ id: colorId, color: ColorUtils.makeColorNumberHex(giftData.colors[0]) });
         }
 
         createBoxTypes();
@@ -208,10 +199,10 @@ export const CatalogGiftView: FC<{}> = props =>
 
     useEffect(() =>
     {
-        if (!isVisible) return;
+        if(!isVisible) return;
 
         createBoxTypes();
-    },[ createBoxTypes, isVisible ])
+    }, [ createBoxTypes, isVisible ]);
 
     if(!giftConfiguration || !giftConfiguration.isEnabled || !isVisible) return null;
 
@@ -220,79 +211,79 @@ export const CatalogGiftView: FC<{}> = props =>
     const priceText = 'catalog.gift_wrapping_new.' + (isBoxDefault ? 'freeprice' : 'price');
 
     return (
-        <NitroCardView uniqueKey="catalog-gift" className="nitro-catalog-gift" theme="primary-slim">
+        <NitroCardView className="nitro-catalog-gift" theme="primary-slim" uniqueKey="catalog-gift">
             <NitroCardHeaderView headerText={ LocalizeText('catalog.gift_wrapping.title') } onCloseClick={ onClose } />
             <NitroCardContentView className="text-black">
                 <FormGroup column>
                     <Text>{ LocalizeText('catalog.gift_wrapping.receiver') }</Text>
-                    <input type="text" className={ classNames('form-control form-control-sm', receiverNotFound && 'is-invalid') } value={ receiverName } onChange={ (e) => onTextChanged(e) } />
+                    <input className={ classNames('form-control form-control-sm', receiverNotFound && 'is-invalid') } type="text" value={ receiverName } onChange={ (e) => onTextChanged(e) } />
                     { (suggestions.length > 0 && isAutocompleteVisible) &&
                         <Column className="autocomplete-gift-container">
                             { suggestions.map((friend: MessengerFriend) => (
-                                <Base key={ friend.id } className="autocomplete-gift-item" onClick={ (e) => selectedReceiverName(friend.name) }>{ friend.name }</Base>
+                                <div key={ friend.id } className="autocomplete-gift-item" onClick={ (e) => selectedReceiverName(friend.name) }>{ friend.name }</div>
                             )) }
                         </Column>
                     }
                     { receiverNotFound &&
-                        <Base className="invalid-feedback">{ LocalizeText('catalog.gift_wrapping.receiver_not_found.title') }</Base> }
+                        <div className="invalid-feedback">{ LocalizeText('catalog.gift_wrapping.receiver_not_found.title') }</div> }
                 </FormGroup>
-                <LayoutGiftTagView figure={ GetSessionDataManager().figure } userName={ GetSessionDataManager().userName } message={ message } editable={ true } onChange={ (value) => setMessage(value) } />
-                <Base className="form-check">
-                    <input className="form-check-input" type="checkbox" name="showMyFace" checked={ showMyFace } onChange={ (e) => setShowMyFace(value => !value) } />
+                <LayoutGiftTagView editable={ true } figure={ GetSessionDataManager().figure } message={ message } userName={ GetSessionDataManager().userName } onChange={ (value) => setMessage(value) } />
+                <div className="form-check">
+                    <input checked={ showMyFace } className="form-check-input" name="showMyFace" type="checkbox" onChange={ (e) => setShowMyFace(value => !value) } />
                     <label className="form-check-label">{ LocalizeText('catalog.gift_wrapping.show_face.title') }</label>
-                </Base>
-                <Flex alignItems="center" gap={ 2 }>
+                </div>
+                <div className="items-center gap-2">
                     { selectedColorId &&
-                        <Base className="gift-preview">
-                            <LayoutFurniImageView productType={ ProductTypeEnum.FLOOR } productClassId={ colourId } extraData={ boxExtraData } />
-                        </Base> }
-                    <Column gap={ 1 }>
-                        <Flex gap={ 2 }>
-                            <ButtonGroup>
+                        <div className="gift-preview">
+                            <LayoutFurniImageView extraData={ boxExtraData } productClassId={ colourId } productType={ ProductTypeEnum.FLOOR } />
+                        </div> }
+                    <div className="flex flex-col gap-1">
+                        <div className="flex gap-2">
+                            <div className="relative inline-flex align-middle">
                                 <Button variant="primary" onClick={ () => handleAction('prev_box') }>
                                     <FaChevronLeft className="fa-icon" />
                                 </Button>
                                 <Button variant="primary" onClick={ () => handleAction('next_box') }>
                                     <FaChevronRight className="fa-icon" />
                                 </Button>
-                            </ButtonGroup>
-                            <Column gap={ 1 }>
+                            </div>
+                            <div className="flex flex-col gap-1">
                                 <Text fontWeight="bold">{ LocalizeText(boxName) }</Text>
-                                <Flex alignItems="center" gap={ 1 }>
+                                <div className="flex items-center gap-1">
                                     { LocalizeText(priceText, [ 'price' ], [ giftConfiguration.price.toString() ]) }
                                     <LayoutCurrencyIcon type={ -1 } />
-                                </Flex>
-                            </Column>
-                        </Flex>
-                        <Flex alignItems="center" gap={ 2 } className={ isColorable ? '' : 'opacity-50 pointer-events-none' }>
-                            <ButtonGroup>
+                                </div>
+                            </div>
+                        </div>
+                        <Flex alignItems="center" className={ isColorable ? '' : 'opacity-50 pointer-events-none' } gap={ 2 }>
+                            <div className="relative inline-flex align-middle">
                                 <Button variant="primary" onClick={ () => handleAction('prev_ribbon') }>
                                     <FaChevronLeft className="fa-icon" />
                                 </Button>
                                 <Button variant="primary" onClick={ () => handleAction('next_ribbon') }>
                                     <FaChevronRight className="fa-icon" />
                                 </Button>
-                            </ButtonGroup>
+                            </div>
                             <Text fontWeight="bold">{ LocalizeText(ribbonName) }</Text>
                         </Flex>
-                    </Column>
-                </Flex>
-                <Column gap={ 1 } className={ isColorable ? '' : 'opacity-50 pointer-events-none' }>
+                    </div>
+                </div>
+                <Column className={ isColorable ? '' : 'opacity-50 pointer-events-none' } gap={ 1 }>
                     <Text fontWeight="bold">
                         { LocalizeText('catalog.gift_wrapping.pick_color') }
                     </Text>
-                    <ButtonGroup fullWidth>
-                        { colors.map(color => <Button key={ color.id } variant="dark" active={ (color.id === selectedColorId) } disabled={ !isColorable } style={ { backgroundColor: color.color } } onClick={ () => setSelectedColorId(color.id) } />) }
-                    </ButtonGroup>
+                    <div className="relative inline-flex align-middle w-full">
+                        { colors.map(color => <Button key={ color.id } active={ (color.id === selectedColorId) } disabled={ !isColorable } style={ { backgroundColor: color.color } } variant="dark" onClick={ () => setSelectedColorId(color.id) } />) }
+                    </div>
                 </Column>
-                <Flex justifyContent="between" alignItems="center">
-                    <Button variant="link" onClick={ onClose } className="text-black">
+                <div className="flex items-center justify-between">
+                    <Button className="text-black" variant="link" onClick={ onClose }>
                         { LocalizeText('cancel') }
                     </Button>
                     <Button variant="success" onClick={ () => handleAction('buy') }>
                         { LocalizeText('catalog.gift_wrapping.give_gift') }
                     </Button>
-                </Flex>
+                </div>
             </NitroCardContentView>
         </NitroCardView>
     );

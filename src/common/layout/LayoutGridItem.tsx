@@ -26,7 +26,8 @@ export const LayoutGridItem: FC<LayoutGridItemProps> = props =>
     {
         const newClassNames: string[] = [ 'layout-grid-item', 'border', 'border-2', 'border-muted', 'rounded' ];
 
-        if(itemActive) newClassNames.push('active');
+
+        if(itemActive) newClassNames.push('!bg-[#ececec] !border-[#fff]');
 
         if(itemUniqueSoldout || (itemUniqueNumber > 0)) newClassNames.push('unique-item');
 
@@ -36,7 +37,7 @@ export const LayoutGridItem: FC<LayoutGridItemProps> = props =>
 
         if(itemHighlight) newClassNames.push('has-highlight');
 
-        if(disabled) newClassNames.push('disabled')
+        if(disabled) newClassNames.push('disabled');
 
         if(itemImage === null) newClassNames.push('icon', 'loading-icon');
 
@@ -59,17 +60,17 @@ export const LayoutGridItem: FC<LayoutGridItemProps> = props =>
     }, [ style, itemImage, itemColor, itemUniqueSoldout, itemUniqueNumber ]);
 
     return (
-        <Column center={ center } pointer position={ position } overflow={ overflow } column={ column } classNames={ getClassNames } style={ getStyle } { ...rest }>
+        <Column pointer center={ center } classNames={ getClassNames } column={ column } overflow={ overflow } position={ position } style={ getStyle } { ...rest }>
             { (itemCount > itemCountMinimum) &&
                 <LayoutItemCountView count={ itemCount } /> }
-            { (itemUniqueNumber > 0) && 
+            { (itemUniqueNumber > 0) &&
                 <>
                     <Base fit className="unique-bg-override" style={ { backgroundImage: `url(${ itemImage })` } } />
-                    <div className="position-absolute bottom-0 unique-item-counter">
+                    <div className="absolute bottom-0 unique-item-counter">
                         <LayoutLimitedEditionStyledNumberView value={ itemUniqueNumber } />
                     </div>
                 </> }
             { children }
         </Column>
     );
-}
+};

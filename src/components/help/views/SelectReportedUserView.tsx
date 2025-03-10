@@ -1,6 +1,6 @@
-import { RoomObjectType } from '@nitrots/nitro-renderer';
+import { GetSessionDataManager, RoomObjectType } from '@nitrots/nitro-renderer';
 import { FC, useMemo, useState } from 'react';
-import { ChatEntryType, GetSessionDataManager, IReportedUser, LocalizeText, ReportState } from '../../../api';
+import { ChatEntryType, IReportedUser, LocalizeText, ReportState } from '../../../api';
 import { AutoGrid, Button, Column, Flex, LayoutGridItem, Text } from '../../../common';
 import { useChatHistory, useHelp } from '../../../hooks';
 
@@ -30,7 +30,7 @@ export const SelectReportedUserView: FC<{}> = props =>
         {
             return { ...prevValue, reportedUserId: userId, currentStep: ReportState.SELECT_CHATS };
         });
-    }
+    };
 
     const selectUser = (userId: number) =>
     {
@@ -40,7 +40,7 @@ export const SelectReportedUserView: FC<{}> = props =>
 
             return userId;
         });
-    }
+    };
 
     const back = () =>
     {
@@ -48,15 +48,15 @@ export const SelectReportedUserView: FC<{}> = props =>
         {
             return { ...prevValue, currentStep: (prevValue.currentStep - 1) };
         });
-    }
+    };
 
     return (
         <>
-            <Column gap={ 1 }>
+            <div className="flex flex-col gap-1">
                 <Text fontSize={ 4 }>{ LocalizeText('help.emergency.main.step.two.title') }</Text>
                 { (availableUsers.length > 0) &&
                     <Text>{ LocalizeText('report.user.pick.user') }</Text> }
-            </Column>
+            </div>
             <Column gap={ 1 } overflow="hidden">
                 { !!!availableUsers.length &&
                     <Text>{ LocalizeText('report.user.error.nolist') }</Text> }
@@ -65,7 +65,7 @@ export const SelectReportedUserView: FC<{}> = props =>
                         { availableUsers.map((user, index) =>
                         {
                             return (
-                                <LayoutGridItem key={ user.id } onClick={ event => selectUser(user.id) } itemActive={ (selectedUserId === user.id) }>
+                                <LayoutGridItem key={ user.id } itemActive={ (selectedUserId === user.id) } onClick={ event => selectUser(user.id) }>
                                     <span dangerouslySetInnerHTML={ { __html: (user.username) } } />
                                 </LayoutGridItem>
                             );
@@ -82,4 +82,4 @@ export const SelectReportedUserView: FC<{}> = props =>
             </Flex>
         </>
     );
-}
+};

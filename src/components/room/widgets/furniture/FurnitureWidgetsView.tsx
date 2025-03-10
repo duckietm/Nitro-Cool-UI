@@ -1,6 +1,5 @@
 import { FC } from 'react';
-import { Base } from '../../../../common';
-import { FurnitureContextMenuView } from './context-menu/FurnitureContextMenuView';
+import { FurnitureAreaHideView } from './FurnitureAreaHideView';
 import { FurnitureBackgroundColorView } from './FurnitureBackgroundColorView';
 import { FurnitureBadgeDisplayView } from './FurnitureBadgeDisplayView';
 import { FurnitureCraftingView } from './FurnitureCraftingView';
@@ -18,12 +17,13 @@ import { FurnitureStackHeightView } from './FurnitureStackHeightView';
 import { FurnitureStickieView } from './FurnitureStickieView';
 import { FurnitureTrophyView } from './FurnitureTrophyView';
 import { FurnitureYoutubeDisplayView } from './FurnitureYoutubeDisplayView';
+import { FurnitureContextMenuView } from './context-menu/FurnitureContextMenuView';
 import { FurniturePlaylistEditorWidgetView } from './playlist-editor/FurniturePlaylistEditorWidgetView';
 
 export const FurnitureWidgetsView: FC<{}> = props =>
 {
     return (
-        <Base fit position="absolute" className="nitro-room-widgets top-0 start-0">
+        <>
             <FurnitureBackgroundColorView />
             <FurnitureBadgeDisplayView />
             <FurnitureCraftingView />
@@ -43,6 +43,7 @@ export const FurnitureWidgetsView: FC<{}> = props =>
             <FurnitureTrophyView />
             <FurnitureContextMenuView />
             <FurnitureYoutubeDisplayView />
-        </Base>
+			<FurnitureAreaHideView />
+        </>
     );
-}
+};

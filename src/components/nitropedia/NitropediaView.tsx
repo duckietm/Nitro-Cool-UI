@@ -1,7 +1,7 @@
-import { ILinkEventTracker, NitroLogger } from '@nitrots/nitro-renderer';
+import { AddLinkEventTracker, ILinkEventTracker, NitroLogger, RemoveLinkEventTracker } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useRef, useState } from 'react';
-import { AddEventLinkTracker, GetConfiguration, OpenUrl, RemoveLinkEventTracker } from '../../api';
-import { Base, NitroCardContentView, NitroCardHeaderView, NitroCardView } from '../../common';
+import { GetConfigurationValue, OpenUrl } from '../../api';
+import { NitroCardContentView, NitroCardHeaderView, NitroCardView } from '../../common';
 
 const NEW_LINE_REGEX = /\n\r|\n|\r/mg;
 
@@ -21,7 +21,7 @@ export const NitropediaView: FC<{}> = props =>
                 const response = await fetch(link);
 
                 if(!response) return;
-        
+
                 const text = await response.text();
                 const splitData = text.split(NEW_LINE_REGEX);
                 const line = splitData.shift().split('|');
@@ -35,7 +35,7 @@ export const NitropediaView: FC<{}> = props =>
                         return {
                             width: parseInt(line[1].split(';')[0]),
                             height: parseInt(line[1].split(';')[1])
-                        }
+                        };
                     }
 
                     return null;
@@ -48,7 +48,7 @@ export const NitropediaView: FC<{}> = props =>
             {
                 NitroLogger.error(`Failed to fetch ${ link }`);
             }
-        }
+        };
 
         const linkTracker: ILinkEventTracker = {
             linkReceived: (url: string) =>
@@ -59,12 +59,12 @@ export const NitropediaView: FC<{}> = props =>
 
                 value.shift();
 
-                openPage(GetConfiguration<string>('habbopages.url') + value.join('/'));
+                openPage(GetConfigurationValue<string>('habbopages.url') + value.join('/'));
             },
             eventUrlPrefix: 'habbopages/'
         };
 
-        AddEventLinkTracker(linkTracker);
+        AddLinkEventTracker(linkTracker);
 
         return () => RemoveLinkEventTracker(linkTracker);
     }, []);
@@ -82,24 +82,24 @@ export const NitropediaView: FC<{}> = props =>
             if(!link || !link.length) return;
 
             OpenUrl(link);
-        }
+        };
 
         document.addEventListener('click', handle);
 
         return () =>
         {
             document.removeEventListener('click', handle);
-        }
+        };
     }, []);
 
     if(!content) return null;
 
     return (
-        <NitroCardView className="nitropedia" theme="primary-slim" style={ dimensions ? { width: dimensions.width, height: dimensions.height } : {} }>
+        <NitroCardView className="nitropedia" style={ dimensions ? { width: dimensions.width, height: dimensions.height } : {} } theme="primary-slim">
             <NitroCardHeaderView headerText={ header } onCloseClick={ () => setContent(null) }/>
             <NitroCardContentView>
-                <Base fit innerRef={ elementRef } className="text-black" dangerouslySetInnerHTML={ { __html: content } } />
+                <div ref={ elementRef } className="text-black size-full" dangerouslySetInnerHTML={ { __html: content } } />
             </NitroCardContentView>
         </NitroCardView>
     );
-}
+};

@@ -1,11 +1,12 @@
 import { GetMarketplaceConfigurationMessageComposer, MakeOfferMessageComposer, MarketplaceConfigurationEvent } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
 import { FurnitureItem, LocalizeText, ProductTypeEnum, SendMessageComposer } from '../../../../../../api';
-import { Base, Button, Column, Grid, LayoutFurniImageView, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../../../../common';
+import { Button, Column, Grid, LayoutFurniImageView, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../../../../common';
 import { CatalogPostMarketplaceOfferEvent } from '../../../../../../events';
 import { useCatalog, useMessageEvent, useNotification, useUiEvent } from '../../../../../../hooks';
+import { NitroInput } from '../../../../../../layout';
 
-export const MarketplacePostOfferView : FC<{}> = props =>
+export const MarketplacePostOfferView: FC<{}> = props =>
 {
     const [ item, setItem ] = useState<FurnitureItem>(null);
     const [ askingPrice, setAskingPrice ] = useState(0);
@@ -23,7 +24,7 @@ export const MarketplacePostOfferView : FC<{}> = props =>
         if(isNaN(newValue) || (newValue === askingPrice)) return;
 
         setAskingPrice(parseInt(price));
-    }
+    };
 
     useMessageEvent<MarketplaceConfigurationEvent>(MarketplaceConfigurationEvent, event =>
     {
@@ -51,7 +52,7 @@ export const MarketplacePostOfferView : FC<{}> = props =>
     useEffect(() =>
     {
         if(!item) return;
-        
+
         return () => setAskingPrice(0);
     }, [ item ]);
 
@@ -71,43 +72,45 @@ export const MarketplacePostOfferView : FC<{}> = props =>
             SendMessageComposer(new MakeOfferMessageComposer(askingPrice, item.isWallItem ? 2 : 1, item.id));
             setItem(null);
         },
-        () => 
+        () =>
         {
-            setItem(null) 
+            setItem(null);
         }, null, null, LocalizeText('inventory.marketplace.confirm_offer.title'));
-    }
-    
+    };
+
     return (
         <NitroCardView className="nitro-catalog-layout-marketplace-post-offer" theme="primary-slim">
             <NitroCardHeaderView headerText={ LocalizeText('inventory.marketplace.make_offer.title') } onCloseClick={ event => setItem(null) } />
             <NitroCardContentView overflow="hidden">
                 <Grid fullHeight>
-                    <Column center className="bg-muted rounded p-2" size={ 4 } overflow="hidden">
-                        <LayoutFurniImageView productType={ item.isWallItem ? ProductTypeEnum.WALL : ProductTypeEnum.FLOOR } productClassId={ item.type } extraData={ item.extra.toString() } />
+                    <Column center className="bg-muted rounded p-2" overflow="hidden" size={ 4 }>
+                        <LayoutFurniImageView extraData={ item.extra.toString() } productClassId={ item.type } productType={ item.isWallItem ? ProductTypeEnum.WALL : ProductTypeEnum.FLOOR } />
                     </Column>
-                    <Column size={ 8 } justifyContent="between" overflow="hidden">
+                    <Column justifyContent="between" overflow="hidden" size={ 8 }>
                         <Column grow gap={ 1 }>
                             <Text fontWeight="bold">{ getFurniTitle }</Text>
-                            <Text truncate shrink>{ getFurniDescription }</Text>
+                            <Text shrink truncate>{ getFurniDescription }</Text>
                         </Column>
                         <Column overflow="auto">
                             <Text italics>
                                 { LocalizeText('inventory.marketplace.make_offer.expiration_info', [ 'time' ], [ marketplaceConfiguration.offerTime.toString() ]) }
                             </Text>
                             <div className="input-group has-validation">
-                                <input className="form-control form-control-sm" type="number" min={ 0 } value={ tempAskingPrice } onChange={ event => updateAskingPrice(event.target.value) } placeholder={ LocalizeText('inventory.marketplace.make_offer.price_request') } />
+
+
+                                <NitroInput min={ 0 } placeholder={ LocalizeText('inventory.marketplace.make_offer.price_request') } type="number" value={ tempAskingPrice } onChange={ event => updateAskingPrice(event.target.value) } />
                                 { ((askingPrice < marketplaceConfiguration.minimumPrice) || isNaN(askingPrice)) &&
-                                    <Base className="invalid-feedback d-block">
+                                    <div className="invalid-feedback d-block">
                                         { LocalizeText('inventory.marketplace.make_offer.min_price', [ 'minprice' ], [ marketplaceConfiguration.minimumPrice.toString() ]) }
-                                    </Base> }
+                                    </div> }
                                 { ((askingPrice > marketplaceConfiguration.maximumPrice) && !isNaN(askingPrice)) &&
-                                    <Base className="invalid-feedback d-block">
+                                    <div className="invalid-feedback d-block">
                                         { LocalizeText('inventory.marketplace.make_offer.max_price', [ 'maxprice' ], [ marketplaceConfiguration.maximumPrice.toString() ]) }
-                                    </Base> }
+                                    </div> }
                                 { (!((askingPrice < marketplaceConfiguration.minimumPrice) || (askingPrice > marketplaceConfiguration.maximumPrice) || isNaN(askingPrice))) &&
-                                    <Base className="invalid-feedback d-block">
+                                    <div className="invalid-feedback d-block">
                                         { LocalizeText('inventory.marketplace.make_offer.final_price', [ 'commission', 'finalprice' ], [ getCommission().toString(), (askingPrice + getCommission()).toString() ]) }
-                                    </Base> }
+                                    </div> }
                             </div>
                             <Button disabled={ ((askingPrice < marketplaceConfiguration.minimumPrice) || (askingPrice > marketplaceConfiguration.maximumPrice) || isNaN(askingPrice)) } onClick={ postItem }>
                                 { LocalizeText('inventory.marketplace.make_offer.post') }
@@ -117,5 +120,5 @@ export const MarketplacePostOfferView : FC<{}> = props =>
                 </Grid>
             </NitroCardContentView>
         </NitroCardView>
-    )
-}
+    );
+};

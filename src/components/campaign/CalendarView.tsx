@@ -1,6 +1,7 @@
+import { GetSessionDataManager } from '@nitrots/nitro-renderer';
 import { FC, useState } from 'react';
-import { CalendarItemState, GetSessionDataManager, ICalendarItem, LocalizeText } from '../../api';
-import { Base, Button, Column, Flex, Grid, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../common';
+import { CalendarItemState, ICalendarItem, LocalizeText } from '../../api';
+import { Button, Column, Grid, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../common';
 import { CalendarItemView } from './CalendarItemView';
 
 interface CalendarViewProps
@@ -32,7 +33,7 @@ export const CalendarView: FC<CalendarViewProps> = props =>
         if(missedDays.includes(day)) return CalendarItemState.STATE_LOCKED_EXPIRED;
 
         return CalendarItemState.STATE_LOCKED_AVAILABLE;
-    }
+    };
 
     const dayMessage = (day: number) =>
     {
@@ -49,7 +50,7 @@ export const CalendarView: FC<CalendarViewProps> = props =>
             default:
                 return LocalizeText('campaign.calendar.info.available.desktop');
         }
-    }
+    };
 
     const onClickNext = () =>
     {
@@ -60,7 +61,7 @@ export const CalendarView: FC<CalendarViewProps> = props =>
         setSelectedDay(nextDay);
 
         if((index + TOTAL_SHOWN_ITEMS) < (nextDay + 1)) setIndex(index + 1);
-    }
+    };
 
     const onClickPrev = () =>
     {
@@ -71,7 +72,7 @@ export const CalendarView: FC<CalendarViewProps> = props =>
         setSelectedDay(prevDay);
 
         if(index > prevDay) setIndex(index - 1);
-    }
+    };
 
     const onClickItem = (item: number) =>
     {
@@ -83,9 +84,9 @@ export const CalendarView: FC<CalendarViewProps> = props =>
 
             return;
         }
-        
+
         setSelectedDay(item);
-    }
+    };
 
     const forceOpen = () =>
     {
@@ -93,51 +94,51 @@ export const CalendarView: FC<CalendarViewProps> = props =>
         const state = getDayState(id);
 
         if(state !== CalendarItemState.STATE_UNLOCKED) openPackage(id, true);
-    }
+    };
 
     return (
         <NitroCardView className="nitro-campaign-calendar" theme="primary-slim">
             <NitroCardHeaderView headerText={ LocalizeText(`campaign.calendar.${ campaignName }.title`) } onCloseClick={ onClose } />
             <NitroCardContentView>
-                <Grid fullHeight={ false } justifyContent="between" alignItems="center">
+                <Grid alignItems="center" fullHeight={ false } justifyContent="between">
                     <Column size={ 1 } />
                     <Column size={ 10 }>
-                        <Flex justifyContent="between" alignItems="center" gap={ 1 }>
-                            <Column gap={ 1 }>
+                        <div className="flex items-center gap-1 justify-between">
+                            <div className="flex flex-col gap-1">
                                 <Text fontSize={ 3 }>{ LocalizeText('campaign.calendar.heading.day', [ 'number' ], [ (selectedDay + 1).toString() ]) }</Text>
                                 <Text>{ dayMessage(selectedDay) }</Text>
-                            </Column>
+                            </div>
                             <div>
                                 { GetSessionDataManager().isModerator &&
                                     <Button variant="danger" onClick={ forceOpen }>Force open</Button> }
                             </div>
-                        </Flex>
+                        </div>
                     </Column>
                     <Column size={ 1 } />
                 </Grid>
-                <Flex fullHeight gap={ 2 }>
-                    <Flex center>
-                        <Base pointer className="campaign-spritesheet prev" onClick={ onClickPrev } />
-                    </Flex>
+                <div className="flex h-full gap-2">
+                    <div className="flex items-center justify-center">
+                        <div className="campaign-spritesheet prev cursor-pointer" onClick={ onClickPrev } />
+                    </div>
                     <Column center fullWidth>
                         <Grid fit columnCount={ TOTAL_SHOWN_ITEMS } gap={ 1 }>
                             { [ ...Array(TOTAL_SHOWN_ITEMS) ].map((e, i) =>
                             {
                                 const day = (index + i);
-                                    
+
                                 return (
                                     <Column key={ i } overflow="hidden">
-                                        <CalendarItemView itemId={ day } state={ getDayState(day) } active={ (selectedDay === day) } product={ receivedProducts.has(day) ? receivedProducts.get(day) : null } onClick={ onClickItem } />
+                                        <CalendarItemView active={ (selectedDay === day) } itemId={ day } product={ receivedProducts.has(day) ? receivedProducts.get(day) : null } state={ getDayState(day) } onClick={ onClickItem } />
                                     </Column>
                                 );
                             }) }
                         </Grid>
                     </Column>
-                    <Flex center>
-                        <Base pointer className="campaign-spritesheet next" onClick={ onClickNext } />
-                    </Flex>
-                </Flex>
+                    <div className="flex items-center justify-center">
+                        <div className="campaign-spritesheet next cursor-pointer" onClick={ onClickNext } />
+                    </div>
+                </div>
             </NitroCardContentView>
         </NitroCardView>
-    )
-}
+    );
+};

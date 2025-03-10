@@ -1,6 +1,6 @@
-import { GuideOnDutyStatusMessageEvent, GuideSessionAttachedMessageEvent, GuideSessionDetachedMessageEvent, GuideSessionEndedMessageEvent, GuideSessionErrorMessageEvent, GuideSessionInvitedToGuideRoomMessageEvent, GuideSessionMessageMessageEvent, GuideSessionOnDutyUpdateMessageComposer, GuideSessionPartnerIsTypingMessageEvent, GuideSessionStartedMessageEvent, ILinkEventTracker, PerkAllowancesMessageEvent, PerkEnum } from '@nitrots/nitro-renderer';
+import { AddLinkEventTracker, GetSessionDataManager, GuideOnDutyStatusMessageEvent, GuideSessionAttachedMessageEvent, GuideSessionDetachedMessageEvent, GuideSessionEndedMessageEvent, GuideSessionErrorMessageEvent, GuideSessionInvitedToGuideRoomMessageEvent, GuideSessionMessageMessageEvent, GuideSessionOnDutyUpdateMessageComposer, GuideSessionPartnerIsTypingMessageEvent, GuideSessionStartedMessageEvent, ILinkEventTracker, PerkAllowancesMessageEvent, PerkEnum, RemoveLinkEventTracker } from '@nitrots/nitro-renderer';
 import { FC, useCallback, useEffect, useState } from 'react';
-import { AddEventLinkTracker, GetConfiguration, GetSessionDataManager, GuideSessionState, GuideToolMessage, GuideToolMessageGroup, LocalizeText, RemoveLinkEventTracker, SendMessageComposer } from '../../api';
+import { GetConfigurationValue, GuideSessionState, GuideToolMessage, GuideToolMessageGroup, LocalizeText, SendMessageComposer } from '../../api';
 import { NitroCardContentView, NitroCardHeaderView, NitroCardView } from '../../common';
 import { GuideToolEvent } from '../../events';
 import { useMessageEvent, useNotification, useUiEvent } from '../../hooks';
@@ -199,7 +199,7 @@ export const GuideToolView: FC<{}> = props =>
     {
         const parser = event.getParser();
 
-        if (parser.roomId !== 0)
+        if(parser.roomId !== 0)
         {
             const messageGroups = [ ...ongoingMessageGroups ];
 
@@ -241,7 +241,7 @@ export const GuideToolView: FC<{}> = props =>
 
         // SOMETHING_WRONG_REQUEST = 0, NO_HELPERS_AVAILABLE = 1, NO_GUARDIANS_AVAILABLE = 2
 
-        switch (parser['errorCode'])
+        switch(parser['errorCode'])
         {
             case 0:
                 updateSessionState(GuideSessionState.USER_SOMETHING_WRONG);
@@ -291,7 +291,7 @@ export const GuideToolView: FC<{}> = props =>
             eventUrlPrefix: 'help/'
         };
 
-        AddEventLinkTracker(linkTracker);
+        AddLinkEventTracker(linkTracker);
 
         return () => RemoveLinkEventTracker(linkTracker);
     }, []);
@@ -320,7 +320,7 @@ export const GuideToolView: FC<{}> = props =>
 
                 return;
             case 'forum_link':
-                const url: string = GetConfiguration<string>('group.homepage.url', '').replace('%groupid%', GetConfiguration<string>('guide.help.alpha.groupid', '0'));
+                const url: string = GetConfigurationValue<string>('group.homepage.url', '').replace('%groupid%', GetConfigurationValue<string>('guide.help.alpha.groupid', '0'));
                 window.open(url);
                 return;
         }
@@ -330,18 +330,18 @@ export const GuideToolView: FC<{}> = props =>
 
     return (
         <NitroCardView className="nitro-guide-tool" theme="primary-slim">
-            <NitroCardHeaderView headerText={ headerText } onCloseClick={ event => processAction('close') } noCloseButton={ noCloseButton } />
+            <NitroCardHeaderView headerText={ headerText } noCloseButton={ noCloseButton } onCloseClick={ event => processAction('close') } />
             <NitroCardContentView className="text-black">
                 { (sessionState === GuideSessionState.GUIDE_TOOL_MENU) &&
-                    <GuideToolMenuView isOnDuty={ isOnDuty } isHandlingGuideRequests={ isHandlingGuideRequests } setIsHandlingGuideRequests={ setIsHandlingGuideRequests } isHandlingHelpRequests={ isHandlingHelpRequests } setIsHandlingHelpRequests={ setIsHandlingHelpRequests } isHandlingBullyReports={ isHandlingBullyReports } setIsHandlingBullyReports={ setIsHandlingBullyReports } guidesOnDuty={ guidesOnDuty } helpersOnDuty={ helpersOnDuty } guardiansOnDuty={ guardiansOnDuty } processAction={ processAction } /> }
+                    <GuideToolMenuView guardiansOnDuty={ guardiansOnDuty } guidesOnDuty={ guidesOnDuty } helpersOnDuty={ helpersOnDuty } isHandlingBullyReports={ isHandlingBullyReports } isHandlingGuideRequests={ isHandlingGuideRequests } isHandlingHelpRequests={ isHandlingHelpRequests } isOnDuty={ isOnDuty } processAction={ processAction } setIsHandlingBullyReports={ setIsHandlingBullyReports } setIsHandlingGuideRequests={ setIsHandlingGuideRequests } setIsHandlingHelpRequests={ setIsHandlingHelpRequests } /> }
                 { (sessionState === GuideSessionState.GUIDE_ACCEPT) &&
-                    <GuideToolAcceptView helpRequestDescription={ helpRequestDescription } helpRequestAverageTime={ helpRequestAverageTime } /> }
+                    <GuideToolAcceptView helpRequestAverageTime={ helpRequestAverageTime } helpRequestDescription={ helpRequestDescription } /> }
                 { [ GuideSessionState.GUIDE_ONGOING, GuideSessionState.USER_ONGOING ].includes(sessionState) &&
-                    <GuideToolOngoingView isGuide={ isOnDuty } userId={ ongoingUserId } userName={ ongoingUsername } userFigure={ ongoingFigure } isTyping={ ongoingIsTyping } messageGroups={ ongoingMessageGroups } /> }
+                    <GuideToolOngoingView isGuide={ isOnDuty } isTyping={ ongoingIsTyping } messageGroups={ ongoingMessageGroups } userFigure={ ongoingFigure } userId={ ongoingUserId } userName={ ongoingUsername } /> }
                 { (sessionState === GuideSessionState.USER_CREATE) &&
-                    <GuideToolUserCreateRequestView userRequest={ userRequest } setUserRequest={ setUserRequest } /> }
+                    <GuideToolUserCreateRequestView setUserRequest={ setUserRequest } userRequest={ userRequest } /> }
                 { (sessionState === GuideSessionState.USER_PENDING) &&
-                    <GuideToolUserPendingView helpRequestDescription={ helpRequestDescription } helpRequestAverageTime={ helpRequestAverageTime } /> }
+                    <GuideToolUserPendingView helpRequestAverageTime={ helpRequestAverageTime } helpRequestDescription={ helpRequestDescription } /> }
                 { (sessionState === GuideSessionState.USER_FEEDBACK) &&
                     <GuideToolUserFeedbackView userName={ ongoingUsername } /> }
                 { (sessionState === GuideSessionState.USER_THANKS) &&

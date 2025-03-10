@@ -1,16 +1,16 @@
-import { ILinkEventTracker } from '@nitrots/nitro-renderer';
+import { AddLinkEventTracker, ILinkEventTracker, RemoveLinkEventTracker } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
-import { AddEventLinkTracker, LocalizeText, RemoveLinkEventTracker, ReportState } from '../../api';
-import { Base, Column, Grid, NitroCardContentView, NitroCardHeaderView, NitroCardView } from '../../common';
+import { LocalizeText, ReportState } from '../../api';
+import { Column, Grid, NitroCardContentView, NitroCardHeaderView, NitroCardView } from '../../common';
 import { useHelp } from '../../hooks';
 import { DescribeReportView } from './views/DescribeReportView';
 import { HelpIndexView } from './views/HelpIndexView';
-import { NameChangeView } from './views/name-change/NameChangeView';
 import { ReportSummaryView } from './views/ReportSummaryView';
 import { SanctionSatusView } from './views/SanctionStatusView';
 import { SelectReportedChatsView } from './views/SelectReportedChatsView';
 import { SelectReportedUserView } from './views/SelectReportedUserView';
 import { SelectTopicView } from './views/SelectTopicView';
+import { NameChangeView } from './views/name-change/NameChangeView';
 
 export const HelpView: FC<{}> = props =>
 {
@@ -21,7 +21,7 @@ export const HelpView: FC<{}> = props =>
     {
         setActiveReport(null);
         setIsVisible(false);
-    }
+    };
 
     useEffect(() =>
     {
@@ -29,9 +29,9 @@ export const HelpView: FC<{}> = props =>
             linkReceived: (url: string) =>
             {
                 const parts = url.split('/');
-        
+
                 if(parts.length < 2) return;
-        
+
                 switch(parts[1])
                 {
                     case 'show':
@@ -59,7 +59,7 @@ export const HelpView: FC<{}> = props =>
             eventUrlPrefix: 'help/'
         };
 
-        AddEventLinkTracker(linkTracker);
+        AddLinkEventTracker(linkTracker);
 
         return () => RemoveLinkEventTracker(linkTracker);
     }, []);
@@ -70,7 +70,7 @@ export const HelpView: FC<{}> = props =>
 
         setIsVisible(true);
     }, [ activeReport ]);
-    
+
     const CurrentStepView = () =>
     {
         if(activeReport)
@@ -91,7 +91,7 @@ export const HelpView: FC<{}> = props =>
         }
 
         return <HelpIndexView />;
-    }
+    };
 
     return (
         <>
@@ -100,10 +100,10 @@ export const HelpView: FC<{}> = props =>
                     <NitroCardHeaderView headerText={ LocalizeText('help.button.cfh') } onCloseClick={ onClose } />
                     <NitroCardContentView className="text-black">
                         <Grid>
-                            <Column center size={ 5 } overflow="hidden">
-                                <Base className="index-image" />
+                            <Column center overflow="hidden" size={ 5 }>
+                                <div className="index-image" />
                             </Column>
-                            <Column justifyContent="between" size={ 7 } overflow="hidden">
+                            <Column justifyContent="between" overflow="hidden" size={ 7 }>
                                 <CurrentStepView />
                             </Column>
                         </Grid>
@@ -113,4 +113,4 @@ export const HelpView: FC<{}> = props =>
             <NameChangeView />
         </>
     );
-}
+};

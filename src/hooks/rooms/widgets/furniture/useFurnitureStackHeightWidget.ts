@@ -1,7 +1,7 @@
-import { FurnitureStackHeightComposer, FurnitureStackHeightEvent, RoomEngineTriggerWidgetEvent } from '@nitrots/nitro-renderer';
+import { FurnitureStackHeightComposer, FurnitureStackHeightEvent, GetRoomEngine, RoomEngineTriggerWidgetEvent } from '@nitrots/nitro-renderer';
 import { useEffect, useState } from 'react';
-import { CanManipulateFurniture, GetRoomEngine, GetRoomSession, SendMessageComposer } from '../../../../api';
-import { useMessageEvent, useRoomEngineEvent } from '../../../events';
+import { CanManipulateFurniture, GetRoomSession, SendMessageComposer } from '../../../../api';
+import { useMessageEvent, useNitroEvent } from '../../../events';
 import { useFurniRemovedEvent } from '../../engine';
 
 const MAX_HEIGHT: number = 40;
@@ -19,7 +19,7 @@ const useFurnitureStackHeightWidgetState = () =>
         setCategory(-1);
         setHeight(0);
         setPendingHeight(-1);
-    }
+    };
 
     const updateHeight = (height: number, server: boolean = false) =>
     {
@@ -32,7 +32,7 @@ const useFurnitureStackHeightWidgetState = () =>
         setHeight(parseFloat(height.toFixed(2)));
 
         if(!server) setPendingHeight(height * 100);
-    }
+    };
 
     useMessageEvent<FurnitureStackHeightEvent>(FurnitureStackHeightEvent, event =>
     {
@@ -43,7 +43,7 @@ const useFurnitureStackHeightWidgetState = () =>
         updateHeight(parser.height, true);
     });
 
-    useRoomEngineEvent<RoomEngineTriggerWidgetEvent>(RoomEngineTriggerWidgetEvent.REQUEST_STACK_HEIGHT, event =>
+    useNitroEvent<RoomEngineTriggerWidgetEvent>(RoomEngineTriggerWidgetEvent.REQUEST_STACK_HEIGHT, event =>
     {
         if(!CanManipulateFurniture(GetRoomSession(), event.objectId, event.category)) return;
 
@@ -74,6 +74,6 @@ const useFurnitureStackHeightWidgetState = () =>
     }, [ objectId, pendingHeight ]);
 
     return { objectId, height, maxHeight: MAX_HEIGHT, onClose, updateHeight };
-}
+};
 
 export const useFurnitureStackHeightWidget = useFurnitureStackHeightWidgetState;

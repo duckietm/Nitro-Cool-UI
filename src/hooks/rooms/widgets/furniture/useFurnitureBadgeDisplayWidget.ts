@@ -1,7 +1,7 @@
-import { RoomEngineTriggerWidgetEvent, RoomObjectVariable, StringDataType } from '@nitrots/nitro-renderer';
+import { GetRoomEngine, GetSessionDataManager, RoomEngineTriggerWidgetEvent, RoomObjectVariable, StringDataType } from '@nitrots/nitro-renderer';
 import { useState } from 'react';
-import { GetRoomEngine, GetSessionDataManager, LocalizeBadgeDescription, LocalizeBadgeName, LocalizeText } from '../../../../api';
-import { useRoomEngineEvent } from '../../../events';
+import { LocalizeBadgeDescription, LocalizeBadgeName, LocalizeText } from '../../../../api';
+import { useNitroEvent } from '../../../events';
 import { useNotification } from '../../../notification';
 import { useFurniRemovedEvent } from '../../engine';
 
@@ -25,9 +25,9 @@ const useFurnitureBadgeDisplayWidgetState = () =>
         setBadgeDesc('');
         setDate('');
         setSenderName('');
-    }
+    };
 
-    useRoomEngineEvent<RoomEngineTriggerWidgetEvent>([
+    useNitroEvent<RoomEngineTriggerWidgetEvent>([
         RoomEngineTriggerWidgetEvent.REQUEST_BADGE_DISPLAY_ENGRAVING,
         RoomEngineTriggerWidgetEvent.REQUEST_ACHIEVEMENT_RESOLUTION_ENGRAVING
     ], event =>
@@ -49,7 +49,7 @@ const useFurnitureBadgeDisplayWidgetState = () =>
         setSenderName(stringStuff.getValue(3));
     });
 
-    useRoomEngineEvent<RoomEngineTriggerWidgetEvent>(RoomEngineTriggerWidgetEvent.REQUEST_ACHIEVEMENT_RESOLUTION_FAILED, event =>
+    useNitroEvent<RoomEngineTriggerWidgetEvent>(RoomEngineTriggerWidgetEvent.REQUEST_ACHIEVEMENT_RESOLUTION_FAILED, event =>
     {
         const roomObject = GetRoomEngine().getRoomObject(event.roomId, event.objectId, event.category);
 
@@ -58,7 +58,7 @@ const useFurnitureBadgeDisplayWidgetState = () =>
         const ownerId = roomObject.model.getValue<number>(RoomObjectVariable.FURNITURE_OWNER_ID);
 
         if(ownerId !== GetSessionDataManager().userId) return;
-        
+
         simpleAlert(`${ LocalizeText('resolution.failed.subtitle') } ${ LocalizeText('resolution.failed.text') }`, null, null, null, LocalizeText('resolution.failed.title'));
     });
 
@@ -70,6 +70,6 @@ const useFurnitureBadgeDisplayWidgetState = () =>
     });
 
     return { objectId, category, color, badgeName, badgeDesc, date, senderName, onClose };
-}
+};
 
 export const useFurnitureBadgeDisplayWidget = useFurnitureBadgeDisplayWidgetState;

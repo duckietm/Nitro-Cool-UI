@@ -1,8 +1,8 @@
-import { RoomControllerLevel, RoomObjectCategory, RoomObjectVariable, RoomUnitGiveHandItemComposer, SetRelationshipStatusComposer, TradingOpenComposer } from '@nitrots/nitro-renderer';
+import { CreateLinkEvent, GetSessionDataManager, RoomControllerLevel, RoomObjectCategory, RoomObjectVariable, RoomUnitGiveHandItemComposer, SetRelationshipStatusComposer, TradingOpenComposer } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-import { AvatarInfoUser, CreateLinkEvent, DispatchUiEvent, GetOwnRoomObject, GetSessionDataManager, GetUserProfile, LocalizeText, MessengerFriend, ReportType, RoomWidgetUpdateChatInputContentEvent, SendMessageComposer } from '../../../../../api';
-import { Base, Flex } from '../../../../../common';
+import { AvatarInfoUser, DispatchUiEvent, GetOwnRoomObject, GetUserProfile, LocalizeText, MessengerFriend, ReportType, RoomWidgetUpdateChatInputContentEvent, SendMessageComposer } from '../../../../../api';
+import { Flex } from '../../../../../common';
 import { useFriends, useHelp, useRoom, useSessionInfo } from '../../../../../hooks';
 import { ContextMenuHeaderView } from '../../context-menu/ContextMenuHeaderView';
 import { ContextMenuListItemView } from '../../context-menu/ContextMenuListItemView';
@@ -194,7 +194,7 @@ export const AvatarInfoWidgetAvatarView: FC<AvatarInfoWidgetAvatarViewProps> = p
         }
 
         if(hideMenu) onClose();
-    }
+    };
 
     useEffect(() =>
     {
@@ -202,8 +202,10 @@ export const AvatarInfoWidgetAvatarView: FC<AvatarInfoWidgetAvatarViewProps> = p
     }, [ avatarInfo ]);
 
     return (
-        <ContextMenuView objectId={ avatarInfo.roomIndex } category={ RoomObjectCategory.UNIT } userType={ avatarInfo.userType } onClose={ onClose } collapsable={ true }>
-            <ContextMenuHeaderView className="cursor-pointer" onClick={ event => GetUserProfile(avatarInfo.webID) } dangerouslySetInnerHTML={ { __html: `${ avatarInfo.name }` } }></ContextMenuHeaderView>
+        <ContextMenuView category={ RoomObjectCategory.UNIT } collapsable={ true } objectId={ avatarInfo.roomIndex } userType={ avatarInfo.userType } onClose={ onClose }>
+            <ContextMenuHeaderView className="cursor-pointer" onClick={ event => GetUserProfile(avatarInfo.webID) }>
+                { avatarInfo.name }
+            </ContextMenuHeaderView>
             { (mode === MODE_NORMAL) &&
                 <>
                     { canRequestFriend(avatarInfo.webID) &&
@@ -348,13 +350,13 @@ export const AvatarInfoWidgetAvatarView: FC<AvatarInfoWidgetAvatarViewProps> = p
                 <>
                     <Flex className="menu-list-split-3">
                         <ContextMenuListItemView onClick={ event => processAction('rship_heart') }>
-                            <Base pointer className="nitro-friends-spritesheet icon-heart" />
+                            <div className="nitro-friends-spritesheet icon-heart cursor-pointer" />
                         </ContextMenuListItemView>
                         <ContextMenuListItemView onClick={ event => processAction('rship_smile') }>
-                            <Base pointer className="nitro-friends-spritesheet icon-smile" />
+                            <div className="nitro-friends-spritesheet icon-smile cursor-pointer" />
                         </ContextMenuListItemView>
                         <ContextMenuListItemView onClick={ event => processAction('rship_bobba') }>
-                            <Base pointer className="nitro-friends-spritesheet icon-bobba" />
+                            <div className="nitro-friends-spritesheet icon-bobba cursor-pointer" />
                         </ContextMenuListItemView>
                     </Flex>
                     <ContextMenuListItemView onClick={ event => processAction('rship_none') }>
@@ -367,4 +369,4 @@ export const AvatarInfoWidgetAvatarView: FC<AvatarInfoWidgetAvatarViewProps> = p
                 </> }
         </ContextMenuView>
     );
-}
+};

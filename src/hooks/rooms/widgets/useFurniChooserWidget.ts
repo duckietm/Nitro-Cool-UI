@@ -1,6 +1,6 @@
-import { RoomObjectCategory, RoomObjectVariable } from '@nitrots/nitro-renderer';
+import { GetRoomEngine, GetSessionDataManager, RoomObjectCategory, RoomObjectVariable } from '@nitrots/nitro-renderer';
 import { useState } from 'react';
-import { GetRoomEngine, GetRoomSession, GetSessionDataManager, LocalizeText, RoomObjectItem } from '../../../api';
+import { GetRoomSession, LocalizeText, RoomObjectItem } from '../../../api';
 import { useFurniAddedEvent, useFurniRemovedEvent } from '../engine';
 import { useRoom } from '../useRoom';
 
@@ -55,7 +55,7 @@ const useFurniChooserWidgetState = () =>
         });
 
         setItems([ ...wallItems, ...floorItems ].sort((a, b) => ((a.name < b.name) ? -1 : 1)));
-    }
+    };
 
     useFurniAddedEvent(!!items, event =>
     {
@@ -127,6 +127,6 @@ const useFurniChooserWidgetState = () =>
     });
 
     return { items, onClose, selectItem, populateChooser };
-}
+};
 
 export const useFurniChooserWidget = useFurniChooserWidgetState;

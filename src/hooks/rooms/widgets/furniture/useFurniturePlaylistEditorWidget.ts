@@ -1,7 +1,7 @@
-import { AddJukeboxDiskComposer, AdvancedMap, FurnitureListAddOrUpdateEvent, FurnitureListEvent, FurnitureListRemovedEvent, FurnitureMultiStateComposer, IAdvancedMap, IMessageEvent, ISongInfo, NotifyPlayedSongEvent, NowPlayingEvent, PlayListStatusEvent, RemoveJukeboxDiskComposer, RoomControllerLevel, RoomEngineTriggerWidgetEvent, SongDiskInventoryReceivedEvent } from '@nitrots/nitro-renderer';
+import { AddJukeboxDiskComposer, AdvancedMap, FurnitureListAddOrUpdateEvent, FurnitureListEvent, FurnitureListRemovedEvent, FurnitureMultiStateComposer, GetRoomEngine, GetSessionDataManager, GetSoundManager, IAdvancedMap, IMessageEvent, ISongInfo, NotifyPlayedSongEvent, NowPlayingEvent, PlayListStatusEvent, RemoveJukeboxDiskComposer, RoomControllerLevel, RoomEngineTriggerWidgetEvent, SongDiskInventoryReceivedEvent } from '@nitrots/nitro-renderer';
 import { useCallback, useState } from 'react';
-import { GetNitroInstance, GetRoomEngine, GetSessionDataManager, IsOwnerOfFurniture, LocalizeText, NotificationAlertType, NotificationBubbleType, SendMessageComposer } from '../../../../api';
-import { useMessageEvent, useRoomEngineEvent, useSoundEvent } from '../../../events';
+import { IsOwnerOfFurniture, LocalizeText, NotificationAlertType, NotificationBubbleType, SendMessageComposer } from '../../../../api';
+import { useMessageEvent, useNitroEvent } from '../../../events';
 import { useNotification } from '../../../notification';
 import { useFurniRemovedEvent } from '../../engine';
 import { useRoom } from '../../useRoom';
@@ -20,7 +20,7 @@ const useFurniturePlaylistEditorWidgetState = () =>
     {
         setObjectId(-1);
         setCategory(-1);
-    }
+    };
 
     const addToPlaylist = useCallback((diskId: number, slotNumber: number) => SendMessageComposer(new AddJukeboxDiskComposer(diskId, slotNumber)), []);
 
@@ -28,7 +28,7 @@ const useFurniturePlaylistEditorWidgetState = () =>
 
     const togglePlayPause = useCallback((furniId: number, position: number) => SendMessageComposer(new FurnitureMultiStateComposer(furniId, position)), []);
 
-    useRoomEngineEvent<RoomEngineTriggerWidgetEvent>(RoomEngineTriggerWidgetEvent.REQUEST_PLAYLIST_EDITOR, event =>
+    useNitroEvent<RoomEngineTriggerWidgetEvent>(RoomEngineTriggerWidgetEvent.REQUEST_PLAYLIST_EDITOR, event =>
     {
         const roomObject = GetRoomEngine().getRoomObject(event.roomId, event.objectId, event.category);
 
@@ -40,8 +40,8 @@ const useFurniturePlaylistEditorWidgetState = () =>
             setObjectId(event.objectId);
             setCategory(event.category);
 
-            GetNitroInstance().soundManager.musicController?.requestUserSongDisks();
-            GetNitroInstance().soundManager.musicController?.getRoomItemPlaylist()?.requestPlayList();
+            GetSoundManager().musicController?.requestUserSongDisks();
+            GetSoundManager().musicController?.getRoomItemPlaylist()?.requestPlayList();
 
             return;
         }
@@ -56,27 +56,27 @@ const useFurniturePlaylistEditorWidgetState = () =>
         onClose();
     });
 
-    useSoundEvent<NowPlayingEvent>(NowPlayingEvent.NPE_SONG_CHANGED, event =>
+    useNitroEvent<NowPlayingEvent>(NowPlayingEvent.NPE_SONG_CHANGED, event =>
     {
         setCurrentPlayingIndex(event.position);
     });
 
-    useSoundEvent<NotifyPlayedSongEvent>(NotifyPlayedSongEvent.NOTIFY_PLAYED_SONG, event =>
+    useNitroEvent<NotifyPlayedSongEvent>(NotifyPlayedSongEvent.NOTIFY_PLAYED_SONG, event =>
     {
-        showSingleBubble(LocalizeText('soundmachine.notification.playing', [ 'songname', 'songauthor' ], [ event.name, event.creator ]), NotificationBubbleType.SOUNDMACHINE)
+        showSingleBubble(LocalizeText('soundmachine.notification.playing', [ 'songname', 'songauthor' ], [ event.name, event.creator ]), NotificationBubbleType.SOUNDMACHINE);
     });
 
-    useSoundEvent<SongDiskInventoryReceivedEvent>(SongDiskInventoryReceivedEvent.SDIR_SONG_DISK_INVENTORY_RECEIVENT_EVENT, event =>
+    useNitroEvent<SongDiskInventoryReceivedEvent>(SongDiskInventoryReceivedEvent.SDIR_SONG_DISK_INVENTORY_RECEIVENT_EVENT, event =>
     {
-        setDiskInventory(GetNitroInstance().soundManager.musicController?.songDiskInventory.clone());
+        setDiskInventory(GetSoundManager().musicController?.songDiskInventory.clone());
     });
 
-    useSoundEvent<PlayListStatusEvent>(PlayListStatusEvent.PLUE_PLAY_LIST_UPDATED, event =>
+    useNitroEvent<PlayListStatusEvent>(PlayListStatusEvent.PLUE_PLAY_LIST_UPDATED, event =>
     {
-        setPlaylist(GetNitroInstance().soundManager.musicController?.getRoomItemPlaylist()?.entries.concat())
+        setPlaylist(GetSoundManager().musicController?.getRoomItemPlaylist()?.entries.concat());
     });
 
-    useSoundEvent<PlayListStatusEvent>(PlayListStatusEvent.PLUE_PLAY_LIST_FULL, event =>
+    useNitroEvent<PlayListStatusEvent>(PlayListStatusEvent.PLUE_PLAY_LIST_FULL, event =>
     {
         simpleAlert(LocalizeText('playlist.editor.alert.playlist.full'), NotificationAlertType.ALERT, '', '', LocalizeText('playlist.editor.alert.playlist.full.title'));
     });
@@ -89,20 +89,20 @@ const useFurniturePlaylistEditorWidgetState = () =>
         {
             if(event.getParser().fragmentNumber === 0)
             {
-                GetNitroInstance().soundManager.musicController?.requestUserSongDisks();
+                GetSoundManager().musicController?.requestUserSongDisks();
             }
         }
         else
         {
-            GetNitroInstance().soundManager.musicController?.requestUserSongDisks();
+            GetSoundManager().musicController?.requestUserSongDisks();
         }
-    }
+    };
 
     useMessageEvent(FurnitureListEvent, onFurniListUpdated);
     useMessageEvent(FurnitureListRemovedEvent, onFurniListUpdated);
     useMessageEvent(FurnitureListAddOrUpdateEvent, onFurniListUpdated);
 
     return { objectId, diskInventory, playlist, currentPlayingIndex, onClose, addToPlaylist, removeFromPlaylist, togglePlayPause };
-}
+};
 
 export const useFurniturePlaylistEditorWidget = useFurniturePlaylistEditorWidgetState;

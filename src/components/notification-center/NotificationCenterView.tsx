@@ -1,6 +1,5 @@
 import { FC, ReactNode, useMemo } from 'react';
 import { NotificationBubbleType } from '../../api';
-import { Column } from '../../common';
 import { useNotification } from '../../hooks';
 import { GetAlertLayout } from './views/alert-layouts/GetAlertLayout';
 import { GetBubbleLayout } from './views/bubble-layouts/GetBubbleLayout';
@@ -14,37 +13,64 @@ export const NotificationCenterView: FC<{}> = props =>
     {
         if(!alerts || !alerts.length) return null;
 
-        return alerts.map((alert) => GetAlertLayout(alert, () => closeAlert(alert)));
+        const elements: ReactNode[] = [];
+
+        for(const alert of alerts)
+        {
+            const element = GetAlertLayout(alert, () => closeAlert(alert));
+
+            elements.push(element);
+        }
+
+        return elements;
     }, [ alerts, closeAlert ]);
 
     const getBubbleAlerts = useMemo(() =>
     {
         if(!bubbleAlerts || !bubbleAlerts.length) return null;
 
-        return bubbleAlerts.map((alert) => {
+        const elements: ReactNode[] = [];
+
+        for(const alert of bubbleAlerts)
+        {
             const element = GetBubbleLayout(alert, () => closeBubbleAlert(alert));
+
             if(alert.notificationType === NotificationBubbleType.CLUBGIFT)
             {
-                return element;
+                elements.unshift(element);
+
+                continue;
             }
-            return element;
-        });
+
+            elements.push(element);
+        }
+
+        return elements;
     }, [ bubbleAlerts, closeBubbleAlert ]);
 
     const getConfirms = useMemo(() =>
     {
         if(!confirms || !confirms.length) return null;
 
-        return confirms.map((confirm) => GetConfirmLayout(confirm, () => closeConfirm(confirm)));
+        const elements: ReactNode[] = [];
+
+        for(const confirm of confirms)
+        {
+            const element = GetConfirmLayout(confirm, () => closeConfirm(confirm));
+
+            elements.push(element);
+        }
+
+        return elements;
     }, [ confirms, closeConfirm ]);
 
     return (
         <>
-            <Column gap={ 1 } className="topnotifications">
+            <div className="flex flex-col gap-1">
                 { getBubbleAlerts }
-            </Column>
+            </div>
             { getConfirms }
             { getAlerts }
         </>
     );
-}
+};

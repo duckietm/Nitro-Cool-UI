@@ -1,7 +1,7 @@
-import { GetModeratorRoomInfoMessageComposer, ModerateRoomMessageComposer, ModeratorActionMessageComposer, ModeratorRoomInfoEvent } from '@nitrots/nitro-renderer';
+import { CreateLinkEvent, GetModeratorRoomInfoMessageComposer, ModerateRoomMessageComposer, ModeratorActionMessageComposer, ModeratorRoomInfoEvent } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
-import { CreateLinkEvent, SendMessageComposer, TryVisitRoom } from '../../../../api';
-import { Button, Column, DraggableWindowPosition, Flex, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../../common';
+import { SendMessageComposer, TryVisitRoom } from '../../../../api';
+import { Button, Column, DraggableWindowPosition, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../../common';
 import { useMessageEvent } from '../../../../hooks';
 
 interface ModToolsRoomViewProps
@@ -44,7 +44,7 @@ export const ModToolsRoomView: FC<ModToolsRoomViewProps> = props =>
                 SendMessageComposer(new ModerateRoomMessageComposer(roomId, lockRoom ? 1 : 0, changeRoomName ? 1 : 0, kickUsers ? 1 : 0));
                 return;
         }
-    }
+    };
 
     useMessageEvent<ModeratorRoomInfoEvent>(ModeratorRoomInfoEvent, event =>
     {
@@ -63,7 +63,7 @@ export const ModToolsRoomView: FC<ModToolsRoomViewProps> = props =>
     useEffect(() =>
     {
         if(infoRequested) return;
-        
+
         SendMessageComposer(new GetModeratorRoomInfoMessageComposer(roomId));
         setInfoRequested(true);
     }, [ roomId, infoRequested, setInfoRequested ]);
@@ -72,46 +72,46 @@ export const ModToolsRoomView: FC<ModToolsRoomViewProps> = props =>
         <NitroCardView className="nitro-mod-tools-room" theme="primary-slim" windowPosition={ DraggableWindowPosition.TOP_LEFT }>
             <NitroCardHeaderView headerText={ 'Room Info' + (name ? ': ' + name : '') } onCloseClick={ event => onCloseClick() } />
             <NitroCardContentView className="text-black">
-                <Flex gap={ 2 }>
-                    <Column justifyContent="center" grow gap={ 1 }>
-                        <Flex alignItems="center" gap={ 2 }>
-                            <Text bold align="end" className="col-7">Room Owner:</Text>
-                            <Text underline pointer truncate>{ ownerName }</Text>
-                        </Flex>
-                        <Flex alignItems="center" gap={ 2 }>
-                            <Text bold align="end" className="col-7">Users in room:</Text>
+                <div className="flex gap-2">
+                    <Column grow gap={ 1 } justifyContent="center">
+                        <div className="items-center gap-2">
+                            <Text bold align="end" className="col-span-7">Room Owner:</Text>
+                            <Text pointer truncate underline>{ ownerName }</Text>
+                        </div>
+                        <div className="items-center gap-2">
+                            <Text bold align="end" className="col-span-7">Users in room:</Text>
                             <Text>{ usersInRoom }</Text>
-                        </Flex>
-                        <Flex alignItems="center" gap={ 2 }>
-                            <Text bold align="end" className="col-7">Owner in room:</Text>
+                        </div>
+                        <div className="items-center gap-2">
+                            <Text bold align="end" className="col-span-7">Owner in room:</Text>
                             <Text>{ ownerInRoom ? 'Yes' : 'No' }</Text>
-                        </Flex>
+                        </div>
                     </Column>
-                    <Column gap={ 1 }>
+                    <div className="flex flex-col gap-1">
                         <Button onClick={ event => TryVisitRoom(roomId) }>Visit Room</Button>
                         <Button onClick={ event => CreateLinkEvent(`mod-tools/open-room-chatlog/${ roomId }`) }>Chatlog</Button>
-                    </Column>
-                </Flex>
+                    </div>
+                </div>
                 <Column className="bg-muted rounded p-2" gap={ 1 }>
-                    <Flex alignItems="center" gap={ 1 }>
-                        <input className="form-check-input" type="checkbox" checked={ kickUsers } onChange={ event => setKickUsers(event.target.checked) } />
+                    <div className="flex items-center gap-1">
+                        <input checked={ kickUsers } className="form-check-input" type="checkbox" onChange={ event => setKickUsers(event.target.checked) } />
                         <Text small>Kick everyone out</Text>
-                    </Flex>
-                    <Flex alignItems="center" gap={ 1 }>
-                        <input className="form-check-input" type="checkbox" checked={ lockRoom } onChange={ event => setLockRoom(event.target.checked) } />
+                    </div>
+                    <div className="flex items-center gap-1">
+                        <input checked={ lockRoom } className="form-check-input" type="checkbox" onChange={ event => setLockRoom(event.target.checked) } />
                         <Text small>Enable the doorbell</Text>
-                    </Flex>
-                    <Flex alignItems="center" gap={ 1 }>
-                        <input className="form-check-input" type="checkbox" checked={ changeRoomName } onChange={ event => setChangeRoomName(event.target.checked) }/>
+                    </div>
+                    <div className="flex items-center gap-1">
+                        <input checked={ changeRoomName } className="form-check-input" type="checkbox" onChange={ event => setChangeRoomName(event.target.checked) } />
                         <Text small>Change room name</Text>
-                    </Flex>
+                    </div>
                 </Column>
-                <textarea className="form-control" placeholder="Type a mandatory message to the users in this text box..." value={ message } onChange={ event => setMessage(event.target.value) }></textarea>
-                <Flex justifyContent="between">
+                <textarea className="min-h-[calc(1.5em+ .5rem+2px)] px-[.5rem] py-[.25rem]  rounded-[.2rem]" placeholder="Type a mandatory message to the users in this text box..." value={ message } onChange={ event => setMessage(event.target.value) }></textarea>
+                <div className="flex justify-between">
                     <Button variant="danger" onClick={ event => handleClick('send_message') }>Send Caution</Button>
                     <Button onClick={ event => handleClick('alert_only') }>Send Alert only</Button>
-                </Flex>
+                </div>
             </NitroCardContentView>
         </NitroCardView>
     );
-}
+};

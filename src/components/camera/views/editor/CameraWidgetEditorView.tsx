@@ -1,10 +1,10 @@
-import { IRoomCameraWidgetEffect, IRoomCameraWidgetSelectedEffect, RoomCameraWidgetSelectedEffect } from '@nitrots/nitro-renderer';
-import { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { GetRoomCameraWidgetManager, IRoomCameraWidgetEffect, IRoomCameraWidgetSelectedEffect, NitroLogger, RoomCameraWidgetSelectedEffect } from '@nitrots/nitro-renderer';
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FaSave, FaSearchMinus, FaSearchPlus, FaTrash } from 'react-icons/fa';
 import ReactSlider from 'react-slider';
-import { CameraEditorTabs, CameraPicture, CameraPictureThumbnail, GetRoomCameraWidgetManager, LocalizeText } from '../../../../api';
-import { Button, ButtonGroup, Column, Flex, Grid, LayoutImage, NitroCardContentView, NitroCardHeaderView, NitroCardTabsItemView, NitroCardTabsView, NitroCardView, Slider, Text } from '../../../../common';
-import { CameraWidgetEffectListView } from './effect-list/CameraWidgetEffectListView';
+import { CameraEditorTabs, CameraPicture, CameraPictureThumbnail, LocalizeText } from '../../../../api';
+import { Button, ButtonGroup, Column, Flex, Grid, LayoutImage, NitroCardContentView, NitroCardHeaderView, NitroCardTabsItemView, NitroCardTabsView, NitroCardView, Text } from '../../../../common';
+import { CameraWidgetEffectListView } from './effect-list';
 
 export interface CameraWidgetEditorViewProps
 {
@@ -26,6 +26,8 @@ export const CameraWidgetEditorView: FC<CameraWidgetEditorViewProps> = props =>
     const [ selectedEffects, setSelectedEffects ] = useState<IRoomCameraWidgetSelectedEffect[]>([]);
     const [ effectsThumbnails, setEffectsThumbnails ] = useState<CameraPictureThumbnail[]>([]);
     const [ isZoomed, setIsZoomed ] = useState(false);
+    const [ currentPictureUrl, setCurrentPictureUrl ] = useState<string>('');
+    const isBusy = useRef<boolean>(false);
 
     const getColorMatrixEffects = useMemo(() =>
     {
@@ -52,12 +54,12 @@ export const CameraWidgetEditorView: FC<CameraWidgetEditorViewProps> = props =>
         if(!name || !name.length || !selectedEffects || !selectedEffects.length) return -1;
 
         return selectedEffects.findIndex(effect => (effect.effect.name === name));
-    }, [ selectedEffects ])
+    }, [ selectedEffects ]);
 
     const getCurrentEffectIndex = useMemo(() =>
     {
-        return getSelectedEffectIndex(selectedEffectName)
-    }, [ selectedEffectName, getSelectedEffectIndex ])
+        return getSelectedEffectIndex(selectedEffectName);
+    }, [ selectedEffectName, getSelectedEffectIndex ]);
 
     const getCurrentEffect = useMemo(() =>
     {
@@ -83,11 +85,6 @@ export const CameraWidgetEditorView: FC<CameraWidgetEditorViewProps> = props =>
         });
     }, [ getCurrentEffectIndex, setSelectedEffects ]);
 
-    const getCurrentPictureUrl = useMemo(() =>
-    {
-        return GetRoomCameraWidgetManager().applyEffects(picture.texture, selectedEffects, isZoomed).src;
-    }, [ picture, selectedEffects, isZoomed ]);
-
     const processAction = useCallback((type: string, effectName: string = null) =>
     {
         switch(type)
@@ -99,7 +96,7 @@ export const CameraWidgetEditorView: FC<CameraWidgetEditorViewProps> = props =>
                 onCancel();
                 return;
             case 'checkout':
-                onCheckout(getCurrentPictureUrl);
+                onCheckout(currentPictureUrl);
                 return;
             case 'change_tab':
                 setCurrentTab(String(effectName));
@@ -108,7 +105,7 @@ export const CameraWidgetEditorView: FC<CameraWidgetEditorViewProps> = props =>
                 let existingIndex = getSelectedEffectIndex(effectName);
 
                 if(existingIndex >= 0) return;
-                
+
                 const effect = availableEffects.find(effect => (effect.name === effectName));
 
                 if(!effect) return;
@@ -143,63 +140,83 @@ export const CameraWidgetEditorView: FC<CameraWidgetEditorViewProps> = props =>
                 setSelectedEffects([]);
                 return;
             case 'download': {
-                const image = new Image();
-                            
-                image.src = getCurrentPictureUrl
-                            
-                const newWindow = window.open('');
-                newWindow.document.write(image.outerHTML);
+                (async () =>
+                {
+                    const image = new Image();
+
+                    image.src = currentPictureUrl;
+
+                    const newWindow = window.open('');
+                    newWindow.document.write(image.outerHTML);
+                })();
                 return;
             }
             case 'zoom':
                 setIsZoomed(!isZoomed);
                 return;
         }
-    }, [ isZoomed, availableEffects, selectedEffectName, getCurrentPictureUrl, getSelectedEffectIndex, onCancel, onCheckout, onClose, setIsZoomed, setSelectedEffects ]);
+    }, [ isZoomed, availableEffects, selectedEffectName, currentPictureUrl, getSelectedEffectIndex, onCancel, onCheckout, onClose, setIsZoomed, setSelectedEffects ]);
 
     useEffect(() =>
     {
-        const thumbnails: CameraPictureThumbnail[] = [];
-
-        for(const effect of availableEffects)
+        const processThumbnails = async () =>
         {
-            thumbnails.push(new CameraPictureThumbnail(effect.name, GetRoomCameraWidgetManager().applyEffects(picture.texture, [ new RoomCameraWidgetSelectedEffect(effect, 1) ], false).src));
-        }
+            const renderedEffects = await Promise.all(availableEffects.map(effect => GetRoomCameraWidgetManager().applyEffects(picture.texture, [ new RoomCameraWidgetSelectedEffect(effect, 1) ], false)));
 
-        setEffectsThumbnails(thumbnails);
+            setEffectsThumbnails(renderedEffects.map((image, index) => new CameraPictureThumbnail(availableEffects[index].name, image.src)));
+        };
+
+        processThumbnails();
     }, [ picture, availableEffects ]);
 
+    useEffect(() =>
+    {
+        GetRoomCameraWidgetManager()
+            .applyEffects(picture.texture, selectedEffects, isZoomed)
+            .then(imageElement =>
+            {
+                setCurrentPictureUrl(imageElement.src);
+            })
+            .catch(error =>
+            {
+                NitroLogger.error('Failed to apply effects to picture', error);
+            });
+    }, [ picture, selectedEffects, isZoomed ]);
+
     return (
-        <NitroCardView className="nitro-camera-editor">
+        <NitroCardView className="w-[600px] h-[500px]">
             <NitroCardHeaderView headerText={ LocalizeText('camera.editor.button.text') } onCloseClick={ event => processAction('close') } />
             <NitroCardTabsView>
                 { TABS.map(tab =>
                 {
-                    return <NitroCardTabsItemView key={ tab } isActive={ currentTab === tab } onClick={ event => processAction('change_tab', tab) }><i className={ 'icon icon-camera-' + tab }></i></NitroCardTabsItemView>
+                    return <NitroCardTabsItemView key={ tab } isActive={ currentTab === tab } onClick={ event => processAction('change_tab', tab) }><i className={ 'nitro-icon icon-camera-' + tab }></i></NitroCardTabsItemView>;
                 }) }
             </NitroCardTabsView>
             <NitroCardContentView>
                 <Grid>
-                    <Column size={ 5 } overflow="hidden">
-                        <CameraWidgetEffectListView myLevel={ myLevel } selectedEffects={ selectedEffects } effects={ getEffectList() } thumbnails={ effectsThumbnails } processAction={ processAction } />
+                    <Column overflow="hidden" size={ 5 }>
+                        <CameraWidgetEffectListView effects={ getEffectList() } myLevel={ myLevel } processAction={ processAction } selectedEffects={ selectedEffects } thumbnails={ effectsThumbnails } />
                     </Column>
-                    <Column size={ 7 } justifyContent="between" overflow="hidden">
+                    <Column justifyContent="between" overflow="hidden" size={ 7 }>
                         <Column center>
-                            <LayoutImage imageUrl={ getCurrentPictureUrl } className="picture-preview" />
+                            <LayoutImage className="w-[320px] h-[320px]" imageUrl={ currentPictureUrl } />
                             { selectedEffectName &&
                                 <Column center fullWidth gap={ 1 }>
                                     <Text>{ LocalizeText('camera.effect.name.' + selectedEffectName) }</Text>
-                                    <Slider
-                                        min={ 0 }
+                                    <ReactSlider
+                                        className={ 'nitro-slider' }
+												 
                                         max={ 1 }
+                                        min={ 0 }
+                                        renderThumb={ (props, state) => <div { ...props }>{ state.valueNow }</div> }
                                         step={ 0.01 }
                                         value={ getCurrentEffect.alpha }
-                                        onChange={ event => setSelectedEffectAlpha(event) }
-                                        renderThumb={ (props, state) => <div { ...props }>{ state.valueNow }</div> } />
+                                        onChange={ event => setSelectedEffectAlpha(event) } />
+																																			   
                                 </Column> }
                         </Column>
-                        <Flex justifyContent="between">
-                            <ButtonGroup>
+                        <div className="flex justify-between">
+                            <div className="relative inline-flex align-middle">
                                 <Button onClick={ event => processAction('clear_effects') }>
                                     <FaTrash className="fa-icon" />
                                 </Button>
@@ -210,19 +227,19 @@ export const CameraWidgetEditorView: FC<CameraWidgetEditorViewProps> = props =>
                                     { isZoomed && <FaSearchMinus className="fa-icon" /> }
                                     { !isZoomed && <FaSearchPlus className="fa-icon" /> }
                                 </Button>
-                            </ButtonGroup>
-                            <Flex gap={ 1 }>
+                            </div>
+                            <div className="flex gap-1">
                                 <Button onClick={ event => processAction('cancel') }>
                                     { LocalizeText('generic.cancel') }
                                 </Button>
                                 <Button onClick={ event => processAction('checkout') }>
                                     { LocalizeText('camera.preview.button.text') }
                                 </Button>
-                            </Flex>
-                        </Flex>
+                            </div>
+                        </div>
                     </Column>
                 </Grid>
             </NitroCardContentView>
         </NitroCardView>
     );
-}
+};

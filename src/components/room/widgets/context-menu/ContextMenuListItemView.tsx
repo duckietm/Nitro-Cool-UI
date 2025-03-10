@@ -15,11 +15,11 @@ export const ContextMenuListItemView: FC<ContextMenuListItemViewProps> = props =
         if(disabled) return;
 
         if(onClick) onClick(event);
-    }
+    };
 
     const getClassNames = useMemo(() =>
     {
-        const newClassNames: string[] = [ 'menu-item', 'list-item' ];
+        const newClassNames: string[] = [ 'relative mb-[2px] p-[3px] overflow-hidden', 'h-[24px] max-h-[24px] p-[3px] bg-[repeating-linear-gradient(#131e25,_#131e25_50%,_#0d171d_50%,_#0d171d_100%)] cursor-pointer' ];
 
         if(disabled) newClassNames.push('disabled');
 
@@ -28,5 +28,5 @@ export const ContextMenuListItemView: FC<ContextMenuListItemViewProps> = props =
         return newClassNames;
     }, [ disabled, classNames ]);
 
-    return <Flex fullWidth={ fullWidth } justifyContent={ justifyContent } alignItems={ alignItems } classNames={ getClassNames } onClick={ handleClick } { ...rest } />;
-}
+    return <Flex alignItems={ alignItems } classNames={ getClassNames } fullWidth={ fullWidth } justifyContent={ justifyContent } onClick={ handleClick } { ...rest } />;
+};

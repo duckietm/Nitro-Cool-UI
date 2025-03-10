@@ -14,7 +14,7 @@ export interface VipGiftItemViewProps
 export const VipGiftItem : FC<VipGiftItemViewProps> = props =>
 {
     const { offer = null, isAvailable = false, daysRequired = 0, onSelect = null } = props;
-    
+
     const getImageUrlForOffer = useCallback( () =>
     {
         if(!offer || !offer.products.length) return '';
@@ -23,7 +23,7 @@ export const VipGiftItem : FC<VipGiftItemViewProps> = props =>
 
         return ProductImageUtility.getProductImageUrl(productData.productType, productData.furniClassId, productData.extraParam);
     }, [ offer ]);
-    
+
     const getItemTitle = useCallback(() =>
     {
         if(!offer || !offer.products.length) return '';
@@ -46,18 +46,18 @@ export const VipGiftItem : FC<VipGiftItemViewProps> = props =>
         return LocalizeText(localizationKey);
     }, [ offer ]);
 
-    const getMonthsRequired = useCallback(() => 
+    const getMonthsRequired = useCallback(() =>
     {
         return Math.floor(daysRequired / 31);
     },[ daysRequired ]);
 
     return (
-        <LayoutGridItem center={ false } column={ false } alignItems="center" className="p-1">
+        <LayoutGridItem alignItems="center" center={ false } className="p-1" column={ false }>
             <LayoutImage imageUrl={ getImageUrlForOffer() } />
             <Text grow fontWeight="bold">{ getItemTitle() }</Text>
-            <Button variant="secondary" onClick={ () => onSelect(offer.localizationId) } disabled={ !isAvailable }>
+            <Button disabled={ !isAvailable } variant="secondary" onClick={ () => onSelect(offer.localizationId) }>
                 { LocalizeText('catalog.club_gift.select') }
             </Button>
         </LayoutGridItem>
     );
-}
+};

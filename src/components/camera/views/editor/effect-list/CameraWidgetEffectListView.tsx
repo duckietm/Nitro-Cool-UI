@@ -24,8 +24,8 @@ export const CameraWidgetEffectListView: FC<CameraWidgetEffectListViewProps> = p
                 const thumbnailUrl = (thumbnails.find(thumbnail => (thumbnail.effectName === effect.name)));
                 const isActive = (selectedEffects.findIndex(selectedEffect => (selectedEffect.effect.name === effect.name)) > -1);
 
-                return <CameraWidgetEffectListItemView key={ index } effect={ effect } thumbnailUrl={ ((thumbnailUrl && thumbnailUrl.thumbnailUrl) || null) } isActive={ isActive } isLocked={ (effect.minLevel > myLevel) } selectEffect={ () => processAction('select_effect', effect.name) } removeEffect={ () => processAction('remove_effect', effect.name) } />
+                return <CameraWidgetEffectListItemView key={ index } effect={ effect } thumbnailUrl={ ((thumbnailUrl && thumbnailUrl.thumbnailUrl) || null) } isActive={ isActive } isLocked={ (effect.minLevel > myLevel) } selectEffect={ () => processAction('select_effect', effect.name) } removeEffect={ () => processAction('remove_effect', effect.name) } />;
             }) }
         </Grid>
     );
-}
+};

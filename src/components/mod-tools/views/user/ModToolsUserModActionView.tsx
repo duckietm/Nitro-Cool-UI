@@ -1,7 +1,7 @@
 import { CallForHelpTopicData, DefaultSanctionMessageComposer, ModAlertMessageComposer, ModBanMessageComposer, ModKickMessageComposer, ModMessageMessageComposer, ModMuteMessageComposer, ModTradingLockMessageComposer } from '@nitrots/nitro-renderer';
 import { FC, useMemo, useState } from 'react';
 import { ISelectedUser, LocalizeText, ModActionDefinition, NotificationAlertType, SendMessageComposer } from '../../../../api';
-import { Button, Column, DraggableWindowPosition, Flex, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../../common';
+import { Button, DraggableWindowPosition, Flex, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../../common';
 import { useModTools, useNotification } from '../../../../hooks';
 
 interface ModToolsUserModActionViewProps
@@ -64,9 +64,9 @@ export const ModToolsUserModActionView: FC<ModToolsUserModActionViewProps> = pro
         const messageOrDefault = (message.trim().length === 0) ? LocalizeText(`help.cfh.topic.${ category.id }`) : message;
 
         SendMessageComposer(new DefaultSanctionMessageComposer(user.userId, selectedTopic, messageOrDefault));
-        
+
         onCloseClick();
-    }
+    };
 
     const sendSanction = () =>
     {
@@ -83,7 +83,7 @@ export const ModToolsUserModActionView: FC<ModToolsUserModActionViewProps> = pro
         if(errorMessage)
         {
             sendAlert(errorMessage);
-            
+
             return;
         }
 
@@ -102,7 +102,7 @@ export const ModToolsUserModActionView: FC<ModToolsUserModActionViewProps> = pro
                 SendMessageComposer(new ModAlertMessageComposer(user.userId, messageOrDefault, category.id));
                 break;
             }
-            case ModActionDefinition.MUTE: 
+            case ModActionDefinition.MUTE:
                 SendMessageComposer(new ModMuteMessageComposer(user.userId, messageOrDefault, category.id));
                 break;
             case ModActionDefinition.BAN: {
@@ -146,7 +146,7 @@ export const ModToolsUserModActionView: FC<ModToolsUserModActionViewProps> = pro
         }
 
         onCloseClick();
-    }
+    };
 
     if(!user) return null;
 
@@ -155,22 +155,22 @@ export const ModToolsUserModActionView: FC<ModToolsUserModActionViewProps> = pro
             <NitroCardHeaderView headerText={ 'Mod Action: ' + (user ? user.username : '') } onCloseClick={ () => onCloseClick() } />
             <NitroCardContentView className="text-black">
                 <select className="form-select form-select-sm" value={ selectedTopic } onChange={ event => setSelectedTopic(parseInt(event.target.value)) }>
-                    <option value={ -1 } disabled>CFH Topic</option>
+                    <option disabled value={ -1 }>CFH Topic</option>
                     { topics.map((topic, index) => <option key={ index } value={ index }>{ LocalizeText('help.cfh.topic.' + topic.id) }</option>) }
                 </select>
                 <select className="form-select form-select-sm" value={ selectedAction } onChange={ event => setSelectedAction(parseInt(event.target.value)) }>
-                    <option value={ -1 } disabled>Sanction Type</option>
+                    <option disabled value={ -1 }>Sanction Type</option>
                     { MOD_ACTION_DEFINITIONS.map((action, index) => <option key={ index } value={ index }>{ action.name }</option>) }
                 </select>
-                <Column gap={ 1 }>
+                <div className="flex flex-col gap-1">
                     <Text small>Optional message type, overrides default</Text>
-                    <textarea className="form-control" value={ message } onChange={ event => setMessage(event.target.value) }/>
-                </Column>
-                <Flex justifyContent="between" gap={ 1 }>
+                    <textarea className="min-h-[calc(1.5em+ .5rem+2px)] px-[.5rem] py-[.25rem]  rounded-[.2rem]" value={ message } onChange={ event => setMessage(event.target.value) } />
+                </div>
+                <Flex gap={ 1 } justifyContent="between">
                     <Button variant="primary" onClick={ sendDefaultSanction }>Default Sanction</Button>
                     <Button variant="success" onClick={ sendSanction }>Sanction</Button>
                 </Flex>
             </NitroCardContentView>
         </NitroCardView>
     );
-}
+};

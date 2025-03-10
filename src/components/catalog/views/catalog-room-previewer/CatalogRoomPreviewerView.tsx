@@ -1,11 +1,13 @@
-import { NitroToolbarAnimateIconEvent, TextureUtils, ToolbarIconEnum } from '@nitrots/nitro-renderer';
+import { GetEventDispatcher, NitroToolbarAnimateIconEvent, RoomPreviewer, TextureUtils, ToolbarIconEnum } from '@nitrots/nitro-renderer';
 import { FC, useRef } from 'react';
-import { GetRoomEngine } from '../../../../api';
-import { LayoutRoomPreviewerView, LayoutRoomPreviewerViewProps } from '../../../../common';
+import { LayoutRoomPreviewerView } from '../../../../common';
 import { CatalogPurchasedEvent } from '../../../../events';
 import { useUiEvent } from '../../../../hooks';
 
-export const CatalogRoomPreviewerView: FC<LayoutRoomPreviewerViewProps> = props =>
+export const CatalogRoomPreviewerView: FC<{
+    roomPreviewer: RoomPreviewer;
+    height?: number;
+}> = props =>
 {
     const { roomPreviewer = null } = props;
     const elementRef = useRef<HTMLDivElement>(null);
@@ -13,25 +15,28 @@ export const CatalogRoomPreviewerView: FC<LayoutRoomPreviewerViewProps> = props 
     useUiEvent(CatalogPurchasedEvent.PURCHASE_SUCCESS, event =>
     {
         if(!elementRef) return;
-        
+
         const renderTexture = roomPreviewer.getRoomObjectCurrentImage();
 
         if(!renderTexture) return;
 
-        const image = TextureUtils.generateImage(renderTexture);
+        (async () =>
+        {
+            const image = await TextureUtils.generateImage(renderTexture);
 
-        if(!image) return;
+            if(!image) return;
 
-        const bounds = elementRef.current.getBoundingClientRect();
+            const bounds = elementRef.current.getBoundingClientRect();
 
-        const x = (bounds.x + (bounds.width / 2));
-        const y = (bounds.y + (bounds.height / 2));
+            const x = (bounds.x + (bounds.width / 2));
+            const y = (bounds.y + (bounds.height / 2));
 
-        const animateEvent = new NitroToolbarAnimateIconEvent(image, x, y);
+            const animateEvent = new NitroToolbarAnimateIconEvent(image, x, y);
 
-        animateEvent.iconName = ToolbarIconEnum.INVENTORY;
+            animateEvent.iconName = ToolbarIconEnum.INVENTORY;
 
-        GetRoomEngine().events.dispatchEvent(animateEvent);
+            GetEventDispatcher().dispatchEvent(animateEvent);
+        })();
     });
 
     return (
@@ -39,4 +44,4 @@ export const CatalogRoomPreviewerView: FC<LayoutRoomPreviewerViewProps> = props 
             <LayoutRoomPreviewerView { ...props } />
         </div>
     );
-}
+};

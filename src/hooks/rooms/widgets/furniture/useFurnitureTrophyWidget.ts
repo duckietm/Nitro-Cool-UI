@@ -1,7 +1,6 @@
-import { RoomEngineTriggerWidgetEvent, RoomObjectVariable } from '@nitrots/nitro-renderer';
+import { GetRoomEngine, RoomEngineTriggerWidgetEvent, RoomObjectVariable } from '@nitrots/nitro-renderer';
 import { useState } from 'react';
-import { GetRoomEngine } from '../../../../api';
-import { useRoomEngineEvent } from '../../../events';
+import { useNitroEvent } from '../../../events';
 import { useFurniRemovedEvent } from '../../engine';
 
 const useFurnitureTrophyWidgetState = () =>
@@ -21,9 +20,9 @@ const useFurnitureTrophyWidgetState = () =>
         setSenderName('');
         setDate('');
         setMessage('');
-    }
+    };
 
-    useRoomEngineEvent<RoomEngineTriggerWidgetEvent>(RoomEngineTriggerWidgetEvent.REQUEST_TROPHY, event =>
+    useNitroEvent<RoomEngineTriggerWidgetEvent>(RoomEngineTriggerWidgetEvent.REQUEST_TROPHY, event =>
     {
         const roomObject = GetRoomEngine().getRoomObject(event.roomId, event.objectId, event.category);
 
@@ -58,6 +57,6 @@ const useFurnitureTrophyWidgetState = () =>
     });
 
     return { objectId, color, senderName, date, message, onClose };
-}
+};
 
 export const useFurnitureTrophyWidget = useFurnitureTrophyWidgetState;

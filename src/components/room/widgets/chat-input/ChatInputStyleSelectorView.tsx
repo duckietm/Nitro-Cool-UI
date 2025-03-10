@@ -1,6 +1,6 @@
 import { FC, MouseEvent, useEffect, useState } from 'react';
-import { Overlay, Popover } from 'react-bootstrap';
-import { Base, Flex, Grid, NitroCardContentView } from '../../../../common';
+import { ArrowContainer, Popover } from 'react-tiny-popover';
+import { Flex, Grid, NitroCardContentView } from '../../../../common';
 
 interface ChatInputStyleSelectorViewProps
 {
@@ -19,7 +19,7 @@ export const ChatInputStyleSelectorView: FC<ChatInputStyleSelectorViewProps> = p
     {
         selectChatStyleId(styleId);
         setSelectorVisible(false);
-    }
+    };
 
     const toggleSelector = (event: MouseEvent<HTMLElement>) =>
     {
@@ -33,7 +33,7 @@ export const ChatInputStyleSelectorView: FC<ChatInputStyleSelectorViewProps> = p
         });
 
         if(visible) setTarget((event.target as (EventTarget & HTMLElement)));
-    }
+    };
 
     useEffect(() =>
     {
@@ -44,25 +44,42 @@ export const ChatInputStyleSelectorView: FC<ChatInputStyleSelectorViewProps> = p
 
     return (
         <>
-            <Base pointer className="icon chatstyles-icon" onClick={ toggleSelector } />
-            <Overlay show={ selectorVisible } target={ target } placement="top">
-                <Popover className="nitro-chat-style-selector-container">
-                    <NitroCardContentView overflow="hidden" className="bg-transparent bubble-window image-rendering-pixelated">
-                        <Grid gap={ 1 } columnCount={ 3 } overflow="auto">
-                            { chatStyleIds && (chatStyleIds.length > 0) && chatStyleIds.map((styleId) =>
-                            {
-                                return (
-                                    <Flex center pointer key={ styleId } className="bubble-parent-container" onClick={ event => selectStyle(styleId) }>
-                                        <Base key={ styleId } className="bubble-container">
-                                            <Base className={ `chat-bubble bubble-${ styleId }` }>&nbsp;</Base>
-                                        </Base>
-                                    </Flex>
-                                );
-                            }) }
-                        </Grid>
-                    </NitroCardContentView>
-                </Popover>
-            </Overlay>
+
+            <Popover
+                containerClassName="max-w-[276px] not-italic font-normal leading-normal text-left no-underline [text-shadow:none] normal-case tracking-[normal] [word-break:normal] [word-spacing:normal] whitespace-normal text-[.7875rem] [word-wrap:break-word] bg-[#dfdfdf] bg-clip-padding border-[1px] border-[solid] border-[#283F5D] rounded-[.25rem] [box-shadow:0_2px_#00000073] z-[1070]"
+                content={ ({ position, childRect, popoverRect }) => (
+                    <ArrowContainer // if you'd like an arrow, you can import the ArrowContainer!
+                        arrowColor={ 'black' }
+                        arrowSize={ 7 }
+                        arrowStyle={ { bottom: 'calc(-.5rem - 1px)' } }
+                        childRect={ childRect }
+                        popoverRect={ popoverRect }
+                        position={ position }
+                    >
+                        <NitroCardContentView className="bg-transparent !max-h-[200px]" overflow="hidden">
+                            <Grid columnCount={ 3 } overflow="auto">
+                                { chatStyleIds && (chatStyleIds.length > 0) && chatStyleIds.map((styleId) =>
+                                {
+                                    return (
+                                        <Flex key={ styleId } center pointer className="h-[30px]" onClick={ event => selectStyle(styleId) }>
+                                            <div key={ styleId } className="bubble-container relative w-[50px]">
+                                                <div className={ `relative max-w-[350px] min-h-[26px] text-[14px] chat-bubble bubble-${ styleId }` }>&nbsp;</div>
+                                            </div>
+                                        </Flex>
+                                    );
+                                }) }
+                            </Grid>
+                        </NitroCardContentView>
+
+                    </ArrowContainer>
+                ) }
+                isOpen={ selectorVisible }
+                positions={ [ 'top' ] }
+            >
+                <div className="cursor-pointer nitro-icon chatstyles-icon" onClick={ toggleSelector } />
+
+            </Popover>
+
         </>
     );
-}
+};

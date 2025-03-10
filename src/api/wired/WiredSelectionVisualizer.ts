@@ -1,16 +1,11 @@
-import { IRoomObject, IRoomObjectSpriteVisualization, NitroFilter, RoomObjectCategory } from '@nitrots/nitro-renderer';
-import { WiredSelectionFilter } from '.';
-import { GetRoomEngine } from '..';
+import { GetRoomEngine, IRoomObject, IRoomObjectSpriteVisualization, RoomObjectCategory, WiredFilter } from '@nitrots/nitro-renderer';
 
 export class WiredSelectionVisualizer
 {
-    private static _selectionShader: NitroFilter = new WiredSelectionFilter([ 1, 1, 1 ], [ 0.6, 0.6, 0.6 ]);
-    private static _maxItemSelectionCount: number = 0;
-
-    public static setMaxItemSelectionCount(count: number): void
-    {
-        WiredSelectionVisualizer._maxItemSelectionCount = count;
-    }
+    private static _selectionShader: WiredFilter = new WiredFilter({
+        lineColor: [ 1, 1, 1 ],
+        color: [ 0.6, 0.6, 0.6 ]
+    });
 
     public static show(furniId: number): void
     {
@@ -55,9 +50,13 @@ export class WiredSelectionVisualizer
 
         for(const sprite of visualization.sprites)
         {
-            if(sprite.blendMode === 1) continue; // BLEND_MODE: ADD
+            if(sprite.blendMode === 'add') continue;
 
-            sprite.filters = [ WiredSelectionVisualizer._selectionShader ];
+            if(!sprite.filters) sprite.filters = [];
+
+            sprite.filters.push(WiredSelectionVisualizer._selectionShader);
+
+            sprite.increaseUpdateCounter();
         }
     }
 
@@ -69,6 +68,18 @@ export class WiredSelectionVisualizer
 
         if(!visualization) return;
 
-        for(const sprite of visualization.sprites) sprite.filters = [];
+        for(const sprite of visualization.sprites)
+        {
+            if(!sprite.filters) continue;
+
+            const index = sprite.filters.indexOf(WiredSelectionVisualizer._selectionShader);
+
+            if(index >= 0)
+            {
+                sprite.filters.splice(index, 1);
+
+                sprite.increaseUpdateCounter();
+            }
+        }
     }
 }

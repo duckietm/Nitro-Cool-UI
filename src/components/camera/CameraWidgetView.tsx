@@ -1,7 +1,6 @@
-import { ILinkEventTracker, RoomSessionEvent } from '@nitrots/nitro-renderer';
+import { AddLinkEventTracker, ILinkEventTracker, RemoveLinkEventTracker, RoomSessionEvent } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
-import { AddEventLinkTracker, RemoveLinkEventTracker } from '../../api';
-import { useCamera, useRoomSessionManagerEvent } from '../../hooks';
+import { useCamera, useNitroEvent } from '../../hooks';
 import { CameraWidgetCaptureView } from './views/CameraWidgetCaptureView';
 import { CameraWidgetCheckoutView } from './views/CameraWidgetCheckoutView';
 import { CameraWidgetEditorView } from './views/editor/CameraWidgetEditorView';
@@ -15,7 +14,7 @@ export const CameraWidgetView: FC<{}> = props =>
 {
     const [ mode, setMode ] = useState<number>(MODE_NONE);
     const [ base64Url, setSavedPictureUrl ] = useState<string>(null);
-    const { availableEffects = [], selectedPictureIndex = -1, cameraRoll = [], setCameraRoll = null, myLevel = 0, price = { credits: 0, duckets: 0, publishDucketPrice: 0 }} = useCamera();
+    const { availableEffects = [], selectedPictureIndex = -1, cameraRoll = [], setCameraRoll = null, myLevel = 0, price = { credits: 0, duckets: 0, publishDucketPrice: 0 } } = useCamera();
 
     const processAction = (type: string) =>
     {
@@ -41,34 +40,15 @@ export const CameraWidgetView: FC<{}> = props =>
                 setMode(MODE_CAPTURE);
                 return;
         }
-    }
+    };
 
     const checkoutPictureUrl = (pictureUrl: string) =>
-	{
-		const expectedPrefix = 'data:image/';
-		
-		if (!pictureUrl.startsWith(expectedPrefix)) {
-			return;
-		}
+    {
+        setSavedPictureUrl(pictureUrl);
+        setMode(MODE_CHECKOUT);
+    };
 
-		const sanitizedUrl = sanitizeImageUrl(pictureUrl);
-		if (!sanitizedUrl) {
-			return;
-		}
-
-		setSavedPictureUrl(sanitizedUrl);
-		setMode(MODE_CHECKOUT);
-	}
-
-		const sanitizeImageUrl = (imageUrl: string): string | null => {
-			if (!imageUrl.startsWith('data:image/')) {
-				return null;
-			}
-
-		return imageUrl;
-	}
-
-    useRoomSessionManagerEvent<RoomSessionEvent>(RoomSessionEvent.ENDED, event => setMode(MODE_NONE));
+    useNitroEvent<RoomSessionEvent>(RoomSessionEvent.ENDED, event => setMode(MODE_NONE));
 
     useEffect(() =>
     {
@@ -76,9 +56,9 @@ export const CameraWidgetView: FC<{}> = props =>
             linkReceived: (url: string) =>
             {
                 const parts = url.split('/');
-        
+
                 if(parts.length < 2) return;
-        
+
                 switch(parts[1])
                 {
                     case 'show':
@@ -99,7 +79,7 @@ export const CameraWidgetView: FC<{}> = props =>
             eventUrlPrefix: 'camera/'
         };
 
-        AddEventLinkTracker(linkTracker);
+        AddLinkEventTracker(linkTracker);
 
         return () => RemoveLinkEventTracker(linkTracker);
     }, []);
@@ -113,4 +93,4 @@ export const CameraWidgetView: FC<{}> = props =>
             { (mode === MODE_CHECKOUT) && <CameraWidgetCheckoutView base64Url={ base64Url } onCloseClick={ () => processAction('close') } onCancelClick={ () => processAction('editor_cancel') } price={ price }></CameraWidgetCheckoutView> }
         </>
     );
-}
+};

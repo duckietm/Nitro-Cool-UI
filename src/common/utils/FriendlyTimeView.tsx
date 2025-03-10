@@ -1,6 +1,6 @@
-import { FriendlyTime } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useMemo, useState } from 'react';
-import { Base, BaseProps } from '..';
+import { FriendlyTime } from '../../api';
+import { Base, BaseProps } from '../Base';
 
 interface FriendlyTimeViewProps extends BaseProps<HTMLDivElement>
 {
@@ -25,4 +25,4 @@ export const FriendlyTimeView: FC<FriendlyTimeViewProps> = props =>
     const value = (Math.round(new Date().getSeconds()) - getStartSeconds);
 
     return <Base { ...rest }>{ isShort ? FriendlyTime.shortFormat(value) : FriendlyTime.format(value) }</Base>;
-}
+};

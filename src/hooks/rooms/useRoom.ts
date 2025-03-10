@@ -1,14 +1,14 @@
-import { AdjustmentFilter, ColorConverter, IRoomSession, NitroContainer, NitroSprite, NitroTexture, RoomBackgroundColorEvent, RoomEngineEvent, RoomEngineObjectEvent, RoomGeometry, RoomId, RoomObjectCategory, RoomObjectHSLColorEnabledEvent, RoomObjectOperationType, RoomSessionEvent, RoomVariableEnum, Vector3d } from '@nitrots/nitro-renderer';
+import { ColorConverter, GetRenderer, GetRoomEngine, GetStage, IRoomSession, NitroAdjustmentFilter, NitroSprite, NitroTexture, RoomBackgroundColorEvent, RoomEngineEvent, RoomEngineObjectEvent, RoomGeometry, RoomId, RoomObjectCategory, RoomObjectHSLColorEnabledEvent, RoomObjectOperationType, RoomSessionEvent, RoomVariableEnum, Vector3d } from '@nitrots/nitro-renderer';
 import { useEffect, useState } from 'react';
 import { useBetween } from 'use-between';
-import { CanManipulateFurniture, DispatchUiEvent, GetNitroInstance, GetRoomEngine, GetRoomSession, InitializeRoomInstanceRenderingCanvas, IsFurnitureSelectionDisabled, ProcessRoomObjectOperation, RoomWidgetUpdateBackgroundColorPreviewEvent, RoomWidgetUpdateRoomObjectEvent, SetActiveRoomId, StartRoomSession } from '../../api';
-import { useRoomEngineEvent, useRoomSessionManagerEvent, useUiEvent } from '../events';
+import { CanManipulateFurniture, DispatchUiEvent, GetRoomSession, InitializeRoomInstanceRenderingCanvas, IsFurnitureSelectionDisabled, ProcessRoomObjectOperation, RoomWidgetUpdateBackgroundColorPreviewEvent, RoomWidgetUpdateRoomObjectEvent, SetActiveRoomId, StartRoomSession } from '../../api';
+import { useNitroEvent, useUiEvent } from '../events';
 
 const useRoomState = () =>
 {
     const [ roomSession, setRoomSession ] = useState<IRoomSession>(null);
     const [ roomBackground, setRoomBackground ] = useState<NitroSprite>(null);
-    const [ roomFilter, setRoomFilter ] = useState<AdjustmentFilter>(null);
+    const [ roomFilter, setRoomFilter ] = useState<NitroAdjustmentFilter>(null);
     const [ originalRoomBackgroundColor, setOriginalRoomBackgroundColor ] = useState(0);
 
     const updateRoomBackgroundColor = (hue: number, saturation: number, lightness: number, original: boolean = false) =>
@@ -27,7 +27,7 @@ const useRoomState = () =>
         {
             roomBackground.tint = newColor;
         }
-    }
+    };
 
     const updateRoomFilter = (color: number) =>
     {
@@ -40,7 +40,7 @@ const useRoomState = () =>
         roomFilter.red = (r / 255);
         roomFilter.green = (g / 255);
         roomFilter.blue = (b / 255);
-    }
+    };
 
     useUiEvent<RoomWidgetUpdateBackgroundColorPreviewEvent>(RoomWidgetUpdateBackgroundColorPreviewEvent.PREVIEW, event => updateRoomBackgroundColor(event.hue, event.saturation, event.lightness));
 
@@ -51,7 +51,7 @@ const useRoomState = () =>
         roomBackground.tint = originalRoomBackgroundColor;
     });
 
-    useRoomEngineEvent<RoomObjectHSLColorEnabledEvent>(RoomObjectHSLColorEnabledEvent.ROOM_BACKGROUND_COLOR, event =>
+    useNitroEvent<RoomObjectHSLColorEnabledEvent>(RoomObjectHSLColorEnabledEvent.ROOM_BACKGROUND_COLOR, event =>
     {
         if(RoomId.isRoomPreviewerId(event.roomId)) return;
 
@@ -59,7 +59,7 @@ const useRoomState = () =>
         else updateRoomBackgroundColor(0, 0, 0, true);
     });
 
-    useRoomEngineEvent<RoomBackgroundColorEvent>(RoomBackgroundColorEvent.ROOM_COLOR, event =>
+    useNitroEvent<RoomBackgroundColorEvent>(RoomBackgroundColorEvent.ROOM_COLOR, event =>
     {
         if(RoomId.isRoomPreviewerId(event.roomId)) return;
 
@@ -75,7 +75,7 @@ const useRoomState = () =>
         updateRoomFilter(ColorConverter.hslToRGB(((ColorConverter.rgbToHSL(color) & 0xFFFF00) + brightness)));
     });
 
-    useRoomEngineEvent<RoomEngineEvent>([
+    useNitroEvent<RoomEngineEvent>([
         RoomEngineEvent.INITIALIZED,
         RoomEngineEvent.DISPOSED
     ], event =>
@@ -98,7 +98,7 @@ const useRoomState = () =>
         }
     });
 
-    useRoomSessionManagerEvent<RoomSessionEvent>([
+    useNitroEvent<RoomSessionEvent>([
         RoomSessionEvent.CREATED,
         RoomSessionEvent.ENDED
     ], event =>
@@ -114,7 +114,7 @@ const useRoomState = () =>
         }
     });
 
-    useRoomEngineEvent<RoomEngineObjectEvent>([
+    useNitroEvent<RoomEngineObjectEvent>([
         RoomEngineObjectEvent.SELECTED,
         RoomEngineObjectEvent.DESELECTED,
         RoomEngineObjectEvent.ADDED,
@@ -197,21 +197,14 @@ const useRoomState = () =>
     {
         if(!roomSession) return;
 
-        const nitroInstance = GetNitroInstance();
         const roomEngine = GetRoomEngine();
         const roomId = roomSession.roomId;
         const canvasId = 1;
         const width = Math.floor(window.innerWidth);
         const height = Math.floor(window.innerHeight);
-        const renderer = nitroInstance.application.renderer;
+        const renderer = GetRenderer();
 
-        if(renderer)
-        {
-            renderer.view.style.width = `${ width }px`;
-            renderer.view.style.height = `${ height }px`;
-            renderer.resolution = window.devicePixelRatio;
-            renderer.resize(width, height);
-        }
+        if(renderer) renderer.resize(width, height, window.devicePixelRatio);
 
         const displayObject = roomEngine.getRoomInstanceDisplay(roomId, canvasId, width, height, RoomGeometry.SCALE_ZOOMED_IN);
         const canvas = GetRoomEngine().getRoomInstanceRenderingCanvas(roomId, canvasId);
@@ -219,8 +212,8 @@ const useRoomState = () =>
         if(!displayObject || !canvas) return;
 
         const background = new NitroSprite(NitroTexture.WHITE);
-        const filter = new AdjustmentFilter();
-        const master = (canvas.master as NitroContainer);
+        const filter = new NitroAdjustmentFilter();
+        const master = canvas.master;
 
         background.tint = 0;
         background.width = width;
@@ -254,11 +247,7 @@ const useRoomState = () =>
             geometry.location = new Vector3d(x, y, z);
         }
 
-        const stage = nitroInstance.application.stage;
-
-        if(!stage) return;
-
-        stage.addChild(displayObject);
+        GetStage().addChild(displayObject);
 
         SetActiveRoomId(roomSession.roomId);
 
@@ -267,18 +256,14 @@ const useRoomState = () =>
             const width = Math.floor(window.innerWidth);
             const height = Math.floor(window.innerHeight);
 
-            renderer.view.style.width = `${ width }px`;
-            renderer.view.style.height = `${ height }px`;
-            renderer.resolution = window.devicePixelRatio;
-            renderer.resize(width, height);
-
             background.width = width;
             background.height = height;
 
-            InitializeRoomInstanceRenderingCanvas(width, height, 1);
+            renderer.resize(width, height, window.devicePixelRatio);
 
-            nitroInstance.application.render();
-        }
+            InitializeRoomInstanceRenderingCanvas(width, height, 1);
+            GetRenderer().render(GetStage());
+        };
 
         window.addEventListener('resize', resize);
 
@@ -289,10 +274,10 @@ const useRoomState = () =>
             setOriginalRoomBackgroundColor(0);
 
             window.removeEventListener('resize', resize);
-        }
+        };
     }, [ roomSession ]);
 
     return { roomSession };
-}
+};
 
 export const useRoom = () => useBetween(useRoomState);

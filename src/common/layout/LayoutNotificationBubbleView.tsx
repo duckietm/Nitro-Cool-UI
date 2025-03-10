@@ -1,6 +1,6 @@
+import { AnimatePresence, motion } from 'framer-motion';
 import { FC, useEffect, useMemo, useState } from 'react';
-import { Flex, FlexProps } from '..';
-import { TransitionAnimation, TransitionAnimationTypes } from '../transitions';
+import { Flex, FlexProps } from '../Flex';
 
 export interface LayoutNotificationBubbleViewProps extends FlexProps
 {
@@ -45,8 +45,14 @@ export const LayoutNotificationBubbleView: FC<LayoutNotificationBubbleViewProps>
     }, [ fadesOut, timeoutMs, onClose ]);
 
     return (
-        <TransitionAnimation type={ TransitionAnimationTypes.FADE_IN } inProp={ isVisible } timeout={ 300 }>
-            <Flex overflow={ overflow } classNames={ getClassNames } onClick={ onClose } { ...rest } />
-        </TransitionAnimation>
+        <AnimatePresence>
+            { isVisible &&
+                <motion.div
+                    initial={ { opacity: 0 }}
+                    animate={ { opacity: 1 }}
+                    exit={ { opacity: 0 }}>
+                    <Flex overflow={ overflow } classNames={ getClassNames } onClick={ onClose } { ...rest } />
+                </motion.div> }
+        </AnimatePresence>
     );
-}
+};

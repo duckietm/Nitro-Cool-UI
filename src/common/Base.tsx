@@ -29,21 +29,21 @@ export const Base: FC<BaseProps<HTMLDivElement>> = props =>
     {
         const newClassNames: string[] = [];
 
-        if(display && display.length) newClassNames.push('d-' + display);
+        if(display && display.length) newClassNames.push(display);
 
-        if(fit || fullWidth) newClassNames.push('w-100');
+        if(fit || fullWidth) newClassNames.push('w-full');
 
-        if(fit || fullHeight) newClassNames.push('h-100');
+        if(fit || fullHeight) newClassNames.push('h-full');
 
-        if(fitV) newClassNames.push('vw-100', 'vh-100');
+        if(fitV) newClassNames.push('vw-full', 'vh-full');
 
-        if(grow) newClassNames.push('flex-grow-1');
+        if(grow) newClassNames.push('!flex-grow');
 
-        if(shrink) newClassNames.push('flex-shrink-0');
+        if(shrink) newClassNames.push('!flex-shrink-0');
 
         if(overflow) newClassNames.push('overflow-' + overflow);
 
-        if(position) newClassNames.push('position-' + position);
+        if(position) newClassNames.push(position);
 
         if(float) newClassNames.push('float-' + float);
 
@@ -75,10 +75,10 @@ export const Base: FC<BaseProps<HTMLDivElement>> = props =>
 
         return newStyle;
     }, [ style ]);
-    
+
     return (
         <div ref={ innerRef } className={ getClassName } style={ getStyle } { ...rest }>
             { children }
         </div>
     );
-}
+};

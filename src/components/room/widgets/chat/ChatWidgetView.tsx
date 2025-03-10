@@ -1,6 +1,6 @@
 import { RoomChatSettings } from '@nitrots/nitro-renderer';
 import { FC, useCallback, useEffect, useRef } from 'react';
-import { ChatBubbleMessage, DoChatsOverlap, GetConfiguration } from '../../../../api';
+import { ChatBubbleMessage, DoChatsOverlap, GetConfigurationValue } from '../../../../api';
 import { useChatWidget } from '../../../../hooks';
 import IntervalWebWorker from '../../../../workers/IntervalWebWorker';
 import { WorkerBuilder } from '../../../../workers/WorkerBuilder';
@@ -23,10 +23,10 @@ export const ChatWidgetView: FC<{}> = props =>
             }
 
             return prevValue;
-        })
+        });
     }, [ setChatMessages ]);
 
-    const checkOverlappingChats = useCallback((chat: ChatBubbleMessage, moved: number, tempChats: ChatBubbleMessage[]) => 
+    const checkOverlappingChats = useCallback((chat: ChatBubbleMessage, moved: number, tempChats: ChatBubbleMessage[]) =>
     {
         for(let i = (chatMessages.indexOf(chat) - 1); i >= 0; i--)
         {
@@ -91,7 +91,7 @@ export const ChatWidgetView: FC<{}> = props =>
             if(!elementRef || !elementRef.current) return;
 
             const currentHeight = elementRef.current.offsetHeight;
-            const newHeight = Math.round(document.body.offsetHeight * GetConfiguration<number>('chat.viewer.height.percentage'));
+            const newHeight = Math.round(document.body.offsetHeight * GetConfigurationValue<number>('chat.viewer.height.percentage'));
 
             elementRef.current.style.height = `${ newHeight }px`;
 
@@ -101,10 +101,10 @@ export const ChatWidgetView: FC<{}> = props =>
                 {
                     prevValue.forEach(chat => (chat.top -= (currentHeight - newHeight)));
                 }
-    
+
                 return prevValue;
             });
-        }
+        };
 
         window.addEventListener('resize', resize);
 
@@ -113,7 +113,7 @@ export const ChatWidgetView: FC<{}> = props =>
         return () =>
         {
             window.removeEventListener('resize', resize);
-        }
+        };
     }, [ setChatMessages ]);
 
     useEffect(() =>
@@ -127,10 +127,10 @@ export const ChatWidgetView: FC<{}> = props =>
                     if(chat.skipMovement)
                     {
                         chat.skipMovement = false;
-            
+
                         return;
                     }
-            
+
                     chat.top -= amount;
                 });
 
@@ -138,7 +138,7 @@ export const ChatWidgetView: FC<{}> = props =>
             });
 
             removeHiddenChats();
-        }
+        };
 
         const worker = new WorkerBuilder(IntervalWebWorker);
 
@@ -149,13 +149,14 @@ export const ChatWidgetView: FC<{}> = props =>
         return () =>
         {
             worker.postMessage({ action: 'STOP' });
-			worker.terminate();
-        }
+
+            worker.terminate();
+        };
     }, [ getScrollSpeed, removeHiddenChats, setChatMessages ]);
 
     return (
-        <div ref={ elementRef } className="nitro-chat-widget">
-            { chatMessages.map(chat => <ChatWidgetMessageView key={ chat.id } chat={ chat } makeRoom={ makeRoom } bubbleWidth={ chatSettings.weight } />) }
+        <div ref={ elementRef } className="absolute flex justify-center items-center w-full top-0 min-h-[1px] z-[var(--chat-zindex)] bg-transparent roundehidden shadow-none pointer-events-none">
+            { chatMessages.map(chat => <ChatWidgetMessageView key={ chat.id } bubbleWidth={ chatSettings.weight } chat={ chat } makeRoom={ makeRoom } />) }
         </div>
     );
-}
+};

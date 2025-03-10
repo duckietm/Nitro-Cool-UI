@@ -1,7 +1,7 @@
 import { BuyMarketplaceOfferMessageComposer, GetMarketplaceOffersMessageComposer, MarketplaceBuyOfferResultEvent, MarketPlaceOffersEvent } from '@nitrots/nitro-renderer';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { IMarketplaceSearchOptions, LocalizeText, MarketplaceOfferData, MarketplaceSearchType, NotificationAlertType, SendMessageComposer } from '../../../../../../api';
-import { Button, ButtonGroup, Column, Text } from '../../../../../../common';
+import { Button, Column, Text } from '../../../../../../common';
 import { useMessageEvent, useNotification, usePurse } from '../../../../../../hooks';
 import { CatalogLayoutProps } from '../CatalogLayout.types';
 import { CatalogLayoutMarketplaceItemView, PUBLIC_OFFER } from './CatalogLayoutMarketplaceItemView';
@@ -27,10 +27,10 @@ export const CatalogLayoutMarketplacePublicItemsView: FC<CatalogLayoutMarketplac
     const requestOffers = useCallback((options: IMarketplaceSearchOptions) =>
     {
         setLastSearch(options);
-        SendMessageComposer(new GetMarketplaceOffersMessageComposer(options.minPrice, options.maxPrice, options.query, options.type))
+        SendMessageComposer(new GetMarketplaceOffersMessageComposer(options.minPrice, options.maxPrice, options.query, options.type));
     }, []);
 
-    const getSortTypes = useMemo( () =>
+    const getSortTypes = useMemo(() =>
     {
         switch(searchType)
         {
@@ -66,7 +66,7 @@ export const CatalogLayoutMarketplacePublicItemsView: FC<CatalogLayoutMarketplac
         const parser = event.getParser();
 
         if(!parser) return;
-        
+
         const latestOffers = new Map<number, MarketplaceOfferData>();
         parser.offers.forEach(entry =>
         {
@@ -100,9 +100,9 @@ export const CatalogLayoutMarketplacePublicItemsView: FC<CatalogLayoutMarketplac
                 simpleAlert(LocalizeText('catalog.marketplace.not_available_header'), NotificationAlertType.DEFAULT, null, null, LocalizeText('catalog.marketplace.not_available_title'));
                 break;
             case 3:
-            // our shit was updated
-            // todo: some dialogue modal 
-                setOffers( prev =>
+                // our shit was updated
+                // todo: some dialogue modal 
+                setOffers(prev =>
                 {
                     const newVal = new Map(prev);
 
@@ -119,8 +119,8 @@ export const CatalogLayoutMarketplacePublicItemsView: FC<CatalogLayoutMarketplac
                     return newVal;
                 });
 
-                showConfirm(LocalizeText('catalog.marketplace.confirm_higher_header') + 
-                '\n' + LocalizeText('catalog.marketplace.confirm_price', [ 'price' ], [ parser.newPrice.toString() ]), () =>
+                showConfirm(LocalizeText('catalog.marketplace.confirm_higher_header') +
+                    '\n' + LocalizeText('catalog.marketplace.confirm_price', [ 'price' ], [ parser.newPrice.toString() ]), () =>
                 {
                     SendMessageComposer(new BuyMarketplaceOfferMessageComposer(parser.offerId));
                 },
@@ -131,10 +131,10 @@ export const CatalogLayoutMarketplacePublicItemsView: FC<CatalogLayoutMarketplac
                 break;
         }
     });
-    
+
     return (
         <>
-            <ButtonGroup>
+            <div className="relative inline-flex align-middle">
                 <Button active={ (searchType === MarketplaceSearchType.BY_ACTIVITY) } onClick={ () => setSearchType(MarketplaceSearchType.BY_ACTIVITY) }>
                     { LocalizeText('catalog.marketplace.search_by_activity') }
                 </Button>
@@ -144,18 +144,18 @@ export const CatalogLayoutMarketplacePublicItemsView: FC<CatalogLayoutMarketplac
                 <Button active={ (searchType === MarketplaceSearchType.ADVANCED) } onClick={ () => setSearchType(MarketplaceSearchType.ADVANCED) }>
                     { LocalizeText('catalog.marketplace.search_advanced') }
                 </Button>
-            </ButtonGroup>
-            <SearchFormView sortTypes={ getSortTypes } searchType={ searchType } onSearch={ requestOffers } />
+            </div>
+            <SearchFormView searchType={ searchType } sortTypes={ getSortTypes } onSearch={ requestOffers } />
             <Column gap={ 1 } overflow="hidden">
-                <Text truncate shrink fontWeight="bold">
+                <Text shrink truncate fontWeight="bold">
                     { LocalizeText('catalog.marketplace.items_found', [ 'count' ], [ offers.size.toString() ]) }
                 </Text>
                 <Column className="nitro-catalog-layout-marketplace-grid" overflow="auto">
-                    { 
-                        Array.from(offers.values()).map( (entry, index) => <CatalogLayoutMarketplaceItemView key={ index } offerData={ entry } type={ PUBLIC_OFFER } onClick={ purchaseItem } />)
+                    {
+                        Array.from(offers.values()).map((entry, index) => <CatalogLayoutMarketplaceItemView key={ index } offerData={ entry } type={ PUBLIC_OFFER } onClick={ purchaseItem } />)
                     }
                 </Column>
             </Column>
         </>
     );
-}
+};

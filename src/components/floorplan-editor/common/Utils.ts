@@ -5,20 +5,20 @@ export const getScreenPositionForTile = (x: number, y: number): [number , number
     let positionX = (x * TILE_SIZE / 2) - (y * TILE_SIZE / 2);
     const positionY = (x * TILE_SIZE / 4) + (y * TILE_SIZE / 4);
 
-    positionX = positionX + 1600; // center the map in the canvas
+    positionX = positionX + 1024; // center the map in the canvas
 
     return [ positionX, positionY ];
-}
+};
 
 export const getTileFromScreenPosition = (x: number, y: number): [number, number] =>
 {
-    const translatedX = x - 1600; // after centering translation
-    
+    const translatedX = x - 1024; // after centering translation
+
     const realX = ((translatedX /(TILE_SIZE / 2)) + (y / (TILE_SIZE / 4))) / 2;
     const realY = ((y /(TILE_SIZE / 4)) - (translatedX / (TILE_SIZE / 2))) / 2;
 
     return [ realX, realY ];
-}
+};
 
 export const convertNumbersForSaving = (value: number): number =>
 {
@@ -35,7 +35,7 @@ export const convertNumbersForSaving = (value: number): number =>
             return 0;
 
     }
-}
+};
 
 export const convertSettingToNumber = (value: number): number =>
 {
@@ -50,4 +50,4 @@ export const convertSettingToNumber = (value: number): number =>
         default:
             return 2;
     }
-}
+};

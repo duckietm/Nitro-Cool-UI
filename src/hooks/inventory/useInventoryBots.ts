@@ -1,7 +1,7 @@
-import { BotAddedToInventoryEvent, BotData, BotInventoryMessageEvent, BotRemovedFromInventoryEvent, GetBotInventoryComposer } from '@nitrots/nitro-renderer';
+import { BotAddedToInventoryEvent, BotData, BotInventoryMessageEvent, BotRemovedFromInventoryEvent, CreateLinkEvent, GetBotInventoryComposer } from '@nitrots/nitro-renderer';
 import { useEffect, useState } from 'react';
 import { useBetween } from 'use-between';
-import { cancelRoomObjectPlacement, CreateLinkEvent, getPlacingItemId, IBotItem, SendMessageComposer, UnseenItemCategory } from '../../api';
+import { IBotItem, SendMessageComposer, UnseenItemCategory, cancelRoomObjectPlacement, getPlacingItemId } from '../../api';
 import { useMessageEvent } from '../events';
 import { useSharedVisibility } from '../useSharedVisibility';
 import { useInventoryUnseenTracker } from './useInventoryUnseenTracker';
@@ -140,7 +140,7 @@ const useInventoryBotsState = () =>
         return () =>
         {
             resetCategory(UnseenItemCategory.BOT);
-        }
+        };
     }, [ isVisible, resetCategory ]);
 
     useEffect(() =>
@@ -153,6 +153,6 @@ const useInventoryBotsState = () =>
     }, [ isVisible, needsUpdate ]);
 
     return { botItems, selectedBot, setSelectedBot, activate, deactivate };
-}
+};
 
 export const useInventoryBots = () => useBetween(useInventoryBotsState);

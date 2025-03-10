@@ -1,6 +1,6 @@
-import { FriendlyTime, HabboClubLevelEnum } from '@nitrots/nitro-renderer';
+import { CreateLinkEvent, HabboClubLevelEnum } from '@nitrots/nitro-renderer';
 import { FC, useMemo } from 'react';
-import { CreateLinkEvent, GetConfiguration, LocalizeText } from '../../api';
+import { FriendlyTime, GetConfigurationValue, LocalizeText } from '../../api';
 import { Column, Flex, Grid, LayoutCurrencyIcon, Text } from '../../common';
 import { usePurse } from '../../hooks';
 import { CurrencyView } from './views/CurrencyView';
@@ -9,9 +9,9 @@ import { SeasonalView } from './views/SeasonalView';
 export const PurseView: FC<{}> = props => {
     const { purse = null, hcDisabled = false } = usePurse();
 
-    const displayedCurrencies = useMemo(() => GetConfiguration<number[]>('system.currency.types', []), []);
-    const currencyDisplayNumberShort = useMemo(() => GetConfiguration<boolean>('currency.display.number.short', false), []);
-
+    const displayedCurrencies = useMemo(() => GetConfigurationValue<number[]>('system.currency.types', []), []);
+    const currencyDisplayNumberShort = useMemo(() => GetConfigurationValue<boolean>('currency.display.number.short', false), []);
+	
     const getClubText = (() => {
         if (!purse) return null;
 
@@ -64,7 +64,7 @@ export const PurseView: FC<{}> = props => {
     if (!purse) return null;
 
     return (
-        <Column alignItems="end" className="nitro-purse-container" gap={1}>
+        <Column alignItems="end" className="nitro-purse-container" gap={0}>
             <Flex className="nitro-purse rounded-bottom p-1">
                 <Grid fullWidth gap={1}>
                     <Column justifyContent="center" size={hcDisabled ? 10 : 6} gap={0}>
@@ -78,10 +78,10 @@ export const PurseView: FC<{}> = props => {
                         </Column>}
                     <Column justifyContent="center" size={1} gap={0}>
                         <Flex center pointer fullHeight className="nitro-purse-button p-1 rounded coffecurrencybutton" onClick={event => CreateLinkEvent('help/show')}>
-                            <i className="icon icon-help"/>
+                            <i className="nitro-icon icon-help"/>
                         </Flex>
                         <Flex center pointer fullHeight className="nitro-purse-button p-1 rounded coffecurrencybutton" onClick={event => CreateLinkEvent('user-settings/toggle')}>
-                            <i className="icon icon-cog"/>
+                            <i className="nitro-icon icon-cog"/>
                         </Flex>
                     </Column>
 					<Column justifyContent="center" size={11} gap={0}>

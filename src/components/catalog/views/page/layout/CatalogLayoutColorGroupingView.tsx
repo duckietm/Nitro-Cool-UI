@@ -2,7 +2,7 @@ import { ColorConverter } from '@nitrots/nitro-renderer';
 import { FC, useMemo, useState } from 'react';
 import { FaFillDrip } from 'react-icons/fa';
 import { IPurchasableOffer } from '../../../../../api';
-import { AutoGrid, Base, Button, Column, Flex, Grid, LayoutGridItem, Text } from '../../../../../common';
+import { AutoGrid, Button, Column, Grid, LayoutGridItem, Text } from '../../../../../common';
 import { useCatalog } from '../../../../../hooks';
 import { CatalogGridOfferView } from '../common/CatalogGridOfferView';
 import { CatalogAddOnBadgeWidgetView } from '../widgets/CatalogAddOnBadgeWidgetView';
@@ -18,7 +18,7 @@ export interface CatalogLayoutColorGroupViewProps extends CatalogLayoutProps
 
 }
 
-export const CatalogLayoutColorGroupingView : FC<CatalogLayoutColorGroupViewProps> = props =>
+export const CatalogLayoutColorGroupingView: FC<CatalogLayoutColorGroupViewProps> = props =>
 {
     const { page = null } = props;
     const [ colorableItems, setColorableItems ] = useState<Map<string, number[]>>(new Map<string, number[]>());
@@ -27,49 +27,49 @@ export const CatalogLayoutColorGroupingView : FC<CatalogLayoutColorGroupViewProp
 
     const sortByColorIndex = (a: IPurchasableOffer, b: IPurchasableOffer) =>
     {
-        if (((!(a.product.furnitureData.colorIndex)) || (!(b.product.furnitureData.colorIndex))))
+        if(((!(a.product.furnitureData.colorIndex)) || (!(b.product.furnitureData.colorIndex))))
         {
             return 1;
         }
-        if (a.product.furnitureData.colorIndex > b.product.furnitureData.colorIndex)
+        if(a.product.furnitureData.colorIndex > b.product.furnitureData.colorIndex)
         {
             return 1;
         }
-        if (a == b)
+        if(a == b)
         {
             return 0;
         }
         return -1;
-    }
+    };
 
     const sortyByFurnitureClassName = (a: IPurchasableOffer, b: IPurchasableOffer) =>
     {
-        if (a.product.furnitureData.className > b.product.furnitureData.className)
+        if(a.product.furnitureData.className > b.product.furnitureData.className)
         {
             return 1;
         }
-        if (a == b)
+        if(a == b)
         {
             return 0;
         }
         return -1;
-    }
+    };
 
     const selectOffer = (offer: IPurchasableOffer) =>
     {
         offer.activate();
         setCurrentOffer(offer);
-    }
+    };
 
     const selectColor = (colorIndex: number, productName: string) =>
     {
         const fullName = `${ productName }*${ colorIndex }`;
         const index = page.offers.findIndex(offer => offer.product.furnitureData.fullName === fullName);
-        if (index > -1)
+        if(index > -1)
         {
             selectOffer(page.offers[index]);
         }
-    }
+    };
 
     const offers = useMemo(() =>
     {
@@ -100,7 +100,7 @@ export const CatalogLayoutColorGroupingView : FC<CatalogLayoutColorGroupViewProp
                 }
 
                 let selectedColor = 0xFFFFFF;
-                
+
                 if(furniData.colors)
                 {
                     for(let color of furniData.colors)
@@ -132,17 +132,17 @@ export const CatalogLayoutColorGroupingView : FC<CatalogLayoutColorGroupViewProp
 
     return (
         <Grid>
-            <Column size={ 7 } overflow="hidden">
+            <Column overflow="hidden" size={ 7 }>
                 <AutoGrid columnCount={ 5 }>
                     { (!colorsShowing || !currentOffer || !colorableItems.has(currentOffer.product.furnitureData.className)) &&
-                        offers.map((offer, index) => <CatalogGridOfferView key={ index } itemActive={ (currentOffer && (currentOffer.product.furnitureData.hasIndexedColor ? currentOffer.product.furnitureData.className === offer.product.furnitureData.className : currentOffer.offerId === offer.offerId)) } offer={ offer } selectOffer={ selectOffer }/>)
+                        offers.map((offer, index) => <CatalogGridOfferView key={ index } itemActive={ (currentOffer && (currentOffer.product.furnitureData.hasIndexedColor ? currentOffer.product.furnitureData.className === offer.product.furnitureData.className : currentOffer.offerId === offer.offerId)) } offer={ offer } selectOffer={ selectOffer } />)
                     }
                     { (colorsShowing && currentOffer && colorableItems.has(currentOffer.product.furnitureData.className)) &&
-                        colorableItems.get(currentOffer.product.furnitureData.className).map((color, index) => <LayoutGridItem itemHighlight key={ index } itemActive={ (currentOffer.product.furnitureData.colorIndex === index) } itemColor={ ColorConverter.int2rgb(color) } className="clear-bg" onClick={ event => selectColor(index, currentOffer.product.furnitureData.className) } />)
+                        colorableItems.get(currentOffer.product.furnitureData.className).map((color, index) => <LayoutGridItem key={ index } itemHighlight className="clear-bg" itemActive={ (currentOffer.product.furnitureData.colorIndex === index) } itemColor={ ColorConverter.int2rgb(color) } onClick={ event => selectColor(index, currentOffer.product.furnitureData.className) } />)
                     }
                 </AutoGrid>
             </Column>
-            <Column center={ !currentOffer } size={ 5 } overflow="hidden">
+            <Column center={ !currentOffer } overflow="hidden" size={ 5 }>
                 { !currentOffer &&
                     <>
                         { !!page.localization.getImage(1) && <img alt="" src={ page.localization.getImage(1) } /> }
@@ -150,27 +150,27 @@ export const CatalogLayoutColorGroupingView : FC<CatalogLayoutColorGroupViewProp
                     </> }
                 { currentOffer &&
                     <>
-                        <Base position="relative" overflow="hidden">
+                        <div className="relative overflow-hidden">
                             <CatalogViewProductWidgetView />
-                            <CatalogAddOnBadgeWidgetView position="absolute" className="bg-muted rounded bottom-1 end-1" />
+                            <CatalogAddOnBadgeWidgetView className="bg-muted rounded bottom-1 end-1" position="absolute" />
                             { currentOffer.product.furnitureData.hasIndexedColor &&
-                                <Button position="absolute" className="bottom-1 start-1" onClick={ event =>setColorsShowing(prev => !prev) }>
+                                <Button className="bottom-1 start-1" position="absolute" onClick={ event => setColorsShowing(prev => !prev) }>
                                     <FaFillDrip className="fa-icon" />
                                 </Button> }
-                        </Base>
-                        <Column grow gap={ 1 }>
-                            <CatalogLimitedItemWidgetView fullWidth />
-                            <Text grow truncate>{ currentOffer.localizationName }</Text>
-                            <Flex justifyContent="between">
-                                <Column gap={ 1 }>
+                        </div>
+                        <Column className="!flex-grow" gap={ 1 }>
+                            <CatalogLimitedItemWidgetView />
+                            <Text truncate className="!flex-grow">{ currentOffer.localizationName }</Text>
+                            <div className="flex justify-between">
+                                <div className="flex flex-col gap-1">
                                     <CatalogSpinnerWidgetView />
-                                </Column>
-                                <CatalogTotalPriceWidget justifyContent="end" alignItems="end" />
-                            </Flex>
+                                </div>
+                                <CatalogTotalPriceWidget alignItems="end" justifyContent="end" />
+                            </div>
                             <CatalogPurchaseWidgetView />
                         </Column>
                     </> }
             </Column>
         </Grid>
     );
-}
+};

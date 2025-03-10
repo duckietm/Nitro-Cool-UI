@@ -1,7 +1,7 @@
-import { IFurnitureData, IPetCustomPart, IRoomUserData, PetCustomPart, PetFigureData, RoomObjectCategory, RoomObjectVariable } from '@nitrots/nitro-renderer';
+import { GetRoomEngine, IFurnitureData, IPetCustomPart, IRoomUserData, PetCustomPart, PetFigureData, RoomObjectCategory, RoomObjectVariable } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useMemo, useState } from 'react';
-import { FurniCategory, GetFurnitureDataForRoomObject, GetRoomEngine, LocalizeText, UseProductItem } from '../../../../api';
-import { Base, Button, Column, Flex, LayoutPetImageView, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../../common';
+import { FurniCategory, GetFurnitureDataForRoomObject, LocalizeText, UseProductItem } from '../../../../api';
+import { Button, Column, Flex, LayoutPetImageView, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../../../common';
 import { useRoom } from '../../../../hooks';
 
 interface AvatarInfoUseProductConfirmViewProps
@@ -32,14 +32,14 @@ export const AvatarInfoUseProductConfirmView: FC<AvatarInfoUseProductConfirmView
         if(!petData) return;
 
         GetRoomEngine().selectRoomObject(roomSession.roomId, petData.roomIndex, RoomObjectCategory.UNIT);
-    }
+    };
 
     const useProduct = () =>
     {
         roomSession.usePetProduct(item.requestRoomObjectId, petData.webID);
 
         onClose();
-    }
+    };
 
     const getPetImage = useMemo(() =>
     {
@@ -69,7 +69,7 @@ export const AvatarInfoUseProductConfirmView: FC<AvatarInfoUseProductConfirmView
                     }
                 }
 
-                return <LayoutPetImageView typeId={ petFigureData.typeId } paletteId={ paletteId } petColor={ petFigureData.color } customParts={ petFigureData.customParts } direction={ 2 } />
+                return <LayoutPetImageView customParts={ petFigureData.customParts } direction={ 2 } paletteId={ paletteId } petColor={ petFigureData.color } typeId={ petFigureData.typeId } />;
             }
             case FurniCategory.PET_CUSTOM_PART: {
                 if(customParts.length < 4) return null;
@@ -96,7 +96,7 @@ export const AvatarInfoUseProductConfirmView: FC<AvatarInfoUseProductConfirmView
                     _local_10++;
                 }
 
-                return <LayoutPetImageView typeId={ petFigureData.typeId } paletteId={ petFigureData.paletteId } petColor={ petFigureData.color } customParts={ newCustomParts } direction={ 2 } />;
+                return <LayoutPetImageView customParts={ newCustomParts } direction={ 2 } paletteId={ petFigureData.paletteId } petColor={ petFigureData.color } typeId={ petFigureData.typeId } />;
             }
             case FurniCategory.PET_CUSTOM_PART_SHAMPOO: {
                 if(customParts.length < 3) return null;
@@ -122,7 +122,7 @@ export const AvatarInfoUseProductConfirmView: FC<AvatarInfoUseProductConfirmView
                     _local_10++;
                 }
 
-                return <LayoutPetImageView typeId={ petFigureData.typeId } paletteId={ petFigureData.paletteId } petColor={ petFigureData.color } customParts={ newCustomParts } direction={ 2 } />;
+                return <LayoutPetImageView customParts={ newCustomParts } direction={ 2 } paletteId={ petFigureData.paletteId } petColor={ petFigureData.color } typeId={ petFigureData.typeId } />;
             }
             case FurniCategory.PET_SADDLE: {
                 if(customParts.length < 4) return null;
@@ -150,7 +150,7 @@ export const AvatarInfoUseProductConfirmView: FC<AvatarInfoUseProductConfirmView
                     }
                 }
 
-                return <LayoutPetImageView typeId={ petFigureData.typeId } paletteId={ petFigureData.paletteId } petColor={ petFigureData.color } customParts={ newCustomParts } direction={ 2 } />;
+                return <LayoutPetImageView customParts={ newCustomParts } direction={ 2 } paletteId={ petFigureData.paletteId } petColor={ petFigureData.color } typeId={ petFigureData.typeId } />;
             }
             case FurniCategory.MONSTERPLANT_REBREED:
             case FurniCategory.MONSTERPLANT_REVIVAL:
@@ -172,7 +172,7 @@ export const AvatarInfoUseProductConfirmView: FC<AvatarInfoUseProductConfirmView
                     }
                 }
 
-                return <LayoutPetImageView typeId={ petFigureData.typeId } paletteId={ petFigureData.paletteId } petColor={ petFigureData.color } customParts={ petFigureData.customParts } posture={ posture } direction={ 2 } />;
+                return <LayoutPetImageView customParts={ petFigureData.customParts } direction={ 2 } paletteId={ petFigureData.paletteId } petColor={ petFigureData.color } posture={ posture } typeId={ petFigureData.typeId } />;
             }
         }
     }, [ petData, furniData, roomSession ]);
@@ -226,56 +226,56 @@ export const AvatarInfoUseProductConfirmView: FC<AvatarInfoUseProductConfirmView
             <NitroCardHeaderView headerText={ LocalizeText('useproduct.widget.title', [ 'name' ], [ petData.name ]) } onCloseClick={ onClose } />
             <NitroCardContentView center>
                 <Flex gap={ 2 } overflow="hidden">
-                    <Column>
-                        <Base pointer className="product-preview" onClick={ selectRoomObject }>
+                    <div className="flex flex-col">
+                        <div className="product-preview cursor-pointer" onClick={ selectRoomObject }>
                             { getPetImage }
-                        </Base>
-                    </Column>
+                        </div>
+                    </div>
                     <Column justifyContent="between" overflow="auto">
                         <Column gap={ 2 }>
                             { (mode === PRODUCT_PAGE_SHAMPOO) &&
                                 <>
-                                    <Text>{ LocalizeText('useproduct.widget.text.shampoo', [ 'productName' ], [ furniData.name ] ) }</Text>
+                                    <Text>{ LocalizeText('useproduct.widget.text.shampoo', [ 'productName' ], [ furniData.name ]) }</Text>
                                     <Text>{ LocalizeText('useproduct.widget.info.shampoo') }</Text>
                                 </> }
                             { (mode === PRODUCT_PAGE_CUSTOM_PART) &&
                                 <>
-                                    <Text>{ LocalizeText('useproduct.widget.text.custompart', [ 'productName' ], [ furniData.name ] ) }</Text>
+                                    <Text>{ LocalizeText('useproduct.widget.text.custompart', [ 'productName' ], [ furniData.name ]) }</Text>
                                     <Text>{ LocalizeText('useproduct.widget.info.custompart') }</Text>
                                 </> }
                             { (mode === PRODUCT_PAGE_CUSTOM_PART_SHAMPOO) &&
                                 <>
-                                    <Text>{ LocalizeText('useproduct.widget.text.custompartshampoo', [ 'productName' ], [ furniData.name ] ) }</Text>
+                                    <Text>{ LocalizeText('useproduct.widget.text.custompartshampoo', [ 'productName' ], [ furniData.name ]) }</Text>
                                     <Text>{ LocalizeText('useproduct.widget.info.custompartshampoo') }</Text>
                                 </> }
                             { (mode === PRODUCT_PAGE_SADDLE) &&
                                 <>
-                                    <Text>{ LocalizeText('useproduct.widget.text.saddle', [ 'productName' ], [ furniData.name ] ) }</Text>
+                                    <Text>{ LocalizeText('useproduct.widget.text.saddle', [ 'productName' ], [ furniData.name ]) }</Text>
                                     <Text>{ LocalizeText('useproduct.widget.info.saddle') }</Text>
                                 </> }
                             { (mode === PRODUCT_PAGE_REVIVE) &&
                                 <>
-                                    <Text>{ LocalizeText('useproduct.widget.text.revive_monsterplant', [ 'productName' ], [ furniData.name ] ) }</Text>
+                                    <Text>{ LocalizeText('useproduct.widget.text.revive_monsterplant', [ 'productName' ], [ furniData.name ]) }</Text>
                                     <Text>{ LocalizeText('useproduct.widget.info.revive_monsterplant') }</Text>
                                 </> }
                             { (mode === PRODUCT_PAGE_REBREED) &&
                                 <>
-                                    <Text>{ LocalizeText('useproduct.widget.text.rebreed_monsterplant', [ 'productName' ], [ furniData.name ] ) }</Text>
+                                    <Text>{ LocalizeText('useproduct.widget.text.rebreed_monsterplant', [ 'productName' ], [ furniData.name ]) }</Text>
                                     <Text>{ LocalizeText('useproduct.widget.info.rebreed_monsterplant') }</Text>
                                 </> }
                             { (mode === PRODUCT_PAGE_FERTILIZE) &&
                                 <>
-                                    <Text>{ LocalizeText('useproduct.widget.text.fertilize_monsterplant', [ 'productName' ], [ furniData.name ] ) }</Text>
+                                    <Text>{ LocalizeText('useproduct.widget.text.fertilize_monsterplant', [ 'productName' ], [ furniData.name ]) }</Text>
                                     <Text>{ LocalizeText('useproduct.widget.info.fertilize_monsterplant') }</Text>
                                 </> }
                         </Column>
-                        <Flex alignItems="center" justifyContent="between">
+                        <div className="flex items-center justify-between">
                             <Button variant="danger" onClick={ onClose }>{ LocalizeText('useproduct.widget.cancel') }</Button>
                             <Button variant="success" onClick={ useProduct }>{ LocalizeText('useproduct.widget.use') }</Button>
-                        </Flex>
+                        </div>
                     </Column>
                 </Flex>
             </NitroCardContentView>
         </NitroCardView>
-    )
-}
+    );
+};

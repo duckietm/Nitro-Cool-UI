@@ -2,6 +2,7 @@ import { CheckUserNameMessageComposer, CheckUserNameResultMessageEvent } from '@
 import { FC, useState } from 'react';
 import { LocalizeText, SendMessageComposer } from '../../../../api';
 import { useMessageEvent } from '../../../../hooks';
+import { NitroInput } from '../../../../layout';
 import { NameChangeLayoutViewProps } from './NameChangeView.types';
 
 const AVAILABLE: number = 0;
@@ -11,7 +12,7 @@ const NOT_VALID: number = 4;
 const TAKEN_WITH_SUGGESTIONS: number = 5;
 const DISABLED: number = 6;
 
-export const NameChangeInputView:FC<NameChangeLayoutViewProps> = props =>
+export const NameChangeInputView: FC<NameChangeLayoutViewProps> = props =>
 {
     const { onAction = null } = props;
     const [ newUsername, setNewUsername ] = useState<string>('');
@@ -30,7 +31,7 @@ export const NameChangeInputView:FC<NameChangeLayoutViewProps> = props =>
         setIsChecking(true);
 
         SendMessageComposer(new CheckUserNameMessageComposer(newUsername));
-    }
+    };
 
     const handleUsernameChange = (username: string) =>
     {
@@ -38,8 +39,8 @@ export const NameChangeInputView:FC<NameChangeLayoutViewProps> = props =>
         setSuggestions([]);
         setErrorCode(null);
         setNewUsername(username);
-    }
-    
+    };
+
     useMessageEvent<CheckUserNameResultMessageEvent>(CheckUserNameResultMessageEvent, event =>
     {
         setIsChecking(false);
@@ -72,26 +73,26 @@ export const NameChangeInputView:FC<NameChangeLayoutViewProps> = props =>
     });
 
     return (
-        <div className="d-flex flex-column gap-3 h-100">
+        <div className="flex flex-col h-full gap-3">
             <div>{ LocalizeText('tutorial.name_change.info.select') }</div>
-            <div className="d-flex gap-2">
-                <input type="text" className="form-control form-control-sm" value={ newUsername } onChange={ event => handleUsernameChange(event.target.value) } />
+            <div className="flex gap-2">
+                <NitroInput type="text" value={ newUsername } onChange={ event => handleUsernameChange(event.target.value) } />
                 <button className="btn btn-primary" disabled={ newUsername === '' || isChecking } onClick={ check }>{ LocalizeText('tutorial.name_change.check') }</button>
             </div>
             { !errorCode && !canProceed &&
-                <div className="bg-muted rounded p-2 text-center">{ LocalizeText('help.tutorial.name.info') }</div> }
+                <div className="p-2 text-center rounded bg-muted">{ LocalizeText('help.tutorial.name.info') }</div> }
             { errorCode &&
-                <div className="bg-danger rounded p-2 text-center text-white">{ LocalizeText(`help.tutorial.name.${ errorCode }`, [ 'name' ], [ newUsername ]) }</div> }
+                <div className="p-2 text-center text-white rounded bg-danger">{ LocalizeText(`help.tutorial.name.${ errorCode }`, [ 'name' ], [ newUsername ]) }</div> }
             { canProceed &&
-                <div className="bg-success rounded p-2 text-center text-white">{ LocalizeText('help.tutorial.name.available', [ 'name' ], [ newUsername ]) }</div> }
+                <div className="p-2 text-center text-white rounded bg-success">{ LocalizeText('help.tutorial.name.available', [ 'name' ], [ newUsername ]) }</div> }
             { suggestions &&
-                <div className="d-flex flex-column gap-2">
-                    { suggestions.map((suggestion, index) => <div key={ index } className="col bg-muted rounded p-1 cursor-pointer" onClick={ () => handleUsernameChange(suggestion) }>{ suggestion }</div>) }
+                <div className="flex flex-col gap-2">
+                    { suggestions.map((suggestion, index) => <div key={ index } className="p-1 rounded cursor-pointer col bg-muted" onClick={ () => handleUsernameChange(suggestion) }>{ suggestion }</div>) }
                 </div> }
-            <div className="d-flex gap-2">
-                <button className="btn btn-success w-100" disabled={ !canProceed } onClick={ () => onAction('confirmation', newUsername) }>{ LocalizeText('tutorial.name_change.pick') }</button>
-                <button className="btn btn-primary w-100" onClick={ () => onAction('close') }>{ LocalizeText('cancel') }</button>
+            <div className="flex gap-2">
+                <button className="w-full btn btn-success" disabled={ !canProceed } onClick={ () => onAction('confirmation', newUsername) }>{ LocalizeText('tutorial.name_change.pick') }</button>
+                <button className="w-full btn btn-primary" onClick={ () => onAction('close') }>{ LocalizeText('cancel') }</button>
             </div>
         </div>
     );
-}
+};

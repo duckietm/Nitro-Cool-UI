@@ -1,8 +1,8 @@
-import { AvatarAction, AvatarExpressionEnum, RoomControllerLevel, RoomObjectCategory, RoomUnitDropHandItemComposer } from '@nitrots/nitro-renderer';
+import { AvatarAction, AvatarExpressionEnum, CreateLinkEvent, RoomControllerLevel, RoomObjectCategory, RoomUnitDropHandItemComposer } from '@nitrots/nitro-renderer';
 import { Dispatch, FC, SetStateAction, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-import { AvatarInfoUser, CreateLinkEvent, DispatchUiEvent, GetCanStandUp, GetCanUseExpression, GetOwnPosture, GetUserProfile, HasHabboClub, HasHabboVip, IsRidingHorse, LocalizeText, PostureTypeEnum, SendMessageComposer } from '../../../../../api';
-import { Flex, LayoutCurrencyIcon } from '../../../../../common';
+import { AvatarInfoUser, DispatchUiEvent, GetCanStandUp, GetCanUseExpression, GetOwnPosture, GetUserProfile, HasHabboClub, HasHabboVip, IsRidingHorse, LocalizeText, PostureTypeEnum, SendMessageComposer } from '../../../../../api';
+import { LayoutCurrencyIcon } from '../../../../../common';
 import { HelpNameChangeEvent } from '../../../../../events';
 import { useRoom } from '../../../../../hooks';
 import { ContextMenuHeaderView } from '../../context-menu/ContextMenuHeaderView';
@@ -108,15 +108,15 @@ export const AvatarInfoWidgetOwnAvatarView: FC<AvatarInfoWidgetOwnAvatarViewProp
         }
 
         if(hideMenu) onClose();
-    }
+    };
 
     const isShowDecorate = () => (avatarInfo.amIOwner || avatarInfo.amIAnyRoomController || (avatarInfo.roomControllerLevel > RoomControllerLevel.GUEST));
-    
+
     const isRidingHorse = IsRidingHorse();
 
     return (
-        <ContextMenuView objectId={ avatarInfo.roomIndex } category={ RoomObjectCategory.UNIT } userType={ avatarInfo.userType } onClose={ onClose } collapsable={ true }>
-            
+        <ContextMenuView category={ RoomObjectCategory.UNIT } collapsable={ true } objectId={ avatarInfo.roomIndex } userType={ avatarInfo.userType } onClose={ onClose }>
+
             <ContextMenuHeaderView className="cursor-pointer" onClick={ event => GetUserProfile(avatarInfo.webID) }>
                 { avatarInfo.name }
             </ContextMenuHeaderView>
@@ -216,7 +216,7 @@ export const AvatarInfoWidgetOwnAvatarView: FC<AvatarInfoWidgetOwnAvatarViewProp
                 </> }
             { (mode === MODE_SIGNS) &&
                 <>
-                    <Flex className="menu-list-split-3">
+                    <div className="flex menu-list-split-3">
                         <ContextMenuListItemView onClick={ event => processAction('sign_1') }>
                             1
                         </ContextMenuListItemView>
@@ -226,8 +226,8 @@ export const AvatarInfoWidgetOwnAvatarView: FC<AvatarInfoWidgetOwnAvatarViewProp
                         <ContextMenuListItemView onClick={ event => processAction('sign_3') }>
                             3
                         </ContextMenuListItemView>
-                    </Flex>
-                    <Flex className="menu-list-split-3">
+                    </div>
+                    <div className="flex menu-list-split-3">
                         <ContextMenuListItemView onClick={ event => processAction('sign_4') }>
                             4
                         </ContextMenuListItemView>
@@ -237,8 +237,8 @@ export const AvatarInfoWidgetOwnAvatarView: FC<AvatarInfoWidgetOwnAvatarViewProp
                         <ContextMenuListItemView onClick={ event => processAction('sign_6') }>
                             6
                         </ContextMenuListItemView>
-                    </Flex>
-                    <Flex className="menu-list-split-3">
+                    </div>
+                    <div className="flex menu-list-split-3">
                         <ContextMenuListItemView onClick={ event => processAction('sign_7') }>
                             7
                         </ContextMenuListItemView>
@@ -248,40 +248,40 @@ export const AvatarInfoWidgetOwnAvatarView: FC<AvatarInfoWidgetOwnAvatarViewProp
                         <ContextMenuListItemView onClick={ event => processAction('sign_9') }>
                             9
                         </ContextMenuListItemView>
-                    </Flex>
-                    <Flex className="menu-list-split-3">
+                    </div>
+                    <div className="flex menu-list-split-3">
                         <ContextMenuListItemView onClick={ event => processAction('sign_10') }>
                             10
                         </ContextMenuListItemView>
                         <ContextMenuListItemView onClick={ event => processAction('sign_11') }>
-                            <i className="icon icon-sign-heart" />
+                            <i className="nitro-icon icon-sign-heart" />
                         </ContextMenuListItemView>
                         <ContextMenuListItemView onClick={ event => processAction('sign_12') }>
-                            <i className="icon icon-sign-skull" />
+                            <i className="nitro-icon icon-sign-skull" />
                         </ContextMenuListItemView>
-                    </Flex>
-                    <Flex className="menu-list-split-3">
+                    </div>
+                    <div className="flex menu-list-split-3">
                         <ContextMenuListItemView onClick={ event => processAction('sign_0') }>
                             0
                         </ContextMenuListItemView>
                         <ContextMenuListItemView onClick={ event => processAction('sign_13') }>
-                            <i className="icon icon-sign-exclamation" />
+                            <i className="nitro-icon icon-sign-exclamation" />
                         </ContextMenuListItemView>
                         <ContextMenuListItemView onClick={ event => processAction('sign_15') }>
-                            <i className="icon icon-sign-smile" />
+                            <i className="nitro-icon icon-sign-smile" />
                         </ContextMenuListItemView>
-                    </Flex>
-                    <Flex className="menu-list-split-3">
+                    </div>
+                    <div className="flex menu-list-split-3">
                         <ContextMenuListItemView onClick={ event => processAction('sign_14') }>
-                            <i className="icon icon-sign-soccer" />
+                            <i className="nitro-icon icon-sign-soccer" />
                         </ContextMenuListItemView>
                         <ContextMenuListItemView onClick={ event => processAction('sign_17') }>
-                            <i className="icon icon-sign-yellow" />
+                            <i className="nitro-icon icon-sign-yellow" />
                         </ContextMenuListItemView>
                         <ContextMenuListItemView onClick={ event => processAction('sign_16') }>
-                            <i className="icon icon-sign-red" />
+                            <i className="nitro-icon icon-sign-red" />
                         </ContextMenuListItemView>
-                    </Flex>
+                    </div>
                     <ContextMenuListItemView onClick={ event => processAction('back') }>
                         <FaChevronLeft className="left fa-icon" />
                         { LocalizeText('generic.back') }
@@ -289,4 +289,4 @@ export const AvatarInfoWidgetOwnAvatarView: FC<AvatarInfoWidgetOwnAvatarViewProp
                 </> }
         </ContextMenuView>
     );
-}
+};

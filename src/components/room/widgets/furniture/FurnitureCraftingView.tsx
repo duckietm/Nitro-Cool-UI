@@ -1,7 +1,7 @@
-import { RoomObjectCategory } from '@nitrots/nitro-renderer';
+import { GetRoomEngine, RoomObjectCategory } from '@nitrots/nitro-renderer';
 import { FC, ReactElement, useEffect, useMemo, useState } from 'react';
-import { GetRoomEngine, IsOwnerOfFurniture, LocalizeText } from '../../../../api';
-import { AutoGrid, Button, Column, Flex, LayoutGridItem, LayoutLoadingSpinnerView, NitroCardContentView, NitroCardHeaderView, NitroCardView } from '../../../../common';
+import { IsOwnerOfFurniture, LocalizeText } from '../../../../api';
+import { AutoGrid, Button, Column, LayoutGridItem, LayoutLoadingSpinnerView, NitroCardContentView, NitroCardHeaderView, NitroCardView } from '../../../../common';
 import { useFurnitureCraftingWidget, useRoom } from '../../../../hooks';
 
 export const FurnitureCraftingView: FC<{}> = props =>
@@ -20,12 +20,12 @@ export const FurnitureCraftingView: FC<{}> = props =>
     {
         if(!requiredIngredients || !requiredIngredients.length) return false;
 
-        for (const ingredient of requiredIngredients) 
+        for(const ingredient of requiredIngredients)
         {
             const ingredientData = ingredients.find(data => (data.name === ingredient.itemName));
 
 
-            if (!ingredientData || ingredientData.count < ingredient.count) return false;
+            if(!ingredientData || ingredientData.count < ingredient.count) return false;
         }
 
         return true;
@@ -33,7 +33,7 @@ export const FurnitureCraftingView: FC<{}> = props =>
 
     const tryCraft = () =>
     {
-        if (!waitingToConfirm) 
+        if(!waitingToConfirm)
         {
             setWaitingToConfirm(true);
 
@@ -55,25 +55,25 @@ export const FurnitureCraftingView: FC<{}> = props =>
         <NitroCardView className="nitro-widget-crafting" theme="primary-slim">
             <NitroCardHeaderView headerText={ LocalizeText('crafting.title') } onCloseClick={ onClose } />
             <NitroCardContentView>
-                <Flex grow overflow="hidden" gap={ 2 }>
-                    <Flex column fullWidth gap={ 2 }>
-                        <Column overflow="hidden" fullHeight>
+                <div className="flex !flex-grow gap-2 overflow-hidden">
+                    <div className="flex flex-col w-full gap-2">
+                        <Column fullHeight overflow="hidden">
                             <div className="bg-muted rounded py-1 text-center">{ LocalizeText('crafting.title.products') }</div>
                             <AutoGrid columnCount={ 5 }>
-                                { (recipes.length > 0) && recipes.map((item) => <LayoutGridItem key={ item.name } itemImage={ item.iconUrl } itemActive={ selectedRecipe && selectedRecipe.name === item.name } onClick={ () => selectRecipe(item) } />) }
+                                { (recipes.length > 0) && recipes.map((item) => <LayoutGridItem key={ item.name } itemActive={ selectedRecipe && selectedRecipe.name === item.name } itemImage={ item.iconUrl } onClick={ () => selectRecipe(item) } />) }
                             </AutoGrid>
                         </Column>
-                        <Column overflow="hidden" fullHeight>
+                        <Column fullHeight overflow="hidden">
                             <div className="bg-muted rounded py-1 text-center">{ LocalizeText('crafting.title.mixer') }</div>
                             <AutoGrid columnCount={ 5 }>
-                                { (ingredients.length > 0) && ingredients.map((item) => <LayoutGridItem key={ item.name } itemImage={ item.iconUrl } itemCount={ item.count } itemCountMinimum={ 0 } className={ (!item.count ? 'opacity-0-5 ' : '') + 'cursor-default' } />) }
+                                { (ingredients.length > 0) && ingredients.map((item) => <LayoutGridItem key={ item.name } className={ (!item.count ? 'opacity-0-5 ' : '') + 'cursor-default' } itemCount={ item.count } itemCountMinimum={ 0 } itemImage={ item.iconUrl } />) }
                             </AutoGrid>
                         </Column>
-                    </Flex>
-                    <Flex column fullWidth gap={ 2 }>
+                    </div>
+                    <div className="flex flex-col w-full gap-2">
                         { !selectedRecipe && <Column center fullHeight className="text-black text-center">{ LocalizeText('crafting.info.start') }</Column> }
                         { selectedRecipe && <>
-                            <Column overflow="hidden" fullHeight>
+                            <div className="flex flex-col h-full overflow-hidden">
                                 <div className="bg-muted rounded py-1 text-center">{ LocalizeText('crafting.current_recipe') }</div>
                                 <AutoGrid columnCount={ 5 }>
                                     { !!requiredIngredients && (requiredIngredients.length > 0) && requiredIngredients.map(ingredient =>
@@ -82,34 +82,34 @@ export const FurnitureCraftingView: FC<{}> = props =>
 
                                         const elements: ReactElement[] = [];
 
-                                        for (let i = 0; i < ingredient.count; i++)
+                                        for(let i = 0; i < ingredient.count; i++)
                                         {
-                                            elements.push(<LayoutGridItem key={ i } itemImage={ ingredientData.iconUrl } className={ (ingredientData.count - (i) <= 0 ? 'opacity-0-5 ' : '') + 'cursor-default' } />);
+                                            elements.push(<LayoutGridItem key={ i } className={ (ingredientData.count - (i) <= 0 ? 'opacity-0-5 ' : '') + 'cursor-default' } itemImage={ ingredientData.iconUrl } />);
                                         }
 
                                         return elements;
                                     }) }
                                 </AutoGrid>
-                            </Column>
-                            <Flex gap={ 2 } column fullHeight>
-                                <Flex gap={ 2 } className="bg-muted rounded" column fullHeight>
+                            </div>
+                            <div className="flex flex-col h-full gap-2">
+                                <div className="flex flex-col h-full bg-muted rounded gap-2">
                                     <div className="py-1 text-center">{ LocalizeText('crafting.result') }</div>
-                                    <Flex gap={ 1 } center column fullHeight className="pb-1">
-                                        <Column fullHeight>
+                                    <div className="flex items-center justify-center flex-col h-full pb-1 gap-1">
+                                        <div className="flex flex-col h-full">
                                             <img src={ selectedRecipe.iconUrl } />
-                                        </Column>
+                                        </div>
                                         <div className="text-black">{ selectedRecipe.localizedName }</div>
-                                    </Flex>
-                                </Flex>
-                                <Button variant={ !isOwner || !canCraft ? 'danger' : waitingToConfirm ? 'warning' : isCrafting ? 'primary' : 'success' } disabled={ !isOwner || !canCraft || isCrafting } onClick={ tryCraft }>
+                                    </div>
+                                </div>
+                                <Button disabled={ !isOwner || !canCraft || isCrafting } variant={ !isOwner || !canCraft ? 'danger' : waitingToConfirm ? 'warning' : isCrafting ? 'primary' : 'success' } onClick={ tryCraft }>
                                     { !isCrafting && LocalizeText(!isOwner ? 'crafting.btn.notowner' : !canCraft ? 'crafting.status.recipe.incomplete' : waitingToConfirm ? 'generic.confirm' : 'crafting.btn.craft') }
                                     { isCrafting && <LayoutLoadingSpinnerView /> }
                                 </Button>
-                            </Flex>
+                            </div>
                         </> }
-                    </Flex>
-                </Flex>
+                    </div>
+                </div>
             </NitroCardContentView>
         </NitroCardView>
     );
-}
+};

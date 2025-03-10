@@ -1,9 +1,10 @@
-import { IFurnitureData } from '@nitrots/nitro-renderer';
+import { GetSessionDataManager, IFurnitureData } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
 import { FaSearch, FaTimes } from 'react-icons/fa';
-import { CatalogPage, CatalogType, FilterCatalogNode, FurnitureOffer, GetOfferNodes, GetSessionDataManager, ICatalogNode, ICatalogPage, IPurchasableOffer, LocalizeText, PageLocalization, SearchResult } from '../../../../../api';
+import { CatalogPage, CatalogType, FilterCatalogNode, FurnitureOffer, GetOfferNodes, ICatalogNode, ICatalogPage, IPurchasableOffer, LocalizeText, PageLocalization, SearchResult } from '../../../../../api';
 import { Button, Flex } from '../../../../../common';
 import { useCatalog } from '../../../../../hooks';
+import { NitroInput } from '../../../../../layout';
 
 export const CatalogSearchView: FC<{}> = props =>
 {
@@ -23,9 +24,7 @@ export const CatalogSearchView: FC<{}> = props =>
 
         const timeout = setTimeout(() =>
         {
-            const furnitureDatas = GetSessionDataManager().getAllFurnitureData({
-                loadFurnitureData: null
-            });
+            const furnitureDatas = GetSessionDataManager().getAllFurnitureData();
 
             if(!furnitureDatas || !furnitureDatas.length) return;
 
@@ -42,10 +41,10 @@ export const CatalogSearchView: FC<{}> = props =>
 
                 if((currentType === CatalogType.BUILDER) && (furniture.purchaseOfferId === -1) && (furniture.rentOfferId === -1))
                 {
-                    // if((furniture.furniLine !== '') && (foundFurniLines.indexOf(furniture.furniLine) < 0))
-                    // {
-                    //    if(searchValues.indexOf(search) >= 0) foundFurniLines.push(furniture.furniLine);
-                    // }
+                    if((furniture.furniLine !== '') && (foundFurniLines.indexOf(furniture.furniLine) < 0))
+                    {
+                        if(searchValues.indexOf(search) >= 0) foundFurniLines.push(furniture.furniLine);
+                    }
                 }
                 else
                 {
@@ -79,18 +78,29 @@ export const CatalogSearchView: FC<{}> = props =>
     }, [ offersToNodes, currentType, rootNode, searchValue, setCurrentPage, setSearchResult ]);
 
     return (
-        <Flex gap={ 1 }>
+        <div className="flex gap-1">
             <Flex fullWidth alignItems="center" position="relative">
-                <input type="text" className="form-control form-control-sm" placeholder={ LocalizeText('generic.search') } value={ searchValue } onChange={ event => setSearchValue(event.target.value) } />
+
+
+
+
+
+
+                <NitroInput
+                    placeholder={ LocalizeText('generic.search') }
+                    value={ searchValue }
+                    onChange={ event => setSearchValue(event.target.value) } />
+
+
             </Flex>
             { (!searchValue || !searchValue.length) &&
-                <Button variant="primary" className="catalog-search-button">
+                <Button className="catalog-search-button" variant="primary">
                     <FaSearch className="fa-icon" />
                 </Button> }
             { searchValue && !!searchValue.length &&
-                <Button variant="primary" className="catalog-search-button" onClick={ event => setSearchValue('') }>
+                <Button className="catalog-search-button" variant="primary" onClick={ event => setSearchValue('') }>
                     <FaTimes className="fa-icon" />
                 </Button> }
-        </Flex>
+        </div>
     );
-}
+};

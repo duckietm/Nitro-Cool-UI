@@ -1,8 +1,8 @@
-import { DesktopViewEvent, GetGuestRoomResultEvent, GroupInformationComposer, GroupInformationEvent, GroupInformationParser, GroupRemoveMemberComposer, HabboGroupDeactivatedMessageEvent, RoomEntryInfoMessageEvent } from '@nitrots/nitro-renderer';
+import { DesktopViewEvent, GetGuestRoomResultEvent, GetSessionDataManager, GroupInformationComposer, GroupInformationEvent, GroupInformationParser, GroupRemoveMemberComposer, HabboGroupDeactivatedMessageEvent, RoomEntryInfoMessageEvent } from '@nitrots/nitro-renderer';
 import { FC, useState } from 'react';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
-import { GetGroupInformation, GetGroupManager, GetSessionDataManager, GroupMembershipType, GroupType, LocalizeText, SendMessageComposer, TryJoinGroup } from '../../../api';
-import { Base, Button, Column, Flex, LayoutBadgeImageView, Text } from '../../../common';
+import { GetGroupInformation, GetGroupManager, GroupMembershipType, GroupType, LocalizeText, SendMessageComposer, TryJoinGroup } from '../../../api';
+import { Button, Flex, LayoutBadgeImageView, Text } from '../../../common';
 import { useMessageEvent, useNotification } from '../../../hooks';
 
 export const GroupRoomInformationView: FC<{}> = props =>
@@ -67,7 +67,7 @@ export const GroupRoomInformationView: FC<{}> = props =>
         {
             SendMessageComposer(new GroupRemoveMemberComposer(groupInformation.id, GetSessionDataManager().userId));
         }, null);
-    }
+    };
 
     const isRealOwner = (groupInformation && (groupInformation.ownerName === GetSessionDataManager().userName));
 
@@ -84,7 +84,7 @@ export const GroupRoomInformationView: FC<{}> = props =>
         if(groupInformation.membershipType === GroupMembershipType.REQUEST_PENDING) return 'group.membershippending';
 
         if((groupInformation.membershipType === GroupMembershipType.NOT_MEMBER) && groupInformation.type === GroupType.EXCLUSIVE) return 'group.requestmembership';
-    }
+    };
 
     const handleButtonClick = () =>
     {
@@ -100,14 +100,14 @@ export const GroupRoomInformationView: FC<{}> = props =>
         }
 
         TryJoinGroup(groupInformation.id);
-    }
+    };
 
     if(!groupInformation) return null;
 
     return (
-        <Base className="nitro-notification-bubble rounded">
-            <Column>
-                <Flex alignItems="center" justifyContent="between" pointer onClick={ event => setIsOpen(value => !value) }>
+        <div className="pointer-events-auto px-[5px] py-[6px] [box-shadow:inset_0_5px_#22222799,_inset_0_-4px_#12121599] bg-[#1c1c20f2] rounded text-sm">
+            <div className="flex flex-col gap-2">
+                <Flex pointer alignItems="center" justifyContent="between" onClick={ event => setIsOpen(value => !value) }>
                     <Text variant="white">{ LocalizeText('group.homeroominfo.title') }</Text>
                     { isOpen && <FaChevronUp className="fa-icon" /> }
                     { !isOpen && <FaChevronDown className="fa-icon" /> }
@@ -115,18 +115,18 @@ export const GroupRoomInformationView: FC<{}> = props =>
                 { isOpen &&
                     <>
                         <Flex pointer alignItems="center" gap={ 2 } onClick={ event => GetGroupInformation(groupInformation.id) }>
-                            <Base className="group-badge">
+                            <div className="group-badge">
                                 <LayoutBadgeImageView badgeCode={ groupInformation.badge } isGroup={ true } />
-                            </Base>
+                            </div>
                             <Text variant="white">{ groupInformation.title }</Text>
                         </Flex>
-                        { (groupInformation.type !== GroupType.PRIVATE || isRealOwner) && 
-                            <Button fullWidth variant="success" disabled={ (groupInformation.membershipType === GroupMembershipType.REQUEST_PENDING) } onClick={ handleButtonClick }>
+                        { (groupInformation.type !== GroupType.PRIVATE || isRealOwner) &&
+                            <Button fullWidth disabled={ (groupInformation.membershipType === GroupMembershipType.REQUEST_PENDING) } variant="success" onClick={ handleButtonClick }>
                                 { LocalizeText(getButtonText()) }
                             </Button>
                         }
                     </> }
-            </Column>
-        </Base>
+            </div>
+        </div>
     );
 };

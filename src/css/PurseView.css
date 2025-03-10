@@ -1,0 +1,111 @@
+.nitro-purse-container {
+    font-size: 1em;
+	pointer-events: all;
+    	
+    .nitro-purse {
+        margin-top: 4px;
+
+        .nitro-purse-subscription {
+            background-color: rgba($light, 0.1);
+        }
+    
+        .nitro-purse-button {
+            padding: 3px 2px;
+        }
+        .coffecurrencybutton{
+            border-radius: 0.5rem !important;
+            background-color: #b69b83;
+            border: 2px solid hsla(0deg, 0%, 100%, 0.5);
+            margin-bottom: 3px;
+            padding: 0px !important;
+            width: 30px;
+			pointer-events: all;
+        }
+        .borderhccontent{
+            background-color: #212131;
+            border-radius: 0.5rem!important;
+            border: 2px solid #383853;
+            height: calc(100% - 3px);
+        }
+        .nitro-purse-button.currency--1 {
+            background: #e8b125;
+            border: 2px solid #f4d892;
+        }
+        .nitro-purse-button.currency-0 {
+            background: #c364c1;
+            border: 2px solid #ecb3ea;
+        }
+        .nitro-purse-button.currency-5 {
+            background: #6bafaa;
+			border: 2px solid #ace6e2;
+        }
+        .allcurrencypurse{
+            border-radius: 5px!important;
+            margin-bottom: 2px;
+        }
+    }
+
+    .nitro-purse-seasonal-currency {
+        background-color: #212131;
+		background: linear-gradient(to right, #5f5f8d, transparent);
+		height: 30px;
+        margin-bottom: 4px;
+		border-radius: 0.5rem !important;
+    }
+	
+	.seasonal-image-padding {
+      padding: 6px;
+    }
+
+    .seasonal-text-padding,
+    .seasonal-amount {
+	  margin-left: 4px;
+      display: flex;
+      align-items: center;
+
+    }
+
+	.nitro-purse-seasonal-currency.purple {
+		&.purple {
+			background: linear-gradient(to right, #b17fbe, transparent);
+			border-top-right-radius: 0.5rem;
+			border-bottom-right-radius: 0.5rem;
+			}
+	}
+
+.nitro-purse-seasonal-currency.bronze {
+  .bronze {
+    background: linear-gradient(to right, #d4943c, transparent);
+    border-top-right-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+  }
+}
+
+.nitro-purse-seasonal-currency.pink {
+  .pink {
+    background: linear-gradient(to right, #d89ba8, transparent);
+    border-top-right-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+  }
+}
+
+.nitro-purse-seasonal-currency.blue {
+  .blue{
+    background: linear-gradient(to right, #95c3e5, transparent);
+    border-top-right-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+  }
+}
+
+.nitro-purse-seasonal-currency.red {
+  &.red{
+    background: linear-gradient(to right, #ff0004, transparent);
+    border-top-right-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+  }
+}
+}
+
+.topcurrencygen {
+  margin-top: 2px;
+}

@@ -23,15 +23,15 @@ export const ModToolsIssueInfoView: FC<IssueInfoViewProps> = props =>
         SendMessageComposer(new ReleaseIssuesMessageComposer([ issueId ]));
 
         onIssueInfoClosed(issueId);
-    }
+    };
 
     const closeIssue = (resolutionType: number) =>
     {
         SendMessageComposer(new CloseIssuesMessageComposer([ issueId ], resolutionType));
 
-        onIssueInfoClosed(issueId)
-    }
-    
+        onIssueInfoClosed(issueId);
+    };
+
     return (
         <>
             <NitroCardView className="nitro-mod-tools-handle-issue" theme="primary-slim">
@@ -57,23 +57,23 @@ export const ModToolsIssueInfoView: FC<IssueInfoViewProps> = props =>
                                     <tr>
                                         <th>Caller</th>
                                         <td>
-                                            <Text bold underline pointer onClick={ event => openUserInfo(ticket.reporterUserId) }>{ ticket.reporterUserName }</Text>
+                                            <Text bold pointer underline onClick={ event => openUserInfo(ticket.reporterUserId) }>{ ticket.reporterUserName }</Text>
                                         </td>
                                     </tr>
                                     <tr>
                                         <th>Reported User</th>
                                         <td>
-                                            <Text bold underline pointer onClick={ event => openUserInfo(ticket.reportedUserId) }>{ ticket.reportedUserName }</Text>
+                                            <Text bold pointer underline onClick={ event => openUserInfo(ticket.reportedUserId) }>{ ticket.reportedUserName }</Text>
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
                         </Column>
-                        <Column size={ 4 } gap={ 1 }>
+                        <Column gap={ 1 } size={ 4 }>
                             <Button variant="secondary" onClick={ () => setcfhChatlogOpen(!cfhChatlogOpen) }>Chatlog</Button>
                             <Button onClick={ event => closeIssue(CloseIssuesMessageComposer.RESOLUTION_USELESS) }>Close as useless</Button>
                             <Button variant="danger" onClick={ event => closeIssue(CloseIssuesMessageComposer.RESOLUTION_ABUSIVE) }>Close as abusive</Button>
-                            <Button variant="success" onClick={ event => closeIssue(CloseIssuesMessageComposer.RESOLUTION_RESOLVED) }>Close as resolved</Button> 
+                            <Button variant="success" onClick={ event => closeIssue(CloseIssuesMessageComposer.RESOLUTION_RESOLVED) }>Close as resolved</Button>
                             <Button variant="secondary" onClick={ event => releaseIssue(issueId) } >Release</Button>
                         </Column>
                     </Grid>
@@ -83,4 +83,4 @@ export const ModToolsIssueInfoView: FC<IssueInfoViewProps> = props =>
                 <CfhChatlogView issueId={ issueId } onCloseClick={ () => setcfhChatlogOpen(false) }/> }
         </>
     );
-}
+};

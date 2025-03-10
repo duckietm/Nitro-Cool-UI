@@ -7,16 +7,15 @@ export const GetAlertLayout = (item: NotificationAlertItem, onClose: () => void)
 {
     if(!item) return null;
 
-    const key = item.id;
-    const props = { item, onClose };
+    const props = { key: item.id, item, onClose };
 
     switch(item.alertType)
     {
         case NotificationAlertType.NITRO:
-            return <NitroSystemAlertView key={key} {...props} />;
+            return <NitroSystemAlertView { ...props } />;
         case NotificationAlertType.SEARCH:
-            return <NotificationSeachAlertView key={key} {...props} />;
+            return <NotificationSeachAlertView { ...props } />;
         default:
-            return <NotificationDefaultAlertView key={key} {...props} />;
+            return <NotificationDefaultAlertView { ...props } />;
     }
-}
+};
