@@ -30,11 +30,15 @@ export const App: FC<{}> = props =>
                 if(!window.NitroConfig) throw new Error('NitroConfig is not defined!');
 
                 const renderer = await PrepareRenderer({
-                    width,
-                    height,
+                    width: Math.floor(width),
+                    height: Math.floor(height),
+                    resolution: window.devicePixelRatio,
                     autoDensity: true,
                     backgroundAlpha: 0,
-                    preference: 'webgl'
+                    preference: 'webgl',
+                    eventMode: 'none',
+                    failIfMajorPerformanceCaveat: false,
+                    roundPixels: true
                 });
 
                 await GetConfiguration().init();
