@@ -71,7 +71,7 @@ $nitro-card-tabs-height: 133px;
         }
 
         .nitro-card-tabs {
-            background-color: #FFFFFF;
+            background-color: $secondary;
 
             .nav-item {
                 padding: $nav-link-padding-y $nav-link-padding-x;

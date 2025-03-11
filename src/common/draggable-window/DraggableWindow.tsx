@@ -5,6 +5,7 @@ import { GetLocalStorage, SetLocalStorage, WindowSaveOptions } from '../../api';
 import { DraggableWindowPosition } from './DraggableWindowPosition';
 
 const CURRENT_WINDOWS: HTMLElement[] = [];
+const POS_MEMORY: Map<Key, { x: number, y: number }> = new Map();																 
 const BOUNDS_THRESHOLD_TOP: number = 0;
 const BOUNDS_THRESHOLD_LEFT: number = 0;
 

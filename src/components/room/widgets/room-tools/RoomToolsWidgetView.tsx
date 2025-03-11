@@ -72,10 +72,10 @@ export const RoomToolsWidgetView: FC<{}> = props =>
     }, [ roomName, roomOwner, roomTags ]);
 
     return (
-        <div className="flex gap-2 nitro-room-tools-container">
+        <div className="flex space-x-2 nitro-room-tools-container">
             <div className="flex flex-col items-center justify-center p-2 nitro-room-tools">
                 <div className="cursor-pointer nitro-icon icon-cog" title={ LocalizeText('room.settings.button.text') } onClick={ () => handleToolClick('settings') } />
-                <div className={ classNames('cursor-pointer', 'icon', (!isZoomedIn && 'icon-zoom-less'), (isZoomedIn && 'icon-zoom-more')) } title={ LocalizeText('room.zoom.button.text') } onClick={ () => handleToolClick('zoom') } />
+                <div className={ classNames('cursor-pointer', 'nitro-icon', (!isZoomedIn && 'icon-zoom-less'), (isZoomedIn && 'icon-zoom-more')) } title={ LocalizeText('room.zoom.button.text') } onClick={ () => handleToolClick('zoom') } />
                 <div className="cursor-pointer nitro-icon icon-chat-history" title={ LocalizeText('room.chathistory.button.text') } onClick={ () => handleToolClick('chat_history') } />
                 { navigatorData.canRate &&
                     <div className="cursor-pointer nitro-icon icon-like-room" title={ LocalizeText('room.like.button.text') } onClick={ () => handleToolClick('like_room') } /> }
