@@ -1,106 +1,89 @@
-import { GetConfiguration, RoomSessionEvent } from '@nitrots/nitro-renderer';
-import { FC, useState } from 'react';
+import { GetConfiguration } from '@nitrots/nitro-renderer';
+import { FC, useRef, useState } from 'react';
 import { GetConfigurationValue } from '../../api';
-import { LayoutAvatarImageView } from '../../common';
-import { useNitroEvent, useSessionInfo } from '../../hooks';
-import { WidgetSlotView } from './views/widgets/WidgetSlotView';
+import { RoomWidgetView } from './RoomWidgetView';
 
-const widgetSlotCount = 7;
-
-export const HotelView: FC<{}> = props =>
-{
-    const [ isVisible, setIsVisible ] = useState(true);
-    const { userFigure = null } = useSessionInfo();
-
-    useNitroEvent<RoomSessionEvent>([
-        RoomSessionEvent.CREATED,
-        RoomSessionEvent.ENDED ], event =>
-    {
-        switch(event.type)
-        {
-            case RoomSessionEvent.CREATED:
-                setIsVisible(false);
-                return;
-            case RoomSessionEvent.ENDED:
-                setIsVisible(event.openLandingView);
-                return;
-        }
-    });
-
-    if(!isVisible) return null;
-
+export const HotelView: FC<{}> = props => {
     const backgroundColor = GetConfigurationValue('hotelview')['images']['background.colour'];
-    const background = GetConfiguration().interpolate(GetConfigurationValue('hotelview')['images']['background']);
-    const sun = GetConfiguration().interpolate(GetConfigurationValue('hotelview')['images']['sun']);
-    const drape = GetConfiguration().interpolate(GetConfigurationValue('hotelview')['images']['drape']);
-    const left = GetConfiguration().interpolate(GetConfigurationValue('hotelview')['images']['left']);
-    const rightRepeat = GetConfiguration().interpolate(GetConfigurationValue('hotelview')['images']['right.repeat']);
-    const right = GetConfiguration().interpolate(GetConfigurationValue('hotelview')['images']['right']);
+    console.log('Background color:', backgroundColor);
+
+    const containerRef = useRef<HTMLDivElement>(null);
+    const [isDragging, setIsDragging] = useState(false);
+    const [startX, setStartX] = useState(0);
+    const [startY, setStartY] = useState(0);
+    const [scrollLeft, setScrollLeft] = useState(0);
+    const [scrollTop, setScrollTop] = useState(0);
+
+    const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+        if (e.button !== 0) return; // Only left mouse button
+        setIsDragging(true);
+        setStartX(e.pageX + scrollLeft);
+        setStartY(e.pageY + scrollTop);
+        if (containerRef.current) {
+            containerRef.current.style.cursor = 'grabbing';
+        }
+    };
+
+    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+        if (!isDragging) return;
+        e.preventDefault();
+        const x = e.pageX;
+        const y = e.pageY;
+        const newScrollLeft = startX - x;
+        const newScrollTop = startY - y;
+
+        if (containerRef.current) {
+            containerRef.current.scrollLeft = newScrollLeft;
+            containerRef.current.scrollTop = newScrollTop;
+            setScrollLeft(newScrollLeft);
+            setScrollTop(newScrollTop);
+        }
+    };
+
+    const handleMouseUp = () => {
+        setIsDragging(false);
+        if (containerRef.current) {
+            containerRef.current.style.cursor = 'grab';
+        }
+    };
+
+    const handleMouseLeave = () => {
+        setIsDragging(false);
+        if (containerRef.current) {
+            containerRef.current.style.cursor = 'grab';
+        }
+    };
 
     return (
-        <div className="block fixed w-full h-[calc(100%-55px)] bg-[black] text-[#000]" style={ (backgroundColor && backgroundColor) ? { background: backgroundColor } : {} }>
-            <div className="container h-full py-3 overflow-hidden z-10 relative">
-                <div className="flex flex-wrap h-full justify-center">
-                    <div className="grid-rows-3 h-full grid w-min">
-                        <WidgetSlotView
-                            className="grid grid-cols-2 gap-12                            "
-                            widgetConf={ GetConfigurationValue('hotelview')['widgets']['slot.' + 1 + '.conf'] }
-                            widgetSlot={ 1 }
-                            widgetType={ GetConfigurationValue('hotelview')['widgets']['slot.' + 1 + '.widget'] }
-                        />
-                        <div className="grid grid-cols-12">
-                            <WidgetSlotView
-                                className="col-span-7"
-                                widgetConf={ GetConfigurationValue('hotelview')['widgets']['slot.' + 2 + '.conf'] }
-                                widgetSlot={ 2 }
-                                widgetType={ GetConfigurationValue('hotelview')['widgets']['slot.' + 2 + '.widget'] }
-                            />
-                            <WidgetSlotView
-                                className="col-span-5"
-                                widgetConf={ GetConfigurationValue('hotelview')['widgets']['slot.' + 3 + '.conf'] }
-                                widgetSlot={ 3 }
-                                widgetType={ GetConfigurationValue('hotelview')['widgets']['slot.' + 3 + '.widget'] }
-                            />
-                            <WidgetSlotView
-                                className="col-span-7"
-                                widgetConf={ GetConfigurationValue('hotelview')['widgets']['slot.' + 4 + '.conf'] }
-                                widgetSlot={ 4 }
-                                widgetType={ GetConfigurationValue('hotelview')['widgets']['slot.' + 4 + '.widget'] }
-                            />
-                            <WidgetSlotView
-                                className="col-span-5"
-                                widgetConf={ GetConfigurationValue('hotelview')['widgets']['slot.' + 5 + '.conf'] }
-                                widgetSlot={ 5 }
-                                widgetType={ GetConfigurationValue('hotelview')['widgets']['slot.' + 5 + '.widget'] }
-                            />
-                        </div>
-                        <WidgetSlotView
-                            className="mt-auto"
-                            widgetConf={ GetConfigurationValue('hotelview')['widgets']['slot.' + 6 + '.conf'] }
-                            widgetSlot={ 6 }
-                            widgetType={ GetConfigurationValue('hotelview')['widgets']['slot.' + 6 + '.widget'] }
-                        />
-                    </div>
-                    <div className="col-span-3 h-full">
-                        <WidgetSlotView
-                            widgetConf={ GetConfigurationValue('hotelview')['widgets']['slot.' + 7 + '.conf'] }
-                            widgetSlot={ 7 }
-                            widgetType={ GetConfigurationValue('hotelview')['widgets']['slot.' + 7 + '.widget'] }
-                        />
-                    </div>
-                </div>
+        <div 
+            ref={containerRef}
+            className="nitro-hotel-view block fixed w-full h-[calc(100%-55px)] text-[#000]" 
+            style={{
+                ...(backgroundColor ? { background: backgroundColor } : {}),
+                overflow: 'auto',
+                WebkitOverflowScrolling: 'touch',
+                maxWidth: '100vw',
+                maxHeight: '100vh',
+                msOverflowStyle: 'none', // IE and Edge
+                scrollbarWidth: 'none', // Firefox
+                '::-webkit-scrollbar': { display: 'none' }, // Chrome, Safari, and newer Edge
+                cursor: 'grab' // Initial cursor state
+            }}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseLeave}
+        >
+            <div 
+                className="hotelview position-relative"
+                style={{
+                    minWidth: '2600px', // 3000px width - 400px left margin
+                    minHeight: '1425px' // 1185px height + 240px top margin
+                }}
+            >
+                <div className="hotelview-background w-full h-full" style={{ position: 'absolute', top: 0, left: 0 }} />
+                <RoomWidgetView />
             </div>
-            <div className="background absolute top-[0] h-full w-full bg-left bg-repeat-y" style={ (background && background.length) ? { backgroundImage: `url(${ background })` } : {} } />
-            <div className="sun absolute w-full h-full top-[0] left-[0] right-[0] m-auto bg-no-repeat bg-[top_center]" style={ (sun && sun.length) ? { backgroundImage: `url(${ sun })` } : {} } />
-            <div className="drape absolute w-full h-full left-[0] top-[0] [animation-iteration-count:1] [animation-name:slideDown] [animation-duration:1s] bg-no-repeat" style={ (drape && drape.length) ? { backgroundImage: `url(${ drape })` } : {} } />
-            <div className="left absolute top-[0] right-[0] bottom-[0] left-[0] [animation-iteration-count:1] [animation-name:slideUp] [animation-duration:1s] bg-no-repeat bg-left-bottom" style={ (left && left.length) ? { backgroundImage: `url(${ left })` } : {} } />
-            <div className="right-repeat absolute w-full h-full right-[0] top-[0] bg-no-repeat bg-right-top" style={ (rightRepeat && rightRepeat.length) ? { backgroundImage: `url(${ rightRepeat })` } : {} } />
-            <div className="right absolute w-full h-full right-[0] bottom-[0] [animation-iteration-count:1] [animation-name:slideUp] [animation-duration:1s] bg-no-repeat bg-right-bottom" style={ (right && right.length) ? { backgroundImage: `url(${ right })` } : {} } />
-            { GetConfigurationValue('hotelview')['show.avatar'] && (
-                <div>
-                    <LayoutAvatarImageView direction={ 2 } figure={ userFigure } />
-                </div>
-            ) }
         </div>
     );
 };
