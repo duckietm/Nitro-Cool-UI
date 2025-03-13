@@ -1,5 +1,5 @@
 import { GetConfiguration } from '@nitrots/nitro-renderer';
-import { FC, useRef, useState } from 'react';
+import { FC, useRef, useState, useEffect } from 'react';
 import { GetConfigurationValue } from '../../api';
 import { RoomWidgetView } from './RoomWidgetView';
 
@@ -14,8 +14,27 @@ export const HotelView: FC<{}> = props => {
     const [scrollLeft, setScrollLeft] = useState(0);
     const [scrollTop, setScrollTop] = useState(0);
 
+    useEffect(() => {
+        if (containerRef.current) {
+            const container = containerRef.current;
+            const contentWidth = 3000;
+            const contentHeight = 1185;
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight - 55;
+
+            const initialScrollLeft = (contentWidth - viewportWidth) / 2;
+            const initialScrollTop = (contentHeight - viewportHeight) / 2;
+
+            container.scrollLeft = Math.max(0, initialScrollLeft);
+            container.scrollTop = Math.max(0, initialScrollTop);
+
+            setScrollLeft(container.scrollLeft);
+            setScrollTop(container.scrollTop);
+        }
+    }, []);
+
     const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-        if (e.button !== 0) return; // Only left mouse button
+        if (e.button !== 0) return;
         setIsDragging(true);
         setStartX(e.pageX + scrollLeft);
         setStartY(e.pageY + scrollTop);
@@ -64,10 +83,10 @@ export const HotelView: FC<{}> = props => {
                 WebkitOverflowScrolling: 'touch',
                 maxWidth: '100vw',
                 maxHeight: '100vh',
-                msOverflowStyle: 'none', // IE and Edge
-                scrollbarWidth: 'none', // Firefox
-                '::-webkit-scrollbar': { display: 'none' }, // Chrome, Safari, and newer Edge
-                cursor: 'grab' // Initial cursor state
+                msOverflowStyle: 'none',
+                scrollbarWidth: 'none',
+                '::WebkitScrollbar': { display: 'none' },
+                cursor: 'grab'
             }}
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
@@ -77,8 +96,8 @@ export const HotelView: FC<{}> = props => {
             <div 
                 className="hotelview position-relative"
                 style={{
-                    minWidth: '2600px', // 3000px width - 400px left margin
-                    minHeight: '1425px' // 1185px height + 240px top margin
+                    minWidth: '2600px',
+                    minHeight: '1425px'
                 }}
             >
                 <div className="hotelview-background w-full h-full" style={{ position: 'absolute', top: 0, left: 0 }} />

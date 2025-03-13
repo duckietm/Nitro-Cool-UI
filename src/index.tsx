@@ -7,6 +7,8 @@ import './css/PurseView.css';
 
 import './css/chat/chats.css';
 
+import './css/hotelview/HotelView.scss';
+
 import './css/loading/loading.css';
 
 import './css/notification/NotificationCenterView.css';
