@@ -4,14 +4,11 @@ import { DispatchUiEvent, GetConfigurationValue, GetRoomSession, GetUserProfile 
 import { Flex, LayoutItemCountView } from '../../common';
 import { GuideToolEvent } from '../../events';
 
-interface ToolbarMeViewProps
-{
+export const ToolbarMeView: FC<PropsWithChildren<{
     useGuideTool: boolean;
     unseenAchievementCount: number;
     setMeExpanded: Dispatch<SetStateAction<boolean>>;
-}
-
-export const ToolbarMeView: FC<PropsWithChildren<ToolbarMeViewProps>> = props =>
+}>> = props =>
 {
     const { useGuideTool = false, unseenAchievementCount = 0, setMeExpanded = null, children = null, ...rest } = props;
     const elementRef = useRef<HTMLDivElement>();

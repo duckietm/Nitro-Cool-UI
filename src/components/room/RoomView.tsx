@@ -1,4 +1,5 @@
-import { GetRenderer } from '@nitrots/nitro-renderer';
+import { GetRenderer, RoomSession } from '@nitrots/nitro-renderer';
+import { AnimatePresence, motion } from 'framer-motion';
 import { FC, useEffect, useRef } from 'react';
 import { DispatchMouseEvent, DispatchTouchEvent } from '../../api';
 import { useRoom } from '../../hooks';
@@ -13,6 +14,8 @@ export const RoomView: FC<{}> = (props) =>
 
     useEffect(() =>
     {
+		if(!roomSession) return;
+		
         const canvas = GetRenderer().canvas;
 
         if(!canvas) return;
@@ -34,19 +37,23 @@ export const RoomView: FC<{}> = (props) =>
         canvas.classList.add('bg-black');
 
         element.appendChild(canvas);
-    }, []);
+    }, [roomSession]);
 
-    return (
-        <div
-            ref={elementRef}
-            className={classNames('size-full', !roomSession && 'hidden')}
-        >
-            {roomSession && (
-                <>
-                    <RoomWidgetsView />
-                    {roomSession.isSpectator && <RoomSpectatorView />}
-                </>
-            )}
-        </div>
+	return (
+        <AnimatePresence>
+            {
+				<motion.div
+                    initial={ { opacity: 0 }}
+                    animate={ { opacity: 1 }}
+                    exit={ { opacity: 0 }}>
+                    <div ref={ elementRef } className="w-100 h-100">
+                        { roomSession instanceof RoomSession &&
+                            <>
+                                <RoomWidgetsView />
+                                { roomSession.isSpectator && <RoomSpectatorView /> }
+                            </> }
+                    </div>
+                </motion.div> }
+        </AnimatePresence>
     );
 };
