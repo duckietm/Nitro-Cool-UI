@@ -1,6 +1,6 @@
 import { CreateLinkEvent, GetGuestRoomResultEvent, GetRoomEngine, NavigatorSearchComposer, RateFlatMessageComposer } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
-import { LocalizeText, SendMessageComposer } from '../../../../api';
+import { GetConfigurationValue, LocalizeText, SendMessageComposer } from '../../../../api';
 import { Text, TransitionAnimation, TransitionAnimationTypes } from '../../../../common';
 import { useMessageEvent, useNavigator, useRoom } from '../../../../hooks';
 import { classNames } from '../../../../layout';
@@ -25,12 +25,17 @@ export const RoomToolsWidgetView: FC<{}> = props =>
             case 'zoom':
                 setIsZoomedIn(prevValue =>
                 {
-                    let scale = GetRoomEngine().getRoomInstanceRenderingCanvasScale(roomSession.roomId, 1);
+                    if(GetConfigurationValue('room.zoom.enabled', true))
+                    {
+                        const scale = GetRoomEngine().getRoomInstanceRenderingCanvasScale(roomSession.roomId, 1);
+                        GetRoomEngine().setRoomInstanceRenderingCanvasScale(roomSession.roomId, 1, scale === 1 ? 0.5 : 1);
+                    }
+                    else
+                    {
+                        const geometry = GetRoomEngine().getRoomInstanceGeometry(roomSession.roomId, 1);
 
-                    if(!prevValue) scale /= 2;
-                    else scale *= 2;
-
-                    GetRoomEngine().setRoomInstanceRenderingCanvasScale(roomSession.roomId, 1, scale);
+                        if(geometry) geometry.performZoom();
+                    }
 
                     return !prevValue;
                 });

@@ -108,7 +108,7 @@ const useChatInputWidgetState = () =>
 
                     return null;
                 case ':zoom':
-                    GetEventDispatcher().dispatchEvent(new RoomZoomEvent(roomSession.roomId, parseFloat(secondPart), false));
+                    GetEventDispatcher().dispatchEvent(new RoomZoomEvent(roomSession.roomId, parseInt(secondPart)));
 
                     return null;
                 case ':screenshot':
