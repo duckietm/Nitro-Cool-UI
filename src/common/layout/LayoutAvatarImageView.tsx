@@ -80,7 +80,7 @@ export const LayoutAvatarImageView: FC<LayoutAvatarImageViewProps> = props =>
                     setAvatarUrl(imageUrl);
                 }
 
-                avatarImage.dispose(true);
+                avatarImage.dispose();
             };
 
             resetFigure(figure);
