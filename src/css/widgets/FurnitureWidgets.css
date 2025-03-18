@@ -2,6 +2,14 @@
     pointer-events: none;
 }
 
+.no-resize {
+    resize: none !important;
+    min-width: 340px !important;
+    max-width: 340px !important;
+    min-height: 430px !important;
+    max-height: 430px !important;
+}
+
 .nitro-widget-custom-stack-height {
     width: 275px;
     height: 220px;
@@ -53,7 +61,7 @@
         width: 320px;
         height: 320px;
     }
-
+    
     .picture-preview-buttons {
         display: flex;
         align-items: center;
@@ -64,7 +72,6 @@
     .picture-preview-buttons-previous,
     .picture-preview-buttons-next {
         color: #222;
-        background-color: white;
         padding: 10px;
         border-radius: 50%;
     }
