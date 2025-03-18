@@ -3,11 +3,10 @@ import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FaSave, FaSearchMinus, FaSearchPlus, FaTrash } from 'react-icons/fa';
 import ReactSlider from 'react-slider';
 import { CameraEditorTabs, CameraPicture, CameraPictureThumbnail, LocalizeText } from '../../../../api';
-import { Button, ButtonGroup, Column, Flex, Grid, LayoutImage, NitroCardContentView, NitroCardHeaderView, NitroCardTabsItemView, NitroCardTabsView, NitroCardView, Text } from '../../../../common';
+import { Button, Column, Flex, Grid, LayoutImage, NitroCardContentView, NitroCardHeaderView, NitroCardTabsItemView, NitroCardTabsView, NitroCardView, Text } from '../../../../common';
 import { CameraWidgetEffectListView } from './effect-list';
 
-export interface CameraWidgetEditorViewProps
-{
+export interface CameraWidgetEditorViewProps {
     picture: CameraPicture;
     availableEffects: IRoomCameraWidgetEffect[];
     myLevel: number;
@@ -18,8 +17,7 @@ export interface CameraWidgetEditorViewProps
 
 const TABS: string[] = [ CameraEditorTabs.COLORMATRIX, CameraEditorTabs.COMPOSITE ];
 
-export const CameraWidgetEditorView: FC<CameraWidgetEditorViewProps> = props =>
-{
+export const CameraWidgetEditorView: FC<CameraWidgetEditorViewProps> = props => {
     const { picture = null, availableEffects = null, myLevel = 1, onClose = null, onCancel = null, onCheckout = null } = props;
     const [ currentTab, setCurrentTab ] = useState(TABS[0]);
     const [ selectedEffectName, setSelectedEffectName ] = useState<string>(null);
@@ -29,66 +27,46 @@ export const CameraWidgetEditorView: FC<CameraWidgetEditorViewProps> = props =>
     const [ currentPictureUrl, setCurrentPictureUrl ] = useState<string>('');
     const isBusy = useRef<boolean>(false);
 
-    const getColorMatrixEffects = useMemo(() =>
-    {
+    const getColorMatrixEffects = useMemo(() => {
         return availableEffects.filter(effect => effect.colorMatrix);
     }, [ availableEffects ]);
 
-    const getCompositeEffects = useMemo(() =>
-    {
+    const getCompositeEffects = useMemo(() => {
         return availableEffects.filter(effect => effect.texture);
     }, [ availableEffects ]);
 
-    const getEffectList = useCallback(() =>
-    {
-        if(currentTab === CameraEditorTabs.COLORMATRIX)
-        {
-            return getColorMatrixEffects;
-        }
-
-        return getCompositeEffects;
+    const getEffectList = useCallback(() => {
+        return currentTab === CameraEditorTabs.COLORMATRIX ? getColorMatrixEffects : getCompositeEffects;
     }, [ currentTab, getColorMatrixEffects, getCompositeEffects ]);
 
-    const getSelectedEffectIndex = useCallback((name: string) =>
-    {
-        if(!name || !name.length || !selectedEffects || !selectedEffects.length) return -1;
-
-        return selectedEffects.findIndex(effect => (effect.effect.name === name));
+    const getSelectedEffectIndex = useCallback((name: string) => {
+        if (!name || !name.length || !selectedEffects || !selectedEffects.length) return -1;
+        return selectedEffects.findIndex(effect => effect.effect.name === name);
     }, [ selectedEffects ]);
 
-    const getCurrentEffectIndex = useMemo(() =>
-    {
+    const getCurrentEffectIndex = useMemo(() => {
         return getSelectedEffectIndex(selectedEffectName);
     }, [ selectedEffectName, getSelectedEffectIndex ]);
 
-    const getCurrentEffect = useMemo(() =>
-    {
-        if(!selectedEffectName) return null;
-
-        return (selectedEffects[getCurrentEffectIndex] || null);
+    const getCurrentEffect = useMemo(() => {
+        if (!selectedEffectName) return null;
+        return selectedEffects[getCurrentEffectIndex] || null;
     }, [ selectedEffectName, getCurrentEffectIndex, selectedEffects ]);
 
-    const setSelectedEffectAlpha = useCallback((alpha: number) =>
-    {
+    const setSelectedEffectAlpha = useCallback((alpha: number) => {
         const index = getCurrentEffectIndex;
+        if (index === -1) return;
 
-        if(index === -1) return;
-
-        setSelectedEffects(prevValue =>
-        {
+        setSelectedEffects(prevValue => {
             const clone = [ ...prevValue ];
             const currentEffect = clone[index];
-
-            clone[getCurrentEffectIndex] = new RoomCameraWidgetSelectedEffect(currentEffect.effect, alpha);
-
+            clone[index] = new RoomCameraWidgetSelectedEffect(currentEffect.effect, alpha);
             return clone;
         });
-    }, [ getCurrentEffectIndex, setSelectedEffects ]);
+    }, [ getCurrentEffectIndex ]);
 
-    const processAction = useCallback((type: string, effectName: string = null) =>
-    {
-        switch(type)
-        {
+    const processAction = useCallback((type: string, effectName: string = null) => {
+        switch (type) {
             case 'close':
                 onClose();
                 return;
@@ -102,37 +80,27 @@ export const CameraWidgetEditorView: FC<CameraWidgetEditorViewProps> = props =>
                 setCurrentTab(String(effectName));
                 return;
             case 'select_effect': {
-                let existingIndex = getSelectedEffectIndex(effectName);
+                const existingIndex = getSelectedEffectIndex(effectName);
+                if (existingIndex >= 0) return;
 
-                if(existingIndex >= 0) return;
+                const effect = availableEffects.find(effect => effect.name === effectName);
+                if (!effect) return;
 
-                const effect = availableEffects.find(effect => (effect.name === effectName));
-
-                if(!effect) return;
-
-                setSelectedEffects(prevValue =>
-                {
-                    return [ ...prevValue, new RoomCameraWidgetSelectedEffect(effect, 1) ];
-                });
-
+                setSelectedEffects(prevValue => [ ...prevValue, new RoomCameraWidgetSelectedEffect(effect, 1) ]);
                 setSelectedEffectName(effect.name);
                 return;
             }
             case 'remove_effect': {
-                let existingIndex = getSelectedEffectIndex(effectName);
+                const existingIndex = getSelectedEffectIndex(effectName);
+                if (existingIndex === -1) return;
 
-                if(existingIndex === -1) return;
-
-                setSelectedEffects(prevValue =>
-                {
+                setSelectedEffects(prevValue => {
                     const clone = [ ...prevValue ];
-
                     clone.splice(existingIndex, 1);
-
                     return clone;
                 });
 
-                if(selectedEffectName === effectName) setSelectedEffectName(null);
+                if (selectedEffectName === effectName) setSelectedEffectName(null);
                 return;
             }
             case 'clear_effects':
@@ -140,78 +108,90 @@ export const CameraWidgetEditorView: FC<CameraWidgetEditorViewProps> = props =>
                 setSelectedEffects([]);
                 return;
             case 'download': {
-                (async () =>
-                {
+                (async () => {
                     const image = new Image();
-
                     image.src = currentPictureUrl;
-
                     const newWindow = window.open('');
                     newWindow.document.write(image.outerHTML);
                 })();
                 return;
             }
             case 'zoom':
-                setIsZoomed(!isZoomed);
+                setIsZoomed(prev => !prev);
                 return;
         }
-    }, [ isZoomed, availableEffects, selectedEffectName, currentPictureUrl, getSelectedEffectIndex, onCancel, onCheckout, onClose, setIsZoomed, setSelectedEffects ]);
+    }, [ availableEffects, selectedEffectName, currentPictureUrl, getSelectedEffectIndex, onCancel, onCheckout, onClose ]);
 
-    useEffect(() =>
-    {
-        const processThumbnails = async () =>
-        {
-            const renderedEffects = await Promise.all(availableEffects.map(effect => GetRoomCameraWidgetManager().applyEffects(picture.texture, [ new RoomCameraWidgetSelectedEffect(effect, 1) ], false)));
-
+    useEffect(() => {
+        const processThumbnails = async () => {
+            const renderedEffects = await Promise.all(
+                availableEffects.map(effect =>
+                    GetRoomCameraWidgetManager().applyEffects(picture.texture, [ new RoomCameraWidgetSelectedEffect(effect, 1) ], false)
+                )
+            );
             setEffectsThumbnails(renderedEffects.map((image, index) => new CameraPictureThumbnail(availableEffects[index].name, image.src)));
         };
-
         processThumbnails();
     }, [ picture, availableEffects ]);
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         GetRoomCameraWidgetManager()
-            .applyEffects(picture.texture, selectedEffects, isZoomed)
-            .then(imageElement =>
-            {
+            .applyEffects(picture.texture, selectedEffects, false) // Remove isZoomed from here
+            .then(imageElement => {
                 setCurrentPictureUrl(imageElement.src);
             })
-            .catch(error =>
-            {
+            .catch(error => {
                 NitroLogger.error('Failed to apply effects to picture', error);
             });
-    }, [ picture, selectedEffects, isZoomed ]);
+    }, [ picture, selectedEffects ]); // Remove isZoomed from dependency array
 
     return (
         <NitroCardView className="w-[600px] h-[500px]">
             <NitroCardHeaderView headerText={ LocalizeText('camera.editor.button.text') } onCloseClick={ event => processAction('close') } />
             <NitroCardTabsView>
-                { TABS.map(tab =>
-                {
-                    return <NitroCardTabsItemView key={ tab } isActive={ currentTab === tab } onClick={ event => processAction('change_tab', tab) }><i className={ 'nitro-icon icon-camera-' + tab }></i></NitroCardTabsItemView>;
-                }) }
+                { TABS.map(tab => (
+                    <NitroCardTabsItemView key={ tab } isActive={ currentTab === tab } onClick={ event => processAction('change_tab', tab) }>
+                        <i className={ 'nitro-icon icon-camera-' + tab }></i>
+                    </NitroCardTabsItemView>
+                )) }
             </NitroCardTabsView>
             <NitroCardContentView>
                 <Grid>
                     <Column overflow="hidden" size={ 5 }>
-                        <CameraWidgetEffectListView myLevel={ myLevel } selectedEffects={ selectedEffects } effects={ getEffectList() } thumbnails={ effectsThumbnails } processAction={ processAction } />
+                        <CameraWidgetEffectListView
+                            myLevel={ myLevel }
+                            selectedEffects={ selectedEffects }
+                            effects={ getEffectList() }
+                            thumbnails={ effectsThumbnails }
+                            processAction={ processAction }
+                        />
                     </Column>
                     <Column justifyContent="between" overflow="hidden" size={ 7 }>
                         <Column center>
-                            <LayoutImage className="w-[320px] h-[320px]" imageUrl={ currentPictureUrl } />
-                            { selectedEffectName &&
+                            <LayoutImage
+                                style={{
+                                    width: '320px',
+                                    height: '320px',
+                                    backgroundImage: `url(${currentPictureUrl})`,
+                                    backgroundPosition: isZoomed ? 'center' : 'top left',
+                                    backgroundSize: isZoomed ? 'contain' : 'auto', // Zoom only affects display
+                                    backgroundRepeat: 'no-repeat'
+                                }}
+                            />
+                            { selectedEffectName && (
                                 <Column center fullWidth gap={ 1 }>
                                     <Text>{ LocalizeText('camera.effect.name.' + selectedEffectName) }</Text>
                                     <ReactSlider
-                                        className={ 'nitro-slider' }
+                                        className="nitro-slider"
                                         min={ 0 }
                                         max={ 1 }
                                         step={ 0.01 }
                                         value={ getCurrentEffect.strength }
                                         onChange={ event => setSelectedEffectAlpha(event) }
-                                        renderThumb={ ({ key, ...props }, state) => <div key={ key } { ...props }>{ state.valueNow }</div> } />
-                                </Column> }
+                                        renderThumb={ ({ key, ...props }, state) => <div key={ key } { ...props }>{ state.valueNow }</div> }
+                                    />
+                                </Column>
+                            ) }
                         </Column>
                         <div className="flex justify-between">
                             <div className="relative inline-flex align-middle">
@@ -222,8 +202,7 @@ export const CameraWidgetEditorView: FC<CameraWidgetEditorViewProps> = props =>
                                     <FaSave className="fa-icon" />
                                 </Button>
                                 <Button onClick={ event => processAction('zoom') }>
-                                    { isZoomed && <FaSearchMinus className="fa-icon" /> }
-                                    { !isZoomed && <FaSearchPlus className="fa-icon" /> }
+                                    { isZoomed ? <FaSearchMinus className="fa-icon" /> : <FaSearchPlus className="fa-icon" /> }
                                 </Button>
                             </div>
                             <div className="flex gap-1">
