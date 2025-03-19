@@ -22,17 +22,7 @@ export const NitroInput = forwardRef<HTMLInputElement, PropsWithChildren<{
     const { color = 'default', inputSize = 'default', rounded = true, disabled = false, type = 'text', autoComplete = 'off', className = null, ...rest } = props;
 
     return (
-        <input
-            ref={ ref }
-            autoComplete={ autoComplete }
-            className={ classNames(
-                classes.base,
-                classes.size[inputSize],
-                rounded && classes.rounded,
-                classes.color[color],
-                disabled && classes.disabled,
-                className
-            ) }
+        <input ref={ ref } autoComplete={ autoComplete } className={ classNames( classes.base, classes.size[inputSize], rounded && classes.rounded, classes.color[color], disabled && classes.disabled, className ) }
             disabled={ disabled }
             type={ type }
             { ...rest } />

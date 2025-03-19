@@ -1,0 +1,31 @@
+/* ChatHistoryView.css */
+.nitro-chat-history {
+    width: 400px;
+    height: 200px;
+	background-color: #f0f0f0;
+	}
+
+/* Increase specificity by repeating the .nitro-chat-history class */
+.nitro-chat-history .nitro-card-content {
+	height: 100%;
+    background-image: url('@/assets/images/chat/chathistory_background.png');
+    background-repeat: repeat;
+    background-size: auto;
+    background-color: #f0f0f0;
+}
+
+/* Increase specificity for the slide-in animation */
+.nitro-chat-history .p-1.slide-in {
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    0% {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}

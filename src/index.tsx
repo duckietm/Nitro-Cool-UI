@@ -3,7 +3,8 @@ import { App } from './App';
 
 import './css/index.css';
 
-import './css/chat/chats.css';
+import './css/chat/Chats.css';
+import './css/chat/ChatHistoryView.css';
 
 import './css/floorplan/FloorplanEditorView.css';
 
@@ -19,7 +20,6 @@ import './css/notification/NotificationCenterView.css';
 
 import './css/purse/PurseView.css';
 
-import './css/room/ChatHistoryView.css';
 import './css/room/RoomWidgets.css';
 
 import './css/slider.css';
