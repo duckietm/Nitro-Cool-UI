@@ -1,20 +1,17 @@
 import { AddLinkEventTracker, ILinkEventTracker, RemoveLinkEventTracker } from '@nitrots/nitro-renderer';
 import { FC, useEffect } from 'react';
 import { LocalizeText } from '../../../../api';
-import { useFurniChooserWidget } from '../../../../hooks';
+import { useFurniChooserWidget, useRoom } from '../../../../hooks';
 import { ChooserWidgetView } from './ChooserWidgetView';
 
-export const FurniChooserWidgetView: FC<{}> = props =>
-{
+export const FurniChooserWidgetView: FC<{}> = props => {
     const { items = null, onClose = null, selectItem = null, populateChooser = null } = useFurniChooserWidget();
+    const { roomSession = null } = useRoom();
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         const linkTracker: ILinkEventTracker = {
-            linkReceived: (url: string) =>
-            {
+            linkReceived: (url: string) => {
                 const parts = url.split('/');
-
                 populateChooser();
             },
             eventUrlPrefix: 'furni-chooser/'
@@ -25,7 +22,9 @@ export const FurniChooserWidgetView: FC<{}> = props =>
         return () => RemoveLinkEventTracker(linkTracker);
     }, [ populateChooser ]);
 
-    if(!items) return null;
+    if (!items) return null;
 
-    return <ChooserWidgetView items={ items } selectItem={ selectItem } title={ LocalizeText('widget.chooser.furni.title') } onClose={ onClose } />;
+    return (
+        <ChooserWidgetView className="w-[200px] h-[200px]" items={ items } selectItem={ selectItem } title={ LocalizeText('widget.chooser.furni.title') } onClose={ onClose } pickallFurni={ roomSession?.isRoomOwner } />
+    );
 };
