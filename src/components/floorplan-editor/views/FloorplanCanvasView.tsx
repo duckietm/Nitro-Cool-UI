@@ -1,8 +1,8 @@
 import { GetOccupiedTilesMessageComposer, GetRoomEntryTileMessageComposer, RoomEntryTileMessageEvent, RoomOccupiedTilesMessageEvent } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useRef, useState } from 'react';
-import { FaArrowDown, FaArrowLeft, FaArrowRight, FaArrowUp } from 'react-icons/fa';
+import { FaArrowDown, FaArrowLeft, FaArrowRight, FaArrowUp, FaDotCircle, FaSearchPlus, FaSearchMinus, FaUndo } from 'react-icons/fa';
 import { SendMessageComposer } from '../../../api';
-import { Button, Column, ColumnProps, Grid } from '../../../common';
+import { Base, Button, Column, ColumnProps, Flex, Grid } from '../../../common';
 import { useMessageEvent } from '../../../hooks';
 import { useFloorplanEditorContext } from '../FloorplanEditorContext';
 import { FloorplanEditor } from '../common/FloorplanEditor';
@@ -10,7 +10,7 @@ import { FloorplanEditor } from '../common/FloorplanEditor';
 export const FloorplanCanvasView: FC<ColumnProps> = props =>
 {
     const { gap = 1, children = null, ...rest } = props;
-    const [ occupiedTilesReceived, setOccupiedTilesReceived ] = useState(false);
+    const [ occupiedTilesReceived , setOccupiedTilesReceived ] = useState(false);
     const [ entryTileReceived, setEntryTileReceived ] = useState(false);
     const { originalFloorplanSettings = null, setOriginalFloorplanSettings = null, setVisualizationSettings = null } = useFloorplanEditorContext();
     const elementRef = useRef<HTMLDivElement>(null);
@@ -31,7 +31,7 @@ export const FloorplanCanvasView: FC<ColumnProps> = props =>
         });
 
         setOccupiedTilesReceived(true);
-
+        
         elementRef.current.scrollTo((FloorplanEditor.instance.renderer.canvas.width / 3), 0);
     });
 
@@ -57,8 +57,8 @@ export const FloorplanCanvasView: FC<ColumnProps> = props =>
 
             return newValue;
         });
-
-        FloorplanEditor.instance.doorLocation = { x: parser.x, y: parser.y };
+        
+        FloorplanEditor.instance.doorLocation = ( parser.x, parser.y );
 
         setEntryTileReceived(true);
     });
@@ -84,12 +84,12 @@ export const FloorplanCanvasView: FC<ColumnProps> = props =>
                 element.scrollBy({ left: 10 });
                 break;
         }
-    };
+    }
 
     const onPointerEvent = (event: PointerEvent) =>
     {
         event.preventDefault();
-
+        
         switch(event.type)
         {
             case 'pointerout':
@@ -103,6 +103,20 @@ export const FloorplanCanvasView: FC<ColumnProps> = props =>
                 FloorplanEditor.instance.onPointerMove(event);
                 break;
         }
+    }
+
+    const handleZoomIn = () => {
+        FloorplanEditor.instance.zoomIn();
+    };
+
+    const handleZoomOut = () => {
+        FloorplanEditor.instance.zoomOut();
+    };
+	
+    const handleResetZoom = () => {
+        FloorplanEditor.instance._zoomLevel = 1.0; // Reset to default zoom
+        FloorplanEditor.instance.adjustCanvasSize();
+        FloorplanEditor.instance.renderTiles();
     };
 
     useEffect(() =>
@@ -118,15 +132,15 @@ export const FloorplanCanvasView: FC<ColumnProps> = props =>
                     thicknessWall: originalFloorplanSettings.thicknessWall,
                     thicknessFloor: originalFloorplanSettings.thicknessFloor,
                     entryPointDir: prevValue.entryPointDir
-                };
+                }
             });
-        };
+        }
     }, [ originalFloorplanSettings.thicknessFloor, originalFloorplanSettings.thicknessWall, originalFloorplanSettings.wallHeight, setVisualizationSettings ]);
 
     useEffect(() =>
     {
         if(!entryTileReceived || !occupiedTilesReceived) return;
-
+        
         FloorplanEditor.instance.renderTiles();
     }, [ entryTileReceived, occupiedTilesReceived ]);
 
@@ -138,7 +152,7 @@ export const FloorplanCanvasView: FC<ColumnProps> = props =>
         const currentElement = elementRef.current;
 
         if(!currentElement) return;
-
+                
         currentElement.appendChild(FloorplanEditor.instance.renderer.canvas);
 
         currentElement.addEventListener('pointerup', onPointerEvent);
@@ -149,7 +163,7 @@ export const FloorplanCanvasView: FC<ColumnProps> = props =>
 
         currentElement.addEventListener('pointermove', onPointerEvent);
 
-        return () =>
+        return () => 
         {
             if(currentElement)
             {
@@ -161,39 +175,30 @@ export const FloorplanCanvasView: FC<ColumnProps> = props =>
 
                 currentElement.removeEventListener('pointermove', onPointerEvent);
             }
-        };
+        }
     }, []);
 
     const isSmallScreen = () => window.innerWidth < 768;
 
     return (
         <Column gap={ gap } { ...rest }>
-            <Grid gap={ 1 } overflow="hidden">
-                <Column center className="hidden" size={ 1 }>
-                    <Button className="hidden" onClick={ event => onClickArrowButton('left') }>
-                        <FaArrowLeft className="fa-icon" />
-                    </Button>
-                </Column>
-                <Column gap={ 1 } overflow="hidden" size={ isSmallScreen() ? 10 : 12 }>
-                    <div className="flex hidden justify-content-enter" >
-                        <Button shrink onClick={ event => onClickArrowButton('up') }>
-                            <FaArrowUp className="fa-icon" />
+            <Grid overflow="hidden" gap={ 1 }>
+                <Column overflow="hidden" size={ isSmallScreen() ? 10 : 12 } gap={ 1 }>
+                    <Flex justifyContent="left" gap={ 1 }>
+                        <Button shrink onClick={ handleZoomIn }>
+                            <FaSearchPlus className="fa-icon" />
                         </Button>
-                    </div>
-                    <div ref={ elementRef } className="overflow-auto" />
-                    <div className="flex hidden justify-center">
-                        <Button shrink onClick={ event => onClickArrowButton('down') }>
-                            <FaArrowDown className="fa-icon" />
+                        <Button shrink onClick={ handleResetZoom }>
+                            <FaDotCircle className="fa-icon" />
                         </Button>
-                    </div>
-                </Column>
-                <Column center className="hidden" size={ 1 }>
-                    <Button className="hidden" onClick={ event => onClickArrowButton('right') }>
-                        <FaArrowRight className="fa-icon" />
-                    </Button>
+                        <Button shrink onClick={ handleZoomOut }>
+                            <FaSearchMinus className="fa-icon" />
+                        </Button>
+                    </Flex>
+                    <Base overflow="auto" innerRef={ elementRef } />
                 </Column>
             </Grid>
             { children }
         </Column>
     );
-};
+}

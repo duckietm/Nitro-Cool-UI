@@ -213,15 +213,5 @@ export const spritesheet = {
             spriteSourceSize: { x: 0, y: 0, w: 34, h: 17 },
             sourceSize: { w: 34, h: 17 },
         },
-    },
-    meta: {
-        app: 'https://www.codeandweb.com/texturepacker',
-        version: '1.0',
-        image: 'tiles.png',
-        format: 'RGBA8888',
-        size: { w: 108, h: 190 },
-        scale: '1',
-        smartupdate:
-            '$TexturePacker:SmartUpdate:6d0f8373580629749f786a0b0f6c6bb9:96dff9df69bdc6938cf02f254bbe028b:accbe1e7e294ded8391337fc1c446319$',
-    },
+    }
 };

@@ -134,7 +134,7 @@ const useMessengerState = () =>
     {
         const parser = event.getParser();
 
-        simpleAlert(`Received room invite error: ${parser.errorCode},recipients: ${parser.failedRecipients.join(',')}`, NotificationAlertType.DEFAULT, null, null, LocalizeText('friendlist.alert.title'));
+        simpleAlert(`Received room invite error: ${ parser.errorCode },recipients: ${ parser.failedRecipients.join(',') }`, NotificationAlertType.DEFAULT, null, null, LocalizeText('friendlist.alert.title'));
     });
 
     useEffect(() =>

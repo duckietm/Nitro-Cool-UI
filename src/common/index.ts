@@ -18,4 +18,5 @@ export * from './draggable-window';
 export * from './layout';
 export * from './layout/limited-edition';
 export * from './types';
+export * from "./Slider";
 export * from './utils';
