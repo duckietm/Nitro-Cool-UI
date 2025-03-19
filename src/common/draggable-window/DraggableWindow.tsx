@@ -26,6 +26,7 @@ export const DraggableWindow: FC<DraggableWindowProps> = props => {
     const [offset, setOffset] = useState<{ x: number, y: number }>({ x: 0, y: 0 });
     const [start, setStart] = useState<{ x: number, y: number }>({ x: 0, y: 0 });
     const [isDragging, setIsDragging] = useState(false);
+    const [isPositioned, setIsPositioned] = useState(false); // New state to control visibility
     const [dragHandler, setDragHandler] = useState<HTMLElement>(null);
     const elementRef = useRef<HTMLDivElement>();
 
@@ -76,10 +77,9 @@ export const DraggableWindow: FC<DraggableWindowProps> = props => {
 
         const windowWidth = elementRef.current.offsetWidth;
         const windowHeight = elementRef.current.offsetHeight;
-        const viewportWidth = window.innerWidth; // Use window.innerWidth for viewport
-        const viewportHeight = window.innerHeight; // Use window.innerHeight for viewport
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
 
-        // Clamp X and Y to keep the window fully within the viewport
         const clampedX = Math.max(BOUNDS_THRESHOLD_LEFT, Math.min(newX, viewportWidth - windowWidth));
         const clampedY = Math.max(BOUNDS_THRESHOLD_TOP, Math.min(newY, viewportHeight - windowHeight));
 
@@ -149,9 +149,8 @@ export const DraggableWindow: FC<DraggableWindowProps> = props => {
             if (handle) setDragHandler(handle as HTMLElement);
         }
 
-        // Initial positioning
-        const windowWidth = element.offsetWidth || 340; // Fallback width if not yet rendered
-        const windowHeight = element.offsetHeight || 462; // Fallback height if not yet rendered
+        const windowWidth = element.offsetWidth || 340;
+        const windowHeight = element.offsetHeight || 462;
         let offsetX = 0;
         let offsetY = 0;
 
@@ -171,10 +170,11 @@ export const DraggableWindow: FC<DraggableWindowProps> = props => {
         }
 
         const clampedPos = clampPosition(offsetX, offsetY);
-        element.style.left = '0px'; // Reset base position
-        element.style.top = '0px';  // Reset base position
+        element.style.left = '0px';
+        element.style.top = '0px';
         setOffset({ x: clampedPos.x, y: clampedPos.y });
         setDelta({ x: 0, y: 0 });
+        setIsPositioned(true); // Mark as positioned after setting initial offset
 
         return () => {
             const index = CURRENT_WINDOWS.indexOf(element);
@@ -183,14 +183,12 @@ export const DraggableWindow: FC<DraggableWindowProps> = props => {
     }, [handleSelector, windowPosition, uniqueKey, disableDrag, offsetLeft, offsetTop, bringToTop]);
 
     useEffect(() => {
-        if (!offset && !delta) return;
-
         const element = elementRef.current as HTMLElement;
-        if (!element) return;
+        if (!element || !isPositioned) return;
 
         element.style.transform = `translate(${offset.x + delta.x}px, ${offset.y + delta.y}px)`;
         element.style.visibility = 'visible';
-    }, [offset, delta]);
+    }, [offset, delta, isPositioned]);
 
     useEffect(() => {
         if (!dragHandler) return;
@@ -229,10 +227,17 @@ export const DraggableWindow: FC<DraggableWindowProps> = props => {
         const clampedPos = clampPosition(localStorage.offset.x, localStorage.offset.y);
         setDelta({ x: 0, y: 0 });
         setOffset({ x: clampedPos.x, y: clampedPos.y });
+        setIsPositioned(true); // Ensure positioned when loading from storage
     }, [uniqueKey, clampPosition]);
 
     return createPortal(
-        <div ref={elementRef} className="absolute draggable-window" style={dragStyle} onMouseDownCapture={onMouseDown} onTouchStartCapture={onTouchStart}>
+        <div
+            ref={elementRef}
+            className="absolute draggable-window"
+            style={{ ...dragStyle, visibility: isPositioned ? 'visible' : 'hidden' }} // Hide until positioned
+            onMouseDownCapture={onMouseDown}
+            onTouchStartCapture={onTouchStart}
+        >
             {children}
         </div>,
         document.getElementById('draggable-windows-container')
