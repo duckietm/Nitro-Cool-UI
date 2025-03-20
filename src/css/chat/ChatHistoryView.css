@@ -1,5 +1,7 @@
 .nitro-chat-history {
 	background-color: #f0f0f0;
+	width: 400px;
+    height: 400px;
 	}
 
 .nitro-chat-history .nitro-card-content {

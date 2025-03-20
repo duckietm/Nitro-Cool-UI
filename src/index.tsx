@@ -6,6 +6,9 @@ import './css/index.css';
 import './css/chat/Chats.css';
 import './css/chat/ChatHistoryView.css';
 
+import './css/common/MiniCamera.css';
+import './css/common/Buttons.css';
+
 import './css/floorplan/FloorplanEditorView.css';
 
 import './css/hotelview/HotelView.css';

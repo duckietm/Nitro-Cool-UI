@@ -1,0 +1,109 @@
+.btn-sm {
+  min-height: 28px;
+}
+
+textarea {
+  resize: none;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.rounded {
+  border-radius: 0.5rem;
+}
+
+.btn-primary {
+  color: #fff;
+  background-color: #3c6d82;
+  border: 2px solid #1a617f;
+  padding: 0.25rem 0.5rem;
+  font-size: .7875rem;
+  border-radius: 0.5rem;
+  box-shadow: none!important;
+}
+
+.btn-primary:hover {
+  border: 2px solid #1a617f;
+  box-shadow: none!important;
+}
+
+.btn-success{
+  color: #fff;
+  background-color: #3c8243;
+  border: 2px solid #006d09;
+  padding: 0.25rem 0.5rem;
+  font-size: .7875rem;
+  border-radius: 0.5rem;
+  box-shadow: none!important;
+}
+
+.btn-success:hover{
+  box-shadow: none!important;
+}
+
+.btn-danger{
+  color: #fff;
+  background-color: #a81a12;
+  border: 2px solid #b9322a;
+  padding: 0.25rem 0.5rem;
+  font-size: .7875rem;
+  border-radius: 0.5rem;
+  box-shadow: none!important;
+}
+
+.btn-danger:hover{
+  box-shadow: none!important;
+}
+
+.btn-warning{
+  color: #222;
+  background-color: #ffc107;
+  border: 2px solid #f3c12a;
+  padding: 0.25rem 0.5rem;
+  font-size: .7875rem;
+  border-radius: 0.5rem;
+  box-shadow: none!important;
+}
+
+.btn-warning:hover{
+  box-shadow: none!important;
+}
+
+.btn-dark {
+  color: #fff;
+  background-color: #212131;
+  border: 2px solid #1c1c2a;
+  box-shadow: none!important;
+  border-radius: 8px;
+  padding: 4px 11px 4px 11px;
+}
+
+.btn-dark:hover{
+  background-color: #212131;
+  border: 2px solid #1c1c2a;
+  box-shadow: none!important;
+  border-radius: 8px;
+  padding: 4px 11px 4px 11px;
+}
+
+.btn-friendsgen{
+  background-color: #424354;
+  border: 2px solid #63647a;
+  border-radius: 10px;
+}
+
+.btn-friendsgensuccess{
+  background-color: #b69b83;
+  border: 2px solid #e2c1a3;
+  border-radius: 10px;
+}

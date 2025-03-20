@@ -59,7 +59,7 @@ export const ChatHistoryView: FC<{}> = props => {
                         setIsVisible(false);
                         return;
                     case 'toggle':
-                        setIsVisible(prevValue => !prevChatLength.current);
+                        setIsVisible(prevValue => !prevValue);
                         return;
                 }
             },
@@ -74,7 +74,7 @@ export const ChatHistoryView: FC<{}> = props => {
     if (!isVisible) return null;
 
     return (
-        <NitroCardView className="w-[400px] h-[400px] nitro-chat-history" theme="primary-slim" uniqueKey="chat-history">
+        <NitroCardView className="nitro-chat-history" theme="primary-slim" uniqueKey="chat-history">
             <NitroCardHeaderView headerText={LocalizeText('room.chathistory.button.text')} onCloseClick={event => setIsVisible(false)} />
             <NitroCardContentView className="nitro-card-content" gap={2} overflow="hidden" style={{ height: 'calc(100% - 40px)', display: 'flex', flexDirection: 'column' }}>
                 <NitroInput placeholder={LocalizeText('generic.search')} type="text" value={searchText} onChange={event => setSearchText(event.target.value)} />
