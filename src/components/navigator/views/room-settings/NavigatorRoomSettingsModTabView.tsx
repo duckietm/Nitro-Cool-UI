@@ -51,7 +51,7 @@ export const NavigatorRoomSettingsModTabView: FC<NavigatorRoomSettingsTabViewPro
     return (
         <Grid overflow="auto">
             <Column size={ 6 }>
-                <Text bold>{ LocalizeText('navigator.roomsettings.moderation.banned.users') } ({ bannedUsers.length })</Text>
+                <Text small bold>{ LocalizeText('navigator.roomsettings.moderation.banned.users') } ({ bannedUsers.length })</Text>
                 <Flex className="bg-white rounded list-container p-2" overflow="hidden">
                     <Column fullWidth gap={ 1 } overflow="auto">
                         { bannedUsers && (bannedUsers.length > 0) && bannedUsers.map((user, index) =>
@@ -59,7 +59,7 @@ export const NavigatorRoomSettingsModTabView: FC<NavigatorRoomSettingsTabViewPro
                             return (
                                 <Flex key={ index } shrink alignItems="center" gap={ 1 } overflow="hidden">
                                     <UserProfileIconView userName={ user.userName } />
-                                    <Text grow pointer onClick={ event => setSelectedUserId(user.userId) }> { user.userName }</Text>
+                                    <Text small grow pointer onClick={ event => setSelectedUserId(user.userId) }> { user.userName }</Text>
                                 </Flex>
                             );
                         }) }
@@ -71,7 +71,7 @@ export const NavigatorRoomSettingsModTabView: FC<NavigatorRoomSettingsTabViewPro
             </Column>
             <Column size={ 6 }>
                 <div className="flex flex-col gap-1">
-                    <Text bold>{ LocalizeText('navigator.roomsettings.moderation.mute.header') }</Text>
+                    <Text small bold>{ LocalizeText('navigator.roomsettings.moderation.mute.header') }</Text>
                     <div className="flex items-center gap-1">
                         <select className="form-select form-select-sm" value={ roomData.moderationSettings.allowMute } onChange={ event => handleChange('moderation_mute', event.target.value) }>
                             <option value={ RoomModerationSettings.MODERATION_LEVEL_NONE }>
@@ -84,7 +84,7 @@ export const NavigatorRoomSettingsModTabView: FC<NavigatorRoomSettingsTabViewPro
                     </div>
                 </div>
                 <div className="flex flex-col gap-1">
-                    <Text bold>{ LocalizeText('navigator.roomsettings.moderation.kick.header') }</Text>
+                    <Text small bold>{ LocalizeText('navigator.roomsettings.moderation.kick.header') }</Text>
                     <div className="flex items-center gap-1">
                         <select className="form-select form-select-sm" value={ roomData.moderationSettings.allowKick } onChange={ event => handleChange('moderation_kick', event.target.value) }>
                             <option value={ RoomModerationSettings.MODERATION_LEVEL_NONE }>
@@ -100,7 +100,7 @@ export const NavigatorRoomSettingsModTabView: FC<NavigatorRoomSettingsTabViewPro
                     </div>
                 </div>
                 <div className="flex flex-col gap-1">
-                    <Text bold>{ LocalizeText('navigator.roomsettings.moderation.ban.header') }</Text>
+                    <Text small bold>{ LocalizeText('navigator.roomsettings.moderation.ban.header') }</Text>
                     <div className="flex items-center gap-1">
                         <select className="form-select form-select-sm" value={ roomData.moderationSettings.allowBan } onChange={ event => handleChange('moderation_ban', event.target.value) }>
                             <option value={ RoomModerationSettings.MODERATION_LEVEL_NONE }>

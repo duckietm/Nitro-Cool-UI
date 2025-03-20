@@ -1,7 +1,7 @@
 .nitro-room-tools-container {
     position: absolute;
-    bottom: 75px;
-    left: 10px;
+    bottom:60px;
+    left: 15px;
 
     .nitro-room-tools {
         background: #212131;
@@ -153,22 +153,10 @@
 
 .tags {
     background-color: #1B2834;
-    color: #1A75A6;
+    color: #12597f;
     font-size: 10px;
 
     &:hover {
         color: #419AD2;
     }
 }
-
-/*
-@import './avatar-info/AvatarInfoWidgetView';
-@import './chat/ChatWidgetView';
-@import './chat-input/ChatInputView';
-@import './choosers/ChooserWidgetView';
-@import './context-menu/ContextMenu';
-@import './friend-request/FriendRequestDialogView';
-@import './furniture/FurnitureWidgets';
-@import './mysterybox/MysteryBoxExtensionView';
-@import './pet-package/PetPackageWidgetView';
-*/

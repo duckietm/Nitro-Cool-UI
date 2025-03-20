@@ -32,7 +32,7 @@ export const ToolbarMeView: FC<PropsWithChildren<{
     }, [ setMeExpanded ]);
 
     return (
-        <Flex alignItems="center" className="absolute bottom-[60px] left-[15px] bg-[rgba(20,_20,_20,_.95)] border-[1px] border-[solid] border-[#101010] [box-shadow:inset_2px_2px_rgba(255,_255,_255,_.1),_inset_-2px_-2px_rgba(255,_255,_255,_.1)] rounded-[$border-radius] p-2" gap={ 2 } innerRef={ elementRef }>
+        <Flex alignItems="center" className="absolute bottom-[60px] left-[33px] bg-[rgba(20,_20,_20,_.95)] border-[1px] border-[solid] border-[#101010] [box-shadow:inset_2px_2px_rgba(255,_255,_255,_.1),_inset_-2px_-2px_rgba(255,_255,_255,_.1)] rounded-[$border-radius] p-2" gap={ 2 } innerRef={ elementRef }>
             { (GetConfigurationValue('guides.enabled') && useGuideTool) &&
                 <div className="navigation-item relative nitro-icon icon-me-helper-tool cursor-pointer" onClick={ event => DispatchUiEvent(new GuideToolEvent(GuideToolEvent.TOGGLE_GUIDE_TOOL)) } /> }
             <div className="navigation-item relative nitro-icon icon-me-achievements cursor-pointer" onClick={ event => CreateLinkEvent('achievements/toggle') }>

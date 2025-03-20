@@ -1,0 +1,24 @@
+/* Styling for text inputs (e.g., password fields) */
+.form-control-sm {
+    padding: 0.25rem 0.5rem; /* Reduced padding */
+    font-size: 0.75rem; /* Small font size, adjust to match <Text small> */
+    line-height: 1.5;
+    border-radius: 0.2rem;
+    min-height: calc(1.5em + 0.5rem + 2px); /* Matches your inline style */
+}
+
+/* Optional: Styling for radio/checkbox inputs */
+.form-check-input {
+    /* No font-size here since it’s an input’s appearance, not text */
+    margin-top: 0.25rem; /* Align with small text */
+}
+
+/* If you have <select> elements elsewhere, keep this */
+.form-select-sm {
+    padding: 0.25rem 2rem 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    line-height: 1.5;
+    background-position: right 0.5rem center;
+    background-size: 12px 10px;
+    border-radius: 0.2rem;
+}

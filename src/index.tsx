@@ -11,6 +11,8 @@ import './css/common/Buttons.css';
 
 import './css/floorplan/FloorplanEditorView.css';
 
+import './css/forms/form_select.css';
+
 import './css/hotelview/HotelView.css';
 
 import './css/icons/icons.css';
@@ -23,7 +25,9 @@ import './css/notification/NotificationCenterView.css';
 
 import './css/purse/PurseView.css';
 
+import './css/room/NavigatorRoomSettings.css';
 import './css/room/RoomWidgets.css';
+
 
 import './css/slider.css';
 

@@ -23,13 +23,13 @@ export const NavigatorRoomSettingsVipChatTabView: FC<NavigatorRoomSettingsTabVie
     return (
         <>
             <div className="flex flex-col gap-1">
-                <Text bold>{ LocalizeText('navigator.roomsettings.vip.caption') }</Text>
-                <Text>{ LocalizeText('navigator.roomsettings.vip.info') }</Text>
+                <Text small bold>{ LocalizeText('navigator.roomsettings.vip.caption') }</Text>
+                <Text small>{ LocalizeText('navigator.roomsettings.vip.info') }</Text>
             </div>
             <Grid overflow="auto">
                 <Column gap={ 1 } size={ 6 }>
-                    <Text bold>{ LocalizeText('navigator.roomsettings.chat_settings') }</Text>
-                    <Text>{ LocalizeText('navigator.roomsettings.chat_settings.info') }</Text>
+                    <Text small bold>{ LocalizeText('navigator.roomsettings.chat_settings') }</Text>
+                    <Text small>{ LocalizeText('navigator.roomsettings.chat_settings.info') }</Text>
                     <select className="form-select form-select-sm" value={ roomData.chatSettings.mode } onChange={ event => handleChange('bubble_mode', event.target.value) }>
                         <option value={ RoomChatSettings.CHAT_MODE_FREE_FLOW }>{ LocalizeText('navigator.roomsettings.chat.mode.free.flow') }</option>
                         <option value={ RoomChatSettings.CHAT_MODE_LINE_BY_LINE }>{ LocalizeText('navigator.roomsettings.chat.mode.line.by.line') }</option>
@@ -49,14 +49,14 @@ export const NavigatorRoomSettingsVipChatTabView: FC<NavigatorRoomSettingsTabVie
                         <option value={ RoomChatSettings.FLOOD_FILTER_NORMAL }>{ LocalizeText('navigator.roomsettings.chat.flood.normal') }</option>
                         <option value={ RoomChatSettings.FLOOD_FILTER_STRICT }>{ LocalizeText('navigator.roomsettings.chat.flood.strict') }</option>
                     </select>
-                    <Text>{ LocalizeText('navigator.roomsettings.chat_settings.hearing.distance') }</Text>
-                    <NitroInput min="0" type="number" value={ chatDistance } onBlur={ event => handleChange('chat_distance', chatDistance) } onChange={ event => setChatDistance(event.target.valueAsNumber) } />
+                    <Text small>{ LocalizeText('navigator.roomsettings.chat_settings.hearing.distance') }</Text>
+                    <NitroInput className="form-control-sm" min="0" type="number" value={ chatDistance } onBlur={ event => handleChange('chat_distance', chatDistance) } onChange={ event => setChatDistance(event.target.valueAsNumber) } />
                 </Column>
                 <Column gap={ 1 } size={ 6 }>
-                    <Text bold>{ LocalizeText('navigator.roomsettings.vip_settings') }</Text>
+                    <Text small bold>{ LocalizeText('navigator.roomsettings.vip_settings') }</Text>
                     <div className="flex items-center gap-1">
                         <input checked={ roomData.hideWalls } className="form-check-input" type="checkbox" onChange={ event => handleChange('hide_walls', event.target.checked) } />
-                        <Text>{ LocalizeText('navigator.roomsettings.hide_walls') }</Text>
+                        <Text small>{ LocalizeText('navigator.roomsettings.hide_walls') }</Text>
                     </div>
                     <select className="form-select form-select-sm" value={ roomData.wallThickness } onChange={ event => handleChange('wall_thickness', event.target.value) }>
                         <option value="0">{ LocalizeText('navigator.roomsettings.wall_thickness.normal') }</option>

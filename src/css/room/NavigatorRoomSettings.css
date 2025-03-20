@@ -1,0 +1,11 @@
+.nitro-room-settings {
+    width: 400px;
+
+    .list-container {
+        height: 100px;
+
+        .list-item {
+            background-color: #ececec;
+        }
+    }
+}

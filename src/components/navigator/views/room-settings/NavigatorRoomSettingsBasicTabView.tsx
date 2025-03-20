@@ -100,9 +100,9 @@ export const NavigatorRoomSettingsBasicTabView: FC<NavigatorRoomSettingsTabViewP
     return (
         <>
             <div className="flex items-center gap-1">
-                <Text className="col-span-3">{ LocalizeText('navigator.roomname') }</Text>
+                <Text small className="col-span-3">{ LocalizeText('navigator.roomname') }</Text>
                 <Column fullWidth gap={ 0 }>
-                    <NitroInput maxLength={ ROOM_NAME_MAX_LENGTH } value={ roomName } onBlur={ saveRoomName } onChange={ event => setRoomName(event.target.value) } />
+                    <NitroInput className="form-control-sm" maxLength={ ROOM_NAME_MAX_LENGTH } value={ roomName } onBlur={ saveRoomName } onChange={ event => setRoomName(event.target.value) } />
                     { (roomName.length < ROOM_NAME_MIN_LENGTH) &&
                         <Text bold small variant="danger">
                             { LocalizeText('navigator.roomsettings.roomnameismandatory') }
@@ -110,23 +110,23 @@ export const NavigatorRoomSettingsBasicTabView: FC<NavigatorRoomSettingsTabViewP
                 </Column>
             </div>
             <div className="flex items-center gap-1">
-                <Text className="col-span-3">{ LocalizeText('navigator.roomsettings.desc') }</Text>
+                <Text small className="col-span-3">{ LocalizeText('navigator.roomsettings.desc') }</Text>
                 <textarea className="min-h-[calc(1.5em+ .5rem+2px)] px-[.5rem] py-[.25rem]  rounded-[.2rem] form-control-sm" maxLength={ DESC_MAX_LENGTH } value={ roomDescription } onBlur={ saveRoomDescription } onChange={ event => setRoomDescription(event.target.value) } />
             </div>
             <div className="flex items-center gap-1">
-                <Text className="col-span-3">{ LocalizeText('navigator.category') }</Text>
+                <Text small className="col-span-3">{ LocalizeText('navigator.category') }</Text>
                 <select className="form-select form-select-sm" value={ roomData.categoryId } onChange={ event => handleChange('category', event.target.value) }>
                     { categories && categories.map(category => <option key={ category.id } value={ category.id }>{ LocalizeText(category.name) }</option>) }
                 </select>
             </div>
             <div className="flex items-center gap-1">
-                <Text className="col-span-3">{ LocalizeText('navigator.maxvisitors') }</Text>
+                <Text small className="col-span-3">{ LocalizeText('navigator.maxvisitors') }</Text>
                 <select className="form-select form-select-sm" value={ roomData.userCount } onChange={ event => handleChange('max_visitors', event.target.value) }>
                     { GetMaxVisitorsList && GetMaxVisitorsList.map(value => <option key={ value } value={ value }>{ value }</option>) }
                 </select>
             </div>
-            <div className="flex items-center gap-1">
-                <Text className="col-span-3">{ LocalizeText('navigator.tradesettings') }</Text>
+            <div className="flex items-center gap-0">
+                <Text small className="col-span-3">{ LocalizeText('navigator.tradesettings') }</Text>
                 <select className="form-select form-select-sm" value={ roomData.tradeState } onChange={ event => handleChange('trade_state', event.target.value) }>
                     <option value="0">{ LocalizeText('navigator.roomsettings.trade_not_allowed') }</option>
                     <option value="1">{ LocalizeText('navigator.roomsettings.trade_not_with_Controller') }</option>
@@ -134,9 +134,9 @@ export const NavigatorRoomSettingsBasicTabView: FC<NavigatorRoomSettingsTabViewP
                 </select>
             </div>
             <div className="flex items-center gap-1">
-                <Text className="col-span-3">{ LocalizeText('navigator.tags') }</Text>
+                <Text small className="col-span-3">{ LocalizeText('navigator.tags') }</Text>
                 <Column fullWidth gap={ 0 }>
-                    <NitroInput value={ roomTag1 } onBlur={ () => saveTags(0) } onChange={ event => setRoomTag1(event.target.value) } />
+                    <NitroInput className="form-control-sm" value={ roomTag1 } onBlur={ () => saveTags(0) } onChange={ event => setRoomTag1(event.target.value) } />
                     { (roomTag1.length > TAGS_MAX_LENGTH) &&
                         <Text bold small variant="danger">
                             { LocalizeText('navigator.roomsettings.toomanycharacters') }
@@ -147,7 +147,7 @@ export const NavigatorRoomSettingsBasicTabView: FC<NavigatorRoomSettingsTabViewP
                         </Text> }
                 </Column>
                 <Column fullWidth gap={ 0 }>
-                    <NitroInput value={ roomTag2 } onBlur={ () => saveTags(1) } onChange={ event => setRoomTag2(event.target.value) } />
+                    <NitroInput className="form-control-sm" value={ roomTag2 } onBlur={ () => saveTags(1) } onChange={ event => setRoomTag2(event.target.value) } />
                     { (roomTag2.length > TAGS_MAX_LENGTH) &&
                         <Text bold small variant="danger">
                             { LocalizeText('navigator.roomsettings.toomanycharacters') }
@@ -159,11 +159,11 @@ export const NavigatorRoomSettingsBasicTabView: FC<NavigatorRoomSettingsTabViewP
                 </Column>
             </div>
             <div className="flex items-center gap-1">
-                <div className="col-span-3" />
+                <div className="col-span-1" />
                 <input checked={ roomData.allowWalkthrough } className="form-check-input" type="checkbox" onChange={ event => handleChange('allow_walkthrough', event.target.checked) } />
-                <Text>{ LocalizeText('navigator.roomsettings.allow_walk_through') }</Text>
+                <Text small>{ LocalizeText('navigator.roomsettings.allow_walk_through') }</Text>
             </div>
-            <Text bold pointer underline className="flex items-center justify-center gap-1" variant="danger" onClick={ deleteRoom }>
+            <Text small bold pointer underline className="flex items-center justify-center gap-1" variant="danger" onClick={ deleteRoom }>
                 <FaTimes className="fa-icon" />
                 { LocalizeText('navigator.roomsettings.delete') }
             </Text>

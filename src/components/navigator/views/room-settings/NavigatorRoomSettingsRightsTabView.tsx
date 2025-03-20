@@ -64,7 +64,7 @@ export const NavigatorRoomSettingsRightsTabView: FC<NavigatorRoomSettingsTabView
     return (
         <Grid>
             <Column size={ 6 }>
-                <Text bold>
+                <Text small bold>
                     { LocalizeText('navigator.flatctrls.userswithrights', [ 'displayed', 'total' ], [ usersWithRights.size.toString(), usersWithRights.size.toString() ]) }
                 </Text>
                 <Flex className="bg-white rounded list-container p-2" overflow="hidden">
@@ -74,7 +74,7 @@ export const NavigatorRoomSettingsRightsTabView: FC<NavigatorRoomSettingsTabView
                             return (
                                 <Flex key={ index } shrink alignItems="center" gap={ 1 } overflow="hidden">
                                     <UserProfileIconView userName={ name } />
-                                    <Text grow pointer onClick={ event => SendMessageComposer(new RoomTakeRightsComposer(id)) }> { name }</Text>
+                                    <Text small grow pointer onClick={ event => SendMessageComposer(new RoomTakeRightsComposer(id)) }> { name }</Text>
                                 </Flex>
                             );
                         }) }
