@@ -19,6 +19,7 @@ import { HotelView } from './hotel-view/HotelView';
 import { InventoryView } from './inventory/InventoryView';
 import { ModToolsView } from './mod-tools/ModToolsView';
 import { NavigatorView } from './navigator/NavigatorView';
+import { NitrobubbleHiddenView } from './nitrobubblehidden/NitrobubbleHiddenView';
 import { NitropediaView } from './nitropedia/NitropediaView';
 import { RightSideView } from './right-side/RightSideView';
 import { RoomView } from './room/RoomView';
@@ -97,6 +98,7 @@ export const MainView: FC<{}> = props =>
             <AvatarEditorView />
             <AchievementsView />
             <NavigatorView />
+			<NitrobubbleHiddenView />
             <InventoryView />
             <CatalogView />
             <FriendsView />

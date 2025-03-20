@@ -76,7 +76,7 @@ export const ChatWidgetMessageView: FC<ChatWidgetMessageViewProps> = ({
     }, [ chat, isReady, isVisible, makeRoom ]);
 
     return (
-        <div ref={ elementRef } className={ `bubble-container ${ isVisible ? 'visible' : 'invisible' } w-max absolute select-none pointer-events-auto` }
+        <div ref={ elementRef } className={ `bubble-container newbubblehe ${ isVisible ? 'visible' : 'invisible' } w-max absolute select-none pointer-events-auto` }
             onClick={ () => GetRoomEngine().selectRoomObject(chat.roomId, chat.senderId, RoomObjectCategory.UNIT) }>
             { chat.styleId === 0 && (
                 <div className="absolute top-[-1px] left-[1px] w-[30px] h-[calc(100%-0.5px)] rounded-[7px] z-[1]" style={ { backgroundColor: chat.color } } />

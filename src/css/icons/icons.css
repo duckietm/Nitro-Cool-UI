@@ -379,6 +379,18 @@
     height: 22px;
 }
 
+.icon-chat-enablebubble {
+	background: url('@/assets/images/icons/enablebubble.png');
+	width: 17px;
+	height: 21px;
+}
+
+ .icon-chat-disablebubble {
+	 background: url('@/assets/images/icons/disablebubble.png');
+	 width: 17px;
+	 height: 21px;
+}
+
 .nitro-icon.icon-arrows {
     background: url("@/assets/images/icons/arrows.png");
     width: 17px;
