@@ -61,7 +61,7 @@ export const LayoutGridColorPickerItem: FC<LayoutGridColorPickerItemProps> = pro
     return (
         <Column center={ center } pointer position={ position } overflow={ overflow } column={ column } classNames={ getClassNames } style={ getStyle } { ...rest }>
             { (itemCount > itemCountMinimum) &&
-                <LayoutItemCountView count={ itemCount } /> }
+                <LayoutItemCountView className="text-black" count={ itemCount } /> }
             { (itemUniqueNumber > 0) && 
                 <>
                     <Base fit className="unique-bg-override" style={ { backgroundImage: `url(${ itemImage })` } } />

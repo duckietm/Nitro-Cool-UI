@@ -45,7 +45,7 @@ export const GameView = () =>
                 <Button variant="light" position="relative" className="px-4" onClick={ onPlay }>
                     { LocalizeText('gamecenter.play_now') }
                     { !accountStatus.hasUnlimitedGames && 
-                    <LayoutItemCountView className="me-n1 mt-n1" count={ accountStatus.freeGamesLeft }/> }
+                    <LayoutItemCountView className="me-n1 mt-n1 text-black" count={ accountStatus.freeGamesLeft }/> }
                 </Button>
             </> }
             <Text bold className="w-50" center>{ LocalizeText(`gamecenter.${ selectedGame.gameNameId }.description_content`) }</Text>

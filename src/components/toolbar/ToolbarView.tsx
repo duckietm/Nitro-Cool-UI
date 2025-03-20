@@ -74,7 +74,7 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
                         <Flex center pointer className={ 'navigation-item item-avatar ' + (isMeExpanded ? 'active ' : '') } onClick={ event => setMeExpanded(!isMeExpanded) }>
                             <LayoutAvatarImageView figure={ userFigure } headOnly={ true } direction={ 2 } position="absolute" />
                             { (getTotalUnseen > 0) &&
-                                <LayoutItemCountView count={ getTotalUnseen } /> }
+                                <LayoutItemCountView className="text-black" count={ getTotalUnseen } /> }
                         </Flex>
                         { isInRoom &&
                             <Base pointer className="navigation-item icon icon-habbo click-box" onClick={ event => VisitDesktop() } /> }
@@ -85,7 +85,7 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
                         <Base pointer className="navigation-item icon icon-catalog click-box" onClick={ event => CreateLinkEvent('catalog/toggle') } />
                         <Base pointer className="navigation-item icon icon-inventory click-box" onClick={ event => CreateLinkEvent('inventory/toggle') }>
                             { (getFullCount > 0) &&
-                                <LayoutItemCountView count={ getFullCount } /> }
+                                <LayoutItemCountView className="text-black" count={ getFullCount } /> }
                         </Base>
                         { isInRoom &&
                             <Base pointer className="navigation-item icon icon-camera click-box" onClick={ event => CreateLinkEvent('camera/toggle') } /> }
@@ -98,7 +98,7 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
                     <Flex gap={ 2 }>
                         <Base pointer className="navigation-item icon icon-friendall click-box friendsmovilgen" onClick={ event => CreateLinkEvent('friends/toggle') }>
                             { (requests.length > 0) &&
-                                <LayoutItemCountView count={ requests.length } /> }
+                                <LayoutItemCountView className="text-black" count={ requests.length } /> }
                         </Base>
                         { ((iconState === MessengerIconState.SHOW) || (iconState === MessengerIconState.UNREAD)) &&
                             <Base pointer className={ `navigation-item icon icon-message click-box mensajesmovilgen ${ (iconState === MessengerIconState.UNREAD) && 'is-unseen' }` } onClick={ event => OpenMessengerChat() } /> }

@@ -95,7 +95,7 @@ export const RoomCreatorGridItem: FC<RoomCreatorGridItemProps> = (props) => {
       {...rest}
     >
       {itemCount > itemCountMinimum && (
-        <LayoutItemCountView count={itemCount} />
+        <LayoutItemCountView className="text-black" count={itemCount} />
       )}
       {itemUniqueNumber > 0 && (
         <>

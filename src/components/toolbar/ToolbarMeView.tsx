@@ -40,7 +40,7 @@ export const ToolbarMeView: FC<PropsWithChildren<ToolbarMeViewProps>> = props =>
                 <Base pointer className="navigation-item icon icon-me-helper-tool click-box" onClick={ event => DispatchUiEvent(new GuideToolEvent(GuideToolEvent.TOGGLE_GUIDE_TOOL)) } /> }
             <Base pointer className="navigation-item icon icon-me-achievements click-box" onClick={ event => CreateLinkEvent('achievements/toggle') }>
                 { (unseenAchievementCount > 0) &&
-                    <LayoutItemCountView count={ unseenAchievementCount } /> }
+                    <LayoutItemCountView className="text-black" count={ unseenAchievementCount } /> }
             </Base>
             <Base pointer className="navigation-item icon icon-me-profile click-box" onClick={ event => GetUserProfile(GetSessionDataManager().userId) } />
             <Base pointer className="navigation-item icon icon-me-rooms click-box" onClick={ event => CreateLinkEvent('navigator/search/myworld_view') } />

@@ -29,7 +29,7 @@ export const NitroCardTabsItemView: FC<NitroCardTabsItemViewProps> = props =>
                 { children }
             </Flex>
             { (count > 0) &&
-                <LayoutItemCountView count={ count } /> }
+                <LayoutItemCountView className="text-black" count={ count } /> }
         </Flex>
     );
 }

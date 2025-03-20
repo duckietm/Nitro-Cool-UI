@@ -117,7 +117,7 @@ export const FriendsMessengerView: FC<{}> = props =>
                                 { visibleThreads && (visibleThreads.length > 0) && visibleThreads.map(thread => {
                                     return (
 										<LayoutGridItem key={ thread.threadId } itemActive={ (activeThread === thread) } onClick={ event => setActiveThreadId(thread.threadId) }>
-                                            { thread.unread && <LayoutItemCountView count={ thread.unreadCount } /> }
+                                            { thread.unread && <LayoutItemCountView className="text-black" count={ thread.unreadCount } /> }
 											<Flex fullWidth alignItems="center" gap={ 1 }>
 												<Flex alignItems="center" className="friend-head px-2">
 													<LayoutAvatarImageView figure={

@@ -10,7 +10,7 @@ export interface WiredConditionBaseViewProps {
 }
 
 export const WiredConditionBaseView: FC<PropsWithChildren<WiredConditionBaseViewProps>> = props => {
-    const { requiresFurni = WiredFurniType.STUFF_SELECTION_OPTION_NONE, save = null, hasSpecialInput = false, children = null, maxItemSelectionCount = 5 } = props;
+    const { requiresFurni = WiredFurniType.STUFF_SELECTION_OPTION_NONE, save = null, hasSpecialInput = false, children = null, maxItemSelectionCount = 50 } = props;
     
     const onSave = () => (save && save());
 
