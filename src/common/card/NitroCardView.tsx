@@ -20,8 +20,6 @@ export const NitroCardView: FC<NitroCardViewProps> = props =>
         // Card Theme Changer
         newClassNames.push('border-[1px] border-[#283F5D]');
 
-
-
         if(classNames.length) newClassNames.push(...classNames);
 
         return newClassNames;

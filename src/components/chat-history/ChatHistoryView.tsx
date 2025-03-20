@@ -8,7 +8,7 @@ import { NitroInput } from '../../layout';
 export const ChatHistoryView: FC<{}> = props => {
     const [isVisible, setIsVisible] = useState(false);
     const [searchText, setSearchText] = useState<string>('');
-    const { chatHistory = [] } = useChatHistory();
+    const {chatHistory = []} = useChatHistory();
     const elementRef = useRef<HTMLDivElement>(null);
     const isFirstRender = useRef(true);
     const prevChatLength = useRef<number>(0);
@@ -74,14 +74,14 @@ export const ChatHistoryView: FC<{}> = props => {
     if (!isVisible) return null;
 
     return (
-        <NitroCardView className="nitro-chat-history" theme="primary-slim" uniqueKey="chat-history" style={{ height: '100%' }}>
+        <NitroCardView className="w-[400px] h-[400px] nitro-chat-history" theme="primary-slim" uniqueKey="chat-history">
             <NitroCardHeaderView headerText={LocalizeText('room.chathistory.button.text')} onCloseClick={event => setIsVisible(false)} />
             <NitroCardContentView className="nitro-card-content" gap={2} overflow="hidden" style={{ height: 'calc(100% - 40px)', display: 'flex', flexDirection: 'column' }}>
                 <NitroInput placeholder={LocalizeText('generic.search')} type="text" value={searchText} onChange={event => setSearchText(event.target.value)} />
                 <div ref={elementRef} style={{ flex: 1, overflowY: 'auto', background: 'inherit' }}>
                     {filteredChatHistory.map((row, index) => (
                         <Flex key={index} alignItems="center" className="p-1" gap={2}>
-                            <Text variant="muted">{row.timestamp}</Text>
+                            <Text variant="gray">{row.timestamp}</Text>
                             {row.type === ChatEntryType.TYPE_CHAT && (
                                 <div className="bubble-container" style={{position: 'relative', display: 'inline-flex', alignItems: 'center'}}>
                                     <div 

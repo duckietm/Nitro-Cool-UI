@@ -44,6 +44,9 @@ export const Button: FC<ButtonProps> = props =>
 
             if(variant == 'dark')
                 newClassNames.push('text-white bg-dark [box-shadow:inset_0_2px_#ffffff26,inset_0_-2px_#0000001a,0_1px_#0000001a] hover:text-white hover:bg-[#18181bfb] hover:border-[#161619fb]');
+				
+			if(variant == 'gray')
+				newClassNames.push('text-white bg-[#1e7295] border-[#1e7295] [box-shadow:inset_0_2px_#ffffff26,inset_0_-2px_#0000001a,0_1px_#0000001a] hover:text-white hover:bg-[#1a617f] hover:border-[#185b77]');
 
         }
 

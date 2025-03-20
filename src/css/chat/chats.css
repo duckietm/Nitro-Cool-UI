@@ -71,11 +71,11 @@
             }
 
             .username {
-                color: rgba($white, 1);
+                color: rgba(#FFF, 1);
             }
 
             .message {
-                color: rgba($white, 1) !important;
+                color: rgba(#FFF, 1) !important;
             }
 
             .pointer {
@@ -650,7 +650,7 @@
             padding: 5px 6px 5px 4px;
             margin-left: 27px;
             line-height: 1;
-            color: $black;
+            color: #000;
             min-height: 25px;
         }
     }
