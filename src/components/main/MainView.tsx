@@ -1,7 +1,8 @@
 import { HabboWebTools, ILinkEventTracker, RoomSessionEvent } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
 import { AddEventLinkTracker, GetCommunication, RemoveLinkEventTracker } from '../../api';
-import { Base, TransitionAnimation, TransitionAnimationTypes } from '../../common';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Base } from '../../common';
 import { useRoomSessionManagerEvent } from '../../hooks';
 import { AchievementsView } from '../achievements/AchievementsView';
 import { AvatarEditorView } from '../avatar-editor/AvatarEditorView';
@@ -83,9 +84,15 @@ export const MainView: FC<{}> = props =>
 
     return (
         <Base fit>
-            <TransitionAnimation type={ TransitionAnimationTypes.FADE_IN } inProp={ landingViewVisible } timeout={ 300 }>
-                <HotelView />
-            </TransitionAnimation>
+            <AnimatePresence>
+                { landingViewVisible &&
+                    <motion.div
+                        initial={ { opacity: 0 }}
+                        animate={ { opacity: 1 }}
+                        exit={ { opacity: 0 }}>
+                        <HotelView />
+                    </motion.div> }
+            </AnimatePresence>
             <ToolbarView isInRoom={ !landingViewVisible } />
             <ModToolsView />
             <RoomView />

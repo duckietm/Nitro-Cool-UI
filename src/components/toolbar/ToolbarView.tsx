@@ -1,7 +1,8 @@
 import { Dispose, DropBounce, EaseOut, JumpBy, Motions, NitroToolbarAnimateIconEvent, PerkAllowancesMessageEvent, PerkEnum, Queue, Wait } from '@nitrots/nitro-renderer';
-import { FC, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { FC, useState, useEffect } from 'react';
 import { CreateLinkEvent, GetConfiguration, GetSessionDataManager, MessengerIconState, OpenMessengerChat, VisitDesktop } from '../../api';
-import { Base, Flex, LayoutAvatarImageView, LayoutItemCountView, TransitionAnimation, TransitionAnimationTypes } from '../../common';
+import { Base, Flex, LayoutAvatarImageView, LayoutItemCountView } from '../../common';
 import { useAchievements, useFriends, useInventoryUnseenTracker, useMessageEvent, useMessenger, useRoomEngineEvent, useSessionInfo } from '../../hooks';
 import { ToolbarMeView } from './ToolbarMeView';
 
@@ -20,7 +21,6 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
     useMessageEvent<PerkAllowancesMessageEvent>(PerkAllowancesMessageEvent, event =>
     {
         const parser = event.getParser();
-
         setUseGuideTool(parser.isAllowed(PerkEnum.USE_GUIDE_TOOL));
     });
 
@@ -29,25 +29,21 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
         const animationIconToToolbar = (iconName: string, image: HTMLImageElement, x: number, y: number) =>
         {
             const target = (document.body.getElementsByClassName(iconName)[0] as HTMLElement);
-
             if(!target) return;
             
             image.className = 'toolbar-icon-animation';
             image.style.visibility = 'visible';
             image.style.left = (x + 'px');
             image.style.top = (y + 'px');
-
             document.body.append(image);
 
             const targetBounds = target.getBoundingClientRect();
             const imageBounds = image.getBoundingClientRect();
-
             const left = (imageBounds.x - targetBounds.x);
             const top = (imageBounds.y - targetBounds.y);
             const squared = Math.sqrt(((left * left) + (top * top)));
             const wait = (500 - Math.abs(((((1 / squared) * 100) * 500) * 0.5)));
             const height = 20;
-
             const motionName = (`ToolbarBouncing[${ iconName }]`);
 
             if(!Motions.getMotionByTag(motionName))
@@ -56,22 +52,45 @@ export const ToolbarView: FC<{ isInRoom: boolean }> = props =>
             }
 
             const motion = new Queue(new EaseOut(new JumpBy(image, wait, ((targetBounds.x - imageBounds.x) + height), (targetBounds.y - imageBounds.y), 100, 1), 1), new Dispose(image));
-
             Motions.runMotion(motion);
         }
 
         animationIconToToolbar('icon-inventory', event.image, event.x, event.y);
     });
 
+    const handleAvatarClick = (event: React.MouseEvent) => {
+        event.stopPropagation();
+        setMeExpanded(prev => !prev);
+    };
+
     return (
         <>
-            <TransitionAnimation type={ TransitionAnimationTypes.FADE_IN } inProp={ isMeExpanded } timeout={ 300 }>
-                <ToolbarMeView useGuideTool={ useGuideTool } unseenAchievementCount={ getTotalUnseen } setMeExpanded={ setMeExpanded } />
-            </TransitionAnimation>
+            <AnimatePresence>
+                { isMeExpanded && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="nitro-toolbar-me"
+                    >
+                        <ToolbarMeView 
+                            useGuideTool={ useGuideTool } 
+                            unseenAchievementCount={ getTotalUnseen } 
+                            setMeExpanded={ setMeExpanded } 
+                        />
+                    </motion.div>
+                )}
+            </AnimatePresence>
             <Flex alignItems="center" justifyContent="between" gap={ 2 } className="nitro-toolbar py-1 px-3">
                 <Flex gap={ 2 } alignItems="center" className="widthsizemax">
                     <Flex alignItems="center" gap={ 2 }>
-                        <Flex center pointer className={ 'navigation-item item-avatar ' + (isMeExpanded ? 'active ' : '') } onClick={ event => setMeExpanded(!isMeExpanded) }>
+                        <Flex 
+                            center 
+                            pointer 
+                            className={ 'navigation-item item-avatar ' + (isMeExpanded ? 'active ' : '') } 
+                            onClick={ handleAvatarClick }
+                        >
                             <LayoutAvatarImageView figure={ userFigure } headOnly={ true } direction={ 2 } position="absolute" />
                             { (getTotalUnseen > 0) &&
                                 <LayoutItemCountView className="text-black" count={ getTotalUnseen } /> }

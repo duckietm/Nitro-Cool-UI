@@ -70,7 +70,7 @@
 
 .nitro-toolbar-me {
     position: absolute;
-    bottom: 68px;
+    bottom: 35px;
     left: 15px;
     z-index: $toolbar-memenu-zindex;
     //background: rgba(20, 20, 20, .95);
@@ -87,7 +87,7 @@
         row-gap: 0rem!important;
         height: 200px;
         left: 62px;
-        z-index: 9999999;
+        z-index: 1;
     }
 
     .navigation-item {

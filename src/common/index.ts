@@ -18,6 +18,5 @@ export * from './layout';
 export * from './layout/limited-edition';
 export * from "./Slider";
 export * from './Text';
-export * from './transitions';
 export * from './types';
 export * from './utils';

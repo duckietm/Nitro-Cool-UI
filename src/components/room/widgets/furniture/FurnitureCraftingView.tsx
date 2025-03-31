@@ -12,9 +12,11 @@ export const FurnitureCraftingView: FC<{}> = props =>
 
     const isOwner = useMemo(() =>
     {
+		if(!roomSession) return false;
+		
         const roomObject = GetRoomEngine().getRoomObject(roomSession.roomId, objectId, RoomObjectCategory.FLOOR);
         return IsOwnerOfFurniture(roomObject);
-    }, [ objectId, roomSession.roomId ]);
+    }, [ objectId, roomSession ]);
 
     const canCraft = useMemo(() =>
     {

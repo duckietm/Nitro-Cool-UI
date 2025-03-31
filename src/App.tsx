@@ -1,7 +1,8 @@
 import { ConfigurationEvent, GetAssetManager, HabboWebTools, LegacyExternalInterface, Nitro, NitroCommunicationDemoEvent, NitroConfiguration, NitroEvent, NitroLocalizationEvent, NitroVersion, RoomEngineEvent } from '@nitrots/nitro-renderer';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Base } from './common';
 import { FC, useCallback, useEffect, useState } from 'react';
 import { GetCommunication, GetConfiguration, GetNitroInstance, GetUIVersion } from './api';
-import { Base, TransitionAnimation, TransitionAnimationTypes } from './common';
 import { LoadingView } from './components/loading/LoadingView';
 import { MainView } from './components/main/MainView';
 import { useConfigurationEvent, useLocalizationEvent, useMainEvent, useRoomEngineEvent } from './hooks';
@@ -132,9 +133,12 @@ export const App: FC<{}> = props =>
         <Base fit overflow="hidden" className={ imageRendering && 'image-rendering-pixelated' }>
             { (!isReady || isError) &&
                 <LoadingView isError={ isError } message={ message } percent={ percent } /> }
-            <TransitionAnimation type={ TransitionAnimationTypes.FADE_IN } inProp={ (isReady) }>
-                <MainView />
-            </TransitionAnimation>
+            <AnimatePresence>
+				{ isReady && ( <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
+					<MainView />
+					</motion.div>
+				)}
+			</AnimatePresence>
             <Base id="draggable-windows-container" />
         </Base>
     );

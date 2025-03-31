@@ -1,7 +1,9 @@
 .nitro-room-tools-container {
     position: absolute;
     bottom: $toolbar-height + 25px;
-    left: 0;
+    left: 0px;
+    display: flex; // Lay out children side by side
+    align-items: flex-start; // Align items to the top
 
     .nitro-room-tools {
         background: #212131;
@@ -9,13 +11,13 @@
         border-top-right-radius: $border-radius;
         border-bottom-right-radius: $border-radius;
         transition: all .2s ease;
-        z-index: 71;
+        z-index: 2;
         margin-left: -20px;
 
         .list-group-item {
             background: transparent;
             padding: 3px 0px;
-            color: $white;
+            color: #FFF;
             border-color: rgba($black, 0.3);
             cursor: pointer;
 
@@ -46,13 +48,20 @@
         }
     }
 
+    .nitro-room-tools-side-container {
+        display: flex;
+        flex-direction: column; // Stack children vertically
+        margin-left: 10px; // Space between nitro-room-tools and side container
+        gap: 10px; // Space between history and info
+    }
+
     .nitro-room-history {
         background: #212131;
         box-shadow: inset 0px 5px lighten(rgba($dark, .6), 2.5), inset 0 -4px darken(rgba($dark, .6), 4);
         transition: all .2s ease;
         width: 150px;
         overflow: hidden;
-        z-index: 3;
+        z-index: 1;
     }
 
     .nitro-room-tools-info {
