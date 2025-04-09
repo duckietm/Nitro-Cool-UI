@@ -1,15 +1,17 @@
 import { ILinkEventTracker } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { AddEventLinkTracker, ChatEntryType, LocalizeText, RemoveLinkEventTracker } from '../../api';
-import { Flex, InfiniteScroll, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text } from '../../common';
+import { Column, Flex, InfiniteScroll, NitroCardContentView, NitroCardHeaderView, NitroCardView, Text, Button } from '../../common';
 import { useChatHistory, useOnClickChat } from '../../hooks';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export const ChatHistoryView: FC<{}> = props =>
 {
-    const { chatHistory = [] } = useChatHistory();
+    const { chatHistory = [], clearChatHistory } = useChatHistory();
     const [ isVisible, setIsVisible ] = useState(false);
-	const { onClickChat = null } = useOnClickChat();
+    const { onClickChat = null } = useOnClickChat();
     const [ searchText, setSearchText ] = useState<string>('');
+
     const elementRef = useRef<HTMLDivElement>(null);
 
     const filteredChatHistory = useMemo(() =>
@@ -20,6 +22,13 @@ export const ChatHistoryView: FC<{}> = props =>
 
         return chatHistory.filter(entry => ((entry.message && entry.message.toLowerCase().includes(text))) || (entry.name && entry.name.toLowerCase().includes(text)));
     }, [ chatHistory, searchText ]);
+
+    const handleClearHistory = () =>
+    {
+        if (clearChatHistory) {
+            clearChatHistory();
+        }
+    };
 
     useEffect(() =>
     {
@@ -32,9 +41,9 @@ export const ChatHistoryView: FC<{}> = props =>
             linkReceived: (url: string) =>
             {
                 const parts = url.split('/');
-        
+
                 if(parts.length < 2) return;
-        
+
                 switch(parts[1])
                 {
                     case 'show':
@@ -56,42 +65,61 @@ export const ChatHistoryView: FC<{}> = props =>
         return () => RemoveLinkEventTracker(linkTracker);
     }, []);
 
-    if(!isVisible) return null;
-
     return (
-        <NitroCardView uniqueKey="chat-history" className="nitro-chat-history" theme="primary-slim">
-            <NitroCardHeaderView headerText={ LocalizeText('room.chathistory.button.text') } onCloseClick={ event => setIsVisible(false) }/>
-            <NitroCardContentView innerRef={ elementRef } overflow="hidden" gap={ 2 }>
-                <input type="text" className="form-control form-control-sm" placeholder={ LocalizeText('generic.search') } value={ searchText } onChange={ event => setSearchText(event.target.value) } />
-                <InfiniteScroll rows={ filteredChatHistory } scrollToBottom={ true } rowRender={ row =>
-                {
-                    return (
-                        <Flex alignItems="center" className="p-1" gap={ 2 }>
-                            <Text variant="muted">{ row.timestamp }</Text>
-                            { (row.type === ChatEntryType.TYPE_CHAT) &&
-                                <div className="bubble-container" style={ { position: 'relative' } }>
-                                    { (row.style === 0) &&
-                                    <div className="user-container-bg" style={ { backgroundColor: row.color } } /> }
-                                    <div className={ `chat-bubble bubble-${ row.style } type-${ row.chatType }` } style={ { maxWidth: '100%' } }>
-                                        <div className="user-container">
-                                            { row.imageUrl && (row.imageUrl.length > 0) &&
-                                <div className="user-image" style={ { backgroundImage: `url(${ row.imageUrl })` } } /> }
-                                        </div>
-                                        <div className="chat-content">
-                                            <b className="username mr-1" dangerouslySetInnerHTML={ { __html: `${ row.name }: ` } } />
-                                            <span className="message" dangerouslySetInnerHTML={ { __html: `${ row.message }` } } onClick={ e => onClickChat(e) }/>
-                                        </div>
-                                    </div>
-                                </div> }
-                            { (row.type === ChatEntryType.TYPE_ROOM_INFO) &&
-                                <>
-                                    <i className="icon icon-small-room" />
-                                    <Text textBreak wrap grow>{ row.name }</Text>
-                                </> }
-                        </Flex>
-                    )
-                } } />
-            </NitroCardContentView>
-        </NitroCardView>
+        <AnimatePresence>
+            { isVisible && (
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                >
+                    <Flex gap={2} className="nitro-chat-history">
+                        <Column className="chat-history-content h-100">
+                            <Column className="h-100">
+                                <Flex justifyContent="end" className="p-2">
+                                    <Button variant="danger" onClick={handleClearHistory}>
+                                        {LocalizeText('chat.history.clear')}
+                                    </Button>
+                                </Flex>
+                                <InfiniteScroll
+                                    rows={filteredChatHistory}
+                                    scrollToBottom={true}
+                                    rowRender={row =>
+                                    {
+                                        return (
+                                            <Flex alignItems="center" className="p-1" gap={2}>
+                                                <Text variant="muted">{row.timestamp}</Text>
+                                                { (row.type === ChatEntryType.TYPE_CHAT) &&
+                                            <div className="bubble-container" style={{ position: 'relative' }}>
+                                                { (row.style === 0) &&
+                                                <div className="user-container-bg" style={{ backgroundColor: row.color }} /> }
+                                                <div className={`chat-bubble bubble-${row.style} type-${row.chatType}`} style={{ maxWidth: '100%' }}>
+                                                    <div className="user-container">
+                                                        { row.imageUrl && (row.imageUrl.length > 0) &&
+                                                    <div className="user-image" style={{ backgroundImage: `url(${row.imageUrl})` }} /> }
+                                                    </div>
+                                                    <div className="chat-content">
+                                                        <b className="username mr-1" dangerouslySetInnerHTML={{ __html: `${row.name}: ` }} />
+                                                        <span className="message" style={{ color: row.chatColours }} dangerouslySetInnerHTML={{ __html: `${row.message}` }} onClick={e => onClickChat(e)} />
+                                                    </div>
+                                                </div>
+                                            </div> }
+                                                { (row.type === ChatEntryType.TYPE_ROOM_INFO) &&
+                                            <>
+                                                <i className="icon icon-small-room" />
+                                                <Text textBreak wrap grow variant="white">{row.name}</Text>
+                                            </> }
+                                            </Flex>
+                                        )
+                                    }}
+                                />
+                            </Column>
+                        </Column>
+                        <Flex className="chat-toggle" onClick={event => setIsVisible(false)} />
+                    </Flex>
+                </motion.div>
+            )}
+        </AnimatePresence>
     );
-}
+};

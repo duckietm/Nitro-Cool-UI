@@ -65,6 +65,12 @@ const useChatHistoryState = () =>
         });
     }
 
+    const clearChatHistory = () =>
+    {
+        setChatHistory([]);
+        CHAT_HISTORY_COUNTER = 0;
+    };
+
     useRoomSessionManagerEvent<RoomSessionEvent>(RoomSessionEvent.STARTED, event => setNeedsRoomInsert(true));
 
     useMessageEvent<GetGuestRoomResultEvent>(GetGuestRoomResultEvent, event =>
@@ -99,7 +105,7 @@ const useChatHistoryState = () =>
         addMessengerEntry({ id: -1, webId: parser.senderId, entityId: -1, name: '', message: parser.messageText, roomId: -1, timestamp: MessengerHistoryCurrentDate(), type: ChatEntryType.TYPE_IM });
     });
     
-    return { addChatEntry, chatHistory, roomHistory, messengerHistory };
+    return { addChatEntry, chatHistory, roomHistory, messengerHistory, clearChatHistory };
 }
 
 export const useChatHistory = () => useBetween(useChatHistoryState);

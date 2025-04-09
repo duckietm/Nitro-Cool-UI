@@ -1,4 +1,37 @@
 .nitro-chat-history {
-    width: $chat-history-width;
-    height: $chat-history-height;
+    background-color: #000000cc;
+    position: absolute;
+    padding-right: 20px;
+    top: 0.5px; /* Adjusted to give more space at the top */
+    bottom: 0;
+    height: 75%;
+    left: 0;
+    width: 400px;
+    border-right: 1px solid #000;
+    border-bottom: 1px solid #000;
+    -webkit-box-shadow: inset -2px 0px 0px 0px #34322d, inset 0px -2px 0px 0px #34322d;
+    box-shadow: inset -2px 0px 0px 0px #34322d, inset 0px -2px 0px 0px #34322d;
+    border-bottom-right-radius: 10px;
+
+    .chat-history-content {
+        width: 100%;
+        background-color: #2e2e2c4f;
+        border-right: 1px solid #3b3933;
+        padding-bottom: 60px;
+    }
+	
+	.chat-history-content .p-2 {
+		padding: 10px;
+	}
+
+    .chat-toggle {
+        background-image: url(@/assets/images/chathistory/chathistory_toggle.png);
+        width: 15px;
+        height: 63px;
+        cursor: pointer;
+        position: absolute;
+        left: 100%;
+        bottom: 140px;
+        border-left: 1px solid black;
+    }
 }
