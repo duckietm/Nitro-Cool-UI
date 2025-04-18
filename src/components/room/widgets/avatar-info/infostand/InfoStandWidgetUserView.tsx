@@ -160,10 +160,9 @@ export const InfoStandWidgetUserView: FC<InfoStandWidgetUserViewProps> = props =
                             <LayoutAvatarImageView figure={ avatarInfo.figure } direction={ 4 } />
                             <Base position="absolute" className={ `body-image profile-overlay ${ infostandOverlayClass }` }/>
                             { avatarInfo.type === AvatarInfoUser.OWN_USER &&
-                                <Base className="icon edit-icon edit-position" onClick={ event =>
-                                {
-                                    event.stopPropagation(); setIsVisible(prevValue => !prevValue);
-                                } } />
+                                <Base position="absolute" className="icon edit-icon edit-icon-position" onClick={ event =>
+									{ event.stopPropagation(); setIsVisible(prevValue => !prevValue); } }
+								/>
                             }
                         </Column>
                         <Column grow alignItems="center" gap={ 0 }>
