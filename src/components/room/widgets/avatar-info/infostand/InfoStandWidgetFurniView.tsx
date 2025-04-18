@@ -1,5 +1,7 @@
-import { CrackableDataType, GroupInformationComposer, GroupInformationEvent, NowPlayingEvent, RoomControllerLevel, RoomObjectCategory, RoomObjectOperationType, RoomObjectVariable, RoomWidgetEnumItemExtradataParameter, RoomWidgetFurniInfoUsagePolicyEnum, SetObjectDataMessageComposer, SongInfoReceivedEvent, StringDataType } from '@nitrots/nitro-renderer';
+import { CrackableDataType, FurnitureFloorUpdateEvent, GroupInformationComposer, GroupInformationEvent, NowPlayingEvent, RoomControllerLevel, RoomObjectCategory, RoomObjectOperationType, RoomObjectVariable, RoomWidgetEnumItemExtradataParameter, RoomWidgetFurniInfoUsagePolicyEnum, SetObjectDataMessageComposer, SongInfoReceivedEvent, StringDataType, UpdateFurniturePositionComposer } from '@nitrots/nitro-renderer';
 import { FC, useCallback, useEffect, useState } from 'react';
+import { FaTimes } from 'react-icons/fa';
+import { GrFormNextLink, GrRotateLeft, GrRotateRight } from 'react-icons/gr';
 import { AvatarInfoFurni, CreateLinkEvent, GetGroupInformation, GetNitroInstance, GetRoomEngine, LocalizeText, SendMessageComposer } from '../../../../../api';
 import { Base, Button, Column, Flex, LayoutBadgeImageView, LayoutLimitedEditionCompactPlateView, LayoutRarityLevelView, Text, UserProfileIconView } from '../../../../../common';
 import { useMessageEvent, useRoom, useSoundEvent } from '../../../../../hooks';
@@ -39,6 +41,217 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
     const [ songName, setSongName ] = useState<string>('');
     const [ songCreator, setSongCreator ] = useState<string>('');
 	const [itemLocation, setItemLocation] = useState<{ x: number; y: number; z: number; }>({ x: -1, y: -1, z: -1 });
+	
+	const [ dropdownOpen, setDropdownOpen ] = useState(sessionStorage.getItem('dropdownOpen') === 'true');
+    const [ furniLocationX, setFurniLocationX ] = useState(null);
+    const [ furniLocationY, setFurniLocationY ] = useState(null);
+    const [ furniLocationZ, setFurniLocationZ ] = useState(null);
+    const [ furniDirection, setFurniDirection ] = useState(null);
+    const [ furniState, setFurniState ] = useState(null);
+
+    const sendUpdate = useCallback((deltaX: number, deltaY: number, deltaZ: number = 0, deltaDirection: number = 0) =>
+    {
+        if (!avatarInfo) return;
+
+        const roomId = GetRoomEngine().activeRoomId;
+        const roomObject = GetRoomEngine().getRoomObject(roomId, avatarInfo.id, avatarInfo.category);
+        if (!roomObject) return;
+
+        const newX = roomObject.getLocation().x + deltaX;
+        const newY = roomObject.getLocation().y + deltaY;
+        const newZ = deltaZ * 10000;
+
+        const currentDirection = roomObject.getDirection().x;
+
+        const newDirection = (deltaDirection !== 0)
+            ? getValidRoomObjectDirection(roomObject, deltaDirection > 0) / 45
+            : currentDirection / 45;
+
+        SendMessageComposer(new UpdateFurniturePositionComposer(avatarInfo.id, newX, newY, newZ, newDirection));
+    }, [ avatarInfo ]);
+
+    function getRotationIndex(directionVector)
+    {
+        const angle = directionVector.x;
+
+        switch(angle)
+        {
+            case 0: return 0;
+            case 45: return 1;
+            case 90: return 2;
+            case 135: return 3;
+            case 180: return 4;
+            case 225: return 5;
+            case 270: return 6;
+            case 315: return 7;
+            default: return null; // Handle unexpected angles
+        }
+    }
+
+    useEffect(() =>
+    {
+        const roomId = roomSession.roomId;
+        const objectId = avatarInfo.id;
+        const isWallItem = avatarInfo.isWallItem;
+
+        const locationString = GetRoomEngine().getFurniLocation(roomId, objectId, isWallItem);
+        const locationVector = parseVector3d(locationString);
+
+        if (locationVector)
+        {
+            setFurniLocationX(locationVector.x);
+            setFurniLocationY(locationVector.y);
+            setFurniLocationZ(locationVector.z);
+        }
+
+        const directionString = GetRoomEngine().getFurniDirection(roomId, objectId, isWallItem);
+        const directionVector = parseVector3d(directionString);
+        const rotationIndex = directionVector ? getRotationIndex(directionVector) : null;
+
+        const state = GetRoomEngine().getFurniState(roomId, objectId, isWallItem);
+
+        setFurniDirection(rotationIndex);
+        setFurniState(state);
+    }, [ avatarInfo, roomSession ]);
+
+    function parseVector3d(vectorString: string)
+    {
+        if (!vectorString) return null;
+
+        const matches = vectorString.match(/\[Vector3d: ([\d.]+), ([\d.]+), ([\d.]+)/);
+        if (matches && matches.length === 4)
+        {
+            return {
+                x: parseFloat(matches[1]),
+                y: parseFloat(matches[2]),
+                z: parseFloat(matches[3])
+            };
+        }
+        return null;
+    }
+
+    useMessageEvent<FurnitureFloorUpdateEvent>(FurnitureFloorUpdateEvent, event =>
+    {
+        const parser = event.getParser();
+        const item = parser.item;
+
+        if (item.itemId !== avatarInfo.id) return;
+
+        const locationVector = {
+            x: item.x,
+            y: item.y,
+            z: item.z
+        };
+
+        if (locationVector)
+        {
+            setFurniLocationX(locationVector.x);
+            setFurniLocationY(locationVector.y);
+            setFurniLocationZ(locationVector.z);
+        }
+
+        const directionVector = { x: item.direction };
+        const rotationIndex = directionVector ? getRotationIndex(directionVector) : null;
+
+        const state = item.state;
+
+        setFurniDirection(rotationIndex);
+        setFurniState(state);
+    });
+
+    const handleHeightChange = useCallback((event) =>
+    {
+        let newZ = parseFloat(event.target.value);
+        if (isNaN(newZ) || newZ < 0)
+        {
+            newZ = 0;
+        }
+        else if (newZ > 40)
+        {
+            newZ = 40;
+        }
+        setFurniLocationZ(newZ);
+        sendUpdate(0, 0, newZ, 0);
+    }, [ sendUpdate ]);
+
+    const handleHeightBlur = useCallback((event) =>
+    {
+        let newZ = parseFloat(event.target.value);
+        if (isNaN(newZ) || newZ < 0)
+        {
+            newZ = 0;
+        }
+        else if (newZ > 40)
+        {
+            newZ = 40;
+        }
+        newZ = parseFloat(newZ.toFixed(4));
+        setFurniLocationZ(newZ);
+        sendUpdate(0, 0, newZ, 0);
+    }, [ sendUpdate ]);
+
+    const adjustHeight = useCallback((amount) =>
+    {
+        let newZ = furniLocationZ + amount;
+        if (newZ < 0)
+        {
+            newZ = 0;
+        }
+        else if (newZ > 40)
+        {
+            newZ = 40;
+        }
+        newZ = parseFloat(newZ.toFixed(4));
+        setFurniLocationZ(newZ);
+        sendUpdate(0, 0, newZ, 0);
+    }, [ furniLocationZ, sendUpdate ]);
+
+    function getValidRoomObjectDirection(roomObject, isPositive)
+    {
+        if (!roomObject || !roomObject.model) return 0;
+
+        let allowedDirections = [];
+
+        if (roomObject.type === 'monster_plant')
+        {
+            allowedDirections = roomObject.model.getValue('pet_allowed_directions');
+        }
+        else
+        {
+            allowedDirections = roomObject.model.getValue('furniture_allowed_directions');
+        }
+
+        let direction = roomObject.getDirection().x;
+
+        if (allowedDirections && allowedDirections.length)
+        {
+            let index = allowedDirections.indexOf(direction);
+
+            if (index < 0)
+            {
+                index = 0;
+                for (let i = 0; i < allowedDirections.length; i++)
+                {
+                    if (direction <= allowedDirections[i]) break;
+                    index++;
+                }
+                index = index % allowedDirections.length;
+            }
+
+            if (isPositive)
+            {
+                index = (index + 1) % allowedDirections.length;
+            }
+            else
+            {
+                index = (index - 1 + allowedDirections.length) % allowedDirections.length;
+            }
+
+            direction = allowedDirections[index];
+        }
+
+        return direction;
+    }
 
     useSoundEvent<NowPlayingEvent>(NowPlayingEvent.NPE_SONG_CHANGED, event =>
     {
@@ -241,7 +454,6 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
         if(furniKeys.length === 0 || furniValues.length === 0) return '';
 
         let data = '';
-
         let i = 0;
 
         while(i < furniKeys.length)
@@ -250,7 +462,6 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
             const value = furniValues[i];
 
             data = (data + (key + '=' + value + '\t'));
-
             i++;
         }
 
@@ -296,7 +507,6 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
                     for(const part of dataParts)
                     {
                         const [ key, value ] = part.split('=', 2);
-
                         mapData.set(key, value);
                     }
                 }
@@ -425,6 +635,63 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
                         { godMode &&
                             <>
                                 <hr className="m-0" />
+                                { (!avatarInfo.isWallItem && canMove) &&
+                                    <>
+                                        <Button className="infostand-buttons px-2" onClick={() => setDropdownOpen(!dropdownOpen)}>
+											{dropdownOpen ? `${LocalizeText('widget.furni.present.close')} Buildtools` : `${LocalizeText('navigator.roomsettings.doormode.open')} Buildtools`}
+										</Button>
+                                        { dropdownOpen &&
+                                            <>
+                                                <Flex gap={ 1 }>
+                                                    <Column className="buildtool-box buildtool-box-left">
+                                                        <Column fullWidth>
+                                                            <Text variant="white">{LocalizeText('group.edit.badge.position')}</Text>
+                                                            <Column justifyContent="center" alignItems="center"
+                                                                    className="button-w-height">
+                                                                <Flex className="floor-spaceing">
+                                                                    <Base className="buildtool-movefurni button-leftup" onClick={ () => sendUpdate(-1, 0, furniLocationZ, 0) }> <GrFormNextLink  className="fa-icon icon-color" size="1.7em" /> </Base>
+                                                                    <Base className="buildtool-movefurni button-rightup" onClick={ () => sendUpdate(0, -1, furniLocationZ, 0) }> <GrFormNextLink  className="fa-icon icon-color" size="1.7em" /> </Base>
+                                                                </Flex>
+                                                                <Flex className="floor-spaceing">
+                                                                    <Base className="buildtool-movefurni button-leftdown" onClick={ () => sendUpdate(0, 1, furniLocationZ, 0) }> <GrFormNextLink  className="fa-icon icon-color" size="1.7em" /> </Base>
+                                                                    <Base className="buildtool-movefurni button-rightdown" onClick={ () => sendUpdate(1, 0, furniLocationZ, 0) }> <GrFormNextLink  className="fa-icon icon-color" size="1.7em" /> </Base>
+                                                                </Flex>
+                                                            </Column>
+                                                            <Text variant="white">{LocalizeText('infostand.button.rotate')}</Text>
+                                                            <Flex center className="floor-spaceing">
+                                                                <Base className="buildtool-rotatefurni" onClick={ () => sendUpdate(0, 0, furniLocationZ, -1) }> <GrRotateLeft className="fa-icon icon-color" size="1.4em" /> </Base>
+                                                                <Base className="buildtool-rotatefurni" onClick={ () => sendUpdate(0, 0, furniLocationZ, 1) }> <GrRotateRight className="fa-icon icon-color" size="1.4em" /> </Base>
+                                                            </Flex>
+                                                        </Column>
+                                                    </Column>
+                                                    <Column className="buildtool-box buildtool-box-right">
+                                                        <Column fullWidth>
+                                                            <Text variant="white">{LocalizeText('stack.magic.tile.height.label')}</Text>
+                                                            <input spellCheck="false" type="number" className="form-control form-control-sm" value={ furniLocationZ !== null ? furniLocationZ.toString() : '' } onChange={ handleHeightChange } onBlur={ handleHeightBlur } min={ 0 } max={ 40 } step={ 0.1 } />
+                                                            <Flex justifyContent="center" gap={ 1 }>
+                                                                <Column>
+                                                                    <Base className="buildtool-setheight buildtool-setheightup" onClick={ () => adjustHeight(1) }>↑</Base>
+																	<Text variant="white" align="center">█</Text>
+                                                                    <Base className="buildtool-setheight buildtool-setheightdown" onClick={ () => adjustHeight(-1) }>↓</Base>
+																</Column>
+                                                                <Column>
+                                                                    <Base className="buildtool-setheight buildtool-setheightup" onClick={ () => adjustHeight(0.1) }>↑</Base>
+                                                                    <Text variant="white" align="center">▄</Text>
+                                                                    <Base className="buildtool-setheight buildtool-setheightdown" onClick={ () => adjustHeight(-0.1) }>↓</Base>
+                                                                </Column>
+                                                                <Column>
+                                                                    <Base className="buildtool-setheight buildtool-setheightup" onClick={ () => adjustHeight(0.01) }>↑</Base>
+                                                                    <Text variant="white" align="center">_</Text>
+                                                                    <Base className="buildtool-setheight buildtool-setheightdown" onClick={ () => adjustHeight(-0.01) }>↓</Base>
+                                                                </Column>
+                                                            </Flex>
+                                                        </Column>
+                                                    </Column>
+                                                </Flex>
+                                            </>
+                                        }
+                                    </>
+                                }
                                 { (furniKeys.length > 0) &&
                                     <>
                                         <hr className="m-0"/>

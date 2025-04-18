@@ -7,6 +7,9 @@ export class RoomUnitInfoParser implements IMessageParser
     private _gender: string;
     private _motto: string;
     private _achievementScore: number;
+    private _backgroundId: number;
+    private _standId: number;
+    private _overlayId: number;
 
     public flush(): boolean
     {
@@ -15,6 +18,9 @@ export class RoomUnitInfoParser implements IMessageParser
         this._gender = 'M';
         this._motto = null;
         this._achievementScore = 0;
+        this._backgroundId = 0;
+        this._standId = 0;
+        this._overlayId = 0;
 
         return true;
     }
@@ -28,6 +34,9 @@ export class RoomUnitInfoParser implements IMessageParser
         this._gender = wrapper.readString().toLocaleUpperCase();
         this._motto = wrapper.readString();
         this._achievementScore = wrapper.readInt();
+        this._backgroundId = wrapper.readInt();
+        this._standId = wrapper.readInt();
+        this._overlayId = wrapper.readInt();
 
         return true;
     }
@@ -55,5 +64,20 @@ export class RoomUnitInfoParser implements IMessageParser
     public get achievementScore(): number
     {
         return this._achievementScore;
+    }
+
+    public get backgroundId(): number
+    {
+        return this._backgroundId;
+    }
+
+    public get standId(): number
+    {
+        return this._standId;
+    }
+
+    public get overlayId(): number
+    {
+        return this._overlayId;
     }
 }

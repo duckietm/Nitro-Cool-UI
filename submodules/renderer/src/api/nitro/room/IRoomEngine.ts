@@ -87,7 +87,10 @@ export interface IRoomEngine extends INitroManager
     saveTextureAsScreenshot(texture: RenderTexture, saveAsThumbnail?: boolean): void;
     saveBase64AsScreenshot(base64: string, saveAsThumbnail?: boolean): void;
     deleteRoomObject(objectId: number, objectCategory: number): boolean;
-    sessionDataManager: ISessionDataManager;
+	getFurniLocation(roomId: number, objectId: number, isWallItem: boolean): string;
+	getFurniDirection(roomId: number, objectId: number, isWallItem: boolean): number;
+	getFurniState(roomId: number, objectId: number, isWallItem: boolean): number;
+	sessionDataManager: ISessionDataManager;
     roomSessionManager: IRoomSessionManager;
     roomManager: IRoomManager;
     objectEventHandler: IRoomObjectEventManager;

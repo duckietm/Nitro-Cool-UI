@@ -266,6 +266,12 @@
         height: 14px;
     }
 
+	&.edit-icon {
+        background-image: url('@/assets/images/infostand/icon_edit.gif');
+        width: 19px;
+        height: 19px;
+    }
+	
     &.disk-creator {
         background-image: url('@/assets/images/infostand/disk-creator.png');
         width: 14px;

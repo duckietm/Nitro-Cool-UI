@@ -14,6 +14,9 @@ export class UserMessageData
     private _figure: string = '';
     private _custom: string = '';
     private _activityPoints: number = 0;
+    private _background: number = 0;
+    private _stand: number = 0;
+    private _overlay: number = 0;
     private _webID: number = 0;
     private _groupID: number = 0;
     private _groupStatus: number = 0;
@@ -177,6 +180,36 @@ export class UserMessageData
         {
             this._activityPoints = k;
         }
+    }
+
+    public get background(): number
+    {
+        return this._background;
+    }
+
+    public set background(k: number)
+    {
+        this._background = k;
+    }
+
+    public get stand(): number
+    {
+        return this._stand;
+    }
+
+    public set stand(k: number)
+    {
+        this._stand = k;
+    }
+
+    public get overlay(): number
+    {
+        return this._overlay;
+    }
+
+    public set overlay(k: number)
+    {
+        this._overlay = k;
     }
 
     public get webID(): number

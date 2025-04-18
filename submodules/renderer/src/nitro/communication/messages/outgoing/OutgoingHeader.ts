@@ -253,6 +253,7 @@ export class OutgoingHeader
     public static GET_SOUND_SETTINGS = 2388;
     public static USER_SETTINGS_CAMERA = 1461;
     public static USER_SETTINGS_CHAT_STYLE = 1030;
+	public static USER_SETTINGS_INFOSTAND_BACKGROUND = 1031;														
     public static USER_SETTINGS_INVITES = 1086;
     public static USER_SETTINGS_OLD_CHAT = 1262;
     public static USER_SETTINGS_VOLUME = 1367;
@@ -470,4 +471,5 @@ export class OutgoingHeader
 
 	public static FURNITURE_PICKUP_ALL = 10017;
 	public static DELETE_ITEM = 10018;
+	public static FURNITURE_FLOOR_POSITION_UPDATE = 10019;
 }

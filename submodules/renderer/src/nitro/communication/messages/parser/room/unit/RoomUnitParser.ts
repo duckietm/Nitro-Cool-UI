@@ -27,6 +27,9 @@ export class RoomUnitParser implements IMessageParser
             const id = wrapper.readInt();
             const username = wrapper.readString();
             const custom = wrapper.readString();
+            const background = wrapper.readInt();
+            const stand = wrapper.readInt();
+            const overlay = wrapper.readInt();
             let figure = wrapper.readString();
             const roomIndex = wrapper.readInt();
             const x = wrapper.readInt();
@@ -40,6 +43,9 @@ export class RoomUnitParser implements IMessageParser
             user.dir = direction;
             user.name = username;
             user.custom = custom;
+            user.background = background;
+            user.stand = stand;
+            user.overlay = overlay;
             user.x = x;
             user.y = y;
             user.z = z;

@@ -9,6 +9,9 @@ export class RoomUserData implements IRoomUserData
     private _figure: string = '';
     private _custom: string = '';
     private _activityPoints: number;
+    private _background: number;
+    private _stand: number;
+    private _overlay: number;
     private _webID: number = 0;
     private _groupID: number = 0;
     private _groupStatus: number = 0;
@@ -44,6 +47,36 @@ export class RoomUserData implements IRoomUserData
     public set activityPoints(k: number)
     {
         this._activityPoints = k;
+    }
+
+    public get background(): number
+    {
+        return this._background;
+    }
+
+    public set background(k: number)
+    {
+        this._background = k;
+    }
+
+    public get stand(): number
+    {
+        return this._stand;
+    }
+
+    public set stand(k: number)
+    {
+        this._stand = k;
+    }
+
+    public get overlay(): number
+    {
+        return this._overlay;
+    }
+
+    public set overlay(k: number)
+    {
+        this._overlay = k;
     }
 
     public get name(): string

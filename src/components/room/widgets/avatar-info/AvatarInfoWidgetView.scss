@@ -54,7 +54,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: rgba($light-dark, 1);
             width: 100%;
             max-width: 68px;
             border-radius: $border-radius;
@@ -136,4 +135,9 @@
     .pet-stats {
         height: 18px;
     }
+	
+	.edit-icon-position {
+		right: 2px;
+		top: 2px;
+	}	
 }

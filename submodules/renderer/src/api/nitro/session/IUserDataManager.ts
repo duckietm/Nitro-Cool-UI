@@ -18,6 +18,7 @@ export interface IUserDataManager
     updateFigure(roomIndex: number, figure: string, sex: string, hasSaddle: boolean, isRiding: boolean): void;
     updateName(roomIndex: number, name: string): void;
     updateMotto(roomIndex: number, custom: string): void;
+	updateBackground(roomIndex: number, background: number, stand: number, overlay: number): void;																							  
     updateAchievementScore(roomIndex: number, score: number): void;
     updatePetLevel(roomIndex: number, level: number): void;
     updatePetBreedingStatus(roomIndex: number, canBreed: boolean, canHarvest: boolean, canRevive: boolean, hasBreedingPermission: boolean): void;
