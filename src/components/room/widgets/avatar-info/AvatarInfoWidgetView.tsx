@@ -8,7 +8,6 @@ import { AvatarInfoRentableBotChatView } from './AvatarInfoRentableBotChatView';
 import { AvatarInfoUseProductConfirmView } from './AvatarInfoUseProductConfirmView';
 import { AvatarInfoUseProductView } from './AvatarInfoUseProductView';
 import { InfoStandWidgetBotView } from './infostand/InfoStandWidgetBotView';
-import { InfoStandWidgetFurniView } from './infostand/InfoStandWidgetFurniView';
 import { InfoStandWidgetPetView } from './infostand/InfoStandWidgetPetView';
 import { InfoStandWidgetRentableBotView } from './infostand/InfoStandWidgetRentableBotView';
 import { InfoStandWidgetUserView } from './infostand/InfoStandWidgetUserView';
