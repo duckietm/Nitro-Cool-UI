@@ -1,252 +1,488 @@
-import { RelationshipStatusInfoEvent, RelationshipStatusInfoMessageParser, RoomSessionFavoriteGroupUpdateEvent, RoomSessionUserBadgesEvent, RoomSessionUserFigureUpdateEvent, UserRelationshipsComposer } from '@nitrots/nitro-renderer';
-import { Dispatch, FC, FocusEvent, KeyboardEvent, SetStateAction, useEffect, useState } from 'react';
-import { FaPencilAlt, FaTimes } from 'react-icons/fa';
-import { AvatarInfoUser, CloneObject, GetConfiguration, GetGroupInformation, GetSessionDataManager, GetUserProfile, LocalizeText, SendMessageComposer } from '../../../../../api';
-import { Base, Column, Flex, LayoutAvatarImageView, LayoutBadgeImageView, Text, UserProfileIconView } from '../../../../../common';
-import { useMessageEvent, useRoom, useRoomSessionManagerEvent } from '../../../../../hooks';
-import { InfoStandWidgetUserRelationshipsView } from './InfoStandWidgetUserRelationshipsView';
-import { InfoStandWidgetUserTagsView } from './InfoStandWidgetUserTagsView';
-import { BackgroundsView } from '../../../../backgrounds/BackgroundsView';
+import { CrackableDataType, GroupInformationComposer, GroupInformationEvent, NowPlayingEvent, RoomControllerLevel, RoomObjectCategory, RoomObjectOperationType, RoomObjectVariable, RoomWidgetEnumItemExtradataParameter, RoomWidgetFurniInfoUsagePolicyEnum, SetObjectDataMessageComposer, SongInfoReceivedEvent, StringDataType } from '@nitrots/nitro-renderer';
+import { FC, useCallback, useEffect, useState } from 'react';
+import { AvatarInfoFurni, CreateLinkEvent, GetGroupInformation, GetNitroInstance, GetRoomEngine, LocalizeText, SendMessageComposer } from '../../../../../api';
+import { Base, Button, Column, Flex, LayoutBadgeImageView, LayoutLimitedEditionCompactPlateView, LayoutRarityLevelView, Text, UserProfileIconView } from '../../../../../common';
+import { useMessageEvent, useRoom, useSoundEvent } from '../../../../../hooks';
 
-interface InfoStandWidgetUserViewProps
+interface InfoStandWidgetFurniViewProps
 {
-    avatarInfo: AvatarInfoUser;
-    setAvatarInfo: Dispatch<SetStateAction<AvatarInfoUser>>;
+    avatarInfo: AvatarInfoFurni;
     onClose: () => void;
 }
 
-export const InfoStandWidgetUserView: FC<InfoStandWidgetUserViewProps> = props =>
+const PICKUP_MODE_NONE: number = 0;
+const PICKUP_MODE_EJECT: number = 1;
+const PICKUP_MODE_FULL: number = 2;
+
+export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props =>
 {
-    const { avatarInfo = null, setAvatarInfo = null, onClose = null } = props;
-    const [ motto, setMotto ] = useState<string>(null);
-    const [ isEditingMotto, setIsEditingMotto ] = useState(false);
-    const [ relationships, setRelationships ] = useState<RelationshipStatusInfoMessageParser>(null);
+    const { avatarInfo = null, onClose = null } = props;
     const { roomSession = null } = useRoom();
-    const [ backgroundId, setBackgroundId ] = useState<number>(null);
-    const [ standId, setStandId ] = useState<number>(null);
-    const [ overlayId, setOverlayId ] = useState<number>(null);
-    const [ isVisible, setIsVisible ] = useState(false);
 
-    const infostandBackgroundClass = `background-${ backgroundId }`;
-    const infostandStandClass = `stand-${ standId }`;
-    const infostandOverlayClass = `overlay-${ overlayId }`;
+    const [ pickupMode, setPickupMode ] = useState(0);
+    const [ canMove, setCanMove ] = useState(false);
+    const [ canRotate, setCanRotate ] = useState(false);
+    const [ canUse, setCanUse ] = useState(false);
+    const [ furniKeys, setFurniKeys ] = useState<string[]>([]);
+    const [ furniValues, setFurniValues ] = useState<string[]>([]);
+    const [ customKeys, setCustomKeys ] = useState<string[]>([]);
+    const [ customValues, setCustomValues ] = useState<string[]>([]);
+    const [ isCrackable, setIsCrackable ] = useState(false);
+    const [ crackableHits, setCrackableHits ] = useState(0);
+    const [ crackableTarget, setCrackableTarget ] = useState(0);
+    const [ godMode, setGodMode ] = useState(false);
+    const [ canSeeFurniId, setCanSeeFurniId ] = useState(false);
+    const [ groupName, setGroupName ] = useState<string>(null);
+    const [ isJukeBox, setIsJukeBox ] = useState<boolean>(false);
+    const [ isSongDisk, setIsSongDisk ] = useState<boolean>(false);
+    const [ songId, setSongId ] = useState<number>(-1);
+    const [ songName, setSongName ] = useState<string>('');
+    const [ songCreator, setSongCreator ] = useState<string>('');
+	const [itemLocation, setItemLocation] = useState<{ x: number; y: number; z: number; }>({ x: -1, y: -1, z: -1 });
 
-    const saveMotto = (motto: string) =>
+    useSoundEvent<NowPlayingEvent>(NowPlayingEvent.NPE_SONG_CHANGED, event =>
     {
-        if(!isEditingMotto || (motto.length > GetConfiguration<number>('motto.max.length', 38))) return;
+        setSongId(event.id);
+    }, (isJukeBox || isSongDisk));
 
-        roomSession.sendMottoMessage(motto);
-
-        setIsEditingMotto(false);
-    }
-
-    const onMottoBlur = (event: FocusEvent<HTMLInputElement>) => saveMotto(event.target.value);
-
-    const onMottoKeyDown = (event: KeyboardEvent<HTMLInputElement>) =>
+    useSoundEvent<NowPlayingEvent>(SongInfoReceivedEvent.SIR_TRAX_SONG_INFO_RECEIVED, event =>
     {
-        event.stopPropagation();
+        if(event.id !== songId) return;
 
-        switch(event.key)
+        const songInfo = GetNitroInstance().soundManager.musicController.getSongInfo(event.id);
+
+        if(!songInfo) return;
+
+        setSongName(songInfo.name);
+        setSongCreator(songInfo.creator);
+    }, (isJukeBox || isSongDisk));
+
+    useEffect(() =>
+    {
+        let pickupMode = PICKUP_MODE_NONE;
+        let canMove = false;
+        let canRotate = false;
+        let canUse = false;
+        let furniKeyss: string[] = [];
+        let furniValuess: string[] = [];
+        let customKeyss: string[] = [];
+        let customValuess: string[] = [];
+        let isCrackable = false;
+        let crackableHits = 0;
+        let crackableTarget = 0;
+        let godMode = false;
+        let canSeeFurniId = false;
+        let furniIsJukebox = false;
+        let furniIsSongDisk = false;
+        let furniSongId = -1;
+		
+		const roomObject = GetRoomEngine().getRoomObject( roomSession.roomId, avatarInfo.id, avatarInfo.isWallItem ? RoomObjectCategory.WALL : RoomObjectCategory.FLOOR );
+		const location = roomObject.getLocation();
+		if (location) {
+			setItemLocation({ x: location.x, y: location.y, z: location.z, });
+		}
+
+        const isValidController = (avatarInfo.roomControllerLevel >= RoomControllerLevel.GUEST);
+
+        if(isValidController || avatarInfo.isOwner || avatarInfo.isRoomOwner || avatarInfo.isAnyRoomController)
         {
-            case 'Enter':
-                saveMotto((event.target as HTMLInputElement).value);
-                return;
+            canMove = true;
+            canRotate = !avatarInfo.isWallItem;
+
+            if(avatarInfo.roomControllerLevel >= RoomControllerLevel.MODERATOR) godMode = true;
         }
-    }
 
-    useRoomSessionManagerEvent<RoomSessionUserBadgesEvent>(RoomSessionUserBadgesEvent.RSUBE_BADGES, event =>
-    {
-        if(!avatarInfo || (avatarInfo.webID !== event.userId)) return;
-
-        const oldBadges = avatarInfo.badges.join('');
-
-        if(oldBadges === event.badges.join('')) return;
-
-        setAvatarInfo(prevValue =>
+        if(avatarInfo.isAnyRoomController)
         {
-            const newValue = CloneObject(prevValue);
+            canSeeFurniId = true;
+        }
 
-            newValue.badges = event.badges;
+        if((((avatarInfo.usagePolicy === RoomWidgetFurniInfoUsagePolicyEnum.EVERYBODY) || ((avatarInfo.usagePolicy === RoomWidgetFurniInfoUsagePolicyEnum.CONTROLLER) && isValidController)) || ((avatarInfo.extraParam === RoomWidgetEnumItemExtradataParameter.JUKEBOX) && isValidController)) || ((avatarInfo.extraParam === RoomWidgetEnumItemExtradataParameter.USABLE_PRODUCT) && isValidController)) canUse = true;
 
-            return newValue;
-        });
-    });
-
-    useRoomSessionManagerEvent<RoomSessionUserFigureUpdateEvent>(RoomSessionUserFigureUpdateEvent.USER_FIGURE, event =>
-    {
-        if(!avatarInfo || (avatarInfo.roomIndex !== event.roomIndex)) return;
-
-        setAvatarInfo(prevValue =>
+        if(avatarInfo.extraParam)
         {
-            const newValue = CloneObject(prevValue);
+            if(avatarInfo.extraParam === RoomWidgetEnumItemExtradataParameter.CRACKABLE_FURNI)
+            {
+                const stuffData = (avatarInfo.stuffData as CrackableDataType);
 
-            newValue.figure = event.figure;
-            newValue.motto = event.customInfo;
-            newValue.backgroundId = event.backgroundId;
-            newValue.standId = event.standId;
-            newValue.overlayId = event.overlayId;
-            newValue.achievementScore = event.activityPoints;
+                canUse = true;
+                isCrackable = true;
+                crackableHits = stuffData.hits;
+                crackableTarget = stuffData.target;
+            }
 
-            return newValue;
-        });
-    });
+            else if(avatarInfo.extraParam === RoomWidgetEnumItemExtradataParameter.JUKEBOX)
+            {
+                const playlist = GetNitroInstance().soundManager.musicController.getRoomItemPlaylist();
 
-    useRoomSessionManagerEvent<RoomSessionFavoriteGroupUpdateEvent>(RoomSessionFavoriteGroupUpdateEvent.FAVOURITE_GROUP_UPDATE, event =>
-    {
-        if(!avatarInfo || (avatarInfo.roomIndex !== event.roomIndex)) return;
+                if(playlist)
+                {
+                    furniSongId = playlist.nowPlayingSongId;
+                }
 
-        setAvatarInfo(prevValue =>
+                furniIsJukebox = true;
+            }
+
+            else if(avatarInfo.extraParam.indexOf(RoomWidgetEnumItemExtradataParameter.SONGDISK) === 0)
+            {
+                furniSongId = parseInt(avatarInfo.extraParam.substr(RoomWidgetEnumItemExtradataParameter.SONGDISK.length));
+
+                furniIsSongDisk = true;
+            }
+
+            if(godMode)
+            {
+                const extraParam = avatarInfo.extraParam.substr(RoomWidgetEnumItemExtradataParameter.BRANDING_OPTIONS.length);
+
+                if(extraParam)
+                {
+                    const parts = extraParam.split('\t');
+
+                    for(const part of parts)
+                    {
+                        const value = part.split('=');
+
+                        if(value && (value.length === 2))
+                        {
+                            furniKeyss.push(value[0]);
+                            furniValuess.push(value[1]);
+                        }
+                    }
+                }
+            }
+        }
+
+        if(godMode)
         {
-            const newValue = CloneObject(prevValue);
-            const clearGroup = ((event.status === -1) || (event.habboGroupId <= 0));
+            const roomObject = GetRoomEngine().getRoomObject(roomSession.roomId, avatarInfo.id, (avatarInfo.isWallItem) ? RoomObjectCategory.WALL : RoomObjectCategory.FLOOR);
 
-            newValue.groupId = clearGroup ? -1 : event.habboGroupId;
-            newValue.groupName = clearGroup ? null : event.habboGroupName
-            newValue.groupBadgeId = clearGroup ? null : GetSessionDataManager().getGroupBadge(event.habboGroupId);
+            if(roomObject)
+            {
+                const customVariables = roomObject.model.getValue<string[]>(RoomObjectVariable.FURNITURE_CUSTOM_VARIABLES);
+                const furnitureData = roomObject.model.getValue<{ [index: string]: string }>(RoomObjectVariable.FURNITURE_DATA);
 
-            return newValue;
-        });
-    });
+                if(customVariables && customVariables.length)
+                {
+                    for(const customVariable of customVariables)
+                    {
+                        customKeyss.push(customVariable);
+                        customValuess.push((furnitureData[customVariable]) || '');
+                    }
+                }
+            }
+        }
 
-    useMessageEvent<RelationshipStatusInfoEvent>(RelationshipStatusInfoEvent, event =>
+        if(avatarInfo.isOwner || avatarInfo.isAnyRoomController) pickupMode = PICKUP_MODE_FULL;
+
+        else if(avatarInfo.isRoomOwner || (avatarInfo.roomControllerLevel >= RoomControllerLevel.GUILD_ADMIN)) pickupMode = PICKUP_MODE_EJECT;
+
+        if(avatarInfo.isStickie) pickupMode = PICKUP_MODE_NONE;
+
+        setPickupMode(pickupMode);
+        setCanMove(canMove);
+        setCanRotate(canRotate);
+        setCanUse(canUse);
+        setFurniKeys(furniKeyss);
+        setFurniValues(furniValuess);
+        setCustomKeys(customKeyss);
+        setCustomValues(customValuess);
+        setIsCrackable(isCrackable);
+        setCrackableHits(crackableHits);
+        setCrackableTarget(crackableTarget);
+        setGodMode(godMode);
+        setCanSeeFurniId(canSeeFurniId);
+        setGroupName(null);
+        setIsJukeBox(furniIsJukebox);
+        setIsSongDisk(furniIsSongDisk);
+        setSongId(furniSongId);
+
+        if(avatarInfo.groupId) SendMessageComposer(new GroupInformationComposer(avatarInfo.groupId, false));
+    }, [ roomSession, avatarInfo ]);
+
+    useMessageEvent<GroupInformationEvent>(GroupInformationEvent, event =>
     {
         const parser = event.getParser();
 
-        if(!avatarInfo || (avatarInfo.webID !== parser.userId)) return;
+        if(!avatarInfo || avatarInfo.groupId !== parser.id || parser.flag) return;
 
-        setRelationships(parser);
+        if(groupName) setGroupName(null);
+
+        setGroupName(parser.title);
     });
 
     useEffect(() =>
     {
-        setIsEditingMotto(false);
-        setMotto(avatarInfo.motto);
-        setBackgroundId(avatarInfo.backgroundId);
-        setStandId(avatarInfo.standId);
-        setOverlayId(avatarInfo.overlayId);
+        const songInfo = GetNitroInstance().soundManager.musicController.getSongInfo(songId);
 
-        SendMessageComposer(new UserRelationshipsComposer(avatarInfo.webID));
+        setSongName(songInfo?.name ?? '');
+        setSongCreator(songInfo?.creator ?? '');
+    }, [ songId ]);
 
-        return () =>
+    const onFurniSettingChange = useCallback((index: number, value: string) =>
+    {
+        const clone = Array.from(furniValues);
+
+        clone[index] = value;
+
+        setFurniValues(clone);
+    }, [ furniValues ]);
+
+    const onCustomVariableChange = useCallback((index: number, value: string) =>
+    {
+        const clone = Array.from(customValues);
+
+        clone[index] = value;
+
+        setCustomValues(clone);
+    }, [ customValues ]);
+
+    const getFurniSettingsAsString = useCallback(() =>
+    {
+        if(furniKeys.length === 0 || furniValues.length === 0) return '';
+
+        let data = '';
+
+        let i = 0;
+
+        while(i < furniKeys.length)
         {
-            setIsEditingMotto(false);
-            setMotto(null);
-            setRelationships(null);
-            setBackgroundId(null);
-            setStandId(null);
-            setOverlayId(null);
+            const key = furniKeys[i];
+            const value = furniValues[i];
+
+            data = (data + (key + '=' + value + '\t'));
+
+            i++;
         }
+
+        return data;
+    }, [ furniKeys, furniValues ]);
+
+    const processButtonAction = useCallback((action: string) =>
+    {
+        if(!action || (action === '')) return;
+
+        let objectData: string = null;
+
+        switch(action)
+        {
+            case 'buy_one':
+                CreateLinkEvent(`catalog/open/offerId/${ avatarInfo.purchaseOfferId }`);
+                return;
+            case 'move':
+                GetRoomEngine().processRoomObjectOperation(avatarInfo.id, avatarInfo.category, RoomObjectOperationType.OBJECT_MOVE);
+                break;
+            case 'rotate':
+                GetRoomEngine().processRoomObjectOperation(avatarInfo.id, avatarInfo.category, RoomObjectOperationType.OBJECT_ROTATE_POSITIVE);
+                break;
+            case 'pickup':
+                if(pickupMode === PICKUP_MODE_FULL)
+                {
+                    GetRoomEngine().processRoomObjectOperation(avatarInfo.id, avatarInfo.category, RoomObjectOperationType.OBJECT_PICKUP);
+                }
+                else
+                {
+                    GetRoomEngine().processRoomObjectOperation(avatarInfo.id, avatarInfo.category, RoomObjectOperationType.OBJECT_EJECT);
+                }
+                break;
+            case 'use':
+                GetRoomEngine().useRoomObject(avatarInfo.id, avatarInfo.category);
+                break;
+            case 'save_branding_configuration': {
+                const mapData = new Map<string, string>();
+                const dataParts = getFurniSettingsAsString().split('\t');
+
+                if(dataParts)
+                {
+                    for(const part of dataParts)
+                    {
+                        const [ key, value ] = part.split('=', 2);
+
+                        mapData.set(key, value);
+                    }
+                }
+
+                GetRoomEngine().modifyRoomObjectDataWithMap(avatarInfo.id, avatarInfo.category, RoomObjectOperationType.OBJECT_SAVE_STUFF_DATA, mapData);
+                break;
+            }
+            case 'save_custom_variables': {
+                const map = new Map();
+
+                for(let i = 0; i < customKeys.length; i++)
+                {
+                    const key = customKeys[i];
+                    const value = customValues[i];
+
+                    if((key && key.length) && (value && value.length)) map.set(key, value);
+                }
+
+                SendMessageComposer(new SetObjectDataMessageComposer(avatarInfo.id, map));
+                break;
+            }
+        }
+    }, [ avatarInfo, pickupMode, customKeys, customValues, getFurniSettingsAsString ]);
+
+    const getGroupBadgeCode = useCallback(() =>
+    {
+        const stringDataType = (avatarInfo.stuffData as StringDataType);
+
+        if(!stringDataType || !(stringDataType instanceof StringDataType)) return null;
+
+        return stringDataType.getValue(2);
     }, [ avatarInfo ]);
 
     if(!avatarInfo) return null;
 
     return (
-        <Column className="nitro-infostand rounded">
-            <Column overflow="visible" className="container-fluid content-area" gap={ 1 }>
-                <Column gap={ 1 }>
-                    <Flex alignItems="center" justifyContent="between">
-                        <Flex alignItems="center" gap={ 1 }>
-                            <UserProfileIconView userId={ avatarInfo.webID } />
-                            <Text variant="white" small wrap>{ avatarInfo.name }</Text>
+        <Column gap={ 1 } alignItems="end">
+            <Column className="nitro-infostand">
+                <Column overflow="visible" className="container-fluid content-area" gap={ 1 }>
+                    <Column gap={ 1 }>
+                        <Flex alignItems="center" justifyContent="between" gap={ 1 }>
+                            { !(isSongDisk) && <Text variant="white" wrap>{ avatarInfo.name }</Text> }
+                            { (songName.length > 0) && <Text variant="white" wrap>{ songName }</Text> }
+                            <i className="infostand-close" onClick={ onClose } />
                         </Flex>
-                        <FaTimes className="cursor-pointer fa-icon" onClick={ onClose } />
-                    </Flex>
-                    <hr className="m-0" />
-                </Column>
-                <Column gap={ 1 }>
-                    <Flex gap={ 1 }>
-                        <Column position="relative" pointer fullWidth className={ `body-image profile-background ${ infostandBackgroundClass }` } onClick={ event => GetUserProfile(avatarInfo.webID) }>
-                            <Base position="absolute" className={ `body-image profile-stand ${ infostandStandClass }` }/>
-                            <LayoutAvatarImageView figure={ avatarInfo.figure } direction={ 4 } />
-                            <Base position="absolute" className={ `body-image profile-overlay ${ infostandOverlayClass }` }/>
-                            { avatarInfo.type === AvatarInfoUser.OWN_USER &&
-                                <Base className="icon edit-icon edit-position" onClick={ event =>
-                                {
-                                    event.stopPropagation(); setIsVisible(prevValue => !prevValue);
-                                } } />
-                            }
-                        </Column>
-                        <Column grow alignItems="center" gap={ 0 }>
-                            <Flex gap={ 1 }>
-                                <Flex center className="badge-image">
-                                    { avatarInfo.badges[0] && <LayoutBadgeImageView badgeCode={ avatarInfo.badges[0] } showInfo={ true } /> }
-                                </Flex>
-                                <Flex center pointer={ ( avatarInfo.groupId > 0) } className="badge-image" onClick={ event => GetGroupInformation(avatarInfo.groupId) }>
-                                    { avatarInfo.groupId > 0 &&
-                                        <LayoutBadgeImageView badgeCode={ avatarInfo.groupBadgeId } isGroup={ true } showInfo={ true } customTitle={ avatarInfo.groupName } /> }
-                                </Flex>
-                            </Flex>
-                            <Flex center gap={ 1 }>
-                                <Flex center className="badge-image">
-                                    { avatarInfo.badges[1] && <LayoutBadgeImageView badgeCode={ avatarInfo.badges[1] } showInfo={ true } /> }
-                                </Flex>
-                                <Flex center className="badge-image">
-                                    { avatarInfo.badges[2] && <LayoutBadgeImageView badgeCode={ avatarInfo.badges[2] } showInfo={ true } /> }
-                                </Flex>
-                            </Flex>
-                            <Flex center gap={ 1 }>
-                                <Flex center className="badge-image">
-                                    { avatarInfo.badges[3] && <LayoutBadgeImageView badgeCode={ avatarInfo.badges[3] } showInfo={ true } /> }
-                                </Flex>
-                                <Flex center className="badge-image">
-                                    { avatarInfo.badges[4] && <LayoutBadgeImageView badgeCode={ avatarInfo.badges[4] } showInfo={ true } /> }
-                                </Flex>
-                            </Flex>
-                        </Column>
-                    </Flex>
-                    <hr className="m-0" />
-                </Column>
-                <Column gap={ 1 }>
-                    <Flex alignItems="center" className="bg-light-dark rounded py-1 px-2">
-                        { (avatarInfo.type !== AvatarInfoUser.OWN_USER) &&
-                            <Flex grow alignItems="center" className="motto-content">
-                                <Text fullWidth pointer wrap textBreak small variant="white">{ motto }</Text>
-                            </Flex> }
-                        { avatarInfo.type === AvatarInfoUser.OWN_USER &&
-                            <Flex grow alignItems="center" gap={ 2 }>
-                                <FaPencilAlt className="small fa-icon" />
-                                <Flex grow alignItems="center" className="motto-content">
-                                    { !isEditingMotto &&
-                                        <Text fullWidth pointer wrap textBreak small variant="white" onClick={ event => setIsEditingMotto(true) }>{ motto }&nbsp;</Text> }
-                                    { isEditingMotto &&
-                                        <input type="text" className="motto-input" maxLength={ GetConfiguration<number>('motto.max.length', 38) } value={ motto } onChange={ event => setMotto(event.target.value) } onBlur={ onMottoBlur } onKeyDown={ onMottoKeyDown } autoFocus={ true } /> }
-                                </Flex>
-                            </Flex> }
-                    </Flex>
-                    <hr className="m-0" />
-                </Column>
-                <Column gap={ 1 }>
-                    <Text variant="white" small wrap>
-                        { LocalizeText('infostand.text.achievement_score') + ' ' + avatarInfo.achievementScore }
-                    </Text>
-                    { (avatarInfo.carryItem > 0) &&
-                        <>
-                            <hr className="m-0" />
-                            <Text variant="white" small wrap>
-                                { LocalizeText('infostand.text.handitem', [ 'item' ], [ LocalizeText('handitem' + avatarInfo.carryItem) ]) }
-                            </Text>
-                        </> }
-                </Column>
-                <Column gap={ 1 }>
-                    <InfoStandWidgetUserRelationshipsView relationships={ relationships } />
-                </Column>
-                { GetConfiguration('user.tags.enabled') &&
-                    <Column gap={ 1 } className="mt-1">
-                        <InfoStandWidgetUserTagsView tags={ GetSessionDataManager().tags } />
+                        <hr className="m-0" />
                     </Column>
-                }
+                    <Column gap={ 1 }>
+                        <Flex position="relative" gap={ 1 }>
+                            { avatarInfo.stuffData.isUnique &&
+                                <div className="position-absolute end-0">
+                                    <LayoutLimitedEditionCompactPlateView uniqueNumber={ avatarInfo.stuffData.uniqueNumber } uniqueSeries={ avatarInfo.stuffData.uniqueSeries } />
+                                </div> }
+                            { (avatarInfo.stuffData.rarityLevel > -1) &&
+                                <div className="position-absolute end-0">
+                                    <LayoutRarityLevelView level={ avatarInfo.stuffData.rarityLevel } />
+                                </div> }
+                            { avatarInfo.image && avatarInfo.image.src.length &&
+                                <img className="d-block mx-auto" src={ avatarInfo.image.src } alt="" /> }
+                        </Flex>
+                        <hr className="m-0" />
+                    </Column>
+                    <Column gap={ 1 }>
+                        <Text fullWidth wrap textBreak variant="white">{ avatarInfo.description }</Text>
+                        <hr className="m-0" />
+                    </Column>
+                    <Column gap={ 1 }>
+                        <Flex alignItems="center" gap={ 1 }>
+                            <UserProfileIconView userId={ avatarInfo.ownerId } />
+                            <Text variant="white" wrap>
+                                { LocalizeText('furni.owner', [ 'name' ], [ avatarInfo.ownerName ]) }
+                            </Text>
+                        </Flex>
+                        { (avatarInfo.purchaseOfferId > 0) &&
+                            <Flex>
+                                <Button className="volter-button" onClick={ event => processButtonAction('buy_one') }>
+                                    { LocalizeText('infostand.button.buy') }
+                                </Button>
+                            </Flex> }
+                    </Column>
+                    { (isJukeBox || isSongDisk) &&
+                        <Column gap={ 1 }>
+                            <hr className="m-0" />
+                            { (songId === -1) &&
+                                <Text variant="white" small wrap>
+                                    { LocalizeText('infostand.jukebox.text.not.playing') }
+                                </Text> }
+                            { !!songName.length &&
+                                <Flex alignItems="center" gap={ 1 }>
+                                    <Base className="icon disk-icon" />
+                                    <Text variant="white" small wrap>
+                                        { songName }
+                                    </Text>
+                                </Flex> }
+                            { !!songCreator.length &&
+                                <Flex alignItems="center" gap={ 1 }>
+                                    <Base className="icon disk-creator" />
+                                    <Text variant="white" small wrap>
+                                        { songCreator }
+                                    </Text>
+                                </Flex> }
+                        </Column> }
+                    <Column gap={ 1 }>
+                        { isCrackable &&
+                            <>
+                                <hr className="m-0" />
+                                <Text variant="white" wrap>{ LocalizeText('infostand.crackable_furni.hits_remaining', [ 'hits', 'target' ], [ crackableHits.toString(), crackableTarget.toString() ]) }</Text>
+                            </> }
+                        { avatarInfo.groupId > 0 &&
+                            <>
+                                <hr className="m-0" />
+                                <Flex pointer alignItems="center" gap={ 2 } onClick={ () => GetGroupInformation(avatarInfo.groupId) }>
+                                    <LayoutBadgeImageView badgeCode={ getGroupBadgeCode() } isGroup={ true } />
+                                    <Text variant="white" underline>{ groupName }</Text>
+                                </Flex>
+                            </> }
+							<>
+								<hr className="m-0" />
+								<Text small wrap variant="white">
+								X = {itemLocation.x}  and  Y = {itemLocation.y}<br />
+								BuildHeight = {itemLocation.z < 0.01 ? 0 : itemLocation.z}<br />
+								{ canSeeFurniId && <Text wrap variant="white"> Room Furnishing ID: { avatarInfo.id }</Text> }
+							</Text>
+							</>
+							{itemLocation.x > -1}
+                        { godMode &&
+                            <>
+                                <hr className="m-0" />
+                                { (furniKeys.length > 0) &&
+                                    <>
+                                        <hr className="m-0"/>
+                                        <Column gap={ 1 }>
+                                            { furniKeys.map((key, index) =>
+                                            {
+                                                return (
+                                                    <Flex key={ index } alignItems="center" gap={ 1 }>
+                                                        <Text wrap align="end" variant="white" className="col-4">{ key }</Text>
+                                                        <input type="text" className="form-control form-control-sm" value={ furniValues[index] } onChange={ event => onFurniSettingChange(index, event.target.value) }/>
+                                                    </Flex>);
+                                            }) }
+                                        </Column>
+                                    </> }
+                            </> }
+                        { (customKeys.length > 0) &&
+                            <>
+                                <hr className="m-0 my-1"/>
+                                <Column gap={ 1 }>
+                                    { customKeys.map((key, index) =>
+                                    {
+                                        return (
+                                            <Flex key={ index } alignItems="center" gap={ 1 }>
+                                                <Text small wrap align="end" variant="white" className="col-4">{ key }</Text>
+                                                <input type="text" className="form-control form-control-sm" value={ customValues[index] } onChange={ event => onCustomVariableChange(index, event.target.value) }/>
+                                            </Flex>);
+                                    }) }
+                                </Column>
+                            </> }
+                    </Column>
+                </Column>
             </Column>
-            { (isVisible && avatarInfo.type === AvatarInfoUser.OWN_USER) &&
-                <BackgroundsView
-                    setIsVisible={ setIsVisible }
-                    selectedBackground={ backgroundId }
-                    setSelectedBackground={ setBackgroundId }
-                    selectedStand={ standId }
-                    setSelectedStand={ setStandId }
-                    selectedOverlay={ overlayId }
-                    setSelectedOverlay={ setOverlayId }
-                />
-            }
+            <Flex gap={ 2 } justifyContent="end">
+                { canMove &&
+                    <Button className="infostand-buttons px-2" onClick={ event => processButtonAction('move') }>
+                        { LocalizeText('infostand.button.move') }
+                    </Button> }
+                { canRotate &&
+                    <Button className="infostand-buttons px-2" onClick={ event => processButtonAction('rotate') }>
+                        { LocalizeText('infostand.button.rotate') }
+                    </Button> }
+                { (pickupMode !== PICKUP_MODE_NONE) &&
+                    <Button className="infostand-buttons px-2" onClick={ event => processButtonAction('pickup') }>
+                        { LocalizeText((pickupMode === PICKUP_MODE_EJECT) ? 'infostand.button.eject' : 'infostand.button.pickup') }
+                    </Button> }
+                { canUse &&
+                    <Button className="infostand-buttons px-2" onClick={ event => processButtonAction('use') }>
+                        { LocalizeText('infostand.button.use') }
+                    </Button> }
+                { ((furniKeys.length > 0 && furniValues.length > 0) && (furniKeys.length === furniValues.length)) &&
+                    <Button className="infostand-buttons px-2" onClick={ () => processButtonAction('save_branding_configuration') }>
+                        { LocalizeText('save') }
+                    </Button> }
+                { ((customKeys.length > 0 && customValues.length > 0) && (customKeys.length === customValues.length)) &&
+                    <Button className="infostand-buttons px-2" onClick={ () => processButtonAction('save_custom_variables') }>
+                        { LocalizeText('save') }
+                    </Button> }
+            </Flex>
         </Column>
     );
 }
