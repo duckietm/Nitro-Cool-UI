@@ -23,9 +23,7 @@ export const LayoutBadgeImageView: FC<LayoutBadgeImageViewProps> = props =>
         const newClassNames: string[] = [ 'badge-image' ];
 
         if(isGroup) newClassNames.push('group-badge');
-
         if(isGrayscale) newClassNames.push('grayscale');
-
         if(classNames.length) newClassNames.push(...classNames);
 
         return newClassNames;
@@ -37,16 +35,16 @@ export const LayoutBadgeImageView: FC<LayoutBadgeImageViewProps> = props =>
 
         if(imageElement)
         {
-            newStyle.backgroundImage = `url(${ (isGroup) ? imageElement.src : GetConfiguration<string>('badge.asset.url').replace('%badgename%', badgeCode.toString())})`;
+            const badgeUrl = isGroup ? imageElement.src : GetConfiguration<string>('badge.asset.url', '').replace('%badgename%', badgeCode.toString());
+
+            newStyle.backgroundImage = `url(${ badgeUrl })`;
             newStyle.width = imageElement.width;
             newStyle.height = imageElement.height;
 
             if(scale !== 1)
             {
                 newStyle.transform = `scale(${ scale })`;
-
                 if(!(scale % 1)) newStyle.imageRendering = 'pixelated';
-
                 newStyle.width = (imageElement.width * scale);
                 newStyle.height = (imageElement.height * scale);
             }
@@ -55,37 +53,81 @@ export const LayoutBadgeImageView: FC<LayoutBadgeImageViewProps> = props =>
         if(Object.keys(style).length) newStyle = { ...newStyle, ...style };
 
         return newStyle;
-    }, [ imageElement, scale, style ]);
+    }, [ badgeCode, imageElement, isGroup, scale, style ]);
 
     useEffect(() =>
     {
-        if(!badgeCode || !badgeCode.length) return;
+
+        if(!badgeCode || !badgeCode.length)
+        {
+            console.warn('LayoutBadgeImageView: Invalid or empty badgeCode', badgeCode);
+            setImageElement(null);
+            return;
+        }
 
         let didSetBadge = false;
 
-        const onBadgeImageReadyEvent = (event: BadgeImageReadyEvent) =>
+        const onBadgeImageReadyEvent = async (event: BadgeImageReadyEvent) =>
         {
             if(event.badgeId !== badgeCode) return;
 
-            const element = TextureUtils.generateImage(new NitroSprite(event.image));
+            try
+            {
+                const sprite = new NitroSprite(event.image);
+                const element = await TextureUtils.generateImage(sprite);
 
-            element.onload = () => setImageElement(element);
-
-            didSetBadge = true;
+                if(element && element.src && element.src.startsWith('data:image/'))
+                {
+                    setImageElement(element);
+                    didSetBadge = true;
+                }
+                else
+                {
+                    console.warn('LayoutBadgeImageView: Invalid badge image (event)', element);
+                }
+            }
+            catch(error)
+            {
+                console.warn('LayoutBadgeImageView: Error generating badge image (event)', error);
+            }
 
             GetSessionDataManager().events.removeEventListener(BadgeImageReadyEvent.IMAGE_READY, onBadgeImageReadyEvent);
-        }
+        };
 
         GetSessionDataManager().events.addEventListener(BadgeImageReadyEvent.IMAGE_READY, onBadgeImageReadyEvent);
 
-        const texture = isGroup ? GetSessionDataManager().getGroupBadgeImage(badgeCode) : GetSessionDataManager().getBadgeImage(badgeCode);
-
-        if(texture && !didSetBadge)
+        const loadBadgeImage = async () =>
         {
-            const element = TextureUtils.generateImage(new NitroSprite(texture));
+            const texture = isGroup ? GetSessionDataManager().getGroupBadgeImage(badgeCode) : GetSessionDataManager().getBadgeImage(badgeCode);
 
-            element.onload = () => setImageElement(element);
-        }
+            if(texture && !didSetBadge)
+            {
+                try
+                {
+                    const sprite = new NitroSprite(texture);
+                    const element = await TextureUtils.generateImage(sprite);
+
+                    if(element && element.src && element.src.startsWith('data:image/'))
+                    {
+                        setImageElement(element);
+                    }
+                    else
+                    {
+                        console.warn('LayoutBadgeImageView: Invalid badge image (direct)', element);
+                    }
+                }
+                catch(error)
+                {
+                    console.warn('LayoutBadgeImageView: Error generating badge image (direct)', error);
+                }
+            }
+            else
+            {
+                console.log('LayoutBadgeImageView: No texture found for badge', badgeCode);
+            }
+        };
+
+        loadBadgeImage();
 
         return () => GetSessionDataManager().events.removeEventListener(BadgeImageReadyEvent.IMAGE_READY, onBadgeImageReadyEvent);
     }, [ badgeCode, isGroup ]);
@@ -100,4 +142,4 @@ export const LayoutBadgeImageView: FC<LayoutBadgeImageViewProps> = props =>
             { children }
         </Base>
     );
-}
+};

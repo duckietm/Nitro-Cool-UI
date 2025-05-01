@@ -334,7 +334,7 @@
             position: absolute;
             left: 0;
             right: 0;
-            bottom: 125px;
+            bottom: -125px;
             margin: 0 auto;
             z-index: 4;
         }
@@ -359,7 +359,7 @@
 }
 
     .choose-clothing {
-        width: 320px;
+        width: 360px;
     }
 
     .color-picker-frame {
@@ -477,9 +477,9 @@
 
     .avatar-parts {
         border: none !important;
-        height: 42px;
-        width: 42px;
-        background-position: center;
+        height: 50px;
+        width: 50px;
+		background-position: center;
         background-repeat: no-repeat;
         border-radius: 2rem !important;
         overflow: visible !important;

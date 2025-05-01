@@ -12,31 +12,42 @@ export class PlaneTextureCache
     public RENDER_TEXTURE_POOL: Map<string, RenderTexture> = new Map();
     public RENDER_TEXTURE_CACHE: RenderTexture[] = [];
 
+    // Store an Extract instance
+    private _extract: Extract;
+
+    constructor()
+    {
+        // Initialize Extract with the renderer
+        const renderer = this.getRenderer();
+        if (renderer) {
+            this._extract = new Extract(renderer);
+        }
+    }
+
     public clearCache(): void
     {
         this.RENDER_TEXTURE_POOL.forEach(renderTexture => renderTexture?.destroy(true));
-
         this.RENDER_TEXTURE_POOL.clear();
         this.RENDER_TEXTURE_CACHE = [];
     }
 
     public clearRenderTexture(renderTexture: RenderTexture): RenderTexture
     {
-        if(!renderTexture) return null;
+        if (!renderTexture) return null;
 
         return this.writeToRenderTexture(new Sprite(Texture.EMPTY), renderTexture);
     }
 
     private getTextureIdentifier(width: number, height: number, planeId: string): string
     {
-        return `${ planeId ?? PlaneTextureCache.DEFAULT_PLANE_ID }:${ width }:${ height }`;
+        return `${planeId ?? PlaneTextureCache.DEFAULT_PLANE_ID}:${width}:${height}`;
     }
 
     public createRenderTexture(width: number, height: number, planeId: string = null): RenderTexture
     {
-        if((width < 0) || (height < 0)) return null;
+        if (width < 0 || height < 0) return null;
 
-        if(!planeId)
+        if (!planeId)
         {
             const renderTexture = RenderTexture.create({
                 width,
@@ -52,7 +63,7 @@ export class PlaneTextureCache
 
         let renderTexture = this.RENDER_TEXTURE_POOL.get(planeId);
 
-        if(!renderTexture)
+        if (!renderTexture)
         {
             renderTexture = RenderTexture.create({
                 width,
@@ -60,7 +71,6 @@ export class PlaneTextureCache
             });
 
             this.RENDER_TEXTURE_CACHE.push(renderTexture);
-
             this.RENDER_TEXTURE_POOL.set(planeId, renderTexture);
         }
 
@@ -69,7 +79,7 @@ export class PlaneTextureCache
 
     public createAndFillRenderTexture(width: number, height: number, planeId = null, color: number = 16777215): RenderTexture
     {
-        if((width < 0) || (height < 0)) return null;
+        if (width < 0 || height < 0) return null;
 
         const renderTexture = this.createRenderTexture(width, height, planeId);
 
@@ -78,7 +88,7 @@ export class PlaneTextureCache
 
     public createAndWriteRenderTexture(width: number, height: number, displayObject: DisplayObject, planeId: string = null, transform: Matrix = null): RenderTexture
     {
-        if((width < 0) || (height < 0)) return null;
+        if (width < 0 || height < 0) return null;
 
         const renderTexture = this.createRenderTexture(width, height, planeId);
 
@@ -87,12 +97,11 @@ export class PlaneTextureCache
 
     public clearAndFillRenderTexture(renderTexture: RenderTexture, color: number = 16777215): RenderTexture
     {
-        if(!renderTexture) return null;
+        if (!renderTexture) return null;
 
         const sprite = new Sprite(Texture.WHITE);
 
         sprite.tint = color;
-
         sprite.width = renderTexture.width;
         sprite.height = renderTexture.height;
 
@@ -101,7 +110,7 @@ export class PlaneTextureCache
 
     public writeToRenderTexture(displayObject: DisplayObject, renderTexture: RenderTexture, clear: boolean = true, transform: Matrix = null): RenderTexture
     {
-        if(!displayObject || !renderTexture) return null;
+        if (!displayObject || !renderTexture) return null;
 
         this.getRenderer().render(displayObject, {
             renderTexture,
@@ -114,7 +123,7 @@ export class PlaneTextureCache
 
     public getPixels(displayObject: DisplayObject | RenderTexture, frame: Rectangle = null): Uint8Array
     {
-        return this.getExtractor().pixels(displayObject);
+        return this.getExtractor().pixels(displayObject, frame);
     }
 
     public getRenderer(): Renderer | AbstractRenderer
@@ -124,6 +133,10 @@ export class PlaneTextureCache
 
     public getExtractor(): Extract
     {
-        return (this.getRenderer().plugins.extract as Extract);
+        // Return the stored Extract instance
+        if (!this._extract) {
+            throw new Error('Extract plugin not initialized. Ensure renderer is available.');
+        }
+        return this._extract;
     }
 }

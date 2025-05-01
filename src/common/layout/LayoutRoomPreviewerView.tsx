@@ -24,43 +24,79 @@ export const LayoutRoomPreviewerView: FC<LayoutRoomPreviewerViewProps> = props =
 
     useEffect(() =>
     {
-        if(!roomPreviewer) return;
+        if(!roomPreviewer || height <= 0)
+        {
+            return;
+        }
 
-        const update = (time: number) =>
+        const update = async (time: number) =>
         {
             if(!roomPreviewer || !renderingCanvas || !elementRef.current) return;
-        
-            roomPreviewer.updatePreviewRoomView();
 
-            if(!renderingCanvas.canvasUpdated) return;
+            try
+            {
+                roomPreviewer.updatePreviewRoomView();
 
-            elementRef.current.style.backgroundImage = `url(${ TextureUtils.generateImageUrl(renderingCanvas.master) })`;
+                if(!renderingCanvas.canvasUpdated) return;
+
+                const imageUrl = await TextureUtils.generateImageUrl(renderingCanvas.master);
+
+                if(imageUrl && imageUrl.startsWith('data:image/'))
+                {
+                    elementRef.current.style.backgroundImage = `url(${ imageUrl })`;
+                }
+                else
+                {
+                    console.warn('LayoutRoomPreviewerView: Invalid image URL', imageUrl);
+                    elementRef.current.style.backgroundImage = '';
+                }
+            }
+            catch(error)
+            {
+                console.warn('LayoutRoomPreviewerView: Error updating preview', error);
+                elementRef.current.style.backgroundImage = '';
+            }
         }
 
         if(!renderingCanvas)
         {
             if(elementRef.current && roomPreviewer)
             {
-                const computed = document.defaultView.getComputedStyle(elementRef.current, null);
+                try
+                {
+                    const computed = document.defaultView.getComputedStyle(elementRef.current, null);
+                    let backgroundColor = computed.backgroundColor;
 
-                let backgroundColor = computed.backgroundColor;
+                    backgroundColor = ColorConverter.rgbStringToHex(backgroundColor);
+                    backgroundColor = backgroundColor.replace('#', '0x');
 
-                backgroundColor = ColorConverter.rgbStringToHex(backgroundColor);
-                backgroundColor = backgroundColor.replace('#', '0x');
+                    roomPreviewer.backgroundColor = parseInt(backgroundColor, 16);
 
-                roomPreviewer.backgroundColor = parseInt(backgroundColor, 16);
+                    const width = elementRef.current.parentElement.clientWidth;
 
-                const width = elementRef.current.parentElement.clientWidth;
-                
-                roomPreviewer.getRoomCanvas(width, height);
+                    roomPreviewer.getRoomCanvas(width, height);
 
-                const canvas = roomPreviewer.getRenderingCanvas();
+                    const canvas = roomPreviewer.getRenderingCanvas();
 
-                setRenderingCanvas(canvas);
-
-                canvas.canvasUpdated = true;
-
-                update(-1);
+                    if(canvas)
+                    {
+                        setRenderingCanvas(canvas);
+                        canvas.canvasUpdated = true;
+                        update(-1);
+                    }
+                    else
+                    {
+                        console.warn('LayoutRoomPreviewerView: Failed to initialize canvas');
+                    }
+                }
+                catch(error)
+                {
+                    console.warn('LayoutRoomPreviewerView: Error initializing canvas', error);
+                }
+            }
+            else
+            {
+                console.warn('LayoutRoomPreviewerView: Missing elementRef or roomPreviewer');
             }
         }
 
@@ -72,20 +108,24 @@ export const LayoutRoomPreviewerView: FC<LayoutRoomPreviewerViewProps> = props =
 
             const width = elementRef.current.parentElement.offsetWidth;
 
-            roomPreviewer.modifyRoomCanvas(width, height);
-
-            update(-1);
+            try
+            {
+                roomPreviewer.modifyRoomCanvas(width, height);
+                update(-1);
+            }
+            catch(error)
+            {
+                console.warn('LayoutRoomPreviewerView: Error resizing canvas', error);
+            }
         });
-        
+
         resizeObserver.observe(elementRef.current);
 
         return () =>
         {
             resizeObserver.disconnect();
-
             GetTicker().remove(update);
         }
-
     }, [ renderingCanvas, roomPreviewer, elementRef, height ]);
 
     return (
@@ -94,4 +134,4 @@ export const LayoutRoomPreviewerView: FC<LayoutRoomPreviewerViewProps> = props =
             { children }
         </div>
     );
-}
+};

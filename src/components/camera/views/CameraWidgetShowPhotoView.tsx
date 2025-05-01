@@ -36,26 +36,31 @@ export const CameraWidgetShowPhotoView: FC<CameraWidgetShowPhotoViewProps> = pro
         });
     }
 	
-	const getUserData = (roomId: number, objectId: number, type: string): number | string =>
+    const getUserData = (roomId: number, objectId: number, type: string): number | string =>
     {
         const roomObject = GetRoomEngine().getRoomObject(roomId, objectId, RoomObjectCategory.WALL);
-        if (!roomObject) return;
-        return type == 'username' ? roomObject.model.getValue<number>(RoomObjectVariable.FURNITURE_OWNER_NAME) : roomObject.model.getValue<number>(RoomObjectVariable.FURNITURE_OWNER_ID);
+        if (!roomObject) return '';
+        return type === 'username' ? roomObject.model.getValue<string>(RoomObjectVariable.FURNITURE_OWNER_NAME) : roomObject.model.getValue<number>(RoomObjectVariable.FURNITURE_OWNER_ID);
     }
 
-    useEffect(() => { setImageIndex(currentIndex); }, [ currentIndex ]);
+    useEffect(() => 
+    {
+        setImageIndex(currentIndex);
+    }, [ currentIndex, currentPhotos ]);
 
     if(!currentImage) return null;
 
+    const imageUrl = currentImage.w || '';
+
     return (
         <Grid style={ { display: 'flex', flexDirection: 'column' } }>
-            <Flex center className="picture-preview border border-black" style={ currentImage.w ? { backgroundImage: 'url(' + currentImage.w + ')' } : {} }>
-                { !currentImage.w && <Text bold>{ LocalizeText('camera.loading') }</Text> }
+            <Flex center className="picture-preview border border-black" style={ imageUrl ? { backgroundImage: `url(${imageUrl})` } : {} }>
+                { !imageUrl && <Text bold>{ LocalizeText('camera.loading') }</Text> }
             </Flex>
             { currentImage.m && currentImage.m.length && <Text center>{ currentImage.m }</Text> }
             <Flex alignItems="center" justifyContent="between">
                 <Text> { new Date(currentImage.t * 1000).toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' }) } </Text>
-				<Text className="username" onClick={() => GetUserProfile(Number(getUserData(currentImage.s, Number(currentImage.u), 'id')))}> { getUserData(currentImage.s, Number(currentImage.u), 'username') } </Text>
+                <Text className="username" onClick={() => GetUserProfile(Number(getUserData(currentImage.s, Number(currentImage.u), 'id')))}> { getUserData(currentImage.s, Number(currentImage.u), 'username') || 'Unknown' } </Text>
             </Flex>
             { (currentPhotos.length > 1) &&
                 <Flex className="picture-preview-buttons">

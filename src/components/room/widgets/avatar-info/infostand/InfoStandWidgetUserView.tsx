@@ -157,7 +157,7 @@ export const InfoStandWidgetUserView: FC<InfoStandWidgetUserViewProps> = props =
                     <Flex gap={ 1 }>
                         <Column position="relative" pointer fullWidth className={ `body-image profile-background ${ infostandBackgroundClass }` } onClick={ event => GetUserProfile(avatarInfo.webID) }>
                             <Base position="absolute" className={ `body-image profile-stand ${ infostandStandClass }` }/>
-                            <LayoutAvatarImageView figure={ avatarInfo.figure } direction={ 4 } />
+                            <LayoutAvatarImageView figure={ avatarInfo.figure } direction={ 2 } style={{ position: 'relative', top: '-10px' }} />
                             <Base position="absolute" className={ `body-image profile-overlay ${ infostandOverlayClass }` }/>
                             { avatarInfo.type === AvatarInfoUser.OWN_USER &&
                                 <Base position="absolute" className="icon edit-icon edit-icon-position" onClick={ event =>

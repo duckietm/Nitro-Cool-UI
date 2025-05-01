@@ -38,23 +38,24 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
     const [ songId, setSongId ] = useState<number>(-1);
     const [ songName, setSongName ] = useState<string>('');
     const [ songCreator, setSongCreator ] = useState<string>('');
-	const [itemLocation, setItemLocation] = useState<{ x: number; y: number; z: number; }>({ x: -1, y: -1, z: -1 });
+    const [ itemLocation, setItemLocation ] = useState<{ x: number; y: number; z: number; }>({ x: -1, y: -1, z: -1 });
+    const [ furniImage, setFurniImage ] = useState<HTMLImageElement | null>(null);
 
     useSoundEvent<NowPlayingEvent>(NowPlayingEvent.NPE_SONG_CHANGED, event =>
     {
         setSongId(event.id);
     }, (isJukeBox || isSongDisk));
 
-    useSoundEvent<NowPlayingEvent>(SongInfoReceivedEvent.SIR_TRAX_SONG_INFO_RECEIVED, event =>
+    useSoundEvent<SongInfoReceivedEvent>(SongInfoReceivedEvent.SIR_TRAX_SONG_INFO_RECEIVED, event =>
     {
-        if(event.id !== songId) return;
+        if (event.id !== songId) return;
 
         const songInfo = GetNitroInstance().soundManager.musicController.getSongInfo(event.id);
 
-        if(!songInfo) return;
+        if (!songInfo) return;
 
-        setSongName(songInfo.name);
-        setSongCreator(songInfo.creator);
+        setSongName(songInfo.name || '');
+        setSongCreator(songInfo.creator || '');
     }, (isJukeBox || isSongDisk));
 
     useEffect(() =>
@@ -75,95 +76,105 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
         let furniIsJukebox = false;
         let furniIsSongDisk = false;
         let furniSongId = -1;
-		
-		const roomObject = GetRoomEngine().getRoomObject( roomSession.roomId, avatarInfo.id, avatarInfo.isWallItem ? RoomObjectCategory.WALL : RoomObjectCategory.FLOOR );
-		const location = roomObject.getLocation();
-		if (location) {
-			setItemLocation({ x: location.x, y: location.y, z: location.z, });
-		}
+
+        const roomObject = GetRoomEngine().getRoomObject(roomSession.roomId, avatarInfo.id, avatarInfo.isWallItem ? RoomObjectCategory.WALL : RoomObjectCategory.FLOOR);
+        const location = roomObject.getLocation();
+        if (location) {
+            setItemLocation({ x: location.x, y: location.y, z: location.z });
+        }
 
         const isValidController = (avatarInfo.roomControllerLevel >= RoomControllerLevel.GUEST);
 
-        if(isValidController || avatarInfo.isOwner || avatarInfo.isRoomOwner || avatarInfo.isAnyRoomController)
+        if (isValidController || avatarInfo.isOwner || avatarInfo.isRoomOwner || avatarInfo.isAnyRoomController)
         {
             canMove = true;
             canRotate = !avatarInfo.isWallItem;
 
-            if(avatarInfo.roomControllerLevel >= RoomControllerLevel.MODERATOR) godMode = true;
+            if (avatarInfo.roomControllerLevel >= RoomControllerLevel.MODERATOR) godMode = true;
         }
 
-        if(avatarInfo.isAnyRoomController)
+        if (avatarInfo.isAnyRoomController)
         {
             canSeeFurniId = true;
         }
 
-        if((((avatarInfo.usagePolicy === RoomWidgetFurniInfoUsagePolicyEnum.EVERYBODY) || ((avatarInfo.usagePolicy === RoomWidgetFurniInfoUsagePolicyEnum.CONTROLLER) && isValidController)) || ((avatarInfo.extraParam === RoomWidgetEnumItemExtradataParameter.JUKEBOX) && isValidController)) || ((avatarInfo.extraParam === RoomWidgetEnumItemExtradataParameter.USABLE_PRODUCT) && isValidController)) canUse = true;
-
-        if(avatarInfo.extraParam)
-        {
-            if(avatarInfo.extraParam === RoomWidgetEnumItemExtradataParameter.CRACKABLE_FURNI)
-            {
-                const stuffData = (avatarInfo.stuffData as CrackableDataType);
-
+        try {
+            if (
+                avatarInfo.usagePolicy === RoomWidgetFurniInfoUsagePolicyEnum.EVERYBODY ||
+                (avatarInfo.usagePolicy === RoomWidgetFurniInfoUsagePolicyEnum.CONTROLLER && isValidController) ||
+                (avatarInfo.extraParam === RoomWidgetEnumItemExtradataParameter.JUKEBOX && isValidController) ||
+                (avatarInfo.extraParam === RoomWidgetEnumItemExtradataParameter.USABLE_PRODUCT && isValidController)
+            ) {
                 canUse = true;
-                isCrackable = true;
-                crackableHits = stuffData.hits;
-                crackableTarget = stuffData.target;
             }
+        } catch (error) {
+            console.warn('Error checking usage policy:', error);
+        }
 
-            else if(avatarInfo.extraParam === RoomWidgetEnumItemExtradataParameter.JUKEBOX)
-            {
-                const playlist = GetNitroInstance().soundManager.musicController.getRoomItemPlaylist();
-
-                if(playlist)
+        if (avatarInfo.extraParam)
+        {
+            try {
+                if (avatarInfo.extraParam === RoomWidgetEnumItemExtradataParameter.CRACKABLE_FURNI)
                 {
-                    furniSongId = playlist.nowPlayingSongId;
+                    const stuffData = (avatarInfo.stuffData as CrackableDataType);
+
+                    canUse = true;
+                    isCrackable = true;
+                    crackableHits = stuffData.hits;
+                    crackableTarget = stuffData.target;
+                }
+                else if (avatarInfo.extraParam === RoomWidgetEnumItemExtradataParameter.JUKEBOX)
+                {
+                    const playlist = GetNitroInstance().soundManager.musicController.getRoomItemPlaylist();
+                    if (playlist)
+                    {
+                        furniSongId = playlist.nowPlayingSongId;
+                    }
+                    furniIsJukebox = true;
+                }
+                else if (avatarInfo.extraParam.indexOf(RoomWidgetEnumItemExtradataParameter.SONGDISK) === 0)
+                {
+                    furniSongId = parseInt(avatarInfo.extraParam.substr(RoomWidgetEnumItemExtradataParameter.SONGDISK.length)) || -1;
+                    furniIsSongDisk = true;
                 }
 
-                furniIsJukebox = true;
-            }
-
-            else if(avatarInfo.extraParam.indexOf(RoomWidgetEnumItemExtradataParameter.SONGDISK) === 0)
-            {
-                furniSongId = parseInt(avatarInfo.extraParam.substr(RoomWidgetEnumItemExtradataParameter.SONGDISK.length));
-
-                furniIsSongDisk = true;
-            }
-
-            if(godMode)
-            {
-                const extraParam = avatarInfo.extraParam.substr(RoomWidgetEnumItemExtradataParameter.BRANDING_OPTIONS.length);
-
-                if(extraParam)
+                if (godMode)
                 {
-                    const parts = extraParam.split('\t');
+                    const extraParam = avatarInfo.extraParam.substr(RoomWidgetEnumItemExtradataParameter.BRANDING_OPTIONS.length);
 
-                    for(const part of parts)
+                    if (extraParam)
                     {
-                        const value = part.split('=');
+                        const parts = extraParam.split('\t');
 
-                        if(value && (value.length === 2))
+                        for (const part of parts)
                         {
-                            furniKeyss.push(value[0]);
-                            furniValuess.push(value[1]);
+                            const value = part.split('=');
+
+                            if (value && (value.length === 2))
+                            {
+                                furniKeyss.push(value[0]);
+                                furniValuess.push(value[1]);
+                            }
                         }
                     }
                 }
+            } catch (error) {
+                console.warn('Error processing extraParam:', error);
             }
         }
 
-        if(godMode)
+        if (godMode)
         {
             const roomObject = GetRoomEngine().getRoomObject(roomSession.roomId, avatarInfo.id, (avatarInfo.isWallItem) ? RoomObjectCategory.WALL : RoomObjectCategory.FLOOR);
 
-            if(roomObject)
+            if (roomObject)
             {
                 const customVariables = roomObject.model.getValue<string[]>(RoomObjectVariable.FURNITURE_CUSTOM_VARIABLES);
                 const furnitureData = roomObject.model.getValue<{ [index: string]: string }>(RoomObjectVariable.FURNITURE_DATA);
 
-                if(customVariables && customVariables.length)
+                if (customVariables && customVariables.length)
                 {
-                    for(const customVariable of customVariables)
+                    for (const customVariable of customVariables)
                     {
                         customKeyss.push(customVariable);
                         customValuess.push((furnitureData[customVariable]) || '');
@@ -172,11 +183,10 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
             }
         }
 
-        if(avatarInfo.isOwner || avatarInfo.isAnyRoomController) pickupMode = PICKUP_MODE_FULL;
+        if (avatarInfo.isOwner || avatarInfo.isAnyRoomController) pickupMode = PICKUP_MODE_FULL;
+        else if (avatarInfo.isRoomOwner || (avatarInfo.roomControllerLevel >= RoomControllerLevel.GUILD_ADMIN)) pickupMode = PICKUP_MODE_EJECT;
 
-        else if(avatarInfo.isRoomOwner || (avatarInfo.roomControllerLevel >= RoomControllerLevel.GUILD_ADMIN)) pickupMode = PICKUP_MODE_EJECT;
-
-        if(avatarInfo.isStickie) pickupMode = PICKUP_MODE_NONE;
+        if (avatarInfo.isStickie) pickupMode = PICKUP_MODE_NONE;
 
         setPickupMode(pickupMode);
         setCanMove(canMove);
@@ -196,16 +206,26 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
         setIsSongDisk(furniIsSongDisk);
         setSongId(furniSongId);
 
-        if(avatarInfo.groupId) SendMessageComposer(new GroupInformationComposer(avatarInfo.groupId, false));
+        if (avatarInfo.groupId) SendMessageComposer(new GroupInformationComposer(avatarInfo.groupId, false));
+
+        if (avatarInfo.image instanceof Promise) {
+            avatarInfo.image.then(image => {
+                setFurniImage(image);
+            }).catch(error => {
+                setFurniImage(null);
+            });
+        } else {
+            setFurniImage(avatarInfo.image);
+        }
     }, [ roomSession, avatarInfo ]);
 
     useMessageEvent<GroupInformationEvent>(GroupInformationEvent, event =>
     {
         const parser = event.getParser();
 
-        if(!avatarInfo || avatarInfo.groupId !== parser.id || parser.flag) return;
+        if (!avatarInfo || avatarInfo.groupId !== parser.id || parser.flag) return;
 
-        if(groupName) setGroupName(null);
+        if (groupName) setGroupName(null);
 
         setGroupName(parser.title);
     });
@@ -213,44 +233,36 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
     useEffect(() =>
     {
         const songInfo = GetNitroInstance().soundManager.musicController.getSongInfo(songId);
-
-        setSongName(songInfo?.name ?? '');
-        setSongCreator(songInfo?.creator ?? '');
+        setSongName(songInfo && songInfo.name ? songInfo.name : '');
+        setSongCreator(songInfo && songInfo.creator ? songInfo.creator : '');
     }, [ songId ]);
 
     const onFurniSettingChange = useCallback((index: number, value: string) =>
     {
         const clone = Array.from(furniValues);
-
         clone[index] = value;
-
         setFurniValues(clone);
     }, [ furniValues ]);
 
     const onCustomVariableChange = useCallback((index: number, value: string) =>
     {
         const clone = Array.from(customValues);
-
         clone[index] = value;
-
         setCustomValues(clone);
     }, [ customValues ]);
 
     const getFurniSettingsAsString = useCallback(() =>
     {
-        if(furniKeys.length === 0 || furniValues.length === 0) return '';
+        if (furniKeys.length === 0 || furniValues.length === 0) return '';
 
         let data = '';
-
         let i = 0;
 
-        while(i < furniKeys.length)
+        while (i < furniKeys.length)
         {
             const key = furniKeys[i];
             const value = furniValues[i];
-
             data = (data + (key + '=' + value + '\t'));
-
             i++;
         }
 
@@ -259,11 +271,11 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
 
     const processButtonAction = useCallback((action: string) =>
     {
-        if(!action || (action === '')) return;
+        if (!action || (action === '')) return;
 
         let objectData: string = null;
 
-        switch(action)
+        switch (action)
         {
             case 'buy_one':
                 CreateLinkEvent(`catalog/open/offerId/${ avatarInfo.purchaseOfferId }`);
@@ -275,7 +287,7 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
                 GetRoomEngine().processRoomObjectOperation(avatarInfo.id, avatarInfo.category, RoomObjectOperationType.OBJECT_ROTATE_POSITIVE);
                 break;
             case 'pickup':
-                if(pickupMode === PICKUP_MODE_FULL)
+                if (pickupMode === PICKUP_MODE_FULL)
                 {
                     GetRoomEngine().processRoomObjectOperation(avatarInfo.id, avatarInfo.category, RoomObjectOperationType.OBJECT_PICKUP);
                 }
@@ -291,12 +303,11 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
                 const mapData = new Map<string, string>();
                 const dataParts = getFurniSettingsAsString().split('\t');
 
-                if(dataParts)
+                if (dataParts)
                 {
-                    for(const part of dataParts)
+                    for (const part of dataParts)
                     {
                         const [ key, value ] = part.split('=', 2);
-
                         mapData.set(key, value);
                     }
                 }
@@ -307,12 +318,12 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
             case 'save_custom_variables': {
                 const map = new Map();
 
-                for(let i = 0; i < customKeys.length; i++)
+                for (let i = 0; i < customKeys.length; i++)
                 {
                     const key = customKeys[i];
                     const value = customValues[i];
 
-                    if((key && key.length) && (value && value.length)) map.set(key, value);
+                    if ((key && key.length) && (value && value.length)) map.set(key, value);
                 }
 
                 SendMessageComposer(new SetObjectDataMessageComposer(avatarInfo.id, map));
@@ -325,12 +336,12 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
     {
         const stringDataType = (avatarInfo.stuffData as StringDataType);
 
-        if(!stringDataType || !(stringDataType instanceof StringDataType)) return null;
+        if (!stringDataType || !(stringDataType instanceof StringDataType)) return null;
 
         return stringDataType.getValue(2);
     }, [ avatarInfo ]);
 
-    if(!avatarInfo) return null;
+    if (!avatarInfo) return null;
 
     return (
         <Column gap={ 1 } alignItems="end">
@@ -339,7 +350,7 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
                     <Column gap={ 1 }>
                         <Flex alignItems="center" justifyContent="between" gap={ 1 }>
                             { !(isSongDisk) && <Text variant="white" wrap>{ avatarInfo.name }</Text> }
-                            { (songName.length > 0) && <Text variant="white" wrap>{ songName }</Text> }
+                            { songName && songName.length > 0 && <Text variant="white" wrap>{ songName }</Text> }
                             <i className="infostand-close" onClick={ onClose } />
                         </Flex>
                         <hr className="m-0" />
@@ -354,8 +365,12 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
                                 <div className="position-absolute end-0">
                                     <LayoutRarityLevelView level={ avatarInfo.stuffData.rarityLevel } />
                                 </div> }
-                            { avatarInfo.image && avatarInfo.image.src.length &&
-                                <img className="d-block mx-auto" src={ avatarInfo.image.src } alt="" /> }
+                            { furniImage && furniImage.src && typeof furniImage.src === 'string' && furniImage.src.length > 0 ?
+                                <>
+                                    <img className="d-block mx-auto" src={ furniImage.src } alt="" />
+                                </> :
+                                console.log('Skipping furni image: Invalid or missing src', furniImage)
+                            }
                         </Flex>
                         <hr className="m-0" />
                     </Column>
@@ -384,14 +399,14 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
                                 <Text variant="white" small wrap>
                                     { LocalizeText('infostand.jukebox.text.not.playing') }
                                 </Text> }
-                            { !!songName.length &&
+                            { songName && songName.length > 0 &&
                                 <Flex alignItems="center" gap={ 1 }>
                                     <Base className="icon disk-icon" />
                                     <Text variant="white" small wrap>
                                         { songName }
                                     </Text>
                                 </Flex> }
-                            { !!songCreator.length &&
+                            { songCreator && songCreator.length > 0 &&
                                 <Flex alignItems="center" gap={ 1 }>
                                     <Base className="icon disk-creator" />
                                     <Text variant="white" small wrap>
@@ -413,15 +428,15 @@ export const InfoStandWidgetFurniView: FC<InfoStandWidgetFurniViewProps> = props
                                     <Text variant="white" underline>{ groupName }</Text>
                                 </Flex>
                             </> }
-							<>
-								<hr className="m-0" />
-								<Text small wrap variant="white">
-								X = {itemLocation.x}  and  Y = {itemLocation.y}<br />
-								BuildHeight = {itemLocation.z < 0.01 ? 0 : itemLocation.z}<br />
-								{ canSeeFurniId && <Text wrap variant="white"> Room Furnishing ID: { avatarInfo.id }</Text> }
-							</Text>
-							</>
-							{itemLocation.x > -1}
+                        <>
+                            <hr className="m-0" />
+                            <Text small wrap variant="white">
+                                X = {itemLocation.x}  and  Y = {itemLocation.y}<br />
+                                BuildHeight = {itemLocation.z < 0.01 ? 0 : itemLocation.z}<br />
+                                { canSeeFurniId && <Text wrap variant="white"> Room Furnishing ID: { avatarInfo.id }</Text> }
+                            </Text>
+                        </>
+                        {itemLocation.x > -1}
                         { godMode &&
                             <>
                                 <hr className="m-0" />

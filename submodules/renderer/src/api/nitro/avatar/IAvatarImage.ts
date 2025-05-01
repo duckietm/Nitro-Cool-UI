@@ -17,7 +17,7 @@ export interface IAvatarImage extends IDisposable
     getLayerData(_arg_1: ISpriteDataContainer): IAnimationLayerData;
     getImage(setType: string, hightlight: boolean, scale?: number, cache?: boolean): RenderTexture;
     getImageAsSprite(setType: string, scale?: number): Sprite;
-    getCroppedImage(setType: string, scale?: number): HTMLImageElement;
+    getCroppedImage(setType: string, scale?: number): Promise<HTMLImageElement>; // Ensure async
     getAsset(_arg_1: string): IGraphicAsset;
     getDirection(): number;
     getFigure(): IAvatarFigureContainer;

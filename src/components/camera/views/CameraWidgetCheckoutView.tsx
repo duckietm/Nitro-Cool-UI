@@ -46,15 +46,17 @@ export const CameraWidgetCheckoutView: FC<CameraWidgetCheckoutViewProps> = props
     useMessageEvent<CameraStorageUrlMessageEvent>(CameraStorageUrlMessageEvent, event =>
     {
         const parser = event.getParser();
+        const cameraUrl = GetConfiguration<string>('camera.url');
+        const fullUrl = cameraUrl + '/' + parser.url;
 
-        setPictureUrl(GetConfiguration<string>('camera.url') + '/' + parser.url);
+        setPictureUrl(fullUrl);
     });
 
     useMessageEvent<NotEnoughBalanceMessageEvent>(NotEnoughBalanceMessageEvent, event =>
     {
         const parser = event.getParser();
         
-        if (!parser) return null;
+        if (!parser) return;
 
         if (parser.notEnoughCredits && !parser.notEnoughActivityPoints) simpleAlert(LocalizeText('catalog.alert.notenough.credits.description'), null, null, null, LocalizeText('catalog.alert.notenough.title'));
         
@@ -91,7 +93,6 @@ export const CameraWidgetCheckoutView: FC<CameraWidgetCheckoutViewProps> = props
     useEffect(() =>
     {
         if(!base64Url) return;
-
         GetRoomEngine().saveBase64AsScreenshot(base64Url);
     }, [ base64Url ]);
 
@@ -102,12 +103,15 @@ export const CameraWidgetCheckoutView: FC<CameraWidgetCheckoutViewProps> = props
             <NitroCardHeaderView headerText={ LocalizeText('camera.confirm_phase.title') } onCloseClick={ event => processAction('close') } />
             <NitroCardContentView>
                 <Flex center>
-                    { (pictureUrl && pictureUrl.length) &&
-                        <LayoutImage className="picture-preview border" imageUrl={ pictureUrl } /> }
-                    { (!pictureUrl || !pictureUrl.length) &&
+                    { (pictureUrl && pictureUrl.length) ? (
+                        <LayoutImage className="picture-preview border" imageUrl={ pictureUrl } />
+                    ) : base64Url ? (
+                        <LayoutImage className="picture-preview border" imageUrl={ base64Url } />
+                    ) : (
                         <Flex center className="picture-preview border">
                             <Text bold>{ LocalizeText('camera.loading') }</Text>
-                        </Flex> }
+                        </Flex>
+                    ) }
                 </Flex>
                 <Flex justifyContent="between" alignItems="center" className="bg-muted rounded p-2">
                     <Column size={ publishDisabled ? 10 : 6 } gap={ 1 }>

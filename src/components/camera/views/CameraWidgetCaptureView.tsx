@@ -1,5 +1,5 @@
 import { NitroRectangle, TextureUtils } from '@nitrots/nitro-renderer';
-import { FC, useRef } from 'react';
+import { FC, useRef, useState } from 'react';
 import { FaTimes } from 'react-icons/fa';
 import { CameraPicture, CreateLinkEvent, GetRoomEngine, GetRoomSession, LocalizeText, PlaySound, SoundNames } from '../../../api';
 import { Column, DraggableWindowCamera, Flex } from '../../../common';
@@ -20,6 +20,7 @@ export const CameraWidgetCaptureView: FC<CameraWidgetCaptureViewProps> = props =
     const { cameraRoll = null, setCameraRoll = null, selectedPictureIndex = -1, setSelectedPictureIndex = null } = useCamera();
     const { simpleAlert = null } = useNotification();
     const elementRef = useRef<HTMLDivElement>();
+    const [ isCapturing, setIsCapturing ] = useState(false);
 
     const selectedPicture = ((selectedPictureIndex > -1) ? cameraRoll[selectedPictureIndex] : null);
 
@@ -32,7 +33,7 @@ export const CameraWidgetCaptureView: FC<CameraWidgetCaptureViewProps> = props =
         return new NitroRectangle(Math.floor(frameBounds.x), Math.floor(frameBounds.y), Math.floor(frameBounds.width), Math.floor(frameBounds.height));
     }
 
-    const takePicture = () =>
+    const takePicture = async () =>
     {
         if(selectedPictureIndex > -1)
         {
@@ -40,21 +41,38 @@ export const CameraWidgetCaptureView: FC<CameraWidgetCaptureViewProps> = props =
             return;
         }
 
-        const texture = GetRoomEngine().createTextureFromRoom(GetRoomSession().roomId, 1, getCameraBounds());
-
-        const clone = [ ...cameraRoll ];
-
-        if(clone.length >= CAMERA_ROLL_LIMIT)
+        setIsCapturing(true);
+        try
         {
-            simpleAlert(LocalizeText('camera.full.body'));
+            const texture = GetRoomEngine().createTextureFromRoom(GetRoomSession().roomId, 1, getCameraBounds());
+            const imageUrl = await TextureUtils.generateImageUrl(texture);
 
-            clone.pop();
+            if (!imageUrl || typeof imageUrl !== 'string' || !imageUrl.startsWith('data:image/')) {
+                simpleAlert(LocalizeText('camera.error.body'));
+                return;
+            }
+
+            const clone = [ ...cameraRoll ];
+
+            if(clone.length >= CAMERA_ROLL_LIMIT)
+            {
+                simpleAlert(LocalizeText('camera.full.body'));
+                clone.pop();
+            }
+
+            PlaySound(SoundNames.CAMERA_SHUTTER);
+            clone.push(new CameraPicture(texture, imageUrl));
+
+            setCameraRoll(clone);
         }
-
-        PlaySound(SoundNames.CAMERA_SHUTTER);
-        clone.push(new CameraPicture(texture, TextureUtils.generateImageUrl(texture)));
-
-        setCameraRoll(clone);
+        catch (error)
+        {
+            simpleAlert(LocalizeText('camera.error.body'));
+        }
+        finally
+        {
+            setIsCapturing(false);
+        }
     }
 
     return (
@@ -62,7 +80,7 @@ export const CameraWidgetCaptureView: FC<CameraWidgetCaptureViewProps> = props =
             <Column center className="nitro-camera-capture" gap={ 0 }>
                 { selectedPicture && <img alt="" className="camera-area" src={ selectedPicture.imageUrl } /> }
                 <div className="camera-canvas drag-handler">
-					<div className="position-absolute info-camera" onClick={ () => CreateLinkEvent('habbopages/camera') }></div>
+                    <div className="position-absolute info-camera" onClick={ () => CreateLinkEvent('habbopages/camera') }></div>
                     <div className="position-absolute header-close" onClick={ onClose }>
                         <FaTimes className="fa-icon" />
                     </div>

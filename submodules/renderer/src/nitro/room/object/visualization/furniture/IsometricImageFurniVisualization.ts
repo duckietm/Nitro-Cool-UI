@@ -12,6 +12,8 @@ export class IsometricImageFurniVisualization extends FurnitureAnimatedVisualiza
     private _thumbnailImageNormal: Texture<Resource>;
     private _thumbnailDirection: number;
     private _thumbnailChanged: boolean;
+    private _uniqueId: string;
+    private _photoUrl: string;
     protected _hasOutline: boolean;
 
     constructor()
@@ -22,7 +24,9 @@ export class IsometricImageFurniVisualization extends FurnitureAnimatedVisualiza
         this._thumbnailImageNormal = null;
         this._thumbnailDirection = -1;
         this._thumbnailChanged = false;
-        this._hasOutline = false;
+        this._uniqueId = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+        this._photoUrl = null;
+        this._hasOutline = true;
     }
 
     public get hasThumbnailImage(): boolean
@@ -30,58 +34,83 @@ export class IsometricImageFurniVisualization extends FurnitureAnimatedVisualiza
         return !(this._thumbnailImageNormal == null);
     }
 
-    public setThumbnailImages(texture: Texture<Resource>): void
+    public setThumbnailImages(k: Texture<Resource>, url?: string): void
     {
-        this._thumbnailImageNormal = texture;
+        this._thumbnailImageNormal = k;
+        this._photoUrl = url || null;
         this._thumbnailChanged = true;
     }
 
-    protected updateModel(scale: number): boolean
+    public getPhotoUrl(): string
     {
-        const flag = super.updateModel(scale);
+        return this._photoUrl;
+    }
 
-        if(!this._thumbnailChanged && (this._thumbnailDirection === this.direction)) return flag;
+    protected async updateModel(scale: number): Promise<boolean>
+    {
+        const flag = await super.updateModel(scale);
 
-        this.refreshThumbnail();
+        if (!this._thumbnailChanged && (this._thumbnailDirection === this.direction)) {
+            return flag;
+        }
+
+        await this.refreshThumbnail();
 
         return true;
     }
 
-    private refreshThumbnail(): void
+    private async refreshThumbnail(): Promise<void>
     {
-        if(this.asset == null) return;
-
-        if(this._thumbnailImageNormal)
-        {
-            this.addThumbnailAsset(this._thumbnailImageNormal, 64);
+        if (this.asset == null) {
+            return;
         }
-        else
-        {
-            this.asset.disposeAsset(this.getThumbnailAssetName(64));
+
+        const thumbnailAssetName = this.getThumbnailAssetName(64);
+
+        if (this._thumbnailImageNormal) {
+            await this.addThumbnailAsset(this._thumbnailImageNormal, 64);
+        } else {
+            const layerId = 2;
+            const sprite = this.getSprite(layerId);
         }
 
         this._thumbnailChanged = false;
         this._thumbnailDirection = this.direction;
     }
 
-    private addThumbnailAsset(texture: Texture<Resource>, scale: number): void
+    private async addThumbnailAsset(k: Texture<Resource>, scale: number): Promise<void>
     {
         let layerId = 0;
 
-        while(layerId < this.totalSprites)
+        while (layerId < this.totalSprites)
         {
-            if(this.getLayerTag(scale, this.direction, layerId) === IsometricImageFurniVisualization.THUMBNAIL)
+            const layerTag = this.getLayerTag(scale, this.direction, layerId);
+
+            if (layerTag === IsometricImageFurniVisualization.THUMBNAIL)
             {
                 const assetName = (this.cacheSpriteAssetName(scale, layerId, false) + this.getFrameNumber(scale, layerId));
                 const asset = this.getAsset(assetName, layerId);
+                const thumbnailAssetName = `${this.getThumbnailAssetName(scale)}-${this._uniqueId}`;
+                const transformedTexture = await this.generateTransformedThumbnail(k, asset || { width: 64, height: 64, offsetX: 0, offsetY: 0 });
 
-                if(asset)
-                {
-                    const _local_6 = this.generateTransformedThumbnail(texture, asset);
-                    const _local_7 = this.getThumbnailAssetName(scale);
+                if (!transformedTexture) {
+                    console.warn('IsometricImageFurniVisualization: Failed to generate transformed thumbnail for asset', { assetName });
+                    return;
+                }
 
-                    this.asset.disposeAsset(_local_7);
-                    this.asset.addAsset(_local_7, _local_6, true, asset.offsetX, asset.offsetY, false, false);
+                const baseOffsetX = asset?.offsetX || 0;
+                const baseOffsetY = asset?.offsetY || 0;
+
+                const offsetX = baseOffsetX - (transformedTexture.width / 2);
+                const offsetY = baseOffsetY - (transformedTexture.height / 2);
+
+                this.asset.addAsset(thumbnailAssetName, transformedTexture, true, offsetX, offsetY, false, false);
+
+                const sprite = this.getSprite(layerId);
+                if (sprite) {
+                    sprite.texture = transformedTexture;
+                } else {
+                    console.warn('IsometricImageFurniVisualization: Sprite not found for layer', { layerId });
                 }
 
                 return;
@@ -91,67 +120,75 @@ export class IsometricImageFurniVisualization extends FurnitureAnimatedVisualiza
         }
     }
 
-    protected generateTransformedThumbnail(texture: Texture<Resource>, asset: IGraphicAsset): Texture<Resource>
+    protected async generateTransformedThumbnail(texture: Texture<Resource>, asset: IGraphicAsset): Promise<Texture<Resource>>
     {
-        if(this._hasOutline)
-        {
-            const container = new NitroSprite();
-            const background = new NitroSprite(NitroTexture.WHITE);
+        const sprite = new NitroSprite(texture);
 
-            background.tint = 0x000000;
-            background.width = (texture.width + 40);
-            background.height = (texture.height + 40);
+        const photoContainer = new NitroSprite();
+        sprite.position.set(0, 0);
+        photoContainer.addChild(sprite);
 
-            const sprite = new NitroSprite(texture);
-            const offsetX = ((background.width - sprite.width) / 2);
-            const offsetY = ((background.height - sprite.height) / 2);
-
-            sprite.position.set(offsetX, offsetY);
-
-            container.addChild(background, sprite);
-
-            texture = TextureUtils.generateTexture(container);
-        }
-
-        texture.orig.width = asset.width;
-        texture.orig.height = asset.height;
-
+        const scaleFactor = (asset?.width || 64) / texture.width;
         const matrix = new Matrix();
 
-        switch(this.direction)
-        {
+        switch (this.direction) {
             case 2:
-                matrix.b = -(0.5);
-                matrix.d /= 1.6;
-                matrix.ty = ((0.5) * texture.width);
+                matrix.a = scaleFactor;
+                matrix.b = (-0.5 * scaleFactor);
+                matrix.c = 0;
+                matrix.d = scaleFactor;
+                matrix.tx = 0;
+                matrix.ty = (0.5 * scaleFactor * texture.width);
                 break;
             case 0:
             case 4:
-                matrix.b = (0.5);
-                matrix.d /= 1.6;
-                matrix.tx = -0.5;
+                matrix.a = scaleFactor;
+                matrix.b = (0.5 * scaleFactor);
+                matrix.c = 0;
+                matrix.d = scaleFactor;
+                matrix.tx = 0;
+                matrix.ty = 0;
                 break;
+            default:
+                matrix.a = scaleFactor;
+                matrix.b = 0;
+                matrix.c = 0;
+                matrix.d = scaleFactor;
+                matrix.tx = 0;
+                matrix.ty = 0;
         }
 
-        const sprite = new NitroSprite(texture);
+        photoContainer.transform.setFromMatrix(matrix);
 
-        sprite.transform.setFromMatrix(matrix);
+        const width = 64;
+        const height = 64;
 
-        return TextureUtils.generateTexture(sprite);
+        const container = new NitroSprite();
+
+        photoContainer.position.set(width / 2, height / 2);
+        container.addChild(photoContainer);
+
+        const renderTexture = await TextureUtils.generateTexture(container, null, null, 1);
+        if (!renderTexture) {
+            console.warn('IsometricImageFurniVisualization: Failed to generate render texture for thumbnail');
+            return texture;
+        }
+
+        return renderTexture;
     }
 
     protected getSpriteAssetName(scale: number, layerId: number): string
     {
-        if(this._thumbnailImageNormal && (this.getLayerTag(scale, this.direction, layerId) === IsometricImageFurniVisualization.THUMBNAIL)) return this.getThumbnailAssetName(scale);
+        if (this._thumbnailImageNormal && (this.getLayerTag(scale, this.direction, layerId) === IsometricImageFurniVisualization.THUMBNAIL)) {
+            return `${this.getThumbnailAssetName(scale)}-${this._uniqueId}`;
+        }
 
         return super.getSpriteAssetName(scale, layerId);
     }
 
     protected getThumbnailAssetName(scale: number): string
     {
-        this._thumbnailAssetNameNormal = this.getFullThumbnailAssetName(this.object.id, 64);
-
-        return this._thumbnailAssetNameNormal;
+        return this.cacheSpriteAssetName(scale, 2, false) + this.getFrameNumber(scale, 2);
     }
 
     protected getFullThumbnailAssetName(k: number, _arg_2: number): string

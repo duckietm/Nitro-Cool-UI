@@ -14,34 +14,48 @@ export class FurnitureDynamicThumbnailVisualization extends IsometricImageFurniV
         this._hasOutline = true;
     }
 
-    protected updateModel(scale: number): boolean {
-    if (this.object) {
-        const thumbnailUrl = this.getThumbnailURL();
+    protected async updateModel(scale: number): Promise<boolean>
+    {
+        if (this.object)
+        {
+            const thumbnailUrl = this.getThumbnailURL();
 
-        if (this._cachedUrl !== thumbnailUrl) {
-            this._cachedUrl = thumbnailUrl;
+            if (this._cachedUrl !== thumbnailUrl)
+            {
+                this._cachedUrl = thumbnailUrl;
 
-            if (this._cachedUrl && this._cachedUrl !== '') {
-                const image = new Image();
+                if (this._cachedUrl && this._cachedUrl !== '')
+                {
+                    const image = new Image();
 
-                image.src = thumbnailUrl;
-                image.crossOrigin = '*';
+                    image.src = thumbnailUrl;
+                    image.crossOrigin = '*';
 
-                image.onload = () => {
-                    const texture = Texture.from(image);
+                    await new Promise<void>((resolve) => {
+                        image.onload = () => {
+                            const texture = Texture.from(image);
 
-                    texture.baseTexture.scaleMode = SCALE_MODES.LINEAR;
+                            texture.baseTexture.scaleMode = SCALE_MODES.LINEAR;
 
-                    this.setThumbnailImages(texture);
-                };
-            } else {
-                this.setThumbnailImages(null);
+                            this.setThumbnailImages(texture);
+                            resolve();
+                        };
+                        image.onerror = () => {
+                            console.warn('FurnitureDynamicThumbnailVisualization: Failed to load thumbnail image', { thumbnailUrl });
+                            this.setThumbnailImages(null);
+                            resolve();
+                        };
+                    });
+                }
+                else
+                {
+                    this.setThumbnailImages(null);
+                }
             }
         }
-    }
 
-    return super.updateModel(scale);
-}
+        return await super.updateModel(scale);
+    }
 
     protected getThumbnailURL(): string
     {

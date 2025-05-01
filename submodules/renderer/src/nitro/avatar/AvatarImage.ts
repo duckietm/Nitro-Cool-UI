@@ -504,58 +504,60 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
         return container;
     }
 
-    public getCroppedImage(setType: string, scale: number = 1): HTMLImageElement
+    public async getCroppedImage(setType: string, scale: number = 1): Promise<HTMLImageElement>
     {
-        if(!this._mainAction) return null;
+        if (!this._mainAction) {
+            console.warn('getCroppedImage: No main action');
+            return null;
+        }
 
-        if(!this._actionsSorted) this.endActionAppends();
+        if (!this._actionsSorted) this.endActionAppends();
 
         const avatarCanvas = this._structure.getCanvas(this._scale, this._mainAction.definition.geometryType);
 
-        if(!avatarCanvas) return null;
+        if (!avatarCanvas) {
+            console.warn('getCroppedImage: No avatar canvas');
+            return null;
+        }
 
         const setTypes = this.getBodyParts(setType, this._mainAction.definition.geometryType, this._mainDirection);
         const container = new NitroContainer();
 
-        let partCount = (setTypes.length - 1);
+        let partCount = setTypes.length - 1;
+        let partsAdded = 0;
 
-        while(partCount >= 0)
+        while (partCount >= 0)
         {
             const set = setTypes[partCount];
             const part = this._cache.getImageContainer(set, this._frameCounter);
 
-            if(part)
+            if (part)
             {
                 const partCacheContainer = part.image;
 
-                if(!partCacheContainer)
-                {
-                    container.destroy({
-                        children: true
-                    });
-
+                if (!partCacheContainer) {
+                    console.warn(`getCroppedImage: No image for part ${set}`);
+                    container.destroy({ children: true });
                     return null;
                 }
 
                 const point = part.regPoint.clone();
 
-                if(point)
+                if (point)
                 {
                     point.x += avatarCanvas.offset.x;
                     point.y += avatarCanvas.offset.y;
-
                     point.x += avatarCanvas.regPoint.x;
                     point.y += avatarCanvas.regPoint.y;
 
                     const partContainer = new NitroContainer();
-
                     partContainer.addChild(partCacheContainer);
 
-                    if(partContainer)
+                    if (partContainer)
                     {
                         partContainer.position.set(point.x, point.y);
-
                         container.addChild(partContainer);
+                        partsAdded++;
                     }
                 }
             }
@@ -565,9 +567,22 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
 
         const texture = TextureUtils.generateTexture(container, new Rectangle(0, 0, avatarCanvas.width, avatarCanvas.height));
 
-        const image = TextureUtils.generateImage(texture);
+        if (!texture) {
+            console.warn('getCroppedImage: Failed to generate texture');
+            container.destroy({ children: true });
+            return null;
+        }
 
-        if(!image) return null;
+        const image = await TextureUtils.generateImage(texture);
+
+        container.destroy({ children: true });
+
+        if (!image || !image.src) {
+            console.warn('getCroppedImage: Invalid image generated', image);
+            const fallback = new Image();
+            fallback.src = '';
+            return fallback;
+        }
 
         return image;
     }
