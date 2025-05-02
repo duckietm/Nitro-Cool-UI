@@ -11,18 +11,20 @@ import { GroupTabIdentityView } from './tabs/GroupTabIdentityView';
 interface GroupCreatorViewProps
 {
     onClose: () => void;
+    onBadgeCodeUpdate?: (badgeCode: string) => void; // Callback to propagate badge code to parent
 }
 
 const TABS: number[] = [ 1, 2, 3, 4 ];
 
 export const GroupCreatorView: FC<GroupCreatorViewProps> = props =>
 {
-    const { onClose = null } = props;
+    const { onClose = null, onBadgeCodeUpdate = null } = props;
     const [ currentTab, setCurrentTab ] = useState<number>(1);
     const [ closeAction, setCloseAction ] = useState<{ action: () => boolean }>(null);
     const [ groupData, setGroupData ] = useState<IGroupData>(null);
     const [ availableRooms, setAvailableRooms ] = useState<{ id: number, name: string }[]>(null);
     const [ purchaseCost, setPurchaseCost ] = useState<number>(0);
+    const [ currentBadgeCode, setCurrentBadgeCode ] = useState<string>(''); // State to hold the current badge code
 
     const onCloseClose = () =>
     {
@@ -85,6 +87,16 @@ export const GroupCreatorView: FC<GroupCreatorViewProps> = props =>
         setCurrentTab(value => (value === 4 ? value : value + 1));
     }
 
+    // Callback to receive the updated badge code from GroupTabBadgeView
+    const handleBadgeCodeUpdate = (badgeCode: string) => {
+        console.log('GroupCreatorView: Received updated badge code', { badgeCode });
+        setCurrentBadgeCode(badgeCode);
+        // Propagate the badge code to the parent
+        if (onBadgeCodeUpdate) {
+            onBadgeCodeUpdate(badgeCode);
+        }
+    };
+
     useMessageEvent<GroupBuyDataEvent>(GroupBuyDataEvent, event =>
     {
         const parser = event.getParser();
@@ -143,7 +155,7 @@ export const GroupCreatorView: FC<GroupCreatorViewProps> = props =>
                         { (currentTab === 1) &&
                             <GroupTabIdentityView groupData={ groupData } setGroupData={ setGroupData } setCloseAction={ setCloseAction } onClose={ null } isCreator={ true } availableRooms={ availableRooms } /> }
                         { (currentTab === 2) &&
-                            <GroupTabBadgeView groupData={ groupData } setGroupData={ setGroupData } setCloseAction={ setCloseAction } /> }
+                            <GroupTabBadgeView groupData={ groupData } setGroupData={ setGroupData } setCloseAction={ setCloseAction } onBadgeCodeUpdate={ handleBadgeCodeUpdate } /> }
                         { (currentTab === 3) &&
                             <GroupTabColorsView groupData={ groupData } setGroupData={ setGroupData } setCloseAction={ setCloseAction } /> }
                         { (currentTab === 4) &&

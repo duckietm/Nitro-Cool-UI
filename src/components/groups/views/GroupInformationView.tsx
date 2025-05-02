@@ -11,11 +11,12 @@ interface GroupInformationViewProps extends GridProps
     groupInformation: GroupInformationParser;
     onJoin?: () => void;
     onClose?: () => void;
+    badgeCode?: string; // Optional badge code prop
 }
 
 export const GroupInformationView: FC<GroupInformationViewProps> = props =>
 {
-    const { groupInformation = null, onClose = null, overflow = 'hidden', ...rest } = props;
+    const { groupInformation = null, onClose = null, badgeCode = null, overflow = 'hidden', ...rest } = props;
     const { showConfirm = null } = useNotification();
 
     const isRealOwner = (groupInformation && (groupInformation.ownerName === GetSessionDataManager().userName));
@@ -99,11 +100,16 @@ export const GroupInformationView: FC<GroupInformationViewProps> = props =>
 
     if(!groupInformation) return null;
 
+    // Use badgeCode if provided (during group creation), otherwise fall back to groupInformation.badge
+    const displayBadgeCode = badgeCode || groupInformation.badge;
+
     return (
         <Grid overflow={ overflow } { ...rest }>
             <Column center size={ 3 } overflow="hidden">
                 <Flex alignItems="center" overflow="hidden" className="group-badge">
-                    <LayoutBadgeImageView badgeCode={ groupInformation.badge } isGroup={ true } scale={ 2 } />
+                    { displayBadgeCode && (
+                        <LayoutBadgeImageView badgeCode={ displayBadgeCode } isGroup={ true } scale={ 2 } />
+                    )}
                 </Flex>
                 <Column alignItems="center" gap={ 1 }>
                     <Text small underline pointer onClick={ () => handleAction('members') }>{ LocalizeText('group.membercount', [ 'totalMembers' ], [ groupInformation.membersCount.toString() ]) }</Text>

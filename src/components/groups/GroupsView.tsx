@@ -1,4 +1,4 @@
-import { GroupPurchasedEvent, GroupSettingsComposer, ILinkEventTracker } from '@nitrots/nitro-renderer';
+import { GroupPurchasedEvent, ILinkEventTracker } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
 import { AddEventLinkTracker, RemoveLinkEventTracker, SendMessageComposer, TryVisitRoom } from '../../api';
 import { useGroup, useMessageEvent } from '../../hooks';
@@ -10,7 +10,14 @@ import { GroupMembersView } from './views/GroupMembersView';
 export const GroupsView: FC<{}> = props =>
 {
     const [ isCreatorVisible, setCreatorVisible ] = useState<boolean>(false);
+    const [ currentBadgeCode, setCurrentBadgeCode ] = useState<string>(''); // State to hold the current badge code
     const {} = useGroup();
+
+    // Callback to receive the updated badge code from GroupCreatorView
+    const handleBadgeCodeUpdate = (badgeCode: string) => {
+        console.log('GroupsView: Received updated badge code', { badgeCode });
+        setCurrentBadgeCode(badgeCode);
+    };
 
     useMessageEvent<GroupPurchasedEvent>(GroupPurchasedEvent, event =>
     {
@@ -53,11 +60,11 @@ export const GroupsView: FC<{}> = props =>
     return (
         <>
             { isCreatorVisible &&
-                <GroupCreatorView onClose={ () => setCreatorVisible(false) } /> }
+                <GroupCreatorView onClose={ () => setCreatorVisible(false) } onBadgeCodeUpdate={ handleBadgeCodeUpdate } /> }
             { !isCreatorVisible &&
                 <GroupManagerView /> }
             <GroupMembersView />
-            <GroupInformationStandaloneView />
+            <GroupInformationStandaloneView badgeCode={ currentBadgeCode } isCreating={ isCreatorVisible } />
         </>
     );
 };

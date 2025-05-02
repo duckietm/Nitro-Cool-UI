@@ -5,24 +5,34 @@ import { NitroCardContentView, NitroCardHeaderView, NitroCardView } from '../../
 import { useMessageEvent } from '../../../hooks';
 import { GroupInformationView } from './GroupInformationView';
 
-export const GroupInformationStandaloneView: FC<{}> = props =>
+interface GroupInformationStandaloneViewProps
 {
+    badgeCode?: string;
+    isCreating?: boolean;
+}
+
+export const GroupInformationStandaloneView: FC<GroupInformationStandaloneViewProps> = props =>
+{
+    const { badgeCode = null, isCreating = false } = props;
     const [ groupInformation, setGroupInformation ] = useState<GroupInformationParser>(null);
 
     useMessageEvent<GroupInformationEvent>(GroupInformationEvent, event =>
     {
+        // Skip updates during group creation
+        if (isCreating) return;
+
         const parser = event.getParser();
 
         if((groupInformation && (groupInformation.id === parser.id)) || parser.flag) setGroupInformation(parser);
     });
 
-    if(!groupInformation) return null;
+    if(!groupInformation && !isCreating) return null;
 
     return (
         <NitroCardView className="nitro-group-information-standalone" theme="primary-slim">
             <NitroCardHeaderView headerText={ LocalizeText('group.window.title') } onCloseClick={ event => setGroupInformation(null) } />
             <NitroCardContentView>
-                <GroupInformationView groupInformation={ groupInformation } onClose={ () => setGroupInformation(null) } />
+                <GroupInformationView groupInformation={ groupInformation } onClose={ () => setGroupInformation(null) } badgeCode={ badgeCode } />
             </NitroCardContentView>
         </NitroCardView>
     );

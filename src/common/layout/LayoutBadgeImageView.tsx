@@ -47,15 +47,10 @@ export const LayoutBadgeImageView: FC<LayoutBadgeImageViewProps> = props =>
 
             newStyle.backgroundImage = `url(${ badgeUrl })`;
 
-            // Remove inline width and height to let SCSS control the size
-            // newStyle.width = imageElement.width;
-            // newStyle.height = imageElement.height;
-
             if(scale !== 1)
             {
                 newStyle.transform = `scale(${ scale })`;
                 if(!(scale % 1)) newStyle.imageRendering = 'pixelated';
-                // If scaling, adjust the dimensions in SCSS instead
             }
         }
 
@@ -111,6 +106,8 @@ export const LayoutBadgeImageView: FC<LayoutBadgeImageViewProps> = props =>
                     // Fallback: Try fetching directly from session data
                     let texture = isGroup ? GetSessionDataManager().getGroupBadgeImage(badgeCode) : GetSessionDataManager().getBadgeImage(badgeCode);
 
+                    console.log('LayoutBadgeImageView: getGroupBadgeImage result', { badgeCode, texture: texture ? 'exists' : 'null', isGroup });
+
                     if(texture)
                     {
                         const sprite = new NitroSprite(texture);
@@ -160,6 +157,12 @@ export const LayoutBadgeImageView: FC<LayoutBadgeImageViewProps> = props =>
     {
         console.log('LayoutBadgeImageView: Rendering loading state', { badgeCode, isGroup });
         return null; // Optionally render a loading placeholder
+    }
+
+    if(!imageElement)
+    {
+        console.log('LayoutBadgeImageView: Rendering fallback placeholder', { badgeCode, isGroup });
+        return <Base classNames={ getClassNames } style={ { ...style, backgroundColor: '#d3d3d3' } } { ...rest } />; // Gray square as fallback
     }
 
     console.log('LayoutBadgeImageView: Rendering badge', { badgeCode, hasImage: !!imageElement, isGroup });
