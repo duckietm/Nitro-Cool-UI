@@ -26,6 +26,7 @@ export const AvatarEditorFigureSetItemView: FC<AvatarEditorFigureSetItemViewProp
 
         if(!partItem)
         {
+            console.warn(`AvatarEditorFigureSetItemView: Part item missing`, partItem);
             setImageUrl(null);
             setIsValid(false);
             return;
@@ -51,13 +52,16 @@ export const AvatarEditorFigureSetItemView: FC<AvatarEditorFigureSetItemViewProp
 
         if(!resolvedImageUrl || !resolvedImageUrl.startsWith('data:image/'))
         {
+            console.warn(`AvatarEditorFigureSetItemView: Invalid or missing imageUrl for item ${partItem.id}`, { resolvedImageUrl, type: typeof resolvedImageUrl });
             if(retryCount.current < maxRetries)
             {
                 retryCount.current += 1;
+                console.log(`AvatarEditorFigureSetItemView: Retrying load for item ${partItem.id} (retry: ${retryCount.current}/${maxRetries})`);
                 setTimeout(loadPartImage, 1500);
             }
             else
             {
+                console.log(`AvatarEditorFigureSetItemView: Max retries reached, skipping item ${partItem.id}`);
                 setImageUrl(null);
                 setIsValid(false);
             }

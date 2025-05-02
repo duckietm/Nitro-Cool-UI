@@ -1,11 +1,13 @@
 import { ConfigurationEvent, GetAssetManager, HabboWebTools, LegacyExternalInterface, Nitro, NitroCommunicationDemoEvent, NitroConfiguration, NitroEvent, NitroLocalizationEvent, NitroVersion, RoomEngineEvent } from '@nitrots/nitro-renderer';
 import { AnimatePresence, motion } from 'framer-motion';
+import { BadgeProvider } from './common/layout/BadgeContext';
 import { Base } from './common';
 import { FC, useCallback, useEffect, useState } from 'react';
 import { GetCommunication, GetConfiguration, GetNitroInstance, GetUIVersion } from './api';
 import { LoadingView } from './components/loading/LoadingView';
 import { MainView } from './components/main/MainView';
 import { useConfigurationEvent, useLocalizationEvent, useMainEvent, useRoomEngineEvent } from './hooks';
+
 
 NitroVersion.UI_VERSION = GetUIVersion();
 
@@ -131,15 +133,18 @@ export const App: FC<{}> = props =>
     
     return (
         <Base fit overflow="hidden" className={ imageRendering && 'image-rendering-pixelated' }>
-            { (!isReady || isError) &&
-                <LoadingView isError={ isError } message={ message } percent={ percent } /> }
-            <AnimatePresence>
-				{ isReady && ( <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
-					<MainView />
-					</motion.div>
-				)}
-			</AnimatePresence>
-            <Base id="draggable-windows-container" />
+            <BadgeProvider>
+                { (!isReady || isError) &&
+                    <LoadingView isError={ isError } message={ message } percent={ percent } /> }
+                <AnimatePresence>
+                    { isReady && (
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
+                            <MainView />
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+                <Base id="draggable-windows-container" />
+            </BadgeProvider>
         </Base>
     );
 }

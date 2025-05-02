@@ -86,8 +86,11 @@
         }
 
         .badge-image {
-            width: 45px;
-            height: 45px;
+            max-width: 45px;
+            max-height: 45px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
         }
 
         .motto-content {

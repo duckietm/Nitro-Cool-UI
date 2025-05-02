@@ -1,3 +1,4 @@
+export * from './BadgeContext';
 export * from './LayoutAvatarImageView';
 export * from './LayoutBackgroundImage';
 export * from './LayoutBadgeImageView';

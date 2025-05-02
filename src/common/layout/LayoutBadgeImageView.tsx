@@ -1,7 +1,8 @@
-import { BadgeImageReadyEvent, NitroSprite, TextureUtils } from '@nitrots/nitro-renderer';
 import { CSSProperties, FC, useEffect, useMemo, useState } from 'react';
 import { GetConfiguration, GetSessionDataManager, LocalizeBadgeDescription, LocalizeBadgeName, LocalizeText } from '../../api';
 import { Base, BaseProps } from '../Base';
+import { NitroSprite, TextureUtils } from '@nitrots/nitro-renderer';
+import { useBadgeContext } from './BadgeContext';
 
 export interface LayoutBadgeImageViewProps extends BaseProps<HTMLDivElement>
 {
@@ -17,6 +18,13 @@ export const LayoutBadgeImageView: FC<LayoutBadgeImageViewProps> = props =>
 {
     const { badgeCode = null, isGroup = false, showInfo = false, customTitle = null, isGrayscale = false, scale = 1, classNames = [], style = {}, children = null, ...rest } = props;
     const [ imageElement, setImageElement ] = useState<HTMLImageElement>(null);
+    const [ isLoading, setIsLoading ] = useState(true);
+    const [ retryCount, setRetryCount ] = useState(0);
+    const maxRetries = 5; // Maximum number of retries
+    const retryInterval = 2000; // Retry every 2 seconds
+    const { badgeImages, requestBadge, updateBadgeImage } = useBadgeContext();
+
+    console.log('LayoutBadgeImageView: Rendered', { badgeCode, isGroup, badgeImagesSize: badgeImages.size });
 
     const getClassNames = useMemo(() =>
     {
@@ -38,15 +46,16 @@ export const LayoutBadgeImageView: FC<LayoutBadgeImageViewProps> = props =>
             const badgeUrl = isGroup ? imageElement.src : GetConfiguration<string>('badge.asset.url', '').replace('%badgename%', badgeCode.toString());
 
             newStyle.backgroundImage = `url(${ badgeUrl })`;
-            newStyle.width = imageElement.width;
-            newStyle.height = imageElement.height;
+
+            // Remove inline width and height to let SCSS control the size
+            // newStyle.width = imageElement.width;
+            // newStyle.height = imageElement.height;
 
             if(scale !== 1)
             {
                 newStyle.transform = `scale(${ scale })`;
                 if(!(scale % 1)) newStyle.imageRendering = 'pixelated';
-                newStyle.width = (imageElement.width * scale);
-                newStyle.height = (imageElement.height * scale);
+                // If scaling, adjust the dimensions in SCSS instead
             }
         }
 
@@ -57,80 +66,103 @@ export const LayoutBadgeImageView: FC<LayoutBadgeImageViewProps> = props =>
 
     useEffect(() =>
     {
+        console.log('LayoutBadgeImageView: useEffect triggered', { badgeCode, isGroup, retryCount });
 
         if(!badgeCode || !badgeCode.length)
         {
             console.warn('LayoutBadgeImageView: Invalid or empty badgeCode', badgeCode);
             setImageElement(null);
+            setIsLoading(false);
             return;
         }
 
-        let didSetBadge = false;
-
-        const onBadgeImageReadyEvent = async (event: BadgeImageReadyEvent) =>
+        const loadBadgeImage = async () =>
         {
-            if(event.badgeId !== badgeCode) return;
+            console.log('LayoutBadgeImageView: loadBadgeImage started', { badgeCode, retryCount, isGroup });
+
+            setIsLoading(true);
 
             try
             {
-                const sprite = new NitroSprite(event.image);
-                const element = await TextureUtils.generateImage(sprite);
+                // Check if badge is already in context
+                const cachedImage = badgeImages.get(badgeCode);
+                if(cachedImage)
+                {
+                    setImageElement(cachedImage);
+                    setIsLoading(false);
+                    console.log('LayoutBadgeImageView: Badge loaded from context', { badgeCode, isGroup });
+                    return;
+                }
 
-                if(element && element.src && element.src.startsWith('data:image/'))
+                console.log('LayoutBadgeImageView: Requesting badge via context', { badgeCode, isGroup });
+
+                // Request the badge image via the context
+                const element = await requestBadge(badgeCode, isGroup);
+
+                if(element)
                 {
                     setImageElement(element);
-                    didSetBadge = true;
+                    console.log('LayoutBadgeImageView: Badge loaded via request', { badgeCode, isGroup });
                 }
                 else
                 {
-                    console.warn('LayoutBadgeImageView: Invalid badge image (event)', element);
+                    console.warn('LayoutBadgeImageView: Failed to load badge image via context, attempting direct fetch', { badgeCode, isGroup });
+
+                    // Fallback: Try fetching directly from session data
+                    let texture = isGroup ? GetSessionDataManager().getGroupBadgeImage(badgeCode) : GetSessionDataManager().getBadgeImage(badgeCode);
+
+                    if(texture)
+                    {
+                        const sprite = new NitroSprite(texture);
+                        const fallbackElement = await TextureUtils.generateImage(sprite);
+
+                        if(fallbackElement && fallbackElement.src && fallbackElement.src.startsWith('data:image/'))
+                        {
+                            setImageElement(fallbackElement);
+                            updateBadgeImage(badgeCode, fallbackElement);
+                            console.log('LayoutBadgeImageView: Badge loaded via direct fetch and cached in context', { badgeCode, isGroup });
+                        }
+                        else
+                        {
+                            console.warn('LayoutBadgeImageView: Invalid badge image from direct fetch', { badgeCode, isGroup });
+                        }
+                    }
+                    else if(retryCount < maxRetries)
+                    {
+                        console.log('LayoutBadgeImageView: Retrying badge load', { badgeCode, retryCount, isGroup });
+                        setTimeout(() =>
+                        {
+                            setRetryCount(prev => prev + 1);
+                        }, retryInterval);
+                        return;
+                    }
+                    else
+                    {
+                        console.warn('LayoutBadgeImageView: Max retries reached, failed to load badge', { badgeCode, maxRetries, isGroup });
+                    }
                 }
             }
             catch(error)
             {
-                console.warn('LayoutBadgeImageView: Error generating badge image (event)', error);
+                console.error('LayoutBadgeImageView: Error loading badge', { error: error.message, badgeCode, isGroup });
             }
-
-            GetSessionDataManager().events.removeEventListener(BadgeImageReadyEvent.IMAGE_READY, onBadgeImageReadyEvent);
-        };
-
-        GetSessionDataManager().events.addEventListener(BadgeImageReadyEvent.IMAGE_READY, onBadgeImageReadyEvent);
-
-        const loadBadgeImage = async () =>
-        {
-            const texture = isGroup ? GetSessionDataManager().getGroupBadgeImage(badgeCode) : GetSessionDataManager().getBadgeImage(badgeCode);
-
-            if(texture && !didSetBadge)
+            finally
             {
-                try
-                {
-                    const sprite = new NitroSprite(texture);
-                    const element = await TextureUtils.generateImage(sprite);
-
-                    if(element && element.src && element.src.startsWith('data:image/'))
-                    {
-                        setImageElement(element);
-                    }
-                    else
-                    {
-                        console.warn('LayoutBadgeImageView: Invalid badge image (direct)', element);
-                    }
-                }
-                catch(error)
-                {
-                    console.warn('LayoutBadgeImageView: Error generating badge image (direct)', error);
-                }
-            }
-            else
-            {
-                console.log('LayoutBadgeImageView: No texture found for badge', badgeCode);
+                setIsLoading(false);
+                console.log('LayoutBadgeImageView: loadBadgeImage completed', { badgeCode, isLoading: false, isGroup });
             }
         };
 
         loadBadgeImage();
+    }, [ badgeCode, isGroup, badgeImages, requestBadge, retryCount, updateBadgeImage ]);
 
-        return () => GetSessionDataManager().events.removeEventListener(BadgeImageReadyEvent.IMAGE_READY, onBadgeImageReadyEvent);
-    }, [ badgeCode, isGroup ]);
+    if(isLoading)
+    {
+        console.log('LayoutBadgeImageView: Rendering loading state', { badgeCode, isGroup });
+        return null; // Optionally render a loading placeholder
+    }
+
+    console.log('LayoutBadgeImageView: Rendering badge', { badgeCode, hasImage: !!imageElement, isGroup });
 
     return (
         <Base classNames={ getClassNames } style={ getStyle } { ...rest }>
