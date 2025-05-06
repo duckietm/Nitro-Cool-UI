@@ -1,8 +1,8 @@
-import { AbstractRenderer, Renderer, RenderTexture, Resource, Texture } from '@pixi/core';
+import { Renderer, RenderTexture, Texture, BaseTexture } from '@pixi/core';
 import { DisplayObject } from '@pixi/display';
 import { Extract } from '@pixi/extract';
 import { Matrix, Rectangle } from '@pixi/math';
-import { settings } from '@pixi/settings';
+import { SCALE_MODES } from '@pixi/constants';
 import { Sprite } from '@pixi/sprite';
 import { PixiApplicationProxy } from './PixiApplicationProxy';
 
@@ -10,7 +10,7 @@ export class TextureUtils
 {
     private static _extract: Extract | null = null;
 
-    public static initialize(renderer: Renderer | AbstractRenderer): void
+    public static initialize(renderer: Renderer): void
     {
         if (!this._extract && renderer) {
             this._extract = new Extract(renderer);
@@ -18,47 +18,56 @@ export class TextureUtils
         }
     }
 
-    public static async generateImage(target: DisplayObject | RenderTexture): Promise<HTMLImageElement>
-    {
+    public static async generateImage(target: DisplayObject | RenderTexture): Promise<HTMLImageElement> {
         if (!target) {
+            console.warn('generateImage: Invalid target', { target });
             return null;
         }
 
         const extractor = this.getExtractor();
         if (!extractor) {
+            console.warn('generateImage: Extractor not available');
             return null;
         }
 
         try {
-            const image = await extractor.image(target);
+            if (target instanceof DisplayObject) {
+                const renderTexture = this.createRenderTexture(target.width, target.height);
+                this.writeToRenderTexture(target, renderTexture);
+                target = renderTexture;
+            }
 
-            if (!image || !image.src || typeof image.src !== 'string' || !image.src.startsWith('data:image/')) {
+            const image = await extractor.image(target);
+            console.log('generateImage: Extracted image', { src: image?.src, isValid: image?.src?.startsWith('data:image/') });
+
+            if (!image || !image.src || !image.src.startsWith('data:image/')) {
                 const canvas = extractor.canvas(target);
                 if (canvas) {
                     const dataUrl = canvas.toDataURL('image/png');
+                    console.log('generateImage: Fallback canvas', { dataUrl });
                     if (dataUrl && dataUrl.startsWith('data:image/')) {
                         const fallbackImage = new Image();
                         fallbackImage.src = dataUrl;
                         return fallbackImage;
                     }
                 }
+                console.warn('generateImage: Failed to generate valid image', { target });
                 const fallback = new Image();
                 fallback.src = '';
                 return fallback;
             }
             return image;
         } catch (error) {
+            console.error('generateImage: Error extracting image', { error: error.message, target });
             const fallback = new Image();
             fallback.src = '';
             return fallback;
         }
     }
 
-    public static generateTexture(displayObject: DisplayObject, region: Rectangle = null, scaleMode: number = null, resolution: number = 1): RenderTexture
+    public static generateTexture(displayObject: DisplayObject, region: Rectangle = null, scaleMode: SCALE_MODES = SCALE_MODES.LINEAR, resolution: number = 1): RenderTexture
     {
         if (!displayObject) return null;
-
-        if (scaleMode === null) scaleMode = settings.SCALE_MODE;
 
         return this.getRenderer().generateTexture(displayObject, {
             scaleMode,
@@ -67,7 +76,7 @@ export class TextureUtils
         });
     }
 
-    public static generateTextureFromImage(image: HTMLImageElement): Texture<Resource>
+    public static generateTextureFromImage(image: HTMLImageElement): Texture<BaseTexture>
     {
         if (!image) return null;
 
@@ -140,7 +149,7 @@ export class TextureUtils
         });
     }
 
-    public static createAndFillRenderTexture(width: number, height: number, color: number = 16777215): RenderTexture
+    public static createAndFillRenderTexture(width: number, height: number, color: number = 0xFFFFFF): RenderTexture
     {
         if (width < 0 || height < 0) return null;
 
@@ -158,7 +167,7 @@ export class TextureUtils
         return this.writeToRenderTexture(displayObject, renderTexture, true, transform);
     }
 
-    public static clearAndFillRenderTexture(renderTexture: RenderTexture, color: number = 16777215): RenderTexture
+    public static clearAndFillRenderTexture(renderTexture: RenderTexture, color: number = 0xFFFFFF): RenderTexture
     {
         if (!renderTexture) return null;
 
@@ -194,7 +203,7 @@ export class TextureUtils
         return extractor.pixels(displayObject, frame);
     }
 
-    public static getRenderer(): Renderer | AbstractRenderer
+    public static getRenderer(): Renderer
     {
         const renderer = PixiApplicationProxy.instance.renderer;
         if (!renderer) {

@@ -1,6 +1,5 @@
 import { ConfigurationEvent, GetAssetManager, HabboWebTools, LegacyExternalInterface, Nitro, NitroCommunicationDemoEvent, NitroConfiguration, NitroEvent, NitroLocalizationEvent, NitroVersion, RoomEngineEvent } from '@nitrots/nitro-renderer';
 import { AnimatePresence, motion } from 'framer-motion';
-import { BadgeProvider } from './common/layout/BadgeContext';
 import { Base } from './common';
 import { FC, useCallback, useEffect, useState } from 'react';
 import { GetCommunication, GetConfiguration, GetNitroInstance, GetUIVersion } from './api';
@@ -133,7 +132,6 @@ export const App: FC<{}> = props =>
     
     return (
         <Base fit overflow="hidden" className={ imageRendering && 'image-rendering-pixelated' }>
-            <BadgeProvider>
                 { (!isReady || isError) &&
                     <LoadingView isError={ isError } message={ message } percent={ percent } /> }
                 <AnimatePresence>
@@ -144,7 +142,6 @@ export const App: FC<{}> = props =>
                     )}
                 </AnimatePresence>
                 <Base id="draggable-windows-container" />
-            </BadgeProvider>
         </Base>
     );
 }

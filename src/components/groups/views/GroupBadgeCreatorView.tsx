@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction, useEffect, useState } from 'react';
+import React, { Dispatch, FC, SetStateAction, useEffect, useState, useMemo } from 'react';
 import { FaPlus, FaTimes } from 'react-icons/fa';
 import { GroupBadgePart } from '../../../api';
 import { Base, Column, Flex, Grid, LayoutBadgeImageView } from '../../../common';
@@ -13,11 +13,15 @@ interface GroupBadgeCreatorViewProps
 
 const POSITIONS: number[] = [ 0, 1, 2, 3, 4, 5, 6, 7, 8 ];
 
-export const GroupBadgeCreatorView: FC<GroupBadgeCreatorViewProps> = props =>
+// Memoize to prevent unnecessary re-renders
+export const GroupBadgeCreatorView: FC<GroupBadgeCreatorViewProps> = React.memo(props =>
 {
     const { badgeParts = [], setBadgeParts = null, onBadgeCodeUpdate = null } = props;
     const [ selectedIndex, setSelectedIndex ] = useState<number>(-1);
     const { groupCustomize = null } = useGroup();
+
+    // Log re-renders to debug state changes
+    console.log('GroupBadgeCreatorView: Component rendered', { selectedIndex, badgePartsLength: badgeParts.length });
 
     const setPartProperty = (partIndex: number, property: string, value: number) =>
     {
@@ -31,7 +35,7 @@ export const GroupBadgeCreatorView: FC<GroupBadgeCreatorViewProps> = props =>
     };
 
     // Helper function to generate a full group badge code with all parts
-    const getFullBadgeCode = (index: number): string => {
+    const getFullBadgeCode = useMemo(() => {
         if (!badgeParts) return '';
 
         let badgeCode = '';
@@ -46,22 +50,24 @@ export const GroupBadgeCreatorView: FC<GroupBadgeCreatorViewProps> = props =>
         console.log('GroupBadgeCreatorView: Computed full badge code', { badgeCode });
 
         return badgeCode;
-    };
+    }, [badgeParts]);
 
     // Debug the contents of badgeBases and badgeSymbols
     console.log('GroupBadgeCreatorView: badgeBases', groupCustomize?.badgeBases);
     console.log('GroupBadgeCreatorView: badgeSymbols', groupCustomize?.badgeSymbols);
 
-    // Compute the full badge code
-    const fullBadgeCode = getFullBadgeCode(0);
-
     useEffect(() => {
-        console.log('GroupBadgeCreatorView: useEffect triggered', { fullBadgeCode, hasOnBadgeCodeUpdate: !!onBadgeCodeUpdate });
-        if (onBadgeCodeUpdate && fullBadgeCode) {
-            console.log('GroupBadgeCreatorView: Propagating badge code to parent', { fullBadgeCode });
-            onBadgeCodeUpdate(fullBadgeCode);
+        console.log('GroupBadgeCreatorView: useEffect triggered', { fullBadgeCode: getFullBadgeCode, hasOnBadgeCodeUpdate: !!onBadgeCodeUpdate });
+        if (onBadgeCodeUpdate && getFullBadgeCode) {
+            console.log('GroupBadgeCreatorView: Propagating badge code to parent', { fullBadgeCode: getFullBadgeCode });
+            onBadgeCodeUpdate(getFullBadgeCode);
         }
-    }, [fullBadgeCode, onBadgeCodeUpdate]);
+    }, [getFullBadgeCode, onBadgeCodeUpdate]);
+
+    // Debug selectedIndex changes
+    useEffect(() => {
+        console.log('GroupBadgeCreatorView: selectedIndex changed', { selectedIndex });
+    }, [selectedIndex]);
 
     // Early return after all hooks are called
     if (!badgeParts || !badgeParts.length) return null;
@@ -70,14 +76,14 @@ export const GroupBadgeCreatorView: FC<GroupBadgeCreatorViewProps> = props =>
         <>
             { ((selectedIndex < 0) && badgeParts && (badgeParts.length > 0)) && badgeParts.map((part, index) =>
             {
-                const badgeCode = badgeParts[index].code;
-                console.log('GroupBadgeCreatorView: Rendering badge part', { index, badgeCode, fullBadgeCode, part });
+                const badgeCode = part.code;
+                console.log('GroupBadgeCreatorView: Rendering badge part', { index, badgeCode, fullBadgeCode: getFullBadgeCode, part });
 
                 return (
-                    <Flex key={ index } alignItems="center" justifyContent="between" gap={ 2 } className="bg-muted rounded px-2 py-1">
+                    <Flex key={ `part-${index}-${badgeCode || 'empty'}` } alignItems="center" justifyContent="between" gap={ 2 } className="bg-muted rounded px-2 py-1">
                         <Flex pointer center className="bg-muted rounded p-1" onClick={ event => setSelectedIndex(index) }>
                             { (badgeCode && badgeCode.length > 0) ? (
-                                <LayoutBadgeImageView badgeCode={ badgeCode } isGroup={ true } />
+                                <LayoutBadgeImageView badgeCode={ badgeCode } isGroup={ true } className="visible-badge" />
                             ) : (
                                 <Flex center className="badge-image group-badge">
                                     <FaPlus className="fa-icon" />
@@ -114,12 +120,12 @@ export const GroupBadgeCreatorView: FC<GroupBadgeCreatorViewProps> = props =>
                         console.log('GroupBadgeCreatorView: Rendering template badge', { type: badgeParts[selectedIndex].type, id: item.id, badgeCode, color: badgeParts[selectedIndex].color, position: badgeParts[selectedIndex].position, item });
 
                         return (
-                            <Column key={ index } pointer center className="bg-muted rounded p-1" onClick={ event => setPartProperty(selectedIndex, 'key', item.id) }>
-                                <LayoutBadgeImageView badgeCode={ badgeCode } isGroup={ true } />
+                            <Column key={ `${badgeParts[selectedIndex].type}-${item.id}` } pointer center className="bg-muted rounded p-1 badge-column" onClick={ event => setPartProperty(selectedIndex, 'key', item.id) }>
+                                <LayoutBadgeImageView badgeCode={ badgeCode } isGroup={ true } className="visible-badge" />
                             </Column>
                         );
                     }) }
                 </Grid> }
         </>
     );
-};
+}, (prevProps, nextProps) => prevProps.badgeParts === nextProps.badgeParts && prevProps.onBadgeCodeUpdate === nextProps.onBadgeCodeUpdate);
