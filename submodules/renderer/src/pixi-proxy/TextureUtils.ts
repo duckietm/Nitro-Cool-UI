@@ -14,7 +14,6 @@ export class TextureUtils
     {
         if (!this._extract && renderer) {
             this._extract = new Extract(renderer);
-            console.log('TextureUtils: Initialized Extract plugin', { renderer });
         }
     }
 
@@ -38,13 +37,11 @@ export class TextureUtils
             }
 
             const image = await extractor.image(target);
-            console.log('generateImage: Extracted image', { src: image?.src, isValid: image?.src?.startsWith('data:image/') });
 
             if (!image || !image.src || !image.src.startsWith('data:image/')) {
                 const canvas = extractor.canvas(target);
                 if (canvas) {
                     const dataUrl = canvas.toDataURL('image/png');
-                    console.log('generateImage: Fallback canvas', { dataUrl });
                     if (dataUrl && dataUrl.startsWith('data:image/')) {
                         const fallbackImage = new Image();
                         fallbackImage.src = dataUrl;

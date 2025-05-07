@@ -38,42 +38,78 @@ const useChatWidgetState = () =>
         }
     }, [ chatSettings ]);
 
-    const setFigureImage = (figure: string) =>
-    {
-        const avatarImage = GetAvatarRenderManager().createAvatarImage(figure, AvatarScaleType.LARGE, null, {
-            resetFigure: figure => 
-            {
-                if(isDisposed.current) return;
+    const setFigureImage = (figure: string, username: string): Promise<string | null> => {
+        return new Promise((resolve) => {
+            console.log('setFigureImage called with figure:', figure, 'username:', username);
 
-                setFigureImage(figure);
-            },
-            dispose: () => 
-            {},
-            disposed: false
+            const avatarImage = GetAvatarRenderManager().createAvatarImage(figure, AvatarScaleType.LARGE, null, {
+                resetFigure: figure => {
+                    if (isDisposed.current) return;
+                    setFigureImage(figure, username);
+                },
+                dispose: () => {},
+                disposed: false
+            });
+
+            console.log('avatarImage result:', avatarImage);
+
+            if (!avatarImage) {
+                console.log('Failed to create avatarImage for figure:', figure);
+                resolve('https://via.placeholder.com/40');
+                return;
+            }
+
+            avatarImage.getCroppedImage(AvatarSetType.HEAD).then(image => {
+                console.log('Cropped image:', image, 'Image src:', image?.src);
+
+                if (!image || !image.src) {
+                    console.log('Failed to get cropped image or src for figure:', figure);
+                    avatarImage.dispose();
+                    resolve('https://via.placeholder.com/40');
+                    return;
+                }
+
+                const color = avatarImage.getPartColor(AvatarFigurePartType.CHEST);
+                console.log('Avatar color:', color, 'RGB:', color?.rgb);
+
+                avatarColorCache.set(figure, ((color && color.rgb) || 16777215));
+                avatarImageCache.set(figure, image.src);
+                console.log('Cached image src:', image.src);
+
+                // Update existing chat messages for this username
+                setChatMessages(prevValue => {
+                    const updatedMessages = prevValue.map(chat => {
+                        if (chat.username === username && chat.imageUrl !== image.src) {
+                            chat.imageUrl = image.src; // Update in-place
+                            return { ...chat }; // Shallow copy to trigger re-render
+                        }
+                        return chat;
+                    });
+                    return updatedMessages;
+                });
+
+                avatarImage.dispose();
+                resolve(image.src);
+            }).catch(error => {
+                console.error('Error in setFigureImage:', error);
+                avatarImage.dispose();
+                resolve('https://via.placeholder.com/40');
+            });
         });
+    };
 
-        if(!avatarImage) return;
-
-        const image = avatarImage.getCroppedImage(AvatarSetType.HEAD);
-        const color = avatarImage.getPartColor(AvatarFigurePartType.CHEST);
-
-        avatarColorCache.set(figure, ((color && color.rgb) || 16777215));
-
-        avatarImage.dispose();
-
-        avatarImageCache.set(figure, image.src);
-
-        return image.src;
-    }
-
-    const getUserImage = (figure: string) =>
-    {
+    const getUserImage = (figure: string, username: string): string | null => {
         let existing = avatarImageCache.get(figure);
 
-        if(!existing) existing = setFigureImage(figure);
+        if (!existing) {
+            setFigureImage(figure, username).then(src => {
+                avatarImageCache.set(figure, src);
+            });
+            return 'https://via.placeholder.com/40';
+        }
 
         return existing;
-    }
+    };
 
     const getPetImage = (figure: string, direction: number, _arg_3: boolean, scale: number = 64, posture: string = null) =>
     {
@@ -88,49 +124,57 @@ const useChatWidgetState = () =>
         if(image)
         {
             existing = TextureUtils.generateImageUrl(image.data);
-
             petImageCache.set((figure + posture), existing);
         }
 
         return existing;
-    }
+    };
 
     useRoomSessionManagerEvent<RoomSessionChatEvent>(RoomSessionChatEvent.CHAT_EVENT, event =>
     {
-		const roomObject = GetRoomEngine().getRoomObject(roomSession.roomId, event.objectId, RoomObjectCategory.UNIT);
+        const roomObject = GetRoomEngine().getRoomObject(roomSession.roomId, event.objectId, RoomObjectCategory.UNIT);
         const bubbleLocation = roomObject ? GetRoomObjectScreenLocation(roomSession.roomId, roomObject?.id, RoomObjectCategory.UNIT) : new NitroPoint();
         const userData = roomObject ? roomSession.userDataManager.getUserDataByIndex(event.objectId) : new RoomUserData(-1);
 
         let username = '';
         let avatarColor = 0;
-        let imageUrl: string = null;
+        let imageUrl: string | null = null;
         let chatType = event.chatType;
         let styleId = event.style;
         let userType = 0;
         let petType = -1;
         let text = event.message;
-		let chatColours = event._chatColours
-		
-		if(userData)
+        let chatColours = event._chatColours;
+
+        if(userData)
         {
             userType = userData.type;
 
             const figure = userData.figure;
+
+            console.log('Chat Event Debug:', {
+                userId: event.objectId,
+                username: userData.name,
+                userType,
+                figure,
+                roomObjectExists: !!roomObject
+            });
 
             switch(userType)
             {
                 case RoomObjectType.PET:
                     imageUrl = getPetImage(figure, 2, true, 64, roomObject.model.getValue<string>(RoomObjectVariable.FIGURE_POSTURE));
                     petType = new PetFigureData(figure).typeId;
-					chatColours = "black"
+                    chatColours = "black";
                     break;
                 case RoomObjectType.USER:
-                    imageUrl = getUserImage(figure);
+                    imageUrl = getUserImage(figure, userData.name);
+                    console.log('getUserImage result:', { figure, imageUrl });
                     break;
                 case RoomObjectType.RENTABLE_BOT:
                 case RoomObjectType.BOT:
                     styleId = SystemChatStyleEnum.BOT;
-					chatColours = "black"
+                    chatColours = "black";
                     break;
             }
 
@@ -196,7 +240,7 @@ const useChatWidgetState = () =>
 
         const formattedText = RoomChatFormatter(text);
         const color = (avatarColor && (('#' + (avatarColor.toString(16).padStart(6, '0'))) || null));
-	
+
         const chatMessage = new ChatBubbleMessage(
             userData.roomIndex,
             RoomObjectCategory.UNIT,
@@ -209,7 +253,8 @@ const useChatWidgetState = () =>
             styleId,
             imageUrl,
             color,
-			chatColours);
+            chatColours
+        );
 
         setChatMessages(prevValue => [ ...prevValue, chatMessage ]);
         addChatEntry({ id: -1, webId: userData.webID, entityId: userData.roomIndex, name: username, imageUrl, style: styleId, chatType: chatType, entityType: userData.type, message: formattedText, timestamp: ChatHistoryCurrentDate(), type: ChatEntryType.TYPE_CHAT, roomId: roomSession.roomId, color, chatColours });
@@ -229,14 +274,14 @@ const useChatWidgetState = () =>
         const parser = event.getParser();
 
         if(!parser.roomEnter) return;
-        
+
         setChatSettings(parser.chat);
     });
 
     useMessageEvent<RoomChatSettingsEvent>(RoomChatSettingsEvent, event =>
     {
         const parser = event.getParser();
-        
+
         setChatSettings(parser.chat);
     });
 
@@ -251,6 +296,6 @@ const useChatWidgetState = () =>
     }, []);
 
     return { chatMessages, setChatMessages, chatSettings, getScrollSpeed };
-}
+};
 
 export const useChatWidget = useChatWidgetState;
