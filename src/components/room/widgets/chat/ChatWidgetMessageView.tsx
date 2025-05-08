@@ -1,4 +1,4 @@
-import { RoomChatSettings, RoomObjectCategory } from '@nitrots/nitro-renderer';
+import { RoomChatSettings, RoomObjectCategory, RoomObjectType } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { ChatBubbleMessage, GetRoomEngine } from '../../../../api';
 import { useOnClickChat } from '../../../../hooks';
@@ -17,7 +17,6 @@ export const ChatWidgetMessageView: FC<ChatWidgetMessageViewProps> = props => {
     const { onClickChat = null } = useOnClickChat();
     const elementRef = useRef<HTMLDivElement>();
 
-    // Memoize chat properties to prevent unnecessary re-renders
     const chatMemo = useMemo(() => ({
         id: chat?.id,
         locationX: chat?.location?.x,
@@ -31,8 +30,9 @@ export const ChatWidgetMessageView: FC<ChatWidgetMessageViewProps> = props => {
         imageUrl: chat?.imageUrl,
         type: chat?.type,
         roomId: chat?.roomId,
-        senderId: chat?.senderId
-    }), [chat?.id, chat?.location?.x, chat?.top, chat?.left, chat?.styleId, chat?.color, chat?.chatColours, chat?.username, chat?.formattedText, chat?.imageUrl, chat?.type, chat?.roomId, chat?.senderId]);
+        senderId: chat?.senderId,
+        userType: (chat as any)?.userType || 0
+    }), [chat?.id, chat?.location?.x, chat?.top, chat?.left, chat?.styleId, chat?.color, chat?.chatColours, chat?.username, chat?.formattedText, chat?.imageUrl, chat?.type, chat?.roomId, chat?.senderId, (chat as any)?.userType]);
 
     const getBubbleWidth = useMemo(() => {
         switch (bubbleWidth) {
@@ -60,10 +60,8 @@ export const ChatWidgetMessageView: FC<ChatWidgetMessageViewProps> = props => {
         let left = chat.left;
         let top = chat.top;
 
-        // Calculate content offset based on styleId to account for margin-left in .chat-content
         const contentOffset = chatMemo.styleId === 33 || chatMemo.styleId === 34 ? 35 : 27;
 
-        // Position the bubble above the user (chat.location.x), adjusting for content offset
         if (!left && !top) {
             left = chatMemo.locationX ? (chatMemo.locationX - (width / 2) + contentOffset) : contentOffset;
             top = element.parentElement ? (element.parentElement.offsetHeight - height) : 0;
@@ -71,7 +69,6 @@ export const ChatWidgetMessageView: FC<ChatWidgetMessageViewProps> = props => {
             chat.top = top;
         }
 
-        // Apply position immediately
         element.style.position = 'absolute';
         element.style.left = `${left}px`;
         element.style.top = `${top}px`;
@@ -90,6 +87,16 @@ export const ChatWidgetMessageView: FC<ChatWidgetMessageViewProps> = props => {
         setIsVisible(true);
     }, [chat, isReady, isVisible, makeRoom]);
 
+    const isPet = chatMemo.userType === RoomObjectType.PET;
+    const imageWidth = isPet ? '41px' : '90px';
+    const imageHeight = isPet ? '54px' : '130px';
+    const imageTop = isPet ? '-15px' : '-50px';
+    const imageLeft = isPet ? '-9.25px' : '-31px';
+
+    // Define styles where imageUrl should not be loaded
+    const stylesWithoutImage = [1, 2, 8, 28, 30, 32, 33, 34, 35, 36, 38];
+    const shouldDisplayImage = !stylesWithoutImage.includes(chatMemo.styleId);
+
     return (
         <div
             ref={elementRef}
@@ -101,11 +108,23 @@ export const ChatWidgetMessageView: FC<ChatWidgetMessageViewProps> = props => {
                 <div className="user-container-bg" style={{ backgroundColor: chatMemo.color }} />
             )}
             <div className={`chat-bubble bubble-${chatMemo.styleId} type-${chatMemo.type}`} style={{ maxWidth: getBubbleWidth }}>
-                <div className="user-container">
-                    {chatMemo.imageUrl && chatMemo.imageUrl.length > 0 && (
-                        <div className="user-image" style={{ backgroundImage: `url(${chatMemo.imageUrl})` }} />
-                    )}
-                </div>
+                {shouldDisplayImage && chatMemo.imageUrl && typeof chatMemo.imageUrl === 'string' && chatMemo.imageUrl.length > 0 && (
+                    <div className="user-container" style={{ display: 'block' }}>
+                        <div
+                            className="user-image"
+                            style={{
+                                backgroundImage: `url(${chatMemo.imageUrl})`,
+                                width: imageWidth,
+                                height: imageHeight,
+                                top: imageTop,
+                                left: imageLeft,
+                                backgroundSize: 'cover',
+                                backgroundPosition: 'center',
+                            }}
+                            onError={() => console.log(`Failed to load image for Chat ID ${chatMemo.id}: ${chatMemo.imageUrl}`)}
+                        />
+                    </div>
+                )}
                 <div className="chat-content">
                     <b className="username mr-1" dangerouslySetInnerHTML={{ __html: `${chatMemo.username}: ` }} />
                     <span

@@ -10,8 +10,8 @@ export const ChatWidgetView: FC<{}> = props => {
     const { chatMessages = [], setChatMessages = null, chatSettings = null, getScrollSpeed = 6000 } = useChatWidget();
     const elementRef = useRef<HTMLDivElement>();
     const lastTickTimeRef = useRef<number>(Date.now());
-    const scrollAmountPerTick = 15; // Pixels moved per tick
-    const workerRef = useRef<Worker | null>(null); // Preserve worker across re-renders
+    const scrollAmountPerTick = 15;
+    const workerRef = useRef<Worker | null>(null);
 
     const removeHiddenChats = useCallback(() => {
         setChatMessages(prevValue => {
@@ -119,16 +119,14 @@ export const ChatWidgetView: FC<{}> = props => {
                 workerRef.current = null;
             }
         };
-    }, [moveAllChatsUp]); // Remove getScrollSpeed from deps to prevent re-creation
+    }, [moveAllChatsUp]);
 
-    // Update worker interval if getScrollSpeed changes
     useEffect(() => {
         if (workerRef.current) {
             workerRef.current.postMessage({ action: 'UPDATE', content: getScrollSpeed });
         }
     }, [getScrollSpeed]);
 
-    // Handle new chats and ensure immediate scrolling
     useEffect(() => {
         if (!chatMessages.length) return;
 
