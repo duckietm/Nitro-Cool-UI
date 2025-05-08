@@ -3,25 +3,39 @@ import { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { ChatBubbleMessage, GetRoomEngine } from '../../../../api';
 import { useOnClickChat } from '../../../../hooks';
 
-interface ChatWidgetMessageViewProps
-{
+interface ChatWidgetMessageViewProps {
     chat: ChatBubbleMessage;
     makeRoom: (chat: ChatBubbleMessage) => void;
     bubbleWidth?: number;
-	selectedEmoji?: string;
+    selectedEmoji?: string;
 }
 
 export const ChatWidgetMessageView: FC<ChatWidgetMessageViewProps> = props => {
     const { chat = null, makeRoom = null, bubbleWidth = RoomChatSettings.CHAT_BUBBLE_WIDTH_NORMAL, selectedEmoji } = props;
-    const [ isVisible, setIsVisible ] = useState(false);
-    const [ isReady, setIsReady ] = useState<boolean>(false);
+    const [isVisible, setIsVisible] = useState(false);
+    const [isReady, setIsReady] = useState<boolean>(false);
     const { onClickChat = null } = useOnClickChat();
     const elementRef = useRef<HTMLDivElement>();
 
-    const getBubbleWidth = useMemo(() =>
-    {
-        switch(bubbleWidth)
-        {
+    // Memoize chat properties to prevent unnecessary re-renders
+    const chatMemo = useMemo(() => ({
+        id: chat?.id,
+        locationX: chat?.location?.x,
+        top: chat?.top,
+        left: chat?.left,
+        styleId: chat?.styleId,
+        color: chat?.color,
+        chatColours: chat?.chatColours,
+        username: chat?.username,
+        formattedText: chat?.formattedText,
+        imageUrl: chat?.imageUrl,
+        type: chat?.type,
+        roomId: chat?.roomId,
+        senderId: chat?.senderId
+    }), [chat?.id, chat?.location?.x, chat?.top, chat?.left, chat?.styleId, chat?.color, chat?.chatColours, chat?.username, chat?.formattedText, chat?.imageUrl, chat?.type, chat?.roomId, chat?.senderId]);
+
+    const getBubbleWidth = useMemo(() => {
+        switch (bubbleWidth) {
             case RoomChatSettings.CHAT_BUBBLE_WIDTH_NORMAL:
                 return 350;
             case RoomChatSettings.CHAT_BUBBLE_WIDTH_THIN:
@@ -29,15 +43,12 @@ export const ChatWidgetMessageView: FC<ChatWidgetMessageViewProps> = props => {
             case RoomChatSettings.CHAT_BUBBLE_WIDTH_WIDE:
                 return 2000;
         }
-    }, [ bubbleWidth ]);
+    }, [bubbleWidth]);
 
-    useEffect(() =>
-    {
+    useEffect(() => {
         setIsVisible(false);
-        
         const element = elementRef.current;
-
-        if(!element) return;
+        if (!element) return;
 
         const width = element.offsetWidth;
         const height = element.offsetHeight;
@@ -45,54 +56,67 @@ export const ChatWidgetMessageView: FC<ChatWidgetMessageViewProps> = props => {
         chat.width = width;
         chat.height = height;
         chat.elementRef = element;
-        
+
         let left = chat.left;
         let top = chat.top;
 
-        if(!left && !top)
-        {
-            left = (chat.location.x - (width / 2));
-            top = (element.parentElement.offsetHeight - height);
-            
+        // Calculate content offset based on styleId to account for margin-left in .chat-content
+        const contentOffset = chatMemo.styleId === 33 || chatMemo.styleId === 34 ? 35 : 27;
+
+        // Position the bubble above the user (chat.location.x), adjusting for content offset
+        if (!left && !top) {
+            left = chatMemo.locationX ? (chatMemo.locationX - (width / 2) + contentOffset) : contentOffset;
+            top = element.parentElement ? (element.parentElement.offsetHeight - height) : 0;
             chat.left = left;
             chat.top = top;
         }
 
+        // Apply position immediately
+        element.style.position = 'absolute';
+        element.style.left = `${left}px`;
+        element.style.top = `${top}px`;
+
         setIsReady(true);
 
-        return () =>
-        {
+        return () => {
             chat.elementRef = null;
-
             setIsReady(false);
-        }
-    }, [ chat ]);
+        };
+    }, [chat, chatMemo]);
 
-    useEffect(() =>
-    {
-        if(!isReady || !chat || isVisible) return;
-        
-        if(makeRoom) makeRoom(chat);
-
+    useEffect(() => {
+        if (!isReady || !chat || isVisible) return;
+        if (makeRoom) makeRoom(chat);
         setIsVisible(true);
-    }, [ chat, isReady, isVisible, makeRoom ]);
+    }, [chat, isReady, isVisible, makeRoom]);
 
     return (
-        <div ref={elementRef} className={`bubble-container newbubblehe ${isVisible ? 'visible' : 'invisible'}`} onClick={event => GetRoomEngine().selectRoomObject(chat.roomId, chat.senderId, RoomObjectCategory.UNIT)}>
+        <div
+            ref={elementRef}
+            className={`bubble-container newbubblehe ${isVisible ? 'visible' : 'invisible'}`}
+            onClick={event => GetRoomEngine().selectRoomObject(chatMemo.roomId, chatMemo.senderId, RoomObjectCategory.UNIT)}
+        >
             {selectedEmoji && <span>{DOMPurify.sanitize(selectedEmoji)}</span>}
-			{ (chat.styleId === 0) &&
-                <div className="user-container-bg" style={ { backgroundColor: chat.color } } /> }
-            <div className={ `chat-bubble bubble-${ chat.styleId } type-${ chat.type }` } style={ { maxWidth: getBubbleWidth } }>
+            {chatMemo.styleId === 0 && (
+                <div className="user-container-bg" style={{ backgroundColor: chatMemo.color }} />
+            )}
+            <div className={`chat-bubble bubble-${chatMemo.styleId} type-${chatMemo.type}`} style={{ maxWidth: getBubbleWidth }}>
                 <div className="user-container">
-                    { chat.imageUrl && (chat.imageUrl.length > 0) &&
-                        <div className="user-image" style={ { backgroundImage: `url(${ chat.imageUrl })` } } /> }
+                    {chatMemo.imageUrl && chatMemo.imageUrl.length > 0 && (
+                        <div className="user-image" style={{ backgroundImage: `url(${chatMemo.imageUrl})` }} />
+                    )}
                 </div>
                 <div className="chat-content">
-                    <b className="username mr-1" dangerouslySetInnerHTML={ { __html: `${ chat.username }: ` } } />
-                     <span className="message" style={{ color: chat.chatColours }} dangerouslySetInnerHTML={{ __html: `${chat.formattedText}` }} onClick={e => onClickChat(e)} />
+                    <b className="username mr-1" dangerouslySetInnerHTML={{ __html: `${chatMemo.username}: ` }} />
+                    <span
+                        className="message"
+                        style={{ color: chatMemo.chatColours }}
+                        dangerouslySetInnerHTML={{ __html: `${chatMemo.formattedText}` }}
+                        onClick={e => onClickChat(e)}
+                    />
                 </div>
                 <div className="pointer" />
             </div>
         </div>
     );
-}
+};

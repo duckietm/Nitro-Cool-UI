@@ -1,8 +1,5 @@
 .nitro-chat-widget {
     position: absolute;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     width: 100%;
     top: 0;
     min-height: 1px;
@@ -11,6 +8,7 @@
     border-radius: 0;
     box-shadow: none;
     pointer-events: none;
+    
 }
 
 .chat-mention {
@@ -28,16 +26,8 @@
 .bubble-container {
     position: absolute;
     width: fit-content;
-    transition: top 0.2s ease 0s;
     user-select: none;
     pointer-events: all;
-
-    // -webkit-animation-duration: 0.2s;
-    // animation-duration: 0.2s;
-    // -webkit-animation-fill-mode: both;
-    // animation-fill-mode: both;
-    // -webkit-animation-name: bounceIn;
-    // animation-name: bounceIn;
 
     .user-container-bg {
         position: absolute;
@@ -74,14 +64,12 @@
         }
 
         &.type-0 {
-            // normal
             .message {
                 font-weight: 400;
             }
         }
 
         &.type-1 {
-            // whisper
             .message {
                 font-weight: 400;
                 font-style: italic;
@@ -90,7 +78,6 @@
         }
 
         &.type-2 {
-            // shout
             .message {
                 font-weight: 700;
             }
@@ -686,7 +673,7 @@
             }
         }
 
-		&.bubble-39 {
+        &.bubble-39 {
             border-image-source: url("@/assets/images/chat/chatbubbles/bubble_39.png");
 
             border-image-slice: 16 6 7 32 fill;
@@ -864,7 +851,7 @@
             .pointer {
                 background: url("@/assets/images/chat/chatbubbles/bubble_53_pointer.png");
             }
-        }	
+        }
 
         .user-container {
             z-index: 3;
@@ -958,7 +945,7 @@
     }
 
     &.bubble-13 {
-        background-image: url('@/assets/images/chat/chatbubbles/bubble_13.png');
+        background-image: url('@/assets/images/chat/chatbubles/bubble_13.png');
     }
 
     &.bubble-14 {
@@ -1096,8 +1083,8 @@
             background: url('@/assets/images/chat/chatbubbles/bubble_38_extra.png');
         }
     }
-	
-	&.bubble-39 {
+
+    &.bubble-39 {
         background-image: url("@/assets/images/chat/chatbubbles/bubble_39.png");
     }
 
@@ -1148,11 +1135,11 @@
     &.bubble-51 {
         background-image: url("@/assets/images/chat/chatbubbles/bubble_51.png");
     }
-    
+
     &.bubble-52 {
         background-image: url("@/assets/images/chat/chatbubbles/bubble_52.png");
     }
-    
+
     &.bubble-53 {
         background-image: url("@/assets/images/chat/chatbubbles/bubble_53.png");
     }

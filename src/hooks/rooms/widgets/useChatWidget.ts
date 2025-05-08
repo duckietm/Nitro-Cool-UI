@@ -40,8 +40,6 @@ const useChatWidgetState = () =>
 
     const setFigureImage = (figure: string, username: string): Promise<string | null> => {
         return new Promise((resolve) => {
-            console.log('setFigureImage called with figure:', figure, 'username:', username);
-
             const avatarImage = GetAvatarRenderManager().createAvatarImage(figure, AvatarScaleType.LARGE, null, {
                 resetFigure: figure => {
                     if (isDisposed.current) return;
@@ -51,37 +49,27 @@ const useChatWidgetState = () =>
                 disposed: false
             });
 
-            console.log('avatarImage result:', avatarImage);
-
             if (!avatarImage) {
-                console.log('Failed to create avatarImage for figure:', figure);
-                resolve('https://via.placeholder.com/40');
                 return;
             }
 
             avatarImage.getCroppedImage(AvatarSetType.HEAD).then(image => {
-                console.log('Cropped image:', image, 'Image src:', image?.src);
 
                 if (!image || !image.src) {
-                    console.log('Failed to get cropped image or src for figure:', figure);
                     avatarImage.dispose();
-                    resolve('https://via.placeholder.com/40');
                     return;
                 }
 
                 const color = avatarImage.getPartColor(AvatarFigurePartType.CHEST);
-                console.log('Avatar color:', color, 'RGB:', color?.rgb);
 
                 avatarColorCache.set(figure, ((color && color.rgb) || 16777215));
                 avatarImageCache.set(figure, image.src);
-                console.log('Cached image src:', image.src);
 
-                // Update existing chat messages for this username
                 setChatMessages(prevValue => {
                     const updatedMessages = prevValue.map(chat => {
                         if (chat.username === username && chat.imageUrl !== image.src) {
-                            chat.imageUrl = image.src; // Update in-place
-                            return { ...chat }; // Shallow copy to trigger re-render
+                            chat.imageUrl = image.src;
+                            return { ...chat };
                         }
                         return chat;
                     });
@@ -91,9 +79,7 @@ const useChatWidgetState = () =>
                 avatarImage.dispose();
                 resolve(image.src);
             }).catch(error => {
-                console.error('Error in setFigureImage:', error);
                 avatarImage.dispose();
-                resolve('https://via.placeholder.com/40');
             });
         });
     };
@@ -105,7 +91,7 @@ const useChatWidgetState = () =>
             setFigureImage(figure, username).then(src => {
                 avatarImageCache.set(figure, src);
             });
-            return 'https://via.placeholder.com/40';
+            return;
         }
 
         return existing;
@@ -152,14 +138,6 @@ const useChatWidgetState = () =>
 
             const figure = userData.figure;
 
-            console.log('Chat Event Debug:', {
-                userId: event.objectId,
-                username: userData.name,
-                userType,
-                figure,
-                roomObjectExists: !!roomObject
-            });
-
             switch(userType)
             {
                 case RoomObjectType.PET:
@@ -169,7 +147,6 @@ const useChatWidgetState = () =>
                     break;
                 case RoomObjectType.USER:
                     imageUrl = getUserImage(figure, userData.name);
-                    console.log('getUserImage result:', { figure, imageUrl });
                     break;
                 case RoomObjectType.RENTABLE_BOT:
                 case RoomObjectType.BOT:
