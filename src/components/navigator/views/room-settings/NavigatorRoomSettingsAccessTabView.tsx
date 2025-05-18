@@ -60,12 +60,12 @@ export const NavigatorRoomSettingsAccessTabView: FC<NavigatorRoomSettingsTabView
                                 <Text small>{ LocalizeText('navigator.roomsettings.doormode.password') }</Text>
                                 <input className="min-h-[calc(1.5em+ .5rem+2px)] px-[.5rem] py-[.25rem]  rounded-[.2rem] form-control-sm col-span-4" placeholder={ LocalizeText('navigator.roomsettings.password') } type="password" value={ password } onChange={ event => setPassword(event.target.value) } onFocus={ event => setIsTryingPassword(true) } />
                                 { isTryingPassword && (password.length <= 0) &&
-                                    <Text small bold small variant="danger">
+                                    <Text small bold variant="danger">
                                         { LocalizeText('navigator.roomsettings.passwordismandatory') }
                                     </Text> }
                                 <input className="min-h-[calc(1.5em+ .5rem+2px)] px-[.5rem] py-[.25rem]  rounded-[.2rem] form-control-sm col-span-4" placeholder={ LocalizeText('navigator.roomsettings.passwordconfirm') } type="password" value={ confirmPassword } onBlur={ saveRoomPassword } onChange={ event => setConfirmPassword(event.target.value) } />
                                 { isTryingPassword && ((password.length > 0) && (password !== confirmPassword)) &&
-                                    <Text small bold small variant="danger">
+                                    <Text small bold variant="danger">
                                         { LocalizeText('navigator.roomsettings.invalidconfirm') }
                                     </Text> }
                             </div> }

@@ -19,6 +19,8 @@ export const RoomToolsWidgetView: FC<{}> = props => {
     const { roomSession = null } = useRoom();
 
     const handleToolClick = (action: string, value?: string) => {
+		if (!roomSession) return;
+		
         switch (action) {
             case 'settings':
                 CreateLinkEvent('navigator/toggle-room-info');

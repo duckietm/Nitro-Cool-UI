@@ -38,7 +38,8 @@ export const App: FC<{}> = props =>
                     preference: 'webgl',
                     eventMode: 'none',
                     failIfMajorPerformanceCaveat: false,
-                    roundPixels: true
+                    roundPixels: true,
+                    useBackBuffer: true // Enable back buffer for blend filters
                 });
 
                 await GetConfiguration().init();
@@ -66,8 +67,6 @@ export const App: FC<{}> = props =>
                 await GetRoomEngine().init();
                 await GetCommunication().init();
 
-                // new GameMessageHandler();
-
                 if(LegacyExternalInterface.available) LegacyExternalInterface.call('legacyTrack', 'authentication', 'authok', []);
 
                 HabboWebTools.sendHeartBeat();
@@ -79,11 +78,7 @@ export const App: FC<{}> = props =>
                 GetTicker().add(ticker => GetTexturePool().run());
 
                 setIsReady(true);
-
-                // handle socket close
-                //canvas.addEventListener('webglcontextlost', () => instance.events.dispatchEvent(new NitroEvent(Nitro.WEBGL_CONTEXT_LOST)));
             }
-
             catch(err)
             {
                 NitroLogger.error(err);

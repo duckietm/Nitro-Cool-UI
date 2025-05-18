@@ -17,6 +17,8 @@ import './css/hotelview/HotelView.css';
 
 import './css/icons/icons.css';
 
+import './css/layout/LayoutTrophy.css';
+
 import './css/loading/loading.css';
 
 import './css/nitrocard/NitroCardView.css';
