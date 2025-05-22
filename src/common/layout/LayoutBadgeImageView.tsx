@@ -68,6 +68,8 @@ export const LayoutBadgeImageView: FC<LayoutBadgeImageViewProps> = props =>
             if(event.badgeId !== badgeCode) return;
 
             const element = await TextureUtils.generateImage(new NitroSprite(event.image));
+			
+			console.log ('boe');
 
             element.onload = () => setImageElement(element);
 
@@ -85,6 +87,7 @@ export const LayoutBadgeImageView: FC<LayoutBadgeImageViewProps> = props =>
             (async () =>
             {
                 const element = await TextureUtils.generateImage(new NitroSprite(texture));
+				
 
                 element.onload = () => setImageElement(element);
             })();

@@ -1,0 +1,145 @@
+.nitro-use-product-confirmation {
+  width: 350px;
+
+  .product-preview {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 75px; /* Aligned with .body-image.pet */
+    height: 80px;
+    background: url('@/assets/images/room-widgets/avatar-info/preview-background.png') no-repeat center;
+
+    .pet-image {
+      width: 75px;
+      height: 80px;
+    }
+
+    .monsterplant-image {
+      width: 75px;
+      height: 80px;
+      background: url('@/assets/images/room-widgets/furni-context-menu/monsterplant-preview.png') no-repeat center;
+    }
+  }
+}
+
+.nitro-infostand {
+  position: relative;
+  width: clamp(160px, 20vw, 190px); /* Responsive width */
+  z-index: 30;
+  pointer-events: auto;
+  background: #212131;
+  box-shadow: inset 0 5px rgba(38, 38, 57, 0.6), inset 0 -4px rgba(25, 25, 37, 0.6);
+  border-radius: 0.5rem;
+  padding: 10px;
+
+  @media (max-width: 576px) {
+    top: -67px;
+    padding: 8px;
+    .text {
+      font-size: 0.85rem;
+    }
+  }
+
+  .form-control-sm {
+    height: 25px;
+    min-height: 25px;
+    padding: 0.1rem 0.25rem;
+  }
+
+  .body-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 68px;
+    border-radius: 0.5rem;
+
+    &.pet {
+      max-width: 75px;
+    }
+
+    &.bot {
+      background-image: url('@/assets/images/infostand/bot_background.png');
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+
+    &.furni {
+      background-color: transparent;
+      margin-right: 0;
+    }
+  }
+
+  .body-image-plant {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 68px;
+    height: 85px;
+    max-height: 90px;
+    border-radius: 0.5rem;
+  }
+
+  .badge-image {
+    width: 45px;
+    height: 45px;
+  }
+
+  .motto-content {
+    min-height: 18px;
+  }
+
+  .motto-input {
+    width: 100%;
+    height: 100%;
+    font-size: 12px;
+    padding: 0;
+    outline: 0;
+    border: 0;
+    color: rgba(255, 255, 255, 1);
+    position: relative;
+    background: transparent;
+    resize: none;
+
+    &:focus {
+      font-style: italic;
+    }
+  }
+
+  .flex-tags {
+    flex-wrap: wrap;
+    margin-bottom: -10px;
+
+    .text-tags {
+      padding: 2px;
+      border-radius: 3px;
+      background: #333;
+      margin-right: 5px;
+      margin-bottom: 10px;
+      cursor: pointer;
+    }
+  }
+
+  .button-container {
+    pointer-events: auto;
+  }
+
+  .pet-stats {
+    height: 18px;
+    transition: width 0.3s ease-in-out; /* Smooth progress bar animation */
+  }
+}
+
+.nitro-rarity-level {
+    width: 36px;
+    height: 28px;
+    background: url('@/assets/images/infostand/rarity-level.png');
+
+    div {
+        line-height: 28px;
+        text-align: center;
+        color: $black;
+        font-weight: bold;
+    }
+}

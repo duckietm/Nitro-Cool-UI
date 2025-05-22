@@ -29,6 +29,7 @@ import './css/notification/NotificationCenterView.css';
 
 import './css/purse/PurseView.css';
 
+import './css/room/InfoStand.css';
 import './css/room/NavigatorRoomSettings.css';
 import './css/room/RoomWidgets.css';
 
