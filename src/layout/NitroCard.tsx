@@ -80,7 +80,7 @@ const NitroCardTabs = forwardRef<HTMLDivElement, {
         <div
             ref={ ref }
             className={ classNames(
-                'justify-center gap-0.5 flex bg-card-tabs min-h-card-tabs max-h-card-tabs pt-1 border-b border-card-border px-2',
+                'justify-center gap-0.5 flex bg-card-tabs min-h-card-tabs max-h-card-tabs pt-1 border-b border-card-border px-2 -mt-[1px]',
                 className)
             }
             { ...rest } />

@@ -4,167 +4,141 @@ import { FixedSizeStack, GetRoomObjectBounds, GetRoomObjectScreenLocation, GetRo
 import { BaseProps } from '../../../../common';
 import { ContextMenuCaretView } from './ContextMenuCaretView';
 
-interface ContextMenuViewProps extends BaseProps<HTMLDivElement>
-{
-    objectId: number;
-    category: number;
-    userType?: number;
-    fades?: boolean;
-    onClose: () => void;
-    collapsable?: boolean;
+interface ContextMenuViewProps extends BaseProps<HTMLDivElement> {
+  objectId: number;
+  category: number;
+  userType?: number;
+  fades?: boolean;
+  onClose: () => void;
+  collapsable?: boolean;
 }
 
-const LOCATION_STACK_SIZE: number = 25;
-const BUBBLE_DROP_SPEED: number = 3;
+const LOCATION_STACK_SIZE = 25;
+const BUBBLE_DROP_SPEED = 3;
 const FADE_DELAY = 5000;
 const FADE_LENGTH = 75;
 const SPACE_AROUND_EDGES = 10;
 
-let COLLAPSED = false;
-let FIXED_STACK: FixedSizeStack = null;
-let MAX_STACK = -1000000;
-let FADE_TIME = 1;
+export const ContextMenuView: FC<ContextMenuViewProps> = ({
+  objectId = -1,
+  category = -1,
+  userType = -1,
+  fades = false,
+  onClose,
+  classNames = [],
+  style = {},
+  children = null,
+  collapsable = false,
+  ...rest
+}) => {
+  const [pos, setPos] = useState<{ x: number; y: number }>({ x: null, y: null });
+  const [opacity, setOpacity] = useState(1);
+  const [isFading, setIsFading] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const elementRef = useRef<HTMLDivElement>(null);
+  const stackRef = useRef<FixedSizeStack>(new FixedSizeStack(LOCATION_STACK_SIZE));
+  const maxStackRef = useRef(-1000000);
 
-export const ContextMenuView: FC<ContextMenuViewProps> = props =>
-{
-    const { objectId = -1, category = -1, userType = -1, fades = false, onClose = null, classNames = [], style = {}, children = null, collapsable = false, ...rest } = props;
-    const [ pos, setPos ] = useState<{ x: number, y: number }>({ x: null, y: null });
-    const [ opacity, setOpacity ] = useState(1);
-    const [ isFading, setIsFading ] = useState(false);
-    const [ isCollapsed, setIsCollapsed ] = useState(COLLAPSED);
-    const elementRef = useRef<HTMLDivElement>();
+  const updatePosition = useCallback(
+    (bounds: NitroRectangle, location: { x: number; y: number }) => {
+      if (!bounds || !location || !elementRef.current) return;
 
-    const updateFade = useCallback((time: number) =>
-    {
-        if(!isFading) return;
+      let offset = -elementRef.current.offsetHeight;
+      if (userType > -1 && [RoomObjectType.USER, RoomObjectType.BOT, RoomObjectType.RENTABLE_BOT].includes(userType)) {
+        offset += bounds.height > 50 ? 15 : 0;
+      } else {
+        offset -= 14;
+      }
 
-        FADE_TIME += time;
+      stackRef.current.addValue(location.y - bounds.top);
+      let maxStack = stackRef.current.getMax();
+      if (maxStack < maxStackRef.current - BUBBLE_DROP_SPEED) {
+        maxStack = maxStackRef.current - BUBBLE_DROP_SPEED;
+      }
+      maxStackRef.current = maxStack;
 
-        let newOpacity = ((1 - (FADE_TIME / FADE_LENGTH)) * 1);
+      const deltaY = location.y - maxStack;
+      let x = Math.round(location.x - elementRef.current.offsetWidth / 2);
+      let y = Math.round(deltaY + offset);
 
-        if(newOpacity <= 0)
-        {
-            onClose();
+      const stage = GetStage();
+      const maxLeft = stage.width - elementRef.current.offsetWidth - SPACE_AROUND_EDGES;
+      const maxTop = stage.height - elementRef.current.offsetHeight - SPACE_AROUND_EDGES;
 
-            return false;
-        }
+      x = Math.max(SPACE_AROUND_EDGES, Math.min(x, maxLeft));
+      y = Math.max(SPACE_AROUND_EDGES, Math.min(y, maxTop));
 
-        setOpacity(newOpacity);
-    }, [ isFading, onClose ]);
+      setPos({ x, y });
+    },
+    [userType]
+  );
 
-    const updatePosition = useCallback((bounds: NitroRectangle, location: { x: number, y: number }) =>
-    {
-        if(!bounds || !location || !FIXED_STACK) return;
+  const getClassNames = useMemo(() => {
+    const classes = [
+      '!p-[2px]',
+      'bg-[#1c323f]',
+      'border-[2px]',
+      'border-[solid]',
+      'border-[rgba(255,255,255,.5)]',
+      'rounded-[.25rem]',
+      'text-[.7875rem]',
+	  'text-white',
+      'z-40',
+      'pointer-events-auto',
+      'absolute',
+      pos.x !== null ? 'visible' : 'invisible',
+    ];
+    if (isCollapsed) classes.push('menu-hidden');
+    return [...classes, ...classNames];
+  }, [pos.x, isCollapsed, classNames]);
 
-        let offset = -(elementRef.current.offsetHeight);
+  const getStyle = useMemo(
+    () => ({
+      left: pos.x ?? 0,
+      top: pos.y ?? 0,
+      transition: isFading ? 'opacity 75ms linear' : undefined,
+      opacity,
+      ...style,
+    }),
+    [pos, opacity, isFading, style]
+  );
 
-        if((userType > -1) && ((userType === RoomObjectType.USER) || (userType === RoomObjectType.BOT) || (userType === RoomObjectType.RENTABLE_BOT)))
-        {
-            offset = (offset + ((bounds.height > 50) ? 15 : 0));
-        }
-        else
-        {
-            offset = (offset - 14);
-        }
+  useEffect(() => {
+    if (!elementRef.current) return;
 
-        FIXED_STACK.addValue((location.y - bounds.top));
+    const update = () => {
+      if (!elementRef.current) return;
+      const bounds = GetRoomObjectBounds(GetRoomSession().roomId, objectId, category);
+      const location = GetRoomObjectScreenLocation(GetRoomSession().roomId, objectId, category);
+      updatePosition(bounds, location);
+    };
 
-        let maxStack = FIXED_STACK.getMax();
+    const ticker = GetTicker();
+    ticker.add(update);
 
-        if(maxStack < (MAX_STACK - BUBBLE_DROP_SPEED)) maxStack = (MAX_STACK - BUBBLE_DROP_SPEED);
+    return () => ticker.remove(update);
+  }, [objectId, category, updatePosition]);
 
-        MAX_STACK = maxStack;
+  useEffect(() => {
+    if (!fades) return;
 
-        const deltaY = (location.y - maxStack);
+    const timeout = setTimeout(() => {
+      setIsFading(true);
+      setTimeout(onClose, FADE_LENGTH);
+    }, FADE_DELAY);
 
-        let x = ~~(location.x - (elementRef.current.offsetWidth / 2));
-        let y = ~~(deltaY + offset);
+    return () => clearTimeout(timeout);
+  }, [fades, onClose]);
 
-        const maxLeft = ((GetStage().width - elementRef.current.offsetWidth) - SPACE_AROUND_EDGES);
-        const maxTop = ((GetStage().height - elementRef.current.offsetHeight) - SPACE_AROUND_EDGES);
+  useEffect(() => {
+    if (!isFading) return;
+    setOpacity(0);
+  }, [isFading]);
 
-        if(x < SPACE_AROUND_EDGES) x = SPACE_AROUND_EDGES;
-        else if(x > maxLeft) x = maxLeft;
-
-        if(y < SPACE_AROUND_EDGES) y = SPACE_AROUND_EDGES;
-        else if(y > maxTop) y = maxTop;
-
-        setPos({ x, y });
-    }, [ userType ]);
-
-    const getClassNames = useMemo(() =>
-    {
-        const newClassNames: string[] = [ '!p-[2px] bg-[#1c323f] border-[2px] border-[solid] border-[rgba(255,255,255,.5)] rounded-[.25rem] text-[.7875rem] z-40 pointer-events-auto', 'absolute' ];
-
-        if(isCollapsed) newClassNames.push('menu-hidden');
-
-        newClassNames.push((pos.x !== null) ? 'visible' : 'invisible');
-
-        if(classNames.length) newClassNames.push(...classNames);
-
-        return newClassNames;
-    }, [ pos, classNames, isCollapsed ]);
-
-    const getStyle = useMemo(() =>
-    {
-        let newStyle: CSSProperties = {};
-
-        newStyle.left = (pos.x || 0);
-        newStyle.top = (pos.y || 0);
-        newStyle.opacity = opacity;
-
-        if(Object.keys(style).length) newStyle = { ...newStyle, ...style };
-
-        return newStyle;
-    }, [ pos, opacity, style ]);
-
-    useEffect(() =>
-    {
-        if(!elementRef.current) return;
-
-        const update = (ticker: NitroTicker) =>
-        {
-            if(!elementRef.current) return;
-
-            updateFade(ticker.lastTime);
-
-            const bounds = GetRoomObjectBounds(GetRoomSession().roomId, objectId, category);
-            const location = GetRoomObjectScreenLocation(GetRoomSession().roomId, objectId, category);
-
-            updatePosition(bounds, location);
-        };
-
-        GetTicker().add(update);
-
-        return () =>
-        {
-            GetTicker().remove(update);
-        };
-    }, [ objectId, category, updateFade, updatePosition ]);
-
-    useEffect(() =>
-    {
-        if(!fades) return;
-
-        const timeout = setTimeout(() => setIsFading(true), FADE_DELAY);
-
-        return () => clearTimeout(timeout);
-    }, [ fades ]);
-
-    useEffect(() =>
-    {
-        COLLAPSED = isCollapsed;
-    }, [ isCollapsed ]);
-
-    useEffect(() =>
-    {
-        FIXED_STACK = new FixedSizeStack(LOCATION_STACK_SIZE);
-        MAX_STACK = -1000000;
-        FADE_TIME = 1;
-    }, []);
-
-    return <div ref={ elementRef } className={ getClassNames.join(' ') } style={ getStyle } { ...rest }>
-        { !(collapsable && COLLAPSED) && children }
-        { collapsable && <ContextMenuCaretView collapsed={ isCollapsed } onClick={ () => setIsCollapsed(!isCollapsed) } /> }
-    </div>;
+  return (
+    <div ref={elementRef} className={getClassNames.join(' ')} style={getStyle} {...rest}>
+      {!(collapsable && isCollapsed) && children}
+      {collapsable && <ContextMenuCaretView collapsed={isCollapsed} onClick={() => setIsCollapsed((prev) => !prev)} />}
+    </div>
+  );
 };

@@ -1,0 +1,947 @@
+.backgrounds-view-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 100;
+  pointer-events: none;
+}
+
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+
+.non-selectable {
+  cursor: default;
+}
+
+.non-selectable .profile-background {
+  filter: opacity(0.5);
+  transition: linear 0.25s;
+}
+
+.non-selectable .profile-background:hover {
+  filter: opacity(1);
+}
+
+.background-edit-icon {
+  background-image: url('@/assets/images/infostand/icon_edit.gif');
+  width: 19px;
+  height: 19px;
+  pointer-events: auto;
+  cursor: pointer;
+  z-index: 10;
+  display: block;
+  transition: opacity 0.2s ease;
+}
+
+.background-edit-icon:hover {
+  opacity: 0.8;
+}
+
+.background-edit-position {
+  position: absolute;
+  left: 8px;
+}
+
+.profile-background {
+  background-repeat: no-repeat;
+  background-position: center;
+  height: 135px;
+  width: 68px;
+}
+
+.profile-background.background-default {
+  background-color: #f0f0f0;
+}
+
+.profile-stand {
+  background-repeat: no-repeat;
+  background-position: center;
+  height: 135px;
+  width: 68px;
+}
+
+.profile-stand.stand-default {
+  background: none;
+}
+
+.profile-overlay {
+  background-repeat: no-repeat;
+  background-position: center;
+  height: 135px;
+  width: 68px;
+}
+
+.profile-overlay.overlay-default {
+  background: none;
+}
+
+.profile-background {
+  background-repeat: no-repeat;
+  background-position: center;
+  height: 135px;
+  width: 68px;
+
+  &.background-0 {
+    background-image: url('@/assets/images/backgrounds/background/bg_0.png');
+  }
+
+  &.background-1 {
+    background-image: url('@/assets/images/backgrounds/background/bg_1.gif');
+  }
+
+  &.background-2 {
+    background-image: url('@/assets/images/backgrounds/background/bg_2.png');
+  }
+
+  &.background-3 {
+    background-image: url('@/assets/images/backgrounds/background/bg_3.png');
+  }
+
+  &.background-4 {
+    background-image: url('@/assets/images/backgrounds/background/bg_4.png');
+  }
+
+  &.background-5 {
+    background-image: url('@/assets/images/backgrounds/background/bg_5.png');
+  }
+
+  &.background-6 {
+    background-image: url('@/assets/images/backgrounds/background/bg_6.png');
+  }
+
+  &.background-7 {
+    background-image: url('@/assets/images/backgrounds/background/bg_7.png');
+  }
+
+  &.background-8 {
+    background-image: url('@/assets/images/backgrounds/background/bg_8.png');
+  }
+
+  &.background-9 {
+    background-image: url('@/assets/images/backgrounds/background/bg_9.png');
+  }
+
+  &.background-10 {
+    background-image: url('@/assets/images/backgrounds/background/bg_10.png');
+  }
+
+  &.background-11 {
+    background-image: url('@/assets/images/backgrounds/background/bg_11.png');
+  }
+
+  &.background-12 {
+    background-image: url('@/assets/images/backgrounds/background/bg_12.png');
+  }
+
+  &.background-13 {
+    background-image: url('@/assets/images/backgrounds/background/bg_13.png');
+  }
+
+  &.background-14 {
+    background-image: url('@/assets/images/backgrounds/background/bg_14.png');
+  }
+
+  &.background-15 {
+    background-image: url('@/assets/images/backgrounds/background/bg_15.png');
+  }
+
+  &.background-16 {
+    background-image: url('@/assets/images/backgrounds/background/bg_16.png');
+  }
+
+  &.background-17 {
+    background-image: url('@/assets/images/backgrounds/background/bg_17.png');
+  }
+
+  &.background-18 {
+    background-image: url('@/assets/images/backgrounds/background/bg_18.png');
+  }
+
+  &.background-19 {
+    background-image: url('@/assets/images/backgrounds/background/bg_19.png');
+  }
+
+  &.background-20 {
+    background-image: url('@/assets/images/backgrounds/background/bg_20.png');
+  }
+
+  &.background-21 {
+    background-image: url('@/assets/images/backgrounds/background/bg_21.png');
+  }
+
+  &.background-22 {
+    background-image: url('@/assets/images/backgrounds/background/bg_22.png');
+  }
+
+  &.background-23 {
+    background-image: url('@/assets/images/backgrounds/background/bg_23.png');
+  }
+
+  &.background-24 {
+    background-image: url('@/assets/images/backgrounds/background/bg_24.png');
+  }
+
+  &.background-25 {
+    background-image: url('@/assets/images/backgrounds/background/bg_25.png');
+  }
+
+  &.background-26 {
+    background-image: url('@/assets/images/backgrounds/background/bg_26.png');
+  }
+
+  &.background-27 {
+    background-image: url('@/assets/images/backgrounds/background/bg_27.png');
+  }
+
+  &.background-28 {
+    background-image: url('@/assets/images/backgrounds/background/bg_28.png');
+  }
+
+  &.background-29 {
+    background-image: url('@/assets/images/backgrounds/background/bg_29.png');
+  }
+
+  &.background-30 {
+    background-image: url('@/assets/images/backgrounds/background/bg_30.png');
+  }
+
+  &.background-31 {
+    background-image: url('@/assets/images/backgrounds/background/bg_31.png');
+  }
+
+  &.background-32 {
+    background-image: url('@/assets/images/backgrounds/background/bg_32.png');
+  }
+
+  &.background-33 {
+    background-image: url('@/assets/images/backgrounds/background/bg_33.png');
+  }
+
+  &.background-34 {
+    background-image: url('@/assets/images/backgrounds/background/bg_34.png');
+  }
+
+  &.background-35 {
+    background-image: url('@/assets/images/backgrounds/background/bg_35.png');
+  }
+
+  &.background-36 {
+    background-image: url('@/assets/images/backgrounds/background/bg_36.gif');
+  }
+
+  &.background-37 {
+    background-image: url('@/assets/images/backgrounds/background/bg_37.png');
+  }
+
+  &.background-38 {
+    background-image: url('@/assets/images/backgrounds/background/bg_38.png');
+  }
+
+  &.background-39 {
+    background-image: url('@/assets/images/backgrounds/background/bg_39.png');
+  }
+
+  &.background-40 {
+    background-image: url('@/assets/images/backgrounds/background/bg_40.png');
+  }
+
+  &.background-41 {
+    background-image: url('@/assets/images/backgrounds/background/bg_41.png');
+  }
+
+  &.background-42 {
+    background-image: url('@/assets/images/backgrounds/background/bg_42.png');
+  }
+
+  &.background-43 {
+    background-image: url('@/assets/images/backgrounds/background/bg_43.png');
+  }
+
+  &.background-44 {
+    background-image: url('@/assets/images/backgrounds/background/bg_44.png');
+  }
+
+  &.background-45 {
+    background-image: url('@/assets/images/backgrounds/background/bg_45.png');
+  }
+
+  &.background-46 {
+    background-image: url('@/assets/images/backgrounds/background/bg_46.png');
+  }
+
+  &.background-47 {
+    background-image: url('@/assets/images/backgrounds/background/bg_47.png');
+  }
+
+  &.background-48 {
+    background-image: url('@/assets/images/backgrounds/background/bg_48.png');
+  }
+
+  &.background-49 {
+    background-image: url('@/assets/images/backgrounds/background/bg_49.png');
+  }
+
+  &.background-50 {
+    background-image: url('@/assets/images/backgrounds/background/bg_50.png');
+  }
+
+  &.background-51 {
+    background-image: url('@/assets/images/backgrounds/background/bg_51.gif');
+  }
+
+  &.background-52 {
+    background-image: url('@/assets/images/backgrounds/background/bg_52.gif');
+  }
+
+  &.background-53 {
+    background-image: url('@/assets/images/backgrounds/background/bg_53.gif');
+  }
+
+  &.background-54 {
+    background-image: url('@/assets/images/backgrounds/background/bg_54.gif');
+  }
+
+  &.background-55 {
+    background-image: url('@/assets/images/backgrounds/background/bg_55.gif');
+  }
+
+  &.background-56 {
+    background-image: url('@/assets/images/backgrounds/background/bg_56.gif');
+  }
+
+  &.background-57 {
+    background-image: url('@/assets/images/backgrounds/background/bg_57.gif');
+  }
+
+  &.background-58 {
+    background-image: url('@/assets/images/backgrounds/background/bg_58.gif');
+  }
+
+  &.background-59 {
+    background-image: url('@/assets/images/backgrounds/background/bg_59.gif');
+  }
+
+  &.background-60 {
+    background-image: url('@/assets/images/backgrounds/background/bg_60.gif');
+  }
+
+  &.background-61 {
+    background-image: url('@/assets/images/backgrounds/background/bg_61.gif');
+  }
+
+  &.background-62 {
+    background-image: url('@/assets/images/backgrounds/background/bg_62.gif');
+  }
+
+  &.background-63 {
+    background-image: url('@/assets/images/backgrounds/background/bg_63.gif');
+  }
+
+  &.background-64 {
+    background-image: url('@/assets/images/backgrounds/background/bg_64.gif');
+  }
+
+  &.background-65 {
+    background-image: url('@/assets/images/backgrounds/background/bg_65.gif');
+  }
+
+  &.background-66 {
+    background-image: url('@/assets/images/backgrounds/background/bg_66.gif');
+  }
+
+  &.background-67 {
+    background-image: url('@/assets/images/backgrounds/background/bg_67.gif');
+  }
+
+  &.background-68 {
+    background-image: url('@/assets/images/backgrounds/background/bg_68.gif');
+  }
+
+  &.background-69 {
+    background-image: url('@/assets/images/backgrounds/background/bg_69.gif');
+  }
+
+  &.background-70 {
+    background-image: url('@/assets/images/backgrounds/background/bg_70.gif');
+  }
+
+  &.background-71 {
+    background-image: url('@/assets/images/backgrounds/background/bg_71.gif');
+  }
+
+  &.background-72 {
+    background-image: url('@/assets/images/backgrounds/background/bg_72.gif');
+  }
+
+  &.background-73 {
+    background-image: url('@/assets/images/backgrounds/background/bg_73.gif');
+  }
+
+  &.background-74 {
+    background-image: url('@/assets/images/backgrounds/background/bg_74.gif');
+  }
+
+  &.background-75 {
+    background-image: url('@/assets/images/backgrounds/background/bg_75.gif');
+  }
+
+  &.background-76 {
+    background-image: url('@/assets/images/backgrounds/background/bg_76.gif');
+  }
+
+  &.background-77 {
+    background-image: url('@/assets/images/backgrounds/background/bg_77.gif');
+  }
+
+  &.background-78 {
+    background-image: url('@/assets/images/backgrounds/background/bg_78.gif');
+  }
+
+  &.background-79 {
+    background-image: url('@/assets/images/backgrounds/background/bg_79.gif');
+  }
+
+  &.background-80 {
+    background-image: url('@/assets/images/backgrounds/background/bg_80.gif');
+  }
+
+  &.background-81 {
+    background-image: url('@/assets/images/backgrounds/background/bg_81.gif');
+  }
+
+  &.background-82 {
+    background-image: url('@/assets/images/backgrounds/background/bg_82.gif');
+  }
+
+  &.background-83 {
+    background-image: url('@/assets/images/backgrounds/background/bg_83.gif');
+  }
+
+  &.background-84 {
+    background-image: url('@/assets/images/backgrounds/background/bg_84.gif');
+  }
+
+  &.background-85 {
+    background-image: url('@/assets/images/backgrounds/background/bg_85.gif');
+  }
+
+  &.background-86 {
+    background-image: url('@/assets/images/backgrounds/background/bg_86.png');
+  }
+
+  &.background-87 {
+    background-image: url('@/assets/images/backgrounds/background/bg_87.gif');
+  }
+
+  &.background-88 {
+    background-image: url('@/assets/images/backgrounds/background/bg_88.gif');
+  }
+
+  &.background-89 {
+    background-image: url('@/assets/images/backgrounds/background/bg_89.gif');
+  }
+
+  &.background-90 {
+    background-image: url('@/assets/images/backgrounds/background/bg_90.gif');
+  }
+
+  &.background-91 {
+    background-image: url('@/assets/images/backgrounds/background/bg_91.gif');
+  }
+
+  &.background-92 {
+    background-image: url('@/assets/images/backgrounds/background/bg_92.gif');
+  }
+
+  &.background-93 {
+    background-image: url('@/assets/images/backgrounds/background/bg_93.gif');
+  }
+
+  &.background-94 {
+    background-image: url('@/assets/images/backgrounds/background/bg_94.gif');
+  }
+
+  &.background-95 {
+    background-image: url('@/assets/images/backgrounds/background/bg_95.gif');
+  }
+
+  &.background-96 {
+    background-image: url('@/assets/images/backgrounds/background/bg_96.gif');
+  }
+
+  &.background-97 {
+    background-image: url('@/assets/images/backgrounds/background/bg_97.gif');
+  }
+
+  &.background-98 {
+    background-image: url('@/assets/images/backgrounds/background/bg_98.gif');
+  }
+
+  &.background-99 {
+    background-image: url('@/assets/images/backgrounds/background/bg_99.gif');
+  }
+
+  &.background-100 {
+    background-image: url('@/assets/images/backgrounds/background/bg_100.gif');
+  }
+
+  &.background-101 {
+    background-image: url('@/assets/images/backgrounds/background/bg_101.png');
+  }
+
+  &.background-102 {
+    background-image: url('@/assets/images/backgrounds/background/bg_102.gif');
+  }
+
+  &.background-103 {
+    background-image: url('@/assets/images/backgrounds/background/bg_103.gif');
+  }
+
+  &.background-104 {
+    background-image: url('@/assets/images/backgrounds/background/bg_104.gif');
+  }
+
+  &.background-105 {
+    background-image: url('@/assets/images/backgrounds/background/bg_105.gif');
+  }
+
+  &.background-106 {
+    background-image: url('@/assets/images/backgrounds/background/bg_106.gif');
+  }
+
+  &.background-107 {
+    background-image: url('@/assets/images/backgrounds/background/bg_107.gif');
+  }
+
+  &.background-108 {
+    background-image: url('@/assets/images/backgrounds/background/bg_108.gif');
+  }
+
+  &.background-109 {
+    background-image: url('@/assets/images/backgrounds/background/bg_109.gif');
+  }
+
+  &.background-110 {
+    background-image: url('@/assets/images/backgrounds/background/bg_110.gif');
+  }
+
+  &.background-111 {
+    background-image: url('@/assets/images/backgrounds/background/bg_111.gif');
+  }
+
+  &.background-112 {
+    background-image: url('@/assets/images/backgrounds/background/bg_112.gif');
+  }
+
+  &.background-113 {
+    background-image: url('@/assets/images/backgrounds/background/bg_113.gif');
+  }
+
+  &.background-114 {
+    background-image: url('@/assets/images/backgrounds/background/bg_114.gif');
+  }
+
+  &.background-115 {
+    background-image: url('@/assets/images/backgrounds/background/bg_115.gif');
+  }
+
+  &.background-116 {
+    background-image: url('@/assets/images/backgrounds/background/bg_116.gif');
+  }
+
+  &.background-117 {
+    background-image: url('@/assets/images/backgrounds/background/bg_117.gif');
+  }
+
+  &.background-118 {
+    background-image: url('@/assets/images/backgrounds/background/bg_118.gif');
+  }
+
+  &.background-119 {
+    background-image: url('@/assets/images/backgrounds/background/bg_119.gif');
+  }
+
+  &.background-120 {
+    background-image: url('@/assets/images/backgrounds/background/bg_120.gif');
+  }
+
+  &.background-121 {
+    background-image: url('@/assets/images/backgrounds/background/bg_121.gif');
+  }
+
+  &.background-122 {
+    background-image: url('@/assets/images/backgrounds/background/bg_122.gif');
+  }
+
+  &.background-123 {
+    background-image: url('@/assets/images/backgrounds/background/bg_123.gif');
+  }
+
+  &.background-124 {
+    background-image: url('@/assets/images/backgrounds/background/bg_124.gif');
+  }
+
+  &.background-125 {
+    background-image: url('@/assets/images/backgrounds/background/bg_125.gif');
+  }
+
+  &.background-126 {
+    background-image: url('@/assets/images/backgrounds/background/bg_126.gif');
+  }
+
+  &.background-127 {
+    background-image: url('@/assets/images/backgrounds/background/bg_127.gif');
+  }
+
+  &.background-128 {
+    background-image: url('@/assets/images/backgrounds/background/bg_128.gif');
+  }
+
+  &.background-129 {
+    background-image: url('@/assets/images/backgrounds/background/bg_129.gif');
+  }
+
+  &.background-130 {
+    background-image: url('@/assets/images/backgrounds/background/bg_130.gif');
+  }
+
+  &.background-131 {
+    background-image: url('@/assets/images/backgrounds/background/bg_131.gif');
+  }
+
+  &.background-132 {
+    background-image: url('@/assets/images/backgrounds/background/bg_132.gif');
+  }
+
+  &.background-133 {
+    background-image: url('@/assets/images/backgrounds/background/bg_133.gif');
+  }
+
+  &.background-134 {
+    background-image: url('@/assets/images/backgrounds/background/bg_134.gif');
+  }
+
+  &.background-135 {
+    background-image: url('@/assets/images/backgrounds/background/bg_135.gif');
+  }
+
+  &.background-136 {
+    background-image: url('@/assets/images/backgrounds/background/bg_136.gif');
+  }
+
+  &.background-137 {
+    background-image: url('@/assets/images/backgrounds/background/bg_137.gif');
+  }
+
+  &.background-138 {
+    background-image: url('@/assets/images/backgrounds/background/bg_138.gif');
+  }
+
+  &.background-139 {
+    background-image: url('@/assets/images/backgrounds/background/bg_139.gif');
+  }
+
+  &.background-140 {
+    background-image: url('@/assets/images/backgrounds/background/bg_140.gif');
+  }
+
+  &.background-141 {
+    background-image: url('@/assets/images/backgrounds/background/bg_141.gif');
+  }
+
+  &.background-142 {
+    background-image: url('@/assets/images/backgrounds/background/bg_142.gif');
+  }
+
+  &.background-143 {
+    background-image: url('@/assets/images/backgrounds/background/bg_143.gif');
+  }
+
+  &.background-144 {
+    background-image: url('@/assets/images/backgrounds/background/bg_144.gif');
+  }
+
+  &.background-145 {
+    background-image: url('@/assets/images/backgrounds/background/bg_145.gif');
+  }
+
+  &.background-146 {
+    background-image: url('@/assets/images/backgrounds/background/bg_146.gif');
+  }
+
+  &.background-147 {
+    background-image: url('@/assets/images/backgrounds/background/bg_147.gif');
+  }
+
+  &.background-148 {
+    background-image: url('@/assets/images/backgrounds/background/bg_148.gif');
+  }
+
+  &.background-149 {
+    background-image: url('@/assets/images/backgrounds/background/bg_149.gif');
+  }
+
+  &.background-150 {
+    background-image: url('@/assets/images/backgrounds/background/bg_150.gif');
+  }
+
+  &.background-151 {
+    background-image: url('@/assets/images/backgrounds/background/bg_151.gif');
+  }
+
+  &.background-152 {
+    background-image: url('@/assets/images/backgrounds/background/bg_152.gif');
+  }
+
+  &.background-153 {
+    background-image: url('@/assets/images/backgrounds/background/bg_153.gif');
+  }
+
+  &.background-154 {
+    background-image: url('@/assets/images/backgrounds/background/bg_154.gif');
+  }
+
+  &.background-155 {
+    background-image: url('@/assets/images/backgrounds/background/bg_155.gif');
+  }
+
+  &.background-156 {
+    background-image: url('@/assets/images/backgrounds/background/bg_156.gif');
+  }
+
+  &.background-157 {
+    background-image: url('@/assets/images/backgrounds/background/bg_157.gif');
+  }
+
+  &.background-158 {
+    background-image: url('@/assets/images/backgrounds/background/bg_158.gif');
+  }
+
+  &.background-159 {
+    background-image: url('@/assets/images/backgrounds/background/bg_159.gif');
+  }
+
+  &.background-160 {
+    background-image: url('@/assets/images/backgrounds/background/bg_160.gif');
+  }
+
+  &.background-161 {
+    background-image: url('@/assets/images/backgrounds/background/bg_161.gif');
+  }
+
+  &.background-162 {
+    background-image: url('@/assets/images/backgrounds/background/bg_162.gif');
+  }
+
+  &.background-163 {
+    background-image: url('@/assets/images/backgrounds/background/bg_163.gif');
+  }
+
+  &.background-164 {
+    background-image: url('@/assets/images/backgrounds/background/bg_164.gif');
+  }
+
+  &.background-165 {
+    background-image: url('@/assets/images/backgrounds/background/bg_165.gif');
+  }
+
+  &.background-166 {
+    background-image: url('@/assets/images/backgrounds/background/bg_166.gif');
+  }
+
+  &.background-167 {
+    background-image: url('@/assets/images/backgrounds/background/bg_167.gif');
+  }
+
+  &.background-168 {
+    background-image: url('@/assets/images/backgrounds/background/bg_168.gif');
+  }
+
+  &.background-169 {
+    background-image: url('@/assets/images/backgrounds/background/bg_169.gif');
+  }
+
+  &.background-170 {
+    background-image: url('@/assets/images/backgrounds/background/bg_170.png');
+  }
+
+  &.background-171 {
+    background-image: url('@/assets/images/backgrounds/background/bg_171.png');
+  }
+
+  &.background-172 {
+    background-image: url('@/assets/images/backgrounds/background/bg_172.png');
+  }
+
+  &.background-173 {
+    background-image: url('@/assets/images/backgrounds/background/bg_173.png');
+  }
+
+  &.background-174 {
+    background-image: url('@/assets/images/backgrounds/background/bg_174.png');
+  }
+
+  &.background-175 {
+    background-image: url('@/assets/images/backgrounds/background/bg_175.png');
+  }
+
+  &.background-176 {
+    background-image: url('@/assets/images/backgrounds/background/bg_176.png');
+  }
+  
+  &.background-177 {
+    background-image: url('@/assets/images/backgrounds/background/bg_177.gif');
+  }
+
+  &.background-178 {
+    background-image: url('@/assets/images/backgrounds/background/bg_178.png');
+  }
+
+  &.background-179 {
+    background-image: url('@/assets/images/backgrounds/background/bg_179.png');
+  }
+
+  &.background-180 {
+    background-image: url('@/assets/images/backgrounds/background/bg_180.png');
+  }
+
+  &.background-181 {
+    background-image: url('@/assets/images/backgrounds/background/bg_181.png');
+  }
+
+  &.background-182 {
+    background-image: url('@/assets/images/backgrounds/background/bg_182.png');
+  }
+
+  &.background-183 {
+    background-image: url('@/assets/images/backgrounds/background/bg_183.png');
+  }
+
+  &.background-184 {
+    background-image: url('@/assets/images/backgrounds/background/bg_184.png');
+  }
+
+  &.background-185 {
+    background-image: url('@/assets/images/backgrounds/background/bg_185.png');
+  }
+
+  &.background-186 {
+    background-image: url('@/assets/images/backgrounds/background/bg_186.png');
+  }
+
+  &.background-187 {
+    background-image: url('@/assets/images/backgrounds/background/bg_187.gif');
+  }
+}
+
+.profile-stand {
+  background-repeat: no-repeat;
+  background-position: center;
+  height: 135px;
+  width: 68px;
+
+  &.stand-0 {
+    background-image: url('@/assets/images/backgrounds/stand_0.png');
+  }
+  &.stand-1 {
+    background-image: url('@/assets/images/backgrounds/stand_1.png');
+  }
+  &.stand-2 {
+    background-image: url('@/assets/images/backgrounds/stand_2.png');
+  }
+  &.stand-3 {
+    background-image: url('@/assets/images/backgrounds/stand_3.png');
+  }
+  &.stand-4 {
+    background-image: url('@/assets/images/backgrounds/stand_4.png');
+  }
+  &.stand-5 {
+    background-image: url('@/assets/images/backgrounds/stand_5.png');
+  }
+  &.stand-6 {
+    background-image: url('@/assets/images/backgrounds/stand_6.png');
+  }
+  &.stand-7 {
+    background-image: url('@/assets/images/backgrounds/stand_7.png');
+  }
+  &.stand-8 {
+    background-image: url('@/assets/images/backgrounds/stand_8.png');
+  }
+  &.stand-9 {
+    background-image: url('@/assets/images/backgrounds/stand_9.png');
+  }
+  &.stand-10 {
+    background-image: url('@/assets/images/backgrounds/stand_10.png');
+  }
+  &.stand-11 {
+    background-image: url('@/assets/images/backgrounds/stand_11.png');
+  }
+  &.stand-12 {
+    background-image: url('@/assets/images/backgrounds/stand_12.png');
+  }
+  &.stand-13 {
+    background-image: url('@/assets/images/backgrounds/stand_13.png');
+  }
+  &.stand-14 {
+    background-image: url('@/assets/images/backgrounds/stand_14.png');
+  }
+  &.stand-15 {
+    background-image: url('@/assets/images/backgrounds/stand_15.png');
+  }
+  &.stand-16 {
+    background-image: url('@/assets/images/backgrounds/stand_16.png');
+  }
+  &.stand-17 {
+    background-image: url('@/assets/images/backgrounds/stand_17.png');
+  }
+  &.stand-18 {
+    background-image: url('@/assets/images/backgrounds/stand_18.png');
+  }
+  &.stand-19 {
+    background-image: url('@/assets/images/backgrounds/stand_19.png');
+  }
+  &.stand-20 {
+    background-image: url('@/assets/images/backgrounds/stand_20.png');
+  }
+  &.stand-21 {
+    background-image: url('@/assets/images/backgrounds/stand_21.gif');
+  }
+}
+
+.profile-overlay {
+  background-repeat: no-repeat;
+  background-position: center;
+  height: 135px;
+  width: 68px;
+
+  &.overlay-0 {
+    background-image: url('@/assets/images/backgrounds/overlay/overlay_0.png');
+  }
+  &.overlay-1 {
+    background-image: url('@/assets/images/backgrounds/overlay/overlay_1.png');
+  }
+  &.overlay-2 {
+    background-image: url('@/assets/images/backgrounds/overlay/overlay_2.png');
+  }
+  &.overlay-3 {
+    background-image: url('@/assets/images/backgrounds/overlay/overlay_3.png');
+  }
+  &.overlay-4 {
+    background-image: url('@/assets/images/backgrounds/overlay/overlay_4.png');
+  }
+  &.overlay-5 {
+    background-image: url('@/assets/images/backgrounds/overlay/overlay_5.gif');
+  }
+  &.overlay-6 {
+    background-image: url('@/assets/images/backgrounds/overlay/overlay_6.png');
+  }
+  &.overlay-7 {
+    background-image: url('@/assets/images/backgrounds/overlay/overlay_7.png');
+  }
+  &.overlay-8 {
+    background-image: url('@/assets/images/backgrounds/overlay/overlay_8.png');
+  }
+}

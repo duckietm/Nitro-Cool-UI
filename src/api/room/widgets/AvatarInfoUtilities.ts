@@ -171,6 +171,9 @@ export class AvatarInfoUtilities
         userInfo.isSpectatorMode = roomSession.isSpectator;
         userInfo.name = userData.name;
         userInfo.motto = userData.custom;
+		userInfo.backgroundId = userData.background;
+        userInfo.standId = userData.stand;
+        userInfo.overlayId = userData.overlay;
         userInfo.achievementScore = userData.activityPoints;
         userInfo.webID = userData.webID;
         userInfo.roomIndex = userData.roomIndex;
