@@ -35,7 +35,7 @@ export class TextureUtils
                 this.writeToRenderTexture(target, renderTexture);
                 target = renderTexture;
             }
-
+			
             const image = await extractor.image(target);
 
             if (!image || !image.src || !image.src.startsWith('data:image/')) {

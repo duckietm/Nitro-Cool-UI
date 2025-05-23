@@ -3420,17 +3420,27 @@ export class RoomEngine extends NitroManager implements IRoomEngine, IRoomCreato
         return texture;
     }
 
-    public saveTextureAsScreenshot(texture: RenderTexture, saveAsThumbnail: boolean = false): void
-    {
-        let composer: RenderRoomMessageComposer = null;
-
-        if(saveAsThumbnail) composer = new RenderRoomThumbnailMessageComposer();
-        else composer = new RenderRoomMessageComposer();
-
-        composer.assignBitmap(texture);
-
-        this._communication.connection.send(composer);
+    public saveTextureAsScreenshot(texture: RenderTexture, saveAsThumbnail: boolean = false): void {
+    if (!texture) {
+        console.warn('saveTextureAsScreenshot: Invalid texture');
+        return;
     }
+
+    TextureUtils.generateImageUrl(texture).then(base64 => {
+        if (base64) {
+            let composer: RenderRoomMessageComposer = null;
+
+            if (saveAsThumbnail) composer = new RenderRoomThumbnailMessageComposer();
+            else composer = new RenderRoomMessageComposer();
+
+            composer.assignBase64(base64);
+
+            this._communication.connection.send(composer);
+        } else {
+            console.warn('saveTextureAsScreenshot: Failed to generate base64');
+        }
+    });
+	}
 
     public saveBase64AsScreenshot(base64: string, saveAsThumbnail: boolean = false): void
     {
