@@ -37,8 +37,13 @@ const useFurniChooserWidgetState = () =>
                 if(furniData && furniData.name.length) name = furniData.name;
             }
 
-            return new RoomObjectItem(roomObject.id, RoomObjectCategory.WALL, name);
-        });
+            const ownerId = roomObject.model.getValue<number>(RoomObjectVariable.FURNITURE_OWNER_ID) || 0;
+            const ownerName = roomObject.model.getValue<string>(RoomObjectVariable.FURNITURE_OWNER_NAME) || 
+                             (sessionDataManager.getUserData ? sessionDataManager.getUserData(ownerId)?.name : null) || 
+                             `User_${ownerId}`;
+
+            return new RoomObjectItem(roomObject.id, RoomObjectCategory.WALL, name, ownerId, ownerName);
+        }).filter(item => item !== null);
 
         const floorItems = floorObjects.map(roomObject =>
         {
@@ -51,8 +56,13 @@ const useFurniChooserWidgetState = () =>
 
             if(furniData && furniData.name.length) name = furniData.name;
 
-            return new RoomObjectItem(roomObject.id, RoomObjectCategory.FLOOR, name);
-        });
+            const ownerId = roomObject.model.getValue<number>(RoomObjectVariable.FURNITURE_OWNER_ID) || 0;
+            const ownerName = roomObject.model.getValue<string>(RoomObjectVariable.FURNITURE_OWNER_NAME) || 
+                             (sessionDataManager.getUserData ? sessionDataManager.getUserData(ownerId)?.name : null) || 
+                             `User_${ownerId}`;
+
+            return new RoomObjectItem(roomObject.id, RoomObjectCategory.FLOOR, name, ownerId, ownerName);
+        }).filter(item => item !== null);
 
         setItems([ ...wallItems, ...floorItems ].sort((a, b) => ((a.name < b.name) ? -1 : 1)));
     }
@@ -84,7 +94,12 @@ const useFurniChooserWidgetState = () =>
                     if(furniData && furniData.name.length) name = furniData.name;
                 }
 
-                item = new RoomObjectItem(roomObject.id, RoomObjectCategory.WALL, name);
+                const ownerId = roomObject.model.getValue<number>(RoomObjectVariable.FURNITURE_OWNER_ID) || 0;
+                const ownerName = roomObject.model.getValue<string>(RoomObjectVariable.FURNITURE_OWNER_NAME) || 
+                                 (GetSessionDataManager().getUserData ? GetSessionDataManager().getUserData(ownerId)?.name : null) || 
+                                 `User_${ownerId}`;
+
+                item = new RoomObjectItem(roomObject.id, RoomObjectCategory.WALL, name, ownerId, ownerName);
 
                 break;
             }
@@ -96,11 +111,16 @@ const useFurniChooserWidgetState = () =>
 
                 if(furniData && furniData.name.length) name = furniData.name;
 
-                item = new RoomObjectItem(roomObject.id, RoomObjectCategory.FLOOR, name);
+                const ownerId = roomObject.model.getValue<number>(RoomObjectVariable.FURNITURE_OWNER_ID) || 0;
+                const ownerName = roomObject.model.getValue<string>(RoomObjectVariable.FURNITURE_OWNER_NAME) || 
+                                 (GetSessionDataManager().getUserData ? GetSessionDataManager().getUserData(ownerId)?.name : null) || 
+                                 `User_${ownerId}`;
+
+                item = new RoomObjectItem(roomObject.id, RoomObjectCategory.FLOOR, name, ownerId, ownerName);
             }
         }
 
-        setItems(prevValue => [ ...prevValue, item ].sort((a, b) => ((a.name < b.name) ? -1 : 1)));
+        if(item) setItems(prevValue => [ ...prevValue, item ].sort((a, b) => ((a.name < b.name) ? -1 : 1)));
     });
 
     useFurniRemovedEvent(!!items, event =>
