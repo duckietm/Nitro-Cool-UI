@@ -4,12 +4,13 @@ import { useRoom } from '../../hooks';
 import { HabboClubLevelEnum } from '@nitrots/nitro-renderer';
 import { GetClubMemberLevel, GetConfiguration, GetSessionDataManager } from '../../api';
 
-interface ItemData { 
+interface ItemData {
     id: number;
     isHcOnly: boolean;
     minRank: number;
     isAmbassadorOnly: boolean;
     selectable: boolean;
+    AvatarDirection: number;
 }
 
 interface BackgroundsViewProps {
@@ -20,6 +21,9 @@ interface BackgroundsViewProps {
     setSelectedStand: Dispatch<SetStateAction<number>>;
     selectedOverlay: number;
     setSelectedOverlay: Dispatch<SetStateAction<number>>;
+    setBackgroundDirection: Dispatch<SetStateAction<number>>;
+    setStandDirection: Dispatch<SetStateAction<number>>;
+    setOverlayDirection: Dispatch<SetStateAction<number>>;
 }
 
 const TABS = ['backgrounds', 'stands', 'overlays'] as const;
@@ -32,11 +36,14 @@ export const BackgroundsView: FC<BackgroundsViewProps> = ({
     selectedStand,
     setSelectedStand,
     selectedOverlay,
-    setSelectedOverlay
+    setSelectedOverlay,
+    setBackgroundDirection,
+    setStandDirection,
+    setOverlayDirection
 }) => {
     const [activeTab, setActiveTab] = useState<TabType>('backgrounds');
     const { roomSession } = useRoom();
-    
+
     const userData = useMemo(() => ({
         isHcMember: GetClubMemberLevel() >= HabboClubLevelEnum.CLUB,
         securityLevel: GetSessionDataManager().canChangeName,
@@ -45,14 +52,19 @@ export const BackgroundsView: FC<BackgroundsViewProps> = ({
 
     const processData = useCallback((configData: any[], dataType: string): ItemData[] => {
         if (!configData?.length) return [];
-        
+
         return configData
             .filter(item => {
                 const meetsRank = userData.securityLevel >= item.minRank;
                 const ambassadorEligible = !item.isAmbassadorOnly || userData.isAmbassador;
                 return item.isHcOnly || (meetsRank && ambassadorEligible);
             })
-            .map(item => ({ id: item[`${dataType}Id`], ...item, selectable: !item.isHcOnly || userData.isHcMember }));
+            .map(item => ({
+                id: item[`${dataType}Id`],
+                ...item,
+                selectable: !item.isHcOnly || userData.isHcMember,
+                AvatarDirection: item.AvatarDirection ?? 4
+            }));
     }, [userData]);
 
     const allData = useMemo(() => ({
@@ -64,14 +76,45 @@ export const BackgroundsView: FC<BackgroundsViewProps> = ({
     const handleSelection = useCallback((id: number) => {
         if (!roomSession) return;
 
-        const setters = { backgrounds: setSelectedBackground, stands: setSelectedStand, overlays: setSelectedOverlay };
-        
-        const currentValues = { backgrounds: selectedBackground, stands: selectedStand, overlays: selectedOverlay };
+        const setters = {
+            backgrounds: setSelectedBackground,
+            stands: setSelectedStand,
+            overlays: setSelectedOverlay
+        };
+        const directionSetters = {
+            backgrounds: setBackgroundDirection,
+            stands: setStandDirection,
+            overlays: setOverlayDirection
+        };
 
-        setters[activeTab](id);
-        const newValues = { ...currentValues, [activeTab]: id };
-        roomSession.sendBackgroundMessage( newValues.backgrounds, newValues.stands, newValues.overlays );
-    }, [activeTab, roomSession, selectedBackground, selectedStand, selectedOverlay, setSelectedBackground, setSelectedStand, setSelectedOverlay]);
+        const currentValues = {
+            backgrounds: selectedBackground,
+            stands: selectedStand,
+            overlays: selectedOverlay
+        };
+
+        const selectedItem = allData[activeTab].find(item => item.id === id);
+        if (selectedItem) {
+            setters[activeTab](id);
+            directionSetters[activeTab](selectedItem.AvatarDirection);
+
+            const newValues = { ...currentValues, [activeTab]: id };
+            roomSession.sendBackgroundMessage(newValues.backgrounds, newValues.stands, newValues.overlays);
+        }
+    }, [
+        activeTab,
+        roomSession,
+        selectedBackground,
+        selectedStand,
+        selectedOverlay,
+        setSelectedBackground,
+        setSelectedStand,
+        setSelectedOverlay,
+        setBackgroundDirection,
+        setStandDirection,
+        setOverlayDirection,
+        allData
+    ]);
 
     const renderItem = useCallback((item: ItemData, type: string) => (
         <Flex
