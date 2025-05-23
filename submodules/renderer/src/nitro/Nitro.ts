@@ -1,5 +1,5 @@
 import { Application, IApplicationOptions } from '@pixi/app';
-import { SCALE_MODES } from '@pixi/constants';
+import { BaseTexture, SCALE_MODES, TextureGCSystem } from '@pixi/core';
 import { settings } from '@pixi/settings';
 import { IAvatarRenderManager, IEventDispatcher, ILinkEventTracker, INitroCommunicationManager, INitroCore, INitroLocalizationManager, IRoomCameraWidgetManager, IRoomEngine, IRoomManager, IRoomSessionManager, ISessionDataManager, ISoundManager, NitroConfiguration, NitroLogger } from '../api';
 import { ConfigurationEvent, EventDispatcher, NitroCore } from '../core';
@@ -21,9 +21,9 @@ import { HabboWebTools } from './utils/HabboWebTools';
 
 LegacyExternalInterface.available;
 
-settings.SCALE_MODE = (!(window.devicePixelRatio % 1)) ? SCALE_MODES.NEAREST : SCALE_MODES.LINEAR;
+BaseTexture.defaultOptions.scaleMode = (!(window.devicePixelRatio % 1)) ? SCALE_MODES.NEAREST : SCALE_MODES.LINEAR;
 settings.ROUND_PIXELS = true;
-settings.GC_MAX_IDLE = 120;
+TextureGCSystem.defaultMaxIdle = 120;
 
 export class Nitro implements INitro
 {
