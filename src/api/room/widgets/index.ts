@@ -7,6 +7,8 @@ export * from './AvatarInfoUtilities';
 export * from './BotSkillsEnum';
 export * from './ChatBubbleMessage';
 export * from './ChatMessageTypeEnum';
+export * from './ChooserSelectionFilter';
+export * from './ChooserSelectionVisualizer';
 export * from './DimmerFurnitureWidgetPresetItem';
 export * from './DoChatsOverlap';
 export * from './FurnitureDimmerUtilities';

@@ -13,6 +13,24 @@ const useFurniChooserWidgetState = () =>
 
     const selectItem = (item: RoomObjectItem) => item && GetRoomEngine().selectRoomObject(GetRoomSession().roomId, item.id, item.category);
 
+    const resolveType = (userType: number): string => {
+        switch(userType) {
+            case 1: return 'Habbo';
+            case 2: return 'Pet';
+            case 3: return 'Bot';
+            default: return '-';
+        }
+    }
+
+    const isPetOrBot = (roomObjectType: string): boolean => {
+        // Check for pet or bot furniture based on type
+        return roomObjectType.includes('pet_') || 
+               roomObjectType.includes('bot_') || 
+               roomObjectType === 'pet' || 
+               roomObjectType === 'bot' || 
+               roomObjectType.includes('rentableBot');
+    }
+
     const populateChooser = () =>
     {
         const sessionDataManager = GetSessionDataManager();
@@ -42,7 +60,12 @@ const useFurniChooserWidgetState = () =>
                              (sessionDataManager.getUserData ? sessionDataManager.getUserData(ownerId)?.name : null) || 
                              `User_${ownerId}`;
 
-            return new RoomObjectItem(roomObject.id, RoomObjectCategory.WALL, name, ownerId, ownerName);
+            // Skip pet/bot furniture
+            if(isPetOrBot(roomObject.type)) {
+                return null;
+            }
+
+            return new RoomObjectItem(roomObject.id, RoomObjectCategory.WALL, name, ownerId, ownerName, 'furniture');
         }).filter(item => item !== null);
 
         const floorItems = floorObjects.map(roomObject =>
@@ -61,7 +84,12 @@ const useFurniChooserWidgetState = () =>
                              (sessionDataManager.getUserData ? sessionDataManager.getUserData(ownerId)?.name : null) || 
                              `User_${ownerId}`;
 
-            return new RoomObjectItem(roomObject.id, RoomObjectCategory.FLOOR, name, ownerId, ownerName);
+            // Skip pet/bot furniture
+            if(isPetOrBot(roomObject.type)) {
+                return null;
+            }
+
+            return new RoomObjectItem(roomObject.id, RoomObjectCategory.FLOOR, name, ownerId, ownerName, 'furniture');
         }).filter(item => item !== null);
 
         setItems([ ...wallItems, ...floorItems ].sort((a, b) => ((a.name < b.name) ? -1 : 1)));
@@ -72,7 +100,6 @@ const useFurniChooserWidgetState = () =>
         if(event.id < 0) return;
 
         const roomObject = GetRoomEngine().getRoomObject(GetRoomSession().roomId, event.id, event.category);
-
         if(!roomObject) return;
 
         let item: RoomObjectItem = null;
@@ -99,8 +126,12 @@ const useFurniChooserWidgetState = () =>
                                  (GetSessionDataManager().getUserData ? GetSessionDataManager().getUserData(ownerId)?.name : null) || 
                                  `User_${ownerId}`;
 
-                item = new RoomObjectItem(roomObject.id, RoomObjectCategory.WALL, name, ownerId, ownerName);
+                // Skip pet/bot furniture
+                if(isPetOrBot(roomObject.type)) {
+                    return;
+                }
 
+                item = new RoomObjectItem(roomObject.id, RoomObjectCategory.WALL, name, ownerId, ownerName, 'furniture');
                 break;
             }
             case RoomObjectCategory.FLOOR: {
@@ -116,7 +147,13 @@ const useFurniChooserWidgetState = () =>
                                  (GetSessionDataManager().getUserData ? GetSessionDataManager().getUserData(ownerId)?.name : null) || 
                                  `User_${ownerId}`;
 
-                item = new RoomObjectItem(roomObject.id, RoomObjectCategory.FLOOR, name, ownerId, ownerName);
+                // Skip pet/bot furniture
+                if(isPetOrBot(roomObject.type)) {
+                    return;
+                }
+
+                item = new RoomObjectItem(roomObject.id, RoomObjectCategory.FLOOR, name, ownerId, ownerName, 'furniture');
+                break;
             }
         }
 
@@ -138,7 +175,6 @@ const useFurniChooserWidgetState = () =>
                 if((existingValue.id !== event.id) || (existingValue.category !== event.category)) continue;
 
                 newValue.splice(i, 1);
-
                 break;
             }
 
