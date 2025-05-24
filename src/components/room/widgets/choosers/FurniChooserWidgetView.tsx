@@ -1,6 +1,6 @@
 import { ILinkEventTracker } from '@nitrots/nitro-renderer';
 import { FC, useEffect } from 'react';
-import { AddEventLinkTracker, LocalizeText, RemoveLinkEventTracker } from '../../../../api';
+import { AddEventLinkTracker, LocalizeText, RemoveLinkEventTracker, chooserSelectionVisualizer } from '../../../../api';
 import { useFurniChooserWidget, useRoom } from '../../../../hooks';
 import { ChooserWidgetView } from './ChooserWidgetView';
 
@@ -23,10 +23,23 @@ export const FurniChooserWidgetView: FC<{}> = props =>
 
         AddEventLinkTracker(linkTracker);
 
-        return () => RemoveLinkEventTracker(linkTracker);
+        return () => {
+            chooserSelectionVisualizer.clearAll();
+            RemoveLinkEventTracker(linkTracker);
+        };
     }, [ populateChooser ]);
     
     if (!items) return null;
 
-    return <ChooserWidgetView title={ LocalizeText('widget.chooser.furni.title') } items={ items } selectItem={ selectItem } onClose={ onClose } pickallFurni={ roomSession?.isRoomOwner } />;
+    return <ChooserWidgetView 
+        title={ LocalizeText('widget.chooser.furni.title') } 
+        items={ items } 
+        selectItem={ selectItem } 
+        onClose={ () => {
+            chooserSelectionVisualizer.clearAll();
+            onClose();
+        }} 
+        pickallFurni={ roomSession?.isRoomOwner } 
+        type="furni"
+    />;
 }
