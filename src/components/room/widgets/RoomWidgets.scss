@@ -2,8 +2,8 @@
     position: absolute;
     bottom: $toolbar-height + 25px;
     left: 0px;
-    display: flex; // Lay out children side by side
-    align-items: flex-start; // Align items to the top
+    display: flex;
+    align-items: flex-start;
 
     .nitro-room-tools {
         background: #212131;
@@ -47,12 +47,12 @@
             }
         }
     }
-
-    .nitro-room-tools-side-container {
+	
+	.nitro-room-tools-side-container {
         display: flex;
-        flex-direction: column; // Stack children vertically
-        margin-left: 10px; // Space between nitro-room-tools and side container
-        gap: 10px; // Space between history and info
+        flex-direction: column;
+        margin-left: 10px;
+        gap: 10px;
     }
 
     .nitro-room-history {
@@ -61,7 +61,7 @@
         transition: all .2s ease;
         width: 150px;
         overflow: hidden;
-        z-index: 1;
+        z-index: 5;
     }
 
     .nitro-room-tools-info {
@@ -170,6 +170,104 @@
     }
 }
 
+.buildtool-box {
+	background-color: 3D5D63;
+    align-items: center;
+    width: 100%;
+    border-radius: 6px;
+    border: 1px solid #fff;
+    padding: 2px;
+}
+
+.buildtool-box-left {
+    background-color: #3D5D63;
+}
+
+.buildtool-box-right {
+    background-color: #3D5D63;
+}
+
+.buildtool-movefurni {
+    background-color: #E55959;
+    color: #fff;
+    width: 25px;
+    height: 25px;
+    border: 1px solid #fff;
+    cursor: pointer;
+    border-radius: 3px;
+	display: flex;
+    justify-content: center;
+    align-items: center;
+	transition: filter 0.3s ease;
+
+    &:hover {
+        filter: brightness(1.5);
+    }
+}
+
+.buildtool-rotatefurni {
+    background-color: #D1A245;
+    color: #000;
+    width: 28px;
+    height: 28px;
+    border: 2px solid #eee;
+    cursor: pointer;
+    border-radius: 14px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+	transition: filter 0.3s ease;
+
+    &:hover {
+        filter: brightness(1.5);
+    }
+}
+
+.buildtool-setheight {
+    color: #fff;
+    width: 24px;
+    height: 24px;
+    border: 1px solid #fff;
+    cursor: pointer;
+    border-radius: 3px;
+    line-height: 1.0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: filter 0.3s ease;
+
+    &:hover {
+        filter: brightness(1.5);
+    }
+}
+
+.buildtool-setheightup {
+    background-color: #247FD1;
+}
+
+.buildtool-setheightdown {
+    background-color: #44A750;
+}
+
+.button-leftdown {
+    transform: rotate(135deg);
+}
+
+.button-leftup {
+    transform: rotate(225deg);
+}
+
+.button-rightdown {
+    transform: rotate(45deg);
+}
+
+.button-rightup {
+    transform: rotate(315deg);
+}
+
+.floor-spaceing {
+    gap: 0.6em!important;
+}				 
 @import './avatar-info/AvatarInfoWidgetView';
 @import './chat/ChatWidgetView';
 @import './chat-input/ChatInputView';
