@@ -189,7 +189,8 @@ export const ChooserWidgetView: FC<ChooserWidgetViewProps> = props =>
                                 </Text>
                             </Flex>
                         );
-                    } } 
+                    } }
+                    scrollToBottom={ false }
                 />
                 { pickallFurni && (
                     <Button 
