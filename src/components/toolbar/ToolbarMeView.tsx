@@ -1,6 +1,14 @@
 import { MouseEventType, RoomObjectCategory } from '@nitrots/nitro-renderer';
 import { Dispatch, FC, PropsWithChildren, SetStateAction, useEffect, useRef } from 'react';
-import { CreateLinkEvent, DispatchUiEvent, GetConfiguration, GetRoomEngine, GetRoomSession, GetUserProfile } from '../../api';
+import {
+    CreateLinkEvent,
+    DispatchUiEvent,
+    GetConfiguration,
+    GetRoomEngine,
+    GetRoomSession,
+    GetUserProfile,
+    GetSessionDataManager // Import fix for user toolbar's "me-profile" button
+} from '../../api';
 import { Base, Flex, LayoutItemCountView } from '../../common';
 import { GuideToolEvent } from '../../events';
 
