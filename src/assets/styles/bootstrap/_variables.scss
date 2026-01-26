@@ -46,7 +46,7 @@ $yellow:  #ffc107 !default;
 $green:   #00800b !default;
 $teal:    #20c997 !default;
 $cyan:    #0dcaf0 !default;
-$muted:   #B6BEC5 !default;
+$muted:   #CBCBCB !default;
 // scss-docs-end color-variables
 
 // scss-docs-start colors-map
@@ -90,6 +90,8 @@ $success:       $green !default;
 $info:          $cyan !default;
 $warning:       $yellow !default;
 $danger:        $red !default;
+$flash-orange:  #F1A700 !default;
+$gray-stone:    #AEAEAE !default;
 
 $light:         #DFDFDF !default;
 $dark:          rgba(28,28,32,.9803921568627451) !default;
@@ -127,7 +129,9 @@ $theme-colors: (
   "black":      $black,
   "muted":      $muted,
   "purple":     $purple,
-  "gainsboro":  $gainsboro
+  "gainsboro":  $gainsboro,
+  "flash-orange": $flash-orange,
+  "gray-stone": $gray-stone
 ) !default;
 // scss-docs-end theme-colors-map
 
@@ -1382,7 +1386,10 @@ $form-feedback-tooltip-border-radius: $tooltip-border-radius !default;
 // scss-docs-start popover-variables
 $popover-font-size:                 $font-size-sm !default;
 $popover-bg:                        $light !default;
-$popover-max-width:                 276px !default;
+$popover-max-width:                 360px !default;
+$popover-max-height:                250px !default;
+$popover-width:                     360px !default;
+$popover-height:                    250px !default;
 $popover-border-width:              $border-width !default;
 $popover-border-color:              $border-color !default;
 $popover-border-radius:             $border-radius !default;

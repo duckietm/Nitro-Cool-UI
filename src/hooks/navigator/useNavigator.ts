@@ -1,4 +1,4 @@
-import { CanCreateRoomEventEvent, CantConnectMessageParser, DoorbellMessageEvent, FlatAccessDeniedMessageEvent, FlatCreatedEvent, FollowFriendMessageComposer, GenericErrorEvent, GetGuestRoomMessageComposer, GetGuestRoomResultEvent, GetUserEventCatsMessageComposer, GetUserFlatCatsMessageComposer, HabboWebTools, LegacyExternalInterface, NavigatorCategoryDataParser, NavigatorEventCategoryDataParser, NavigatorHomeRoomEvent, NavigatorMetadataEvent, NavigatorOpenRoomCreatorEvent, NavigatorSavedSearch, NavigatorSearchEvent, NavigatorSearchResultSet, NavigatorSearchesEvent, NavigatorTopLevelContext, RoomDataParser, RoomDoorbellAcceptedEvent, RoomEnterErrorEvent, RoomEntryInfoMessageEvent, RoomForwardEvent, RoomScoreEvent, RoomSettingsUpdatedEvent, SecurityLevel, UserEventCatsEvent, UserFlatCatsEvent, UserInfoEvent, UserPermissionsEvent } from "@nitrots/nitro-renderer";
+import { CanCreateRoomEventEvent, CantConnectMessageParser, DoorbellMessageEvent, FavouriteChangedEvent, FavouritesEvent, FavouritesMessageParser, FlatAccessDeniedMessageEvent, FlatCreatedEvent, FollowFriendMessageComposer, GenericErrorEvent, GetGuestRoomMessageComposer, GetGuestRoomResultEvent, GetUserEventCatsMessageComposer, GetUserFlatCatsMessageComposer, HabboWebTools, LegacyExternalInterface, NavigatorCategoryDataParser, NavigatorEventCategoryDataParser, NavigatorHomeRoomEvent, NavigatorMetadataEvent, NavigatorOpenRoomCreatorEvent, NavigatorSavedSearch, NavigatorSearchEvent, NavigatorSearchResultSet, NavigatorSearchesEvent, NavigatorTopLevelContext, RoomDataParser, RoomDoorbellAcceptedEvent, RoomEnterErrorEvent, RoomEntryInfoMessageEvent, RoomForwardEvent, RoomScoreEvent, RoomSettingsUpdatedEvent, SecurityLevel, UserEventCatsEvent, UserFlatCatsEvent, UserInfoEvent, UserPermissionsEvent } from "@nitrots/nitro-renderer";
 import { useState } from "react";
 import { useBetween } from "use-between";
 import { CreateLinkEvent, CreateRoomSession, DoorStateType, GetConfiguration, GetSessionDataManager, INavigatorData, LocalizeText, NotificationAlertType, SendMessageComposer, TryVisitRoom, VisitDesktop, } from "../../api";
@@ -8,6 +8,7 @@ import { useNotification } from "../notification";
 const useNavigatorState = () => { 
 	const [categories, setCategories] = useState<NavigatorCategoryDataParser[]>(null);
 	const [eventCategories, setEventCategories] = useState<NavigatorEventCategoryDataParser[]>(null);
+	const [favouriteRoomIds, setFavouriteRoomIds] = useState<number[]>([]);
 	const [topLevelContext, setTopLevelContext] = useState<NavigatorTopLevelContext>(null);
 	const [topLevelContexts, setTopLevelContexts] = useState<NavigatorTopLevelContext[]>(null);
 	const [doorData, setDoorData] = useState<{ roomInfo: RoomDataParser; state: number; }>({ roomInfo: null, state: DoorStateType.NONE });
@@ -16,6 +17,32 @@ const useNavigatorState = () => {
 	const [navigatorSearches, setNavigatorSearches] = useState<NavigatorSavedSearch[]>(null);
 	const [navigatorData, setNavigatorData] = useState<INavigatorData>({ settingsReceived: false, homeRoomId: 0, enteredGuestRoom: null, currentRoomOwner: false, currentRoomId: 0, currentRoomIsStaffPick: false, createdFlatId: 0, avatarId: 0, roomPicker: false, eventMod: false, currentRoomRating: 0, canRate: true });
 	const { simpleAlert = null } = useNotification();
+	
+	useMessageEvent<FavouritesEvent>(FavouritesEvent, event =>
+    {
+        const parser = event.getParser();
+        const favoriteIds = (parser.favoriteRoomIds || []).map((x: any) => Number(x));
+        setFavouriteRoomIds(favoriteIds);
+    });
+
+    useMessageEvent<FavouriteChangedEvent>(FavouriteChangedEvent, event =>
+    {
+        const parser = event.getParser();
+        const roomId = Number(parser.flatId);
+        const added = !!parser.added;
+
+        setFavouriteRoomIds(prev =>
+        {
+            const ids = (prev || []).map((x: any) => Number(x));
+
+            if(added)
+            {
+                return ids.includes(roomId) ? ids : [ ...ids, roomId ];
+            }
+
+            return ids.filter(id => id !== roomId);
+        });
+    });
 	
 	useMessageEvent<RoomSettingsUpdatedEvent>( RoomSettingsUpdatedEvent, (event) => { const parser = event.getParser(); SendMessageComposer( new GetGuestRoomMessageComposer(parser.roomId, false, false) ); });
 	
@@ -324,7 +351,7 @@ const useNavigatorState = () => {
 				setNavigatorSearches(parser.searches);
 			});
 			
-			return { categories, doorData, setDoorData, topLevelContext, topLevelContexts, searchResult, navigatorData, navigatorSearches, searchResultQuery };
+			return { categories, doorData, setDoorData, topLevelContext, topLevelContexts, searchResult, navigatorData, navigatorSearches, searchResultQuery, favouriteRoomIds };
 	};
 
 export const useNavigator = () => useBetween(useNavigatorState);

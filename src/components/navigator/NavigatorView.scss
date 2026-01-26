@@ -50,9 +50,32 @@
     width: 300px;
 }
 
-.nitro-room-info {
-    width: $room-info-width;
-    resize: none;
+.room-info {
+    width: 360px;
+    color: #000;
+    image-rendering: pixelated;
+    
+    .event-information {
+        margin-top: 0.5em;
+        background: #EDBA44;
+        color: white;
+        border-radius: 3px;
+        max-height: 60px;
+
+        .text-desc-title {
+            min-width: 130px;
+            max-width: 275px;
+        }
+        .text-desc-desc {
+            max-width: 140px;
+        }
+    }
+
+    .room-info-bg {
+        border-image-source: url('@/assets/images/navigator/white_bg.png');
+        border-image-slice: 6 6 6 6 fill;
+        border-image-width: 6px 6px 6px 6px;
+    }
 }
 
 .text-tag {
@@ -239,18 +262,7 @@
 
 }
 
-.room-info {
-    width: 275px;
-    color: #000;
-    image-rendering: pixelated;
 
-    .room-info-bg {
-        border-image-source: url('@/assets/images/navigator/white_bg.png');
-        border-image-slice: 6 6 6 6 fill;
-        border-image-width: 6px 6px 6px 6px;
-    }
-
-}
 
 .navigator-search-button {
     right: 10px;

@@ -46,9 +46,64 @@
         height: 30px;
         width: 32px;
     }
+	
+	 &.icon-navigator-my-room {
+        background: url('@/assets/images/navigator/icons/house-active.png') no-repeat;
+        width: 13px;
+        height: 12px;
+
+        &.active {
+            background: url('@/assets/images/navigator/icons/house.png') no-repeat;
+        }
+    }
+
+    &.icon-navigator-favorite-room {
+        background: url('@/assets/images/navigator/icons/favorite.png');
+        width: 13px;
+        height: 12px;
+
+        &.active {
+            background: url('@/assets/images/navigator/icons/favorite-active.png');
+        }
+    }
+
+    &.icon-navigator-room-settings {
+        background: url('@/assets/images/navigator/icons/settings.png');
+        width: 13px;
+        height: 14px;
+    }
+
+    &.icon-navigator-room-report {
+        background: url('@/assets/images/navigator/icons/report.png') no-repeat;
+        width: 13px;
+        height: 15px;
+    }
+
+    &.icon-inline-view {
+        background: url('@/assets/images/navigator/inline_view.png');
+        width: 11px;
+        height: 11px;
+    }
+
+    &.icon-thumbnail-view {
+        background: url('@/assets/images/navigator/thumbnail_view.png');
+        width: 11px;
+        height: 11px;
+    }
+
+    &.icon-show-more {
+        background: url('@/assets/images/navigator/similar_results.png');
+        width: 11px;
+        height: 11px;
+
+        &.active {
+            background: url('@/assets/images/navigator/similar_results_active.png');
+        }
+    }
 
     &.gray {
-        opacity: 0.5;
+        filter: grayscale(100%);
+        opacity: 0.6;
     }
 
     &.icon-inventory {
@@ -411,6 +466,12 @@
         background: url('@/assets/images/icons/camera-small.png');
         width: 17px;
         height: 15px;
+    }
+	
+	&.icon-report-room {
+        background: url('@/assets/images/room/report-room.png');
+        width: 19px;
+        height: 19px;
     }
 
     &.icon-small-room {
