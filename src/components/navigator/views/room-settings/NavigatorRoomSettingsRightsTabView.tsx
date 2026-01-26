@@ -1,4 +1,12 @@
-import { FlatControllerAddedEvent, FlatControllerRemovedEvent, FlatControllersEvent, RemoveAllRightsMessageComposer, RoomGiveRightsComposer, RoomTakeRightsComposer, RoomUsersWithRightsComposer } from '@nitrots/nitro-renderer';
+import {
+    FlatControllerAddedEvent,
+    FlatControllerRemovedEvent,
+    FlatControllersEvent,
+    RemoveAllRightsMessageComposer,
+    RoomGiveRightsComposer,
+    RoomTakeRightsComposer,
+    RoomUsersWithRightsComposer
+} from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
 import { IRoomData, LocalizeText, SendMessageComposer } from '../../../../api';
 import { Button, Column, Flex, Grid, Text, UserProfileIconView } from '../../../../common';
@@ -10,15 +18,38 @@ interface NavigatorRoomSettingsTabViewProps
     handleChange: (field: string, value: string | number | boolean) => void;
 }
 
+const STAFF_CHAT_ID = -1;
+const STAFF_CHAT_NAME = 'Staff Chat';
+
 export const NavigatorRoomSettingsRightsTabView: FC<NavigatorRoomSettingsTabViewProps> = props =>
 {
     const { roomData = null } = props;
     const [ usersWithRights, setUsersWithRights ] = useState<Map<number, string>>(new Map());
     const { onlineFriends = [], offlineFriends = [] } = useFriends();
 
-    const allFriends = [ ...onlineFriends, ...offlineFriends ];
+    const allFriendsRaw = [ ...onlineFriends, ...offlineFriends ];
 
-    const friendWitoutRights = allFriends.filter(friend => !usersWithRights.has(friend.id));
+    // Exclude Staff Chat from the FRIENDS list (so it won't show on the right column)
+    const allFriends = allFriendsRaw.filter(friend =>
+    {
+        if(friend.id === STAFF_CHAT_ID) return false;
+        if(friend.name === STAFF_CHAT_NAME) return false;
+
+        return true;
+    });
+
+    // Exclude Staff Chat from the RIGHTS list (so it won't show on the left column)
+    const filteredUsersWithRights = new Map(
+        Array.from(usersWithRights.entries()).filter(([ id, name ]) =>
+        {
+            if(id === STAFF_CHAT_ID) return false;
+            if(name === STAFF_CHAT_NAME) return false;
+
+            return true;
+        })
+    );
+
+    const friendsWithoutRights = allFriends.filter(friend => !filteredUsersWithRights.has(friend.id));
 
     useMessageEvent<FlatControllersEvent>(FlatControllersEvent, event =>
     {
@@ -58,49 +89,82 @@ export const NavigatorRoomSettingsRightsTabView: FC<NavigatorRoomSettingsTabView
             newValue.delete(parser.userId);
 
             return newValue;
-        }); 
+        });
     });
 
     useEffect(() =>
     {
+        if(!roomData) return;
+
         SendMessageComposer(new RoomUsersWithRightsComposer(roomData.roomId));
-    }, [ roomData.roomId ]);
+    }, [ roomData?.roomId ]);
 
     return (
         <Grid>
             <Column size={ 6 }>
                 <Text bold>
-                    { LocalizeText('navigator.flatctrls.userswithrights', [ 'displayed', 'total' ], [ usersWithRights.size.toString(), usersWithRights.size.toString() ]) }
+                    { LocalizeText(
+                        'navigator.flatctrls.userswithrights',
+                        [ 'displayed', 'total' ],
+                        [
+                            filteredUsersWithRights.size.toString(),
+                            filteredUsersWithRights.size.toString()
+                        ]
+                    ) }
                 </Text>
+
                 <Flex overflow="hidden" className="p-2 bg-white rounded list-container">
                     <Column fullWidth overflow="auto" gap={ 1 }>
-                        { Array.from(usersWithRights.entries()).map(([ id, name ], index) =>
+                        { Array.from(filteredUsersWithRights.entries()).map(([ id, name ], index) =>
                         {
                             return (
-                                <Flex key={ index } shrink alignItems="center" gap={ 1 } overflow="hidden">
+                                <Flex key={ `${id}-${index}` } shrink alignItems="center" gap={ 1 } overflow="hidden">
                                     <UserProfileIconView userId={ id } />
-                                    <Text pointer grow onClick={ event => SendMessageComposer(new RoomTakeRightsComposer(id)) }> { name }</Text>
+                                    <Text
+                                        pointer
+                                        grow
+                                        onClick={ () => SendMessageComposer(new RoomTakeRightsComposer(id)) }>
+                                        { name }
+                                    </Text>
                                 </Flex>
                             );
                         }) }
                     </Column>
                 </Flex>
-                <Button variant="danger" disabled={ !usersWithRights.size } onClick={ event => SendMessageComposer(new RemoveAllRightsMessageComposer(roomData.roomId)) } >
+
+                <Button
+                    variant="danger"
+                    disabled={ !filteredUsersWithRights.size }
+                    onClick={ () => roomData && SendMessageComposer(new RemoveAllRightsMessageComposer(roomData.roomId)) }>
                     { LocalizeText('navigator.flatctrls.clear') }
                 </Button>
             </Column>
+
             <Column size={ 6 }>
                 <Text bold>
-                    { LocalizeText('navigator.flatctrls.friends', [ 'displayed', 'total' ], [ friendWitoutRights.length.toString(), allFriends.length.toString() ]) }
+                    { LocalizeText(
+                        'navigator.flatctrls.friends',
+                        [ 'displayed', 'total' ],
+                        [
+                            friendsWithoutRights.length.toString(),
+                            allFriends.length.toString()
+                        ]
+                    ) }
                 </Text>
+
                 <Flex overflow="hidden" className="p-2 bg-white rounded list-container">
                     <Column fullWidth overflow="auto" gap={ 1 }>
-                        { friendWitoutRights.map((friend, index) =>
+                        { friendsWithoutRights.map((friend, index) =>
                         {
                             return (
-                                <Flex key={ index } shrink alignItems="center" gap={ 1 } overflow="hidden">
+                                <Flex key={ `${friend.id}-${index}` } shrink alignItems="center" gap={ 1 } overflow="hidden">
                                     <UserProfileIconView userId={ friend.id } />
-                                    <Text pointer grow onClick={ event => SendMessageComposer(new RoomGiveRightsComposer(friend.id)) }> { friend.name }</Text>
+                                    <Text
+                                        pointer
+                                        grow
+                                        onClick={ () => SendMessageComposer(new RoomGiveRightsComposer(friend.id)) }>
+                                        { friend.name }
+                                    </Text>
                                 </Flex>
                             );
                         }) }
@@ -109,4 +173,4 @@ export const NavigatorRoomSettingsRightsTabView: FC<NavigatorRoomSettingsTabView
             </Column>
         </Grid>
     );
-}
+};
