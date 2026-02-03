@@ -1,12 +1,4 @@
-import {
-    FlatControllerAddedEvent,
-    FlatControllerRemovedEvent,
-    FlatControllersEvent,
-    RemoveAllRightsMessageComposer,
-    RoomGiveRightsComposer,
-    RoomTakeRightsComposer,
-    RoomUsersWithRightsComposer
-} from '@nitrots/nitro-renderer';
+import { FlatControllerAddedEvent, FlatControllerRemovedEvent, FlatControllersEvent, RemoveAllRightsMessageComposer, RoomGiveRightsComposer, RoomTakeRightsComposer, RoomUsersWithRightsComposer } from '@nitrots/nitro-renderer';
 import { FC, useEffect, useState } from 'react';
 import { IRoomData, LocalizeText, SendMessageComposer } from '../../../../api';
 import { Button, Column, Flex, Grid, Text, UserProfileIconView } from '../../../../common';
@@ -29,21 +21,21 @@ export const NavigatorRoomSettingsRightsTabView: FC<NavigatorRoomSettingsTabView
 
     const allFriendsRaw = [ ...onlineFriends, ...offlineFriends ];
 
-    // Exclude Staff Chat from the FRIENDS list (so it won't show on the right column)
     const allFriends = allFriendsRaw.filter(friend =>
     {
         if(friend.id === STAFF_CHAT_ID) return false;
         if(friend.name === STAFF_CHAT_NAME) return false;
+		if(friend.id <= 0) return false;
 
         return true;
     });
 
-    // Exclude Staff Chat from the RIGHTS list (so it won't show on the left column)
     const filteredUsersWithRights = new Map(
         Array.from(usersWithRights.entries()).filter(([ id, name ]) =>
         {
             if(id === STAFF_CHAT_ID) return false;
             if(name === STAFF_CHAT_NAME) return false;
+			if(id <= 0) return false;
 
             return true;
         })
