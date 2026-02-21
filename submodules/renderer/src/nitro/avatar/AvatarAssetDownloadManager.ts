@@ -92,7 +92,7 @@ export class AvatarAssetDownloadManager extends EventDispatcher
                 continue;
             }
 
-            for(const part of library.parts)
+            for(const part of (library.parts || []))
             {
                 const id = (part.id as string);
                 const type = (part.type as string);
